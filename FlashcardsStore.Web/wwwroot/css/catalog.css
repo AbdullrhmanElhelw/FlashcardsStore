@@ -1,0 +1,125 @@
+/* ==========================================================================
+   Kholoud Elnady English Academy — Catalog & Filter Components
+   Responsive / Enterprise Standard
+   ========================================================================== */
+
+/* ─── Category Filter Pills ─────────────────────────────────────────────── */
+.category-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  min-height: 36px;
+}
+
+@media (min-width: 640px) {
+  .category-filter-pill {
+    font-size: 13px;
+    padding: 7px 16px;
+    min-height: 38px;
+  }
+}
+
+.category-filter-pill:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  transform: translateY(-1px);
+}
+
+.category-filter-pill.active {
+  background: #0F172A;
+  color: #F8FAFC;
+  border-color: #D4AF37;
+  box-shadow: 0 3px 10px rgba(15,23,42,0.2), 0 0 0 1px rgba(212,175,55,0.5);
+}
+
+/* ─── Grade Filter Pills ─────────────────────────────────────────────────── */
+.grade-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1.5px solid #E2E8F0;
+  background-color: #FFFFFF;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  min-height: 36px;
+}
+
+@media (min-width: 640px) {
+  .grade-filter-pill {
+    font-size: 13px;
+    padding: 8px 16px;
+    min-height: 38px;
+  }
+}
+
+.grade-filter-pill:hover {
+  border-color: #D4AF37;
+  color: #0F172A;
+  background-color: #FFFDF8;
+  transform: translateY(-1px);
+}
+
+.grade-filter-pill.active {
+  background: linear-gradient(135deg, #18061A 0%, #290A2E 100%);
+  color: #FBF6E5;
+  border-color: #D4AF37;
+  box-shadow: 0 4px 14px rgba(24,6,26,0.25), 0 0 0 1px rgba(212,175,55,0.6);
+}
+
+.grade-filter-pill.active svg {
+  color: #D4AF37;
+}
+
+/* ─── Scrollbar Utilities ────────────────────────────────────────────────── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── HTMX Loading Indicator ─────────────────────────────────────────────── */
+#catalog-grid.htmx-request {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+/* ─── Product Card Flip ───────────────────────────────────────────────────── */
+.flip-card {
+  perspective: 1400px;
+}
+.flip-card-inner {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(-180deg);
+}
+.flip-card-front,
+.flip-card-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-card-back {
+  transform: rotateY(180deg);
+  position: absolute;
+  inset: 0;
+}

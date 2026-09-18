@@ -1,0 +1,86 @@
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    ViewData["Title"] = Loc.Get("TrackOrderTitle") + " - " + Loc.Get("BrandName");
+    var trackingResult = ViewBag.TrackingResult as OrderTrackingDto;
+    var searched = ViewBag.Searched as bool? ?? false;
+    var isRtl = Loc.IsRtl;
+    var nextArrow = isRtl ? "←" : "→";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/order-status.css" asp-append-version="true" />
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Header -->
+    <div class="text-center space-y-2 mb-10">
+        <div class="w-16 h-16 bg-gradient-to-br from-[#18061A] to-[#290A2E] text-[#D4AF37] rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg border border-[#D4AF37]/30">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+        </div>
+        <h1 class="text-2xl sm:text-4xl font-black text-slate-900">@Loc.Get("TrackOrderTitle")</h1>
+        <p class="text-sm text-slate-500 max-w-md mx-auto">
+            @Loc.Get("TrackOrderSubtitle")
+        </p>
+    </div>
+
+    <!-- Search Form (HTMX) -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md mb-8">
+        <form id="order-track-form" 
+              hx-post="/Order/TrackLookup" 
+              hx-target="#track-result-container"
+              hx-indicator="#track-loading"
+              class="space-y-4">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-start">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("OrderNumberLabel")</label>
+                    <input type="text" 
+                           id="track-order-number" 
+                           name="orderNumber" 
+                           value="@ViewBag.OrderNumber" 
+                           required 
+                           dir="ltr"
+                           placeholder="EGY-20260918-1234" 
+                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] text-sm font-mono text-start" />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("RegisteredPhoneLabel")</label>
+                    <input type="tel" 
+                           id="track-phone" 
+                           name="phone" 
+                           value="@ViewBag.Phone" 
+                           required 
+                           dir="ltr"
+                           placeholder="010XXXXXXXX" 
+                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] text-sm font-mono text-start" />
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 px-6 rounded-xl btn-gold-primary text-slate-950 font-black text-sm shadow-md flex items-center justify-center gap-2">
+                <span>@Loc.Get("SearchOrder")</span>
+                <span class="font-mono text-base">@nextArrow</span>
+            </button>
+        </form>
+
+        <div id="track-loading" class="htmx-indicator text-center py-4 text-xs font-bold text-[#290A2E]">
+            @Loc.Get("SearchingOrder")
+        </div>
+    </div>
+
+    <!-- Dynamic Result Container -->
+    <div id="track-result-container">
+        @if (searched)
+        {
+            <partial name="_OrderTrackResult" model="trackingResult" />
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/order-tracker.js" asp-append-version="true"></script>
+}

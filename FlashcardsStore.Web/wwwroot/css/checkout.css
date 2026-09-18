@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Kholoud Elnady English Academy - Checkout & Payment Methods Styling
+   Zero inline styles / Enterprise standard
+   ========================================================================== */
+
+.payment-method-card {
+  border: 2px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(24, 6, 26, 0.03);
+}
+
+.payment-method-card:hover {
+  border-color: var(--brand-gold-500);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15);
+}
+
+.payment-method-card.selected {
+  border-color: var(--brand-gold-500);
+  background: linear-gradient(135deg, #FFFFFF 0%, #FBF6E5 100%);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.25);
+}
+
+.customer-type-card {
+  border: 1.5px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 14px 10px;
+  cursor: pointer;
+  background-color: #FFFFFF;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  position: relative;
+}
+
+.customer-type-card:hover {
+  border-color: #D4AF37;
+  background-color: #FFFDF8;
+  transform: translateY(-1px);
+}
+
+.customer-type-card.selected {
+  border-color: #D4AF37;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FBF6E5 100%);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.5);
+}
+
+.payment-method-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--brand-gold-600);
+}
+
+.receipt-upload-dropzone {
+  border: 2px dashed rgba(212, 175, 55, 0.45);
+  border-radius: 16px;
+  padding: 34px 20px;
+  text-align: center;
+  background-color: #FAF8F5;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.receipt-upload-dropzone:hover {
+  border-color: var(--brand-gold-500);
+  background-color: #FBF6E5;
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+}
+
+.governorate-badge {
+  background-color: #FAF8F5;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-plum-900);
+}
+
+.wallet-copy-btn {
+  background: #FAF8F5;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--brand-plum-900);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.wallet-copy-btn:hover {
+  background: #FBF6E5;
+  border-color: var(--brand-gold-500);
+  color: #100312;
+}

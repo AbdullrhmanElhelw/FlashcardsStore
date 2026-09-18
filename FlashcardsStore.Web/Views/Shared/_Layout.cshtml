@@ -1,0 +1,55 @@
+@using FlashcardsStore.Web.Common
+<!DOCTYPE html>
+<html lang="@CultureHelper.CurrentLanguageCode" dir="@CultureHelper.Direction">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kholoud Elnady English Academy | @(CultureHelper.IsRtl ? "بطاقات الفلاش كاردز التعليمية" : "Interactive Educational Flashcards")</title>
+    <link rel="icon" type="image/png" href="~/images/brand/logo.png" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+
+    <!-- HTMX CDN -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+    <!-- Global Modular CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/flip-card.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/order-status.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1E1220] selection:bg-[#D4AF37] selection:text-[#18061A] overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false }">
+
+    <!-- Navigation Header -->
+    <partial name="_Navbar" />
+
+    <!-- Main Page Content -->
+    <main role="main" class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Slide-out Cart Drawer -->
+    <div id="cart-drawer-container">
+        <partial name="_CartDrawer" />
+    </div>
+
+    <!-- Toast Notification Container -->
+    <partial name="_Toast" />
+
+    <!-- Footer -->
+    <partial name="_Footer" />
+
+    <!-- Global Modular JavaScript -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/cart-store.js" asp-append-version="true"></script>
+    <script src="~/js/flip-card.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

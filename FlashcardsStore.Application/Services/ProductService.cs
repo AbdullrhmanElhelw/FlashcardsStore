@@ -1,0 +1,285 @@
+using FlashcardsStore.Application.Common;
+using FlashcardsStore.Application.DTOs.Products;
+using FlashcardsStore.Application.Interfaces.Persistence;
+using FlashcardsStore.Application.Interfaces.Services;
+using FlashcardsStore.Domain.Entities;
+
+namespace FlashcardsStore.Application.Services;
+
+public class ProductService : IProductService
+{
+    private readonly IProductRepository _productRepository;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ProductService(
+        IProductRepository productRepository,
+        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork)
+    {
+        _productRepository = productRepository;
+        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
+    }
+
+    public async Task<PagedResult<ProductCardViewModel>> GetCatalogCardsAsync(ProductFilterDto filter, CancellationToken cancellationToken = default)
+    {
+        var products = await _productRepository.GetCatalogAsync(
+            filter.CategoryId,
+            filter.SearchTerm,
+            filter.GradeLevel,
+            cancellationToken);
+
+        var query = products.AsEnumerable();
+
+        if (filter.MinPrice.HasValue)
+            query = query.Where(p => p.Price >= filter.MinPrice.Value);
+
+        if (filter.MaxPrice.HasValue)
+            query = query.Where(p => p.Price <= filter.MaxPrice.Value);
+
+        var isRtl = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+        query = filter.SortBy switch
+        {
+            "price_asc" => query.OrderBy(p => p.Price),
+            "price_desc" => query.OrderByDescending(p => p.Price),
+            "name" => isRtl ? query.OrderBy(p => p.NameAr) : query.OrderBy(p => p.Name),
+            _ => query.OrderByDescending(p => p.CreatedAt)
+        };
+
+        var totalCount = query.Count();
+        var pageIndex = Math.Max(1, filter.PageIndex);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 100);
+
+        var pagedItems = query
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .Select(p => new ProductCardViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                NameAr = p.NameAr,
+                Slug = p.Slug,
+                TargetAudience = p.TargetAudience,
+                GradeLevel = p.GradeLevel,
+                CardCount = p.CardCount,
+                Price = p.Price,
+                AvailableStockQuantity = p.AvailableStockQuantity,
+                ImageUrl = p.ImageUrl,
+                BackPreviewText = p.BackPreviewText,
+                BackKeyPoints = p.BackKeyPoints,
+                CategoryName = p.Category?.Name ?? string.Empty,
+                CategoryNameAr = p.Category?.NameAr ?? string.Empty
+            }).ToList();
+
+        return new PagedResult<ProductCardViewModel>
+        {
+            Items = pagedItems,
+            TotalCount = totalCount,
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<IReadOnlyList<ProductDto>> GetAllProductsAsync(CancellationToken cancellationToken = default)
+    {
+        var products = await _productRepository.GetAllWithCategoryAsync(cancellationToken);
+        return products.Select(MapToDto).ToList();
+    }
+
+    public async Task<PagedResult<ProductDto>> GetAllProductsPagedAsync(int pageIndex, int pageSize, int? categoryId = null, CancellationToken cancellationToken = default)
+    {
+        var products = await _productRepository.GetAllWithCategoryAsync(cancellationToken);
+        var query = products.AsEnumerable();
+
+        if (categoryId.HasValue && categoryId.Value > 0)
+            query = query.Where(p => p.CategoryId == categoryId.Value);
+
+        var totalCount = query.Count();
+        pageIndex = Math.Max(1, pageIndex);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var pagedItems = query
+            .OrderByDescending(p => p.CreatedAt)
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .Select(MapToDto)
+            .ToList();
+
+        return new PagedResult<ProductDto>
+        {
+            Items = pagedItems,
+            TotalCount = totalCount,
+            PageIndex = pageIndex,
+            PageSize = pageSize
+        };
+    }
+
+    public async Task<ProductDetailDto?> GetProductDetailBySlugAsync(string slug, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetBySlugAsync(slug, cancellationToken);
+        if (product == null) return null;
+
+        return MapToDetailDto(product);
+    }
+
+    public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetByIdAsync(id, cancellationToken);
+        if (product == null) return null;
+
+        return MapToDetailDto(product);
+    }
+
+    public async Task<ProductDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetByIdAsync(id, cancellationToken);
+        return product == null ? null : MapToDto(product);
+    }
+
+    public async Task<Result<ProductDto>> CreateProductAsync(CreateProductDto dto, CancellationToken cancellationToken = default)
+    {
+        if (await _productRepository.ExistsBySlugAsync(dto.Slug, null, cancellationToken))
+        {
+            return Result<ProductDto>.Failure("الرابط المخصص (Slug) مستخدم بالفعل لمنتج آخر");
+        }
+
+        var product = new Product
+        {
+            Name = dto.Name,
+            NameAr = dto.NameAr,
+            Slug = dto.Slug,
+            Description = dto.Description,
+            DescriptionAr = dto.DescriptionAr,
+            TargetAudience = dto.TargetAudience,
+            GradeLevel = dto.GradeLevel,
+            CardCount = dto.CardCount,
+            Price = dto.Price,
+            StockQuantity = dto.StockQuantity,
+            ImageUrl = dto.ImageUrl,
+            BackPreviewText = dto.BackPreviewText,
+            BackKeyPoints = dto.BackKeyPoints,
+            CategoryId = dto.CategoryId,
+            IsActive = dto.IsActive,
+            IsFeatured = dto.IsFeatured
+        };
+
+        await _productRepository.AddAsync(product, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result<ProductDto>.Success(MapToDto(product));
+    }
+
+    public async Task<Result<ProductDto>> UpdateProductAsync(UpdateProductDto dto, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetByIdAsync(dto.Id, cancellationToken);
+        if (product == null)
+            return Result<ProductDto>.Failure("المنتج غير موجود");
+
+        if (await _productRepository.ExistsBySlugAsync(dto.Slug, dto.Id, cancellationToken))
+            return Result<ProductDto>.Failure("الرابط المخصص مستخدم بالفعل لمنتج آخر");
+
+        product.Name = dto.Name;
+        product.NameAr = dto.NameAr;
+        product.Slug = dto.Slug;
+        product.Description = dto.Description;
+        product.DescriptionAr = dto.DescriptionAr;
+        product.TargetAudience = dto.TargetAudience;
+        product.GradeLevel = dto.GradeLevel;
+        product.CardCount = dto.CardCount;
+        product.Price = dto.Price;
+        product.StockQuantity = dto.StockQuantity;
+        product.ImageUrl = dto.ImageUrl;
+        product.BackPreviewText = dto.BackPreviewText;
+        product.BackKeyPoints = dto.BackKeyPoints;
+        product.CategoryId = dto.CategoryId;
+        product.IsActive = dto.IsActive;
+        product.IsFeatured = dto.IsFeatured;
+
+        await _productRepository.UpdateAsync(product, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result<ProductDto>.Success(MapToDto(product));
+    }
+
+    public async Task<Result<bool>> DeleteProductAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var product = await _productRepository.GetByIdAsync(id, cancellationToken);
+        if (product == null)
+            return Result<bool>.Failure("المنتج غير موجود");
+
+        await _productRepository.DeleteAsync(product, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result<bool>.Success(true);
+    }
+
+    public async Task<IReadOnlyList<ProductCardViewModel>> GetFeaturedCardsAsync(CancellationToken cancellationToken = default)
+    {
+        var products = await _productRepository.GetFeaturedProductsAsync(cancellationToken);
+        return products.Select(p => new ProductCardViewModel
+        {
+            Id = p.Id,
+            Name = p.Name,
+            NameAr = p.NameAr,
+            Slug = p.Slug,
+            TargetAudience = p.TargetAudience,
+            GradeLevel = p.GradeLevel,
+            CardCount = p.CardCount,
+            Price = p.Price,
+            AvailableStockQuantity = p.AvailableStockQuantity,
+            ImageUrl = p.ImageUrl,
+            BackPreviewText = p.BackPreviewText,
+            BackKeyPoints = p.BackKeyPoints,
+            CategoryName = p.Category?.Name ?? string.Empty,
+            CategoryNameAr = p.Category?.NameAr ?? string.Empty
+        }).ToList();
+    }
+
+    private static ProductDto MapToDto(Product p) => new()
+    {
+        Id = p.Id,
+        Name = p.Name,
+        NameAr = p.NameAr,
+        Slug = p.Slug,
+        Description = p.Description,
+        DescriptionAr = p.DescriptionAr,
+        TargetAudience = p.TargetAudience,
+        GradeLevel = p.GradeLevel,
+        CardCount = p.CardCount,
+        Price = p.Price,
+        StockQuantity = p.StockQuantity,
+        ReservedStockQuantity = p.ReservedStockQuantity,
+        AvailableStockQuantity = p.AvailableStockQuantity,
+        ImageUrl = p.ImageUrl,
+        BackPreviewText = p.BackPreviewText,
+        BackKeyPoints = p.BackKeyPoints,
+        CategoryId = p.CategoryId,
+        CategoryName = p.Category?.Name ?? string.Empty,
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty,
+        IsActive = p.IsActive,
+        IsFeatured = p.IsFeatured
+    };
+
+    private static ProductDetailDto MapToDetailDto(Product p) => new()
+    {
+        Id = p.Id,
+        Name = p.Name,
+        NameAr = p.NameAr,
+        Slug = p.Slug,
+        Description = p.Description,
+        DescriptionAr = p.DescriptionAr,
+        TargetAudience = p.TargetAudience,
+        GradeLevel = p.GradeLevel,
+        CardCount = p.CardCount,
+        Price = p.Price,
+        StockQuantity = p.StockQuantity,
+        AvailableStockQuantity = p.AvailableStockQuantity,
+        ImageUrl = p.ImageUrl,
+        BackPreviewText = p.BackPreviewText,
+        BackKeyPoints = p.BackKeyPoints,
+        CategoryId = p.CategoryId,
+        CategoryName = p.Category?.Name ?? string.Empty,
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+    };
+}

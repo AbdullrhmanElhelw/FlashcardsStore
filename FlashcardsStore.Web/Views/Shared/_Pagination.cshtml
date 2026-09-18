@@ -1,0 +1,120 @@
+@* Shared Pagination Component — Reusable across Catalog and Admin pages *@
+@using FlashcardsStore.Application.Common
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var paged = ViewBag.PagedInfo as dynamic ?? Model;
+    int pageIndex = paged?.PageIndex ?? 1;
+    int totalPages = paged?.TotalPages ?? 1;
+    int totalCount = paged?.TotalCount ?? 0;
+    int pageSize = paged?.PageSize ?? 12;
+    string baseUrl = ViewBag.PaginationBaseUrl as string ?? "";
+    string sep = baseUrl.Contains("?") ? (baseUrl.EndsWith("?") || baseUrl.EndsWith("&") ? "" : "&") : "?";
+    string GetPageUrl(int p) => $"{baseUrl}{sep}page={p}";
+    int startItem = ((pageIndex - 1) * pageSize) + 1;
+    int endItem = Math.Min(pageIndex * pageSize, totalCount);
+}
+
+@if (totalPages > 1)
+{
+    <nav class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4" aria-label="Pagination">
+        <!-- Result Count -->
+        <div class="text-xs sm:text-sm font-bold text-slate-500 order-2 sm:order-1">
+            @Loc.Get("PaginationShowing", startItem, endItem, totalCount)
+        </div>
+
+        <!-- Page Buttons -->
+        <div class="flex items-center gap-1.5 order-1 sm:order-2" dir="ltr">
+            @* Previous (Left arrow in LTR) *@
+            @if (pageIndex > 1)
+            {
+                <a href="@GetPageUrl(pageIndex - 1)"
+                   class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+                   title="@Loc.Get("Previous")"
+                   data-scroll-catalog>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-300 cursor-not-allowed">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </span>
+            }
+
+            @* Page Numbers *@
+            @{
+                int startPage = Math.Max(1, pageIndex - 2);
+                int endPage = Math.Min(totalPages, pageIndex + 2);
+
+                if (startPage > 1)
+                {
+                    <a href="@GetPageUrl(1)"
+                       class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+                       data-scroll-catalog>
+                        1
+                    </a>
+                    if (startPage > 2)
+                    {
+                        <span class="text-slate-400 text-sm font-bold px-1">…</span>
+                    }
+                }
+
+                for (int i = startPage; i <= endPage; i++)
+                {
+                    if (i == pageIndex)
+                    {
+                        <span class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B88E23] text-slate-950 text-sm font-black shadow-md shadow-[#D4AF37]/25 border border-[#D4AF37]">
+                            @i
+                        </span>
+                    }
+                    else
+                    {
+                        <a href="@GetPageUrl(i)"
+                           class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-[#8D6711] transition-colors shadow-xs"
+                           data-scroll-catalog>
+                            @i
+                        </a>
+                    }
+                }
+
+                if (endPage < totalPages)
+                {
+                    if (endPage < totalPages - 1)
+                    {
+                        <span class="text-slate-400 text-sm font-bold px-1">…</span>
+                    }
+                    <a href="@GetPageUrl(totalPages)"
+                       class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+                       data-scroll-catalog>
+                        @totalPages
+                    </a>
+                }
+            }
+
+            @* Next (Right arrow in LTR) *@
+            @if (pageIndex < totalPages)
+            {
+                <a href="@GetPageUrl(pageIndex + 1)"
+                   class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-xs"
+                   title="@Loc.Get("Next")"
+                   data-scroll-catalog>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-300 cursor-not-allowed">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
+            }
+        </div>
+    </nav>
+}

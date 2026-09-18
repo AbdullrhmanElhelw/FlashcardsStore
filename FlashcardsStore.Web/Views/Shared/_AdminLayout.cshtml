@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - لوحة التحكم | أكاديمية خلود النادي</title>
+    <link rel="icon" type="image/png" href="~/images/brand/logo.png" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+
+    <!-- HTMX CDN -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+    <!-- Admin Modular Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased" x-data="{ mobileNavOpen: false }">
+
+    <!-- Enterprise Top Admin Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white border-b border-slate-200/90 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-18 gap-4">
+
+                <!-- Academy Brand & Admin CMS Badge -->
+                <div class="flex items-center gap-4 flex-shrink-0">
+                    <a asp-controller="Admin" asp-action="Dashboard" class="flex items-center gap-3 group">
+                        <img src="~/images/brand/logo.png" 
+                             alt="Kholoud Elnady Academy" 
+                             class="h-10 w-10 object-contain rounded-xl border border-amber-300/80 shadow-xs" />
+                        <div class="text-right">
+                            <span class="block text-base font-black text-slate-900 leading-tight">
+                                أكاديمية خلود النادي
+                            </span>
+                            <span class="inline-flex items-center gap-1 text-[10px] font-black text-[#8D6711] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                لوحة الإدارة والمحتوى • CMS
+                            </span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Admin Navigation Links -->
+                @{
+                    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+                    var isDashboard = currentAction == "Dashboard";
+                    var isOrders = currentAction == "Orders" || currentAction == "OrderDetails";
+                    var isProducts = currentAction == "Products" || currentAction == "CreateProduct" || currentAction == "EditProduct";
+                    var isCategories = currentAction == "Categories" || currentAction == "CreateCategory" || currentAction == "EditCategory";
+                    var adminUser = Context.Session.GetString("AdminLoggedInUser") ?? "المشرف";
+                }
+                <nav class="hidden md:flex items-center gap-1 text-sm font-bold">
+                    <a asp-controller="Admin" asp-action="Dashboard" 
+                       class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 @(isDashboard ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
+                        <svg class="w-4 h-4 @(isDashboard ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                        <span>لوحة المؤشرات</span>
+                    </a>
+
+                    <a asp-controller="Admin" asp-action="Orders" 
+                       class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 @(isOrders ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
+                        <svg class="w-4 h-4 @(isOrders ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span>إدارة الطلبات</span>
+                    </a>
+
+                    <a asp-controller="Admin" asp-action="Products" 
+                       class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 @(isProducts ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
+                        <svg class="w-4 h-4 @(isProducts ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        <span>كروت الفلاش كاردز</span>
+                    </a>
+
+                    <a asp-controller="Admin" asp-action="Categories" 
+                       class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-2 @(isCategories ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
+                        <svg class="w-4 h-4 @(isCategories ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <span>أقسام الكروت</span>
+                    </a>
+                </nav>
+
+                <!-- Admin Action Buttons (User badge, Storefront preview & Logout) -->
+                <div class="flex items-center gap-2.5">
+                    <!-- Admin User Badge -->
+                    <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200/80">
+                        <div class="w-6 h-6 rounded-full bg-[#290A2E] text-[#D4AF37] flex items-center justify-center text-[11px] font-black">
+                            @adminUser.Substring(0, Math.Min(1, adminUser.Length)).ToUpper()
+                        </div>
+                        <span class="font-mono">@adminUser</span>
+                    </div>
+
+                    <a asp-controller="Catalog" asp-action="Index" target="_blank" 
+                       class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span>معاينة المتجر</span>
+                    </a>
+
+                    <form asp-controller="Admin" asp-action="Logout" method="post" class="inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" 
+                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>خروج</span>
+                        </button>
+                    </form>
+
+                    <!-- Mobile Menu Button -->
+                    <button type="button" @@click="mobileNavOpen = !mobileNavOpen" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Mobile Navigation Dropdown -->
+            <div x-show="mobileNavOpen" @@click.away="mobileNavOpen = false" x-cloak class="md:hidden border-t border-slate-200 py-3 space-y-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="block px-3 py-2 rounded-lg text-sm font-bold @(isDashboard ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">لوحة المؤشرات</a>
+                <a asp-controller="Admin" asp-action="Orders" class="block px-3 py-2 rounded-lg text-sm font-bold @(isOrders ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">إدارة الطلبات</a>
+                <a asp-controller="Admin" asp-action="Products" class="block px-3 py-2 rounded-lg text-sm font-bold @(isProducts ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">كروت الفلاش كاردز</a>
+                <a asp-controller="Admin" asp-action="Categories" class="block px-3 py-2 rounded-lg text-sm font-bold @(isCategories ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">أقسام الكروت</a>
+                <a asp-controller="Catalog" asp-action="Index" target="_blank" class="block px-3 py-2 rounded-lg text-sm font-bold text-amber-700 hover:bg-amber-50">معاينة المتجر ↗</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Admin Container -->
+    <main role="main" class="flex-grow">
+        @RenderBody()
+    </main>
+
+    <!-- Toast Notification Container -->
+    <partial name="_Toast" />
+
+    <!-- Admin Modular Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

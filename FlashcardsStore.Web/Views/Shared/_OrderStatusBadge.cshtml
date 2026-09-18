@@ -1,0 +1,50 @@
+@model OrderStatus
+
+@{
+    var (text, cssClass) = Model switch
+    {
+        OrderStatus.Draft => ("مسودة طلب", "status-draft"),
+        OrderStatus.WhatsAppPending => ("في انتظار تأكيد واتساب", "status-whatsapppending"),
+        OrderStatus.PendingVerification => ("في انتظار مراجعة التحويل (محجوز)", "status-pendingverification"),
+        OrderStatus.Approved => ("تم التأكيد والاعتماد", "status-approved"),
+        OrderStatus.Shipped => ("تم الشحن مع المندوب", "status-shipped"),
+        OrderStatus.Delivered => ("تم التسليم بنجاح", "status-delivered"),
+        OrderStatus.Rejected => ("مرفوض (تحويل غير صحيح)", "status-rejected"),
+        OrderStatus.Cancelled => ("ملغي", "status-cancelled"),
+        _ => ("غير محدد", "status-draft")
+    };
+}
+
+<span class="status-badge @cssClass">
+    @if (Model == OrderStatus.Approved || Model == OrderStatus.Delivered)
+    {
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+    }
+    else if (Model == OrderStatus.PendingVerification)
+    {
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    }
+    else if (Model == OrderStatus.Shipped)
+    {
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+        </svg>
+    }
+    else if (Model == OrderStatus.Rejected || Model == OrderStatus.Cancelled)
+    {
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    }
+    else
+    {
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    }
+    <span>@text</span>
+</span>

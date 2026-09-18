@@ -1,0 +1,310 @@
+/* ==========================================================================
+   Kholoud Elnady English Academy - Admin Portal Styling
+   Zero inline styles / Enterprise standard
+   ========================================================================== */
+
+.admin-sidebar {
+  width: 270px;
+  background-color: var(--brand-plum-950);
+  border-left: 1px solid rgba(212, 175, 55, 0.2);
+  color: #F8FAFC;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #BDB0C2;
+  font-weight: 700;
+  text-decoration: none;
+  margin-bottom: 6px;
+  transition: all 0.2s ease;
+}
+
+.admin-nav-item:hover,
+.admin-nav-item.active {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--brand-gold-400);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.metric-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 4px 15px rgba(24, 6, 26, 0.04);
+  transition: all 0.25s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-gold-500);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.12);
+}
+
+.admin-table-container {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(24, 6, 26, 0.04);
+}
+
+.admin-table th {
+  background-color: #FAF8F5;
+  color: var(--brand-plum-900);
+  font-weight: 800;
+  font-size: 13px;
+  padding: 14px 18px;
+  text-align: right;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.admin-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #FAF5EE;
+  font-size: 14px;
+}
+
+.admin-table tr:hover td {
+  background-color: #FDFBF7;
+}
+
+/* Receipt Modal */
+.receipt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(16, 3, 18, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.receipt-modal-dialog {
+  background-color: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(16, 3, 18, 0.6);
+}
+
+.receipt-image-preview {
+  max-height: 60vh;
+  object-fit: contain;
+  width: 100%;
+  background-color: #100312;
+}
+
+/* Status Filter Tabs / Pills */
+.admin-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 13px;
+  background-color: #FFFFFF;
+  color: #475569;
+  border: 1px solid #E2E8F0;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.admin-tab-pill:hover {
+  background-color: #F8FAFC;
+  color: #0F172A;
+  border-color: #CBD5E1;
+}
+
+.admin-tab-pill.active {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.admin-tab-pill .tab-count {
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  background-color: #F1F5F9;
+  color: #475569;
+}
+
+.admin-tab-pill.active .tab-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+/* Admin Form Controls */
+.admin-form-input,
+.admin-form-select,
+.admin-form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  font-size: 14px;
+  color: #0F172A;
+  transition: all 0.15s ease;
+}
+
+.admin-form-input:focus,
+.admin-form-select:focus,
+.admin-form-textarea:focus {
+  outline: none;
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.admin-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 13px;
+  background: linear-gradient(135deg, #18061A 0%, #290A2E 100%);
+  color: #FBF6E5;
+  border: 1px solid #D4AF37;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(24, 6, 26, 0.15);
+}
+
+.admin-btn-primary:hover {
+  background: linear-gradient(135deg, #290A2E 0%, #3D0E45 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+}
+
+.admin-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  background-color: #F1F5F9;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-btn-secondary:hover {
+  background-color: #E2E8F0;
+  color: #0F172A;
+}
+
+.admin-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-btn-danger:hover {
+  background-color: #FEE2E2;
+}
+
+.card-preview-chip {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.card-preview-chip:hover,
+.card-preview-chip.selected {
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+}
+
+/* Product Image Upload Dropzone */
+.admin-dropzone {
+  border: 2px dashed #CBD5E1;
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  background-color: #F8FAFC;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-dropzone:hover,
+.admin-dropzone.dragover {
+  border-color: #D4AF37;
+  background-color: #FFFDF7;
+}
+
+.admin-image-thumb {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  aspect-ratio: 1 / 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.admin-image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-image-thumb .remove-btn {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: rgba(220, 38, 38, 0.9);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.admin-image-thumb .remove-btn:hover {
+  background: #B91C1C;
+  transform: scale(1.1);
+}

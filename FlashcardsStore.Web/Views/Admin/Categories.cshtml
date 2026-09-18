@@ -1,0 +1,134 @@
+@model IReadOnlyList<CategoryDto>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "إدارة أقسام وتصنيفات الفلاش كاردز - CMS";
+}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-6 gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <span class="text-slate-900">الأقسام والتصنيفات</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">أقسام وتصنيفات الفلاش كاردز</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">تنظيم المواد التعليمية وترتيب ظهورها في الكتالوج وشريط التصفح</p>
+        </div>
+
+        <a asp-controller="Admin" asp-action="CreateCategory" class="admin-btn-primary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>إضافة قسم جديد</span>
+        </a>
+    </div>
+
+    <!-- Feedback Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-bold flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold flex items-center gap-2">
+            <svg class="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <!-- Categories Table -->
+    <div class="admin-table-container">
+        <table class="w-full admin-table text-right">
+            <thead>
+                <tr>
+                    <th>ترتيب العرض</th>
+                    <th>اسم القسم</th>
+                    <th>الرابط (Slug)</th>
+                    <th>عدد البطاقات</th>
+                    <th>الوصف</th>
+                    <th class="text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="py-12 text-center text-slate-400 font-bold">
+                            لا توجد أقسام مسجلة حالياً.
+                        </td>
+                    </tr>
+                }
+                @foreach (var cat in Model)
+                {
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td>
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 font-bold text-slate-700 text-xs">
+                                @cat.DisplayOrder
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="font-black text-slate-900 text-sm">@cat.NameAr</div>
+                            <div class="text-xs font-semibold text-slate-400 font-mono">@cat.Name</div>
+                        </td>
+
+                        <td>
+                            <span class="font-mono text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200/60">
+                                @cat.Slug
+                            </span>
+                        </td>
+
+                        <td>
+                            <a asp-controller="Admin" asp-action="Products" asp-route-categoryId="@cat.Id" 
+                               class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 hover:bg-amber-100 transition">
+                                <span>@cat.ProductCount باقة</span>
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+                        </td>
+
+                        <td>
+                            <span class="text-xs text-slate-500 truncate max-w-xs block" title="@cat.Description">
+                                @cat.Description
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="flex items-center justify-center gap-2">
+                                <a asp-controller="Admin" asp-action="EditCategory" asp-route-id="@cat.Id"
+                                   class="p-2 text-[#B88E23] hover:text-[#8D6711] hover:bg-amber-50 rounded-lg transition" title="تعديل القسم">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </a>
+
+                                <form asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post" 
+                                      onsubmit="return confirm('هل أنت متأكد من حذف قسم «@cat.NameAr»؟');" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition" title="حذف القسم">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -1,0 +1,72 @@
+@model CreateCategoryDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "إضافة قسم تعليمي جديد";
+}
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-slate-200 pb-6 mb-8">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <a asp-controller="Admin" asp-action="Categories" class="hover:underline">الأقسام</a>
+                <span>/</span>
+                <span class="text-slate-900">إضافة قسم</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">إضافة قسم تعليمي جديد</h1>
+        </div>
+
+        <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">
+            <span>إلغاء والعودة</span>
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-controller="Admin" asp-action="CreateCategory" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold"></div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">اسم القسم بالعربية *</label>
+                <input asp-for="NameAr" required placeholder="مثال: صوتيات وفونكس" class="admin-form-input" />
+                <span asp-validation-for="NameAr" class="text-xs text-rose-600 mt-1 block"></span>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">الاسم بالإنجليزية *</label>
+                <input asp-for="Name" required placeholder="e.g. Phonics & Sounds" class="admin-form-input font-mono" />
+                <span asp-validation-for="Name" class="text-xs text-rose-600 mt-1 block"></span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الرابط المخصص (Slug)</label>
+                    <input asp-for="Slug" placeholder="e.g. phonics-sounds" class="admin-form-input font-mono text-xs" />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">ترتيب العرض في الموقع</label>
+                    <input asp-for="DisplayOrder" type="number" step="1" required class="admin-form-input" />
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">وصف القسم (اختياري)</label>
+                <textarea asp-for="Description" rows="3" placeholder="وصف موجز لما يحتويه القسم من بطاقات ومستويات..." class="admin-form-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+            <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">إلغاء</a>
+            <button type="submit" class="admin-btn-primary px-8">
+                <span>حفظ وإضافة القسم ✓</span>
+            </button>
+        </div>
+    </form>
+
+</div>

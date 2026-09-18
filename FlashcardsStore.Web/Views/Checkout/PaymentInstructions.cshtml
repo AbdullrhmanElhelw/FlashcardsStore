@@ -1,0 +1,205 @@
+@model OrderDetailDto
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    ViewData["Title"] = Loc.Get("PaymentInstructionsTitle", Model.OrderNumber);
+    const string vodafoneCash = "01099887766";
+    const string instaPay = "kholoud.elnady@instapay";
+    var isRtl = Loc.IsRtl;
+    var nextArrow = isRtl ? "←" : "→";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Step / Progress Banner -->
+    <div class="bg-gradient-to-r from-[#18061A] via-[#290A2E] to-[#18061A] text-white border border-[#D4AF37]/40 rounded-3xl p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="space-y-1.5 text-center sm:text-start relative z-10">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#F6ECC9] text-xs font-black">
+                <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                @Loc.Get("PaymentStepBanner")
+            </span>
+            <h1 class="text-xl sm:text-2xl font-black text-white">@Loc.Get("PaymentPendingTitle")</h1>
+            <p class="text-xs sm:text-sm font-semibold text-slate-300">
+                @Loc.Get("YourOrderNumber", Model.OrderNumber)
+            </p>
+        </div>
+
+        <div class="text-center sm:text-start bg-white/10 backdrop-blur-md px-5 py-3.5 rounded-2xl border border-white/20 flex-shrink-0 relative z-10">
+            <span class="block text-xs font-bold text-slate-300">@Loc.Get("TotalWithShipping")</span>
+            <span class="text-2xl sm:text-3xl font-black text-gold-gradient">@Model.GrandTotal.ToString("F2") <small class="text-xs font-bold text-[#F6ECC9]">@Loc.Get("Currency")</small></span>
+        </div>
+    </div>
+
+    <!-- 24-Hour Stock Reservation Alert -->
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 mb-8 flex items-start gap-4 backdrop-blur-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <div class="space-y-1 text-xs sm:text-sm text-slate-700 text-start">
+            <h4 class="font-extrabold text-sm text-slate-900">@Loc.Get("Reservation24hTitle")</h4>
+            <p class="leading-relaxed">
+                @Loc.Get("Reservation24hDesc")
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start mb-8">
+
+        <!-- Wallet Transfer Details (Vodafone Cash & InstaPay) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-6 text-start">
+            <h2 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#290A2E]/10 text-[#290A2E] flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                    </svg>
+                </div>
+                <span>@Loc.Get("EgyptPaymentMethods")</span>
+            </h2>
+
+            <!-- Option 1: Vodafone Cash -->
+            <div class="p-4 rounded-2xl bg-red-50/70 border border-red-200/80 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-red-700 flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+                        Vodafone Cash / Orange / Etisalat / WE Pay
+                    </span>
+                    <button type="button" 
+                            onclick="copyToClipboard('@vodafoneCash', this)" 
+                            class="wallet-copy-btn inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.61v.916m-7.416-.916a2.25 2.25 0 00-.084.61v.916m7.5 0h-7.5m7.5 0v1.5m-7.5-1.5v1.5m7.5 0A2.25 2.25 0 0118 7.5v10.5A2.25 2.25 0 0115.75 20.25h-7.5A2.25 2.25 0 016 18V7.5a2.25 2.25 0 012.25-2.25h7.5z" />
+                        </svg>
+                        <span>@Loc.Get("CopyNumber")</span>
+                    </button>
+                </div>
+                <div class="text-2xl font-mono font-black text-slate-900 text-start tracking-wider" dir="ltr">
+                    @vodafoneCash
+                </div>
+                <p class="text-[11px] text-slate-500">
+                    @Loc.Get("WalletTransferHint")
+                </p>
+            </div>
+
+            <!-- Option 2: InstaPay -->
+            <div class="p-4 rounded-2xl bg-[#18061A]/5 border border-[#D4AF37]/30 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black text-[#290A2E] flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span>
+                        InstaPay (IPA)
+                    </span>
+                    <button type="button" 
+                            onclick="copyToClipboard('@instaPay', this)" 
+                            class="wallet-copy-btn inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.849A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.599m7.332 0c.055.194.084.4.084.61v.916m-7.416-.916a2.25 2.25 0 00-.084.61v.916m7.5 0h-7.5m7.5 0v1.5m-7.5-1.5v1.5m7.5 0A2.25 2.25 0 0118 7.5v10.5A2.25 2.25 0 0115.75 20.25h-7.5A2.25 2.25 0 016 18V7.5a2.25 2.25 0 012.25-2.25h7.5z" />
+                        </svg>
+                        <span>@Loc.Get("CopyAccount")</span>
+                    </button>
+                </div>
+                <div class="text-base sm:text-lg font-mono font-black text-[#290A2E] text-start truncate tracking-wide" dir="ltr">
+                    @instaPay
+                </div>
+                <p class="text-[11px] text-slate-500 font-medium">
+                    @Loc.Get("InstaPayReceiverHint")
+                </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl text-xs text-slate-600 space-y-1.5 border border-slate-200/60">
+                <div class="flex items-center gap-2 text-slate-800 font-bold">
+                    <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.002 6.002 0 00-4-5.659V5a2 2 0 114 0v2.091a6.002 6.002 0 004 5.659V18m-4 0v.75m0 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 003 0" />
+                    </svg>
+                    <span>@Loc.Get("PaymentNoteTitle")</span>
+                </div>
+                <p class="leading-relaxed">@Loc.Get("PaymentNoteDesc", Model.OrderNumber)</p>
+            </div>
+        </div>
+
+        <!-- Receipt Screenshot Upload Form -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-5 text-start">
+            <h2 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#D4AF37]/10 text-[#290A2E] flex items-center justify-center">
+                    <svg class="w-4 h-4 text-[#B88E23]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                </div>
+                <span>@Loc.Get("UploadReceiptHeader")</span>
+            </h2>
+
+            <form asp-controller="Checkout" asp-action="UploadProof" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="orderId" value="@Model.Id" />
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("ReceiptFileLabel")</label>
+                        <div class="receipt-upload-dropzone">
+                            <input type="file" 
+                                   id="receipt-file-input" 
+                                   name="proofFile" 
+                                   accept="image/*,application/pdf" 
+                                   required 
+                                   class="w-full text-xs text-slate-500 cursor-pointer" />
+                            <p class="text-xs text-slate-400 mt-2">@Loc.Get("SupportedFilesHint")</p>
+                        </div>
+                    </div>
+
+                    <!-- Image Preview Container -->
+                    <div id="receipt-preview-container" class="border border-slate-200 rounded-2xl p-3 bg-slate-50 text-center" style="display: none;">
+                        <span class="block text-xs font-bold text-slate-500 mb-2">@Loc.Get("ReceiptPreviewTitle")</span>
+                        <img id="receipt-preview-img" src="#" alt="Receipt Preview" class="max-h-48 mx-auto rounded-xl shadow-sm" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("PaymentMethodUsed")</label>
+                        <select name="bankOrWalletName" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] text-sm font-semibold">
+                            <option value="Vodafone Cash">Vodafone Cash (فودافون كاش)</option>
+                            <option value="InstaPay">InstaPay (إنستاباي)</option>
+                            <option value="Orange Money">Orange Money (أورنج موني)</option>
+                            <option value="Etisalat Cash">Etisalat Cash (اتصالات كاش)</option>
+                            <option value="WE Pay">WE Pay (وي باي)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("SenderPhoneLabel")</label>
+                        <input type="text" name="senderPhoneNumber" dir="ltr" placeholder="010XXXXXXXX" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] text-sm text-start font-mono" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("TrxRefLabel")</label>
+                        <input type="text" name="transactionReference" dir="ltr" placeholder="Ref / Trx ID" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] text-sm text-start font-mono" />
+                    </div>
+
+                    <button type="submit" class="w-full btn-gold-primary py-3.5 px-4 rounded-xl text-slate-950 font-black text-sm flex items-center justify-center gap-2">
+                        <span>@Loc.Get("SubmitReceipt")</span>
+                        <span class="font-mono text-base">@nextArrow</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="pt-3 border-t border-slate-100 text-center">
+                <a href="@Model.WhatsAppDirectLink" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-700 hover:text-emerald-800 hover:underline">
+                    <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z" />
+                    </svg>
+                    <span>@Loc.Get("OrSendViaWhatsApp")</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,209 @@
+@model ProductCardViewModel
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var firstImage = (Model.ImageUrl ?? "")
+        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Trim())
+        .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
+
+    var isRtl = Loc.IsRtl;
+    var primaryTitle = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);
+    var secondaryTitle = isRtl ? Model.Name : Model.NameAr;
+    var categoryDisplay = Loc.GetLocalized(Model.CategoryNameAr, Model.CategoryName);
+    var currency = Loc.Get("Currency");
+
+    var audienceDisplay = Model.TargetAudience;
+    if (!isRtl && !string.IsNullOrEmpty(audienceDisplay))
+    {
+        audienceDisplay = audienceDisplay
+            .Replace("(الأطفال من سن 4 إلى 7 سنوات)", "(Ages 4 to 7)")
+            .Replace("(سن 6 إلى 10 سنوات)", "(Ages 6 to 10)")
+            .Replace("(سن 7 إلى 13 سنة)", "(Ages 7 to 13)");
+    }
+
+    Func<string, string> translatePoint = pt => {
+        if (isRtl) return pt;
+        if (pt.Contains("كوشيه") || pt.Contains("350")) return "Premium 350gsm cardstock";
+        if (pt.Contains("زوايا") || pt.Contains("دائرية")) return "Safe rounded corners";
+        if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
+        if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable";
+        if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Model.CardCount} Double-sided cards";
+        if (pt.Contains("تمارين") || pt.Contains("جمل")) return "Sentence reading drills";
+        if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
+        if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
+        return pt;
+    };
+}
+
+<div class="flip-card-scene">
+    <div class="flip-card" data-product-id="@Model.Id">
+        <div class="flip-card-inner">
+
+            <!-- Front Face: Compact Artwork, Clear Price & Direct Add-to-Cart -->
+            <div class="flip-card-front">
+                <!-- Compact Artwork -->
+                <div class="card-artwork group">
+                    <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-105" />
+
+                    <!-- Quick Flip Button (Small icon) -->
+                    <button type="button" 
+                            onclick="event.stopPropagation(); this.closest('.flip-card').classList.toggle('is-flipped')" 
+                            class="flip-hint-badge"
+                            title="@Loc.Get("FlipCard")">
+                        <svg class="w-3 h-3 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
+
+                    <!-- Category Pill (Ultra-compact) -->
+                    <span class="category-pill-compact">
+                        @categoryDisplay
+                    </span>
+                </div>
+
+                <!-- Info Body -->
+                <div class="p-2.5 sm:p-3 flex flex-col justify-between flex-grow">
+                    <div class="space-y-1">
+                        <!-- Grade / Audience & Count Tag -->
+                        <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-slate-500">
+                            <span class="truncate text-slate-600">@audienceDisplay</span>
+                            <span class="text-[#8D6711] bg-amber-50 px-1.5 py-0.5 rounded shrink-0">@Loc.Get("CardsCountLabel", Model.CardCount)</span>
+                        </div>
+
+                        <!-- Card Title -->
+                        <h3 class="text-xs sm:text-sm font-black text-slate-900 leading-snug line-clamp-1 hover:text-[#B88E23] transition-colors">
+                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug">
+                                @primaryTitle
+                            </a>
+                        </h3>
+
+                        <!-- Secondary Title -->
+                        <p class="text-[10px] sm:text-[11px] font-semibold text-slate-400 font-mono truncate">
+                            @secondaryTitle
+                        </p>
+                    </div>
+
+                    <!-- Price & Actions Bar -->
+                    <div class="pt-2 border-t border-slate-100 mt-auto">
+                        <div class="flex items-baseline justify-between mb-1.5">
+                            <span class="text-sm sm:text-base font-black text-slate-900">
+                                @Model.Price.ToString("F0") <small class="text-[10px] font-bold text-[#8D6711]">@currency</small>
+                            </span>
+                            @if (Model.InStock)
+                            {
+                                <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>@Loc.Get("InStock")</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-[10px] font-bold text-rose-500">@Loc.Get("OutOfStock")</span>
+                            }
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-1.5">
+                            @if (Model.InStock)
+                            {
+                                <button type="button"
+                                        hx-post="/Cart/AddToCart?productId=@Model.Id&quantity=1"
+                                        hx-target="#cart-drawer-container"
+                                        hx-swap="innerHTML"
+                                        onclick="event.stopPropagation()"
+                                        class="btn-gold-primary flex-1 py-1.5 sm:py-2 px-2 rounded-lg font-black text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-xs min-h-[34px] sm:min-h-[36px]"
+                                        title="@Loc.Get("AddToCart")">
+                                    <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    <span>@Loc.Get("AddToCart")</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" disabled class="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 text-slate-400 font-bold text-[11px] cursor-not-allowed border border-slate-200 min-h-[34px]">
+                                    @Loc.Get("OutOfStock")
+                                </button>
+                            }
+
+                            <!-- Details Icon Link -->
+                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                               onclick="event.stopPropagation()"
+                               class="p-1.5 sm:p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center shrink-0 min-h-[34px] sm:min-h-[36px] min-w-[34px] sm:min-w-[36px]"
+                               title="@Loc.Get("Details")">
+                                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Face: Compact Luxury Objectives & Fast Action -->
+            <div class="flip-card-back">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between border-b border-[#D4AF37]/20 pb-1.5">
+                        <span class="text-[10px] font-bold text-[#D4AF37]">@Loc.Get("CardContent")</span>
+                        <button type="button" 
+                                onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('is-flipped')"
+                                class="text-[10px] text-[#FBF6E5]/80 hover:text-white flex items-center gap-1">
+                            <span>@Loc.Get("FrontFace")</span>
+                        </button>
+                    </div>
+
+                    <h4 class="text-xs sm:text-sm font-black text-white leading-tight line-clamp-1">@primaryTitle</h4>
+
+                    <!-- English Preview Box (LTR) -->
+                    <div class="back-preview-box text-left en-card-content text-[10px] sm:text-[11px] text-[#FBF6E5]/90 leading-snug bg-black/30 p-2 rounded-lg border border-white/10 line-clamp-3">
+                        @Model.BackPreviewText
+                    </div>
+
+                    <!-- Key Features Points -->
+                    <div class="space-y-1 my-1">
+                        @foreach (var point in (Model.BackKeyPoints ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(3))
+                        {
+                            <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#FBF6E5]/90 truncate">
+                                <svg class="w-3 h-3 text-[#D4AF37] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="truncate">@translatePoint(point)</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Back Actions -->
+                <div class="pt-2 border-t border-[#D4AF37]/20 mt-auto space-y-1.5">
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-[10px] text-[#FBF6E5]/70">@Loc.Get("PriceLabel")</span>
+                        <span class="text-sm sm:text-base font-black text-white">@Model.Price.ToString("F0") <small class="text-[10px] font-bold text-[#D4AF37]">@currency</small></span>
+                    </div>
+
+                    @if (Model.InStock)
+                    {
+                        <button type="button"
+                                hx-post="/Cart/AddToCart?productId=@Model.Id&quantity=1"
+                                hx-target="#cart-drawer-container"
+                                hx-swap="innerHTML"
+                                onclick="event.stopPropagation()"
+                                class="btn-gold-primary w-full py-1.5 rounded-lg font-black text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-sm min-h-[34px]">
+                            <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <span>@Loc.Get("AddToCart")</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" disabled class="w-full py-1.5 rounded-lg bg-[#290A2E] text-[#8C7B8E] font-bold text-[11px] cursor-not-allowed border border-[#D4AF37]/20 min-h-[34px]">
+                            @Loc.Get("OutOfStock")
+                        </button>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

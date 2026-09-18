@@ -1,0 +1,126 @@
+@model OrderTrackingDto
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var isRtl = Loc.IsRtl;
+    var nextArrow = isRtl ? "←" : "→";
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="p-6 rounded-3xl bg-red-50/80 border border-red-200 text-red-700 text-center space-y-2">
+        <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+        </div>
+        <h4 class="font-extrabold text-sm">@Loc.Get("OrderNotFound")</h4>
+        <p class="text-xs text-red-600">@ViewBag.ErrorMessage</p>
+    </div>
+}
+else if (Model != null)
+{
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-lg space-y-6 text-start">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
+            <div>
+                <span class="text-xs font-bold text-slate-400">@Loc.Get("OrderRecordData")</span>
+                <h3 class="text-xl font-black text-slate-900 font-mono">@Model.OrderNumber</h3>
+                <span class="text-xs text-slate-500">@Loc.Get("OrderDateLabel", Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt"))</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <partial name="_OrderStatusBadge" model="Model.Status" />
+            </div>
+        </div>
+
+        <!-- Order Progress Stepper Timeline -->
+        <div class="order-stepper">
+            @{
+                int stepIndex = Model.Status switch
+                {
+                    OrderStatus.Draft => 1,
+                    OrderStatus.WhatsAppPending => 1,
+                    OrderStatus.PendingVerification => 2,
+                    OrderStatus.Approved => 3,
+                    OrderStatus.Shipped => 4,
+                    OrderStatus.Delivered => 5,
+                    _ => 0
+                };
+            }
+
+            <div class="stepper-step @(stepIndex >= 1 ? "completed" : "")">
+                <div class="step-icon">1</div>
+                <span class="text-xs font-bold block mt-1 text-slate-700">@Loc.Get("StepPlaced")</span>
+            </div>
+
+            <div class="stepper-step @(stepIndex >= 2 ? (stepIndex == 2 ? "active" : "completed") : "")">
+                <div class="step-icon">2</div>
+                <span class="text-xs font-bold block mt-1 text-slate-700">@Loc.Get("StepReview")</span>
+            </div>
+
+            <div class="stepper-step @(stepIndex >= 3 ? (stepIndex == 3 ? "active" : "completed") : "")">
+                <div class="step-icon">3</div>
+                <span class="text-xs font-bold block mt-1 text-slate-700">@Loc.Get("StepConfirmed")</span>
+            </div>
+
+            <div class="stepper-step @(stepIndex >= 4 ? (stepIndex == 4 ? "active" : "completed") : "")">
+                <div class="step-icon">4</div>
+                <span class="text-xs font-bold block mt-1 text-slate-700">@Loc.Get("StepWithCourier")</span>
+            </div>
+
+            <div class="stepper-step @(stepIndex >= 5 ? "completed" : "")">
+                <div class="step-icon">5</div>
+                <span class="text-xs font-bold block mt-1 text-slate-700">@Loc.Get("StepDelivered")</span>
+            </div>
+        </div>
+
+        <!-- Status Details Box -->
+        <div class="bg-[#18061A]/5 rounded-2xl p-5 border border-[#D4AF37]/20 space-y-1.5">
+            <h4 class="text-xs font-extrabold text-[#290A2E] flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#D4AF37]"></span>
+                @Loc.Get("CurrentOrderStatus")
+            </h4>
+            <p class="text-sm font-bold text-slate-800">
+                @(isRtl ? Model.StatusDescriptionAr : Model.StatusDescription)
+            </p>
+        </div>
+
+        <!-- Action Notice for Proof Upload if required -->
+        @if (Model.RequiresPaymentProof && !Model.HasUploadedProof)
+        {
+            <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-950 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-start gap-2.5">
+                    <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <div class="space-y-0.5">
+                        <strong class="font-black text-slate-900 block">@Loc.Get("NoProofNotice")</strong>
+                        <span class="text-slate-700">@Loc.Get("NoProofDesc")</span>
+                    </div>
+                </div>
+                <a asp-controller="Checkout" asp-action="PaymentInstructions" asp-route-orderNumber="@Model.OrderNumber" 
+                   class="btn-gold-primary px-5 py-2 text-slate-950 font-black rounded-xl text-xs whitespace-nowrap shadow-sm inline-flex items-center gap-1.5">
+                    <span>@Loc.Get("UploadProofNow")</span>
+                    <span class="font-mono text-base">@nextArrow</span>
+                </a>
+            </div>
+        }
+
+        <!-- Quick Summary -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100 text-xs">
+            <div>
+                <span class="text-slate-400 block mb-0.5">@Loc.Get("RecipientName")</span>
+                <span class="font-bold text-slate-900 text-sm">@Model.CustomerName</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block mb-0.5">@Loc.Get("OrderPacksCount")</span>
+                <span class="font-bold text-slate-900 text-sm">@Loc.Get("PacksCount", Model.ItemCount)</span>
+            </div>
+            <div>
+                <span class="text-slate-400 block mb-0.5">@Loc.Get("RequiredAmount")</span>
+                <span class="font-bold text-gold-gradient text-sm">@Model.GrandTotal.ToString("F2") @Loc.Get("Currency")</span>
+            </div>
+        </div>
+
+    </div>
+}

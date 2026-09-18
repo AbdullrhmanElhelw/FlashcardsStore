@@ -1,0 +1,574 @@
+@model OrderDetailDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "تفاصيل الطلب " + Model.OrderNumber;
+    var customerWhatsAppUrl = !string.IsNullOrEmpty(Model.CustomerPhone)
+        ? $"https://wa.me/20{Model.CustomerPhone.TrimStart('0')}?text={Uri.EscapeDataString($"أهلاً بحضرتك {Model.CustomerName}، بخصوص طلب الفلاش كاردز من أكاديمية خلود النادي برقم {Model.OrderNumber}...")}"
+        : "#";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <style>
+        @@media print {
+            header, footer, nav, .no-print, #receipt-modal, button, form, .admin-action-bar {
+                display: none !important;
+            }
+            body {
+                background: #FFFFFF !important;
+                color: #000000 !important;
+                padding: 0 !important;
+            }
+            .max-w-6xl {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-only-slip {
+                display: block !important;
+            }
+            .screen-only-details {
+                display: none !important;
+            }
+        }
+        @@media screen {
+            .print-only-slip {
+                display: none !important;
+            }
+        }
+    </style>
+}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Screen-Only Header & Breadcrumbs -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-8 gap-4 no-print">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <a asp-controller="Admin" asp-action="Orders" class="hover:underline">الطلبات</a>
+                <span>/</span>
+                <span class="font-mono text-[#290A2E] font-bold">@Model.OrderNumber</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
+                <span>طلب: <span class="font-mono">@Model.OrderNumber</span></span>
+                <span id="order-status-badge-container">
+                    <partial name="_OrderStatusBadge" model="Model.Status" />
+                </span>
+            </h1>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <!-- Print Invoice & Packing Slip -->
+            <button type="button" onclick="window.print()" 
+                    class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+                <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.656l10.5 0z" />
+                </svg>
+                <span>طباعة البوليصة والفاتورة</span>
+            </button>
+
+            <a href="@customerWhatsAppUrl" target="_blank" rel="noopener noreferrer" 
+               class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-2 shadow-sm transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z" />
+                </svg>
+                <span>محادثة واتساب</span>
+            </a>
+
+            <a asp-controller="Admin" asp-action="Orders" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs inline-flex items-center gap-1.5 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+                <span>رجوع للقائمة</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Feedback Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-bold flex items-center gap-2 no-print">
+            <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold flex items-center gap-2 no-print">
+            <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <!-- Admin Action Bar -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md mb-8 no-print admin-action-bar">
+        <h3 class="text-xs font-black text-slate-400 mb-3 uppercase tracking-wider">الإجراءات والتحكم في حالة الطلب:</h3>
+
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Approve & Reject Actions -->
+            <div class="flex items-center gap-3">
+                @if (Model.Status != OrderStatus.Approved && Model.Status != OrderStatus.Delivered && Model.Status != OrderStatus.Shipped)
+                {
+                    <button type="button"
+                            hx-post="/Admin/Approve?id=@Model.Id"
+                            hx-target="#order-status-badge-container"
+                            onclick="return confirmOrderAction('اعتماد وتثبيت خصم المخزون لـ', '@Model.OrderNumber')"
+                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md flex items-center gap-2 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <span>اعتماد الطلب وخصم المخزون</span>
+                    </button>
+
+                    <button type="button"
+                            hx-post="/Admin/Reject?id=@Model.Id&reason=تحويل_غير_مكتمل"
+                            hx-target="#order-status-badge-container"
+                            onclick="return confirmOrderAction('رفض وإلغاء حجز المخزون لـ', '@Model.OrderNumber')"
+                            class="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-sm inline-flex items-center gap-1.5 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span>رفض التحويل</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Transition to Shipped, Delivered, or Cancelled -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-bold text-slate-600">تحديث الموقف:</span>
+                <button type="button"
+                        hx-post="/Admin/UpdateStatus?id=@Model.Id&newStatus=Shipped"
+                        hx-target="#order-status-badge-container"
+                        class="px-3.5 py-2 rounded-xl bg-sky-50 text-sky-800 hover:bg-sky-100 border border-sky-200 font-bold text-xs inline-flex items-center gap-1.5 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V3.75a1.125 1.125 0 00-1.125-1.125H3.375A1.125 1.125 0 002.25 3.75v10.5" />
+                    </svg>
+                    <span>تسليم لشركة الشحن</span>
+                </button>
+                <button type="button"
+                        hx-post="/Admin/UpdateStatus?id=@Model.Id&newStatus=Delivered"
+                        hx-target="#order-status-badge-container"
+                        class="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 font-bold text-xs inline-flex items-center gap-1.5 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    <span>تم التسليم للعميل</span>
+                </button>
+                @if (Model.Status != OrderStatus.Cancelled && Model.Status != OrderStatus.Delivered)
+                {
+                    <button type="button"
+                            hx-post="/Admin/UpdateStatus?id=@Model.Id&newStatus=Cancelled"
+                            hx-target="#order-status-badge-container"
+                            onclick="return confirmOrderAction('إلغاء', '@Model.OrderNumber')"
+                            class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 font-bold text-xs inline-flex items-center gap-1.5 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span>إلغاء الطلب</span>
+                    </button>
+                }
+            </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start screen-only-details">
+
+        <!-- Customer & Order Information -->
+        <div class="lg:col-span-7 space-y-6">
+
+            <!-- Customer Details Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
+                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#290A2E]/10 text-[#290A2E] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </div>
+                    <span>بيانات العميل ومكان التسليم</span>
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <span class="text-slate-400 block mb-0.5">الاسم:</span>
+                        <span class="font-bold text-slate-900 text-sm">@Model.CustomerName</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block mb-0.5">نوع المشتري:</span>
+                        <span class="font-bold text-[#290A2E] text-sm">@Model.CustomerType</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block mb-0.5">رقم الهاتف:</span>
+                        <span class="font-mono font-bold text-slate-900 text-sm" dir="ltr">@Model.CustomerPhone</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block mb-0.5">رقم الواتساب:</span>
+                        <span class="font-mono font-bold text-slate-900 text-sm" dir="ltr">@(Model.CustomerWhatsApp ?? Model.CustomerPhone)</span>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <span class="text-slate-400 block mb-0.5">عنوان التوصيل في مصر:</span>
+                        <span class="font-bold text-slate-900 text-sm bg-slate-50 p-3 rounded-xl border border-slate-100 block">
+                            @Model.Governorate - @Model.City - @Model.ShippingAddress
+                        </span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.CustomerNotes))
+                    {
+                        <div class="sm:col-span-2">
+                            <span class="text-slate-400 block mb-0.5">ملاحظات العميل:</span>
+                            <span class="text-slate-700 italic bg-amber-50/70 p-3 rounded-xl border border-amber-200/60 block">
+                                @Model.CustomerNotes
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Items Table Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
+                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#D4AF37]/10 text-[#B88E23] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                        </svg>
+                    </div>
+                    <span>البطاقات المطلوبة (@Model.Items.Count صنف)</span>
+                </h3>
+
+                <div class="divide-y divide-slate-100 text-xs">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" class="w-12 h-12 rounded-xl object-cover border border-slate-200" />
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">@item.ProductNameAr</h4>
+                                    <span class="text-slate-400 en-card-content block">@item.ProductName</span>
+                                </div>
+                            </div>
+
+                            <div class="text-left">
+                                <span class="font-bold text-slate-700 text-sm">@item.Quantity × @item.UnitPrice.ToString("F0") ج.م</span>
+                                <span class="block font-black text-slate-900 text-sm">@item.SubTotal.ToString("F0") ج.م</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="border-t border-slate-200 pt-4 space-y-2 text-sm">
+                    <div class="flex items-center justify-between text-slate-600">
+                        <span>قيمة البطاقات:</span>
+                        <span class="font-bold text-slate-900">@Model.TotalAmount.ToString("F2") ج.م</span>
+                    </div>
+                    <div class="flex items-center justify-between text-slate-600">
+                        <span>الشحن (@Model.Governorate):</span>
+                        <span class="font-bold text-slate-900">@Model.ShippingFee.ToString("F2") ج.م</span>
+                    </div>
+                    <div class="flex items-center justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-100">
+                        <span>الإجمالي المطلوب:</span>
+                        <span class="text-2xl font-black text-gold-gradient">@Model.GrandTotal.ToString("F2") ج.م</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Internal Notes & Follow-up Card -->
+            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4 no-print">
+                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-[#B88E23] flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                        </div>
+                        <span>سجل الملاحظات الإدارية والمتابعة</span>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-400">خاص بالمشرفين</span>
+                </h3>
+
+                <!-- Notes History Log -->
+                @if (!string.IsNullOrWhiteSpace(Model.AdminNotes))
+                {
+                    <div class="space-y-2 max-h-48 overflow-y-auto p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+                        @foreach (var line in Model.AdminNotes.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200/70 text-slate-700 leading-relaxed font-medium">
+                                @line
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-xs text-slate-400 italic p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                        لا توجد ملاحظات إدارية مدونة لهذا الطلب بعد.
+                    </div>
+                }
+
+                <!-- Add New Note Form -->
+                <form asp-controller="Admin" asp-action="AddOrderNote" method="post" class="space-y-3 pt-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">إضافة ملاحظة جديدة أو تحديث موقف:</label>
+                        <textarea name="notes" rows="2" required placeholder="اكتب ملاحظاتك (مثلاً: تم تأكيد العنوان هاتفياً / خرج مع مندوب الشحن)..." class="admin-form-textarea text-xs"></textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-slate-600 whitespace-nowrap">تغيير الحالة إلى:</label>
+                            <select name="newStatus" class="admin-form-select text-xs py-1.5 font-bold">
+                                <option value="">(الحالة الحالية)</option>
+                                <option value="Approved">تم التأكيد والاعتماد</option>
+                                <option value="Shipped">تم التسليم لشركة الشحن</option>
+                                <option value="Delivered">تم التسليم بنجاح</option>
+                                <option value="Rejected">مرفوض</option>
+                                <option value="Cancelled">ملغي</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="admin-btn-primary px-4 py-2 text-xs font-bold whitespace-nowrap">
+                            <span>حفظ الملاحظة وتحديث الطلب ✓</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Payment Proof & Verification Column -->
+        <div class="lg:col-span-5 space-y-6">
+
+            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
+                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#290A2E]/10 text-[#290A2E] flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                    </div>
+                    <span>إيصال التحويل المرفق</span>
+                </h3>
+
+                @if (Model.PaymentProof != null)
+                {
+                    <div class="space-y-4">
+                        <!-- Clickable Image Thumbnail with modal trigger -->
+                        <div class="relative group cursor-pointer border border-slate-200 rounded-2xl overflow-hidden shadow-sm"
+                             onclick="openReceiptModal('@Model.PaymentProof.FilePath', 'إيصال طلب @Model.OrderNumber', 'المرسل: @Model.PaymentProof.SenderPhoneNumber | الوسيلة: @Model.PaymentProof.BankOrWalletName')">
+                            <img src="@Model.PaymentProof.FilePath" alt="Receipt Screenshot" class="w-full h-56 object-contain bg-slate-900" />
+                            <div class="absolute inset-0 bg-[#18061A]/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white font-black text-xs gap-2 transition-opacity">
+                                <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                                <span>انقر لتكبير صورة الإيصال</span>
+                            </div>
+                        </div>
+
+                        <!-- Proof Metadata -->
+                        <div class="space-y-2 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">طريقة التحويل:</span>
+                                <span class="font-bold text-slate-900">@Model.PaymentProof.BankOrWalletName</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">رقم محفظة الراسل:</span>
+                                <span class="font-mono font-bold text-slate-900" dir="ltr">@(Model.PaymentProof.SenderPhoneNumber ?? "غير محدد")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">رقم العملية / المرجع:</span>
+                                <span class="font-mono font-bold text-slate-900" dir="ltr">@(Model.PaymentProof.TransactionReference ?? "غير مدخل")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">تاريخ الرفع:</span>
+                                <span class="font-bold text-slate-700">@Model.PaymentProof.UploadedAt.ToString("yyyy/MM/dd - hh:mm tt")</span>
+                            </div>
+                        </div>
+
+                        <button type="button" 
+                                onclick="openReceiptModal('@Model.PaymentProof.FilePath', 'إيصال طلب @Model.OrderNumber', 'المرسل: @Model.PaymentProof.SenderPhoneNumber | الوسيلة: @Model.PaymentProof.BankOrWalletName')"
+                                class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs text-center block transition-colors">
+                            تكبير ومعاينة الإيصال بملء الشاشة
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-8 text-center text-slate-400 space-y-2 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-700">لم يتم إرفاق إيصال تحويل بعد</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            @if (Model.PaymentMethod == PaymentMethod.WhatsAppDirect)
+                            {
+                                <span>طلب واتساب مباشر — لا يتطلب رفع إيصال في النظام. يتم التنسيق المباشر عبر الشات.</span>
+                            }
+                            else
+                            {
+                                <span>في انتظار رفع العميل للقطة شاشة التحويل قبل انتهاء مهلة الـ 24 ساعة.</span>
+                            }
+                        </p>
+                    </div>
+                }
+            </div>
+
+            <!-- Egyptian Stock Reservation Info -->
+            <div class="bg-[#18061A]/5 rounded-3xl p-5 border border-[#D4AF37]/20 text-xs space-y-2">
+                <h4 class="font-black text-[#290A2E] flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                    </svg>
+                    <span>قواعد المخزون والتسليم:</span>
+                </h4>
+                <p class="text-slate-700 leading-relaxed">
+                    عند الضغط على "اعتماد الطلب"، يقوم النظام آلياً بتثبيت حجز البطاقات وخصمها نهائياً من الكميات المتاحة في مخزن الأكاديمية.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- Printable Invoice & Delivery Packing Slip (Displayed on Print)   -->
+    <!-- ================================================================= -->
+    <div class="print-only-slip p-8 bg-white text-slate-900 border-2 border-slate-900 rounded-3xl" dir="rtl">
+        <!-- Academy Print Header -->
+        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-6 mb-6">
+            <div class="flex items-center gap-4">
+                <img src="~/images/brand/logo.png" alt="Logo" class="h-16 w-16 object-contain" />
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900">أكاديمية خلود النادي للغة الإنجليزية</h1>
+                    <p class="text-xs font-bold text-slate-600 mt-1">بوليصة شحن وفاتورة استلام طلب الفلاش كاردز التعليمية</p>
+                    <p class="text-[11px] text-slate-500 font-mono">خدمة العملاء والتواصل: 01099887766</p>
+                </div>
+            </div>
+            <div class="text-left font-mono">
+                <div class="text-xs text-slate-500">رقم الطلب:</div>
+                <div class="text-xl font-black text-slate-900">@Model.OrderNumber</div>
+                <div class="text-xs text-slate-600 mt-1">التاريخ: @Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt")</div>
+                <div class="text-xs font-bold mt-1 text-slate-800">الحالة: @Model.Status</div>
+            </div>
+        </div>
+
+        <!-- Customer & Delivery Info Grid -->
+        <div class="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-300 text-xs mb-6">
+            <div>
+                <span class="text-slate-500 font-bold block">اسم العميل / المستلم:</span>
+                <span class="text-base font-black text-slate-900 block mt-0.5">@Model.CustomerName</span>
+                <span class="text-xs text-slate-600">(@Model.CustomerType)</span>
+            </div>
+            <div>
+                <span class="text-slate-500 font-bold block">رقم الهاتف للتواصل:</span>
+                <span class="text-sm font-black font-mono text-slate-900 block mt-0.5" dir="ltr">@Model.CustomerPhone</span>
+                @if (!string.IsNullOrEmpty(Model.CustomerWhatsApp) && Model.CustomerWhatsApp != Model.CustomerPhone)
+                {
+                    <span class="text-xs font-mono text-slate-600 block" dir="ltr">واتساب: @Model.CustomerWhatsApp</span>
+                }
+            </div>
+            <div class="col-span-2 border-t border-slate-200 pt-3">
+                <span class="text-slate-500 font-bold block">عنوان التسليم بمصر:</span>
+                <span class="text-sm font-bold text-slate-900 block mt-0.5">
+                    محافظة @Model.Governorate — مدينة / مركز @Model.City — @Model.ShippingAddress
+                </span>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.CustomerNotes))
+            {
+                <div class="col-span-2 border-t border-slate-200 pt-2">
+                    <span class="text-slate-500 font-bold block">ملاحظات العميل للشحن:</span>
+                    <span class="text-xs text-slate-800 block mt-0.5">@Model.CustomerNotes</span>
+                </div>
+            }
+        </div>
+
+        <!-- Itemized Products Table -->
+        <table class="w-full text-right border-collapse border border-slate-300 text-xs mb-6">
+            <thead>
+                <tr class="bg-slate-100 text-slate-900 border-b border-slate-300">
+                    <th class="p-2.5 border-l border-slate-300">م</th>
+                    <th class="p-2.5 border-l border-slate-300">اسم الباقة التعليمية</th>
+                    <th class="p-2.5 border-l border-slate-300 text-center">الكمية</th>
+                    <th class="p-2.5 border-l border-slate-300 text-left">سعر الوحدة</th>
+                    <th class="p-2.5 text-left">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int itemIdx = 1; }
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="border-b border-slate-200">
+                        <td class="p-2.5 border-l border-slate-200 font-mono">@itemIdx</td>
+                        <td class="p-2.5 border-l border-slate-200">
+                            <span class="font-bold text-slate-900 block">@item.ProductNameAr</span>
+                            <span class="text-[11px] text-slate-500 font-mono block">@item.ProductName</span>
+                        </td>
+                        <td class="p-2.5 border-l border-slate-200 text-center font-bold font-mono">@item.Quantity</td>
+                        <td class="p-2.5 border-l border-slate-200 text-left font-mono">@item.UnitPrice.ToString("F0") ج.م</td>
+                        <td class="p-2.5 text-left font-black font-mono">@item.SubTotal.ToString("F0") ج.م</td>
+                    </tr>
+                    itemIdx++;
+                }
+            </tbody>
+        </table>
+
+        <!-- Totals & Payment Breakdown -->
+        <div class="flex justify-between items-start gap-8 mb-6">
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600 flex-grow">
+                <span class="font-bold text-slate-900 block mb-1">طريقة السداد:</span>
+                @if (Model.PaymentMethod == PaymentMethod.WalletTransfer)
+                {
+                    <span class="font-bold text-slate-800">تحويل محفظة إلكترونية (فودافون كاش / إنستاباي)</span>
+                    <span class="block text-[11px] text-emerald-700 mt-0.5">✓ تم التحقق من إيصال السداد واعتماد الطلب</span>
+                }
+                else
+                {
+                    <span class="font-bold text-slate-800">تنسيق مباشر عبر واتساب</span>
+                }
+            </div>
+
+            <div class="w-64 space-y-1.5 text-xs text-right">
+                <div class="flex justify-between text-slate-600">
+                    <span>قيمة البطاقات:</span>
+                    <span class="font-mono font-bold text-slate-900">@Model.TotalAmount.ToString("F2") ج.م</span>
+                </div>
+                <div class="flex justify-between text-slate-600">
+                    <span>مصاريف الشحن:</span>
+                    <span class="font-mono font-bold text-slate-900">@Model.ShippingFee.ToString("F2") ج.م</span>
+                </div>
+                <div class="flex justify-between text-sm font-black text-slate-900 border-t-2 border-slate-900 pt-2">
+                    <span>المبلغ المطلوب تسليمه:</span>
+                    <span class="font-mono text-base">@Model.GrandTotal.ToString("F2") ج.م</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Signatures and Instructions -->
+        <div class="border-t border-slate-300 pt-4 flex justify-between items-end text-[11px] text-slate-500">
+            <div>
+                <span>توقيع مسؤول التجهيز والتغليف: __________________</span>
+            </div>
+            <div>
+                <span>توقيع مندوب شركة الشحن: __________________</span>
+            </div>
+            <div>
+                <span>توقيع واستلام العميل: __________________</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Partial Included -->
+<partial name="_ReceiptModal" />
+
+@section Scripts {
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}

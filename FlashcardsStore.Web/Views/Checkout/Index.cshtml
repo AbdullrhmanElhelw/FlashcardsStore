@@ -1,0 +1,342 @@
+@model CheckoutDto
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    ViewData["Title"] = Loc.Get("CheckoutTitle");
+    var cart = ViewBag.Cart as CartViewModel ?? new CartViewModel();
+    var isRtl = Loc.IsRtl;
+    var arrowPath = isRtl ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true" />
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+
+    <!-- Page Header -->
+    <div class="mb-6 sm:mb-8 text-start">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-[#8D6711] mb-2">
+            <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>@Loc.Get("CheckoutTrustBanner")</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900">@Loc.Get("CheckoutTitle")</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">@Loc.Get("CheckoutSubtitle")</p>
+    </div>
+
+    <form asp-controller="Checkout" asp-action="Submit" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+            <!-- Checkout Form Inputs -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- Validation Summary (Only when there are errors) -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="p-4 sm:p-5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold shadow-xs flex items-start gap-3">
+                        <div class="w-7 h-7 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1.5 text-start flex-grow">
+                            <p class="font-extrabold text-rose-900 text-sm">@Loc.Get("CheckoutValidationHeader")</p>
+                            <div asp-validation-summary="All" class="text-xs text-rose-700 space-y-1 ps-2"></div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Customer Personal Information -->
+                <div class="bg-white rounded-2xl p-5 sm:p-7 border border-amber-200/80 shadow-xs space-y-5">
+                    <h2 class="text-base font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <span>@Loc.Get("CustomerInfo")</span>
+                    </h2>
+
+                    <!-- Customer Type Radio: Modern Interactive Cards -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2.5">@Loc.Get("CustomerType")</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="customer-type-card @(Model.CustomerType == CustomerType.Parent ? "selected" : "")">
+                                <input type="radio" asp-for="CustomerType" value="Parent" class="sr-only" />
+                                <div class="w-9 h-9 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-black text-slate-900">@Loc.Get("Parent")</span>
+                                <span class="text-[10px] text-slate-400 font-medium">@Loc.Get("ParentDesc")</span>
+                            </div>
+
+                            <div class="customer-type-card @(Model.CustomerType == CustomerType.Teacher ? "selected" : "")">
+                                <input type="radio" asp-for="CustomerType" value="Teacher" class="sr-only" />
+                                <div class="w-9 h-9 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-black text-slate-900">@Loc.Get("Teacher")</span>
+                                <span class="text-[10px] text-slate-400 font-medium">@Loc.Get("TeacherDesc")</span>
+                            </div>
+
+                            <div class="customer-type-card @(Model.CustomerType == CustomerType.School ? "selected" : "")">
+                                <input type="radio" asp-for="CustomerType" value="School" class="sr-only" />
+                                <div class="w-9 h-9 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-black text-slate-900">@Loc.Get("CustomerTypeSchool")</span>
+                                <span class="text-[10px] text-slate-400 font-medium">@Loc.Get("CustomerTypeSchoolDesc")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="FullName" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("FullName")</label>
+                            <input asp-for="FullName" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-900" placeholder="@(isRtl ? "مثال: سارة أحمد محمود" : "e.g. Sarah Ahmed")" />
+                            <span asp-validation-for="FullName" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="PhoneNumber" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("EgyptianPhone")</label>
+                            <input asp-for="PhoneNumber" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-start font-mono font-semibold text-slate-900" placeholder="01012345678" />
+                            <span asp-validation-for="PhoneNumber" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="WhatsAppNumber" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("WhatsAppNumberOptional")</label>
+                            <input asp-for="WhatsAppNumber" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-start font-mono text-slate-900" placeholder="@Loc.Get("WhatsAppNumberPlaceholder")" />
+                        </div>
+
+                        <div>
+                            <label asp-for="Email" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("EmailOptional")</label>
+                            <input asp-for="Email" type="email" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-start text-slate-900" placeholder="name@example.com" />
+                            <span asp-validation-for="Email" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address Details -->
+                <div class="bg-white rounded-2xl p-5 sm:p-7 border border-amber-200/80 shadow-xs space-y-5">
+                    <h2 class="text-base font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <span>@Loc.Get("ShippingAddressSection")</span>
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="Governorate" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("Governorate")</label>
+                            <select id="governorate-select" asp-for="Governorate" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-900 bg-white">
+                                <option value="القاهرة">@(isRtl ? "القاهرة (شحن 50 ج.م)" : "Cairo (Shipping 50 EGP)")</option>
+                                <option value="الجيزة">@(isRtl ? "الجيزة (شحن 50 ج.م)" : "Giza (Shipping 50 EGP)")</option>
+                                <option value="الإسكندرية">@(isRtl ? "الإسكندرية (شحن 60 ج.م)" : "Alexandria (Shipping 60 EGP)")</option>
+                                <option value="القليوبية">@(isRtl ? "القليوبية (شحن 60 ج.م)" : "Qalyubia (Shipping 60 EGP)")</option>
+                                <option value="الشرقية">@(isRtl ? "الشرقية (شحن 60 ج.م)" : "Sharqia (Shipping 60 EGP)")</option>
+                                <option value="الدقهلية">@(isRtl ? "الدقهلية (شحن 60 ج.م)" : "Daqahlia (Shipping 60 EGP)")</option>
+                                <option value="الغربية">@(isRtl ? "الغربية (شحن 60 ج.م)" : "Gharbia (Shipping 60 EGP)")</option>
+                                <option value="المنوفية">@(isRtl ? "المنوفية (شحن 60 ج.م)" : "Menofia (Shipping 60 EGP)")</option>
+                                <option value="البحيرة">@(isRtl ? "البحيرة (شحن 60 ج.م)" : "Beheira (Shipping 60 EGP)")</option>
+                                <option value="دمياط">@(isRtl ? "دمياط (شحن 60 ج.م)" : "Damietta (Shipping 60 EGP)")</option>
+                                <option value="كفر الشيخ">@(isRtl ? "كفر الشيخ (شحن 60 ج.م)" : "Kafr El-Sheikh (Shipping 60 EGP)")</option>
+                                <option value="بورسعيد">@(isRtl ? "بورسعيد (شحن 60 ج.م)" : "Port Said (Shipping 60 EGP)")</option>
+                                <option value="الإسماعيلية">@(isRtl ? "الإسماعيلية (شحن 60 ج.م)" : "Ismailia (Shipping 60 EGP)")</option>
+                                <option value="السويس">@(isRtl ? "السويس (شحن 60 ج.م)" : "Suez (Shipping 60 EGP)")</option>
+                                <option value="الفيوم">@(isRtl ? "الفيوم (شحن 75 ج.م)" : "Fayoum (Shipping 75 EGP)")</option>
+                                <option value="بني سويف">@(isRtl ? "بني سويف (شحن 75 ج.م)" : "Beni Suef (Shipping 75 EGP)")</option>
+                                <option value="المنيا">@(isRtl ? "المنيا (شحن 75 ج.م)" : "Minya (Shipping 75 EGP)")</option>
+                                <option value="أسيوط">@(isRtl ? "أسيوط (شحن 75 ج.م)" : "Asyut (Shipping 75 EGP)")</option>
+                                <option value="سوهاج">@(isRtl ? "سوهاج (شحن 75 ج.م)" : "Sohag (Shipping 75 EGP)")</option>
+                                <option value="قنا">@(isRtl ? "قنا (شحن 75 ج.م)" : "Qena (Shipping 75 EGP)")</option>
+                                <option value="الأقصر">@(isRtl ? "الأقصر (شحن 75 ج.م)" : "Luxor (Shipping 75 EGP)")</option>
+                                <option value="أسوان">@(isRtl ? "أسوان (شحن 75 ج.م)" : "Aswan (Shipping 75 EGP)")</option>
+                                <option value="البحر الأحمر">@(isRtl ? "البحر الأحمر (شحن 75 ج.م)" : "Red Sea (Shipping 75 EGP)")</option>
+                                <option value="مطروح">@(isRtl ? "مطروح (شحن 75 ج.م)" : "Matrouh (Shipping 75 EGP)")</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label asp-for="City" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("CityLabel")</label>
+                            <input asp-for="City" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-slate-900" placeholder="@Loc.Get("CityPlaceholder")" />
+                            <span asp-validation-for="City" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label asp-for="ShippingAddress" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("DetailedAddressLabel")</label>
+                        <textarea asp-for="ShippingAddress" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-slate-900" placeholder="@Loc.Get("DetailedAddressPlaceholder")"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Notes" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("NotesLabel")</label>
+                        <input asp-for="Notes" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-slate-900" placeholder="@Loc.Get("NotesPlaceholder")" />
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div class="bg-white rounded-2xl p-5 sm:p-7 border border-amber-200/80 shadow-xs space-y-4">
+                    <h2 class="text-base font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                        </div>
+                        <span>@Loc.Get("PaymentMethodSection")</span>
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- Wallet Transfer Card -->
+                        <div class="payment-method-card selected">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="radio" asp-for="PaymentMethod" value="WalletTransfer" class="payment-method-radio mt-1" checked />
+                                <div class="space-y-1">
+                                    <span class="block text-sm font-black text-slate-900">@Loc.Get("WalletMethodTitle")</span>
+                                    <span class="block text-xs text-[#8D6711] font-bold">@Loc.Get("WalletMethodSub")</span>
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold bg-amber-50 text-[#8D6711] border border-amber-200 px-2 py-0.5 rounded-md mt-1">
+                                        <svg class="w-3 h-3 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>@Loc.Get("WalletMethodBadge")</span>
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- WhatsApp Direct Card -->
+                        <div class="payment-method-card">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="radio" asp-for="PaymentMethod" value="WhatsAppDirect" class="payment-method-radio mt-1" />
+                                <div class="space-y-1">
+                                    <span class="block text-sm font-black text-slate-900">@Loc.Get("WhatsAppMethodTitle")</span>
+                                    <span class="block text-xs text-emerald-700 font-bold">@Loc.Get("WhatsAppMethodSub")</span>
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-md mt-1">
+                                        <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                        </svg>
+                                        <span>@Loc.Get("WhatsAppMethodBadge")</span>
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <!-- Dynamic Payment Guidance -->
+                    <div id="wallet-transfer-info" class="p-4 rounded-xl bg-amber-50/60 border border-amber-200/80 text-xs text-slate-700 space-y-1">
+                        <p class="font-black text-slate-900">@Loc.Get("WalletStepsTitle")</p>
+                        <p>@Loc.Get("WalletStepsDesc")</p>
+                    </div>
+
+                    <div id="whatsapp-direct-info" class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 space-y-1" style="display: none;">
+                        <p class="font-black text-emerald-900">@Loc.Get("WhatsAppStepsTitle")</p>
+                        <p>@Loc.Get("WhatsAppStepsDesc")</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Order Review Column (Sticky on Desktop) -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-2xl p-5 sm:p-6 border border-amber-200/80 shadow-sm space-y-4 sticky top-24">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 class="text-base font-black text-slate-900">@Loc.Get("OrderCardsHeader")</h3>
+                        <span class="text-xs font-bold bg-amber-50 text-[#8D6711] border border-amber-200 px-2.5 py-0.5 rounded-full">
+                            @Loc.Get("PacksCount", cart.TotalItems)
+                        </span>
+                    </div>
+
+                    <!-- Product Rows with Clean Thumbnails -->
+                    <div class="max-h-72 overflow-y-auto divide-y divide-slate-100 space-y-2 pe-1">
+                        @foreach (var item in cart.Items)
+                        {
+                            var itemName = Loc.GetLocalized(item.ProductNameAr, item.ProductName);
+                            var itemSub = isRtl ? item.ProductName : item.ProductNameAr;
+
+                            <div class="pt-2 flex items-center gap-3">
+                                <div class="relative shrink-0">
+                                    <img src="@item.ImageUrl" alt="@itemName" class="w-13 h-13 rounded-xl object-contain p-1 border border-slate-200 bg-slate-50" />
+                                    <span class="absolute -top-1.5 -end-1.5 w-5 h-5 rounded-full bg-slate-950 text-[#F6ECC9] font-black text-[10px] flex items-center justify-center border border-amber-300">
+                                        @item.Quantity
+                                    </span>
+                                </div>
+                                <div class="flex-grow min-w-0 text-start">
+                                    <h4 class="text-xs font-black text-slate-900 leading-snug">@itemName</h4>
+                                    <p class="text-[10px] text-slate-400 en-card-content truncate mt-0.5">@itemSub</p>
+                                    <span class="text-[11px] font-bold text-slate-500">@item.UnitPrice.ToString("F0") @Loc.Get("Currency") × @item.Quantity</span>
+                                </div>
+                                <span class="text-xs font-black text-slate-900 shrink-0">@item.SubTotal.ToString("F0") @Loc.Get("Currency")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Dynamic Subtotal & Shipping Calculation -->
+                    <div class="border-t border-slate-100 pt-3 space-y-2.5 text-xs sm:text-sm">
+                        <div class="flex items-center justify-between text-slate-600">
+                            <span>@Loc.Get("SubtotalCardsLabel")</span>
+                            <span id="subtotal-amount" data-subtotal="@cart.SubTotal" class="font-bold text-slate-900">@cart.SubTotal.ToString("F2") @Loc.Get("Currency")</span>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-600">
+                            <span>@Loc.Get("ShippingGovernorateLabel")</span>
+                            <span id="shipping-cost-display" class="font-bold text-slate-900">50 @Loc.Get("Currency")</span>
+                        </div>
+                        <div class="flex items-center justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-100">
+                            <span>@Loc.Get("TotalPayableLabel")</span>
+                            <span id="grand-total-display" class="text-2xl font-black text-slate-900">@((cart.SubTotal + 50).ToString("F0")) @Loc.Get("Currency")</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-gold-primary w-full py-4 px-4 text-base font-black shadow-xl rounded-xl flex items-center justify-center gap-2">
+                        <span>@Loc.Get("ConfirmAndProceed")</span>
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="@arrowPath" />
+                        </svg>
+                    </button>
+
+                    <!-- Trust Chips -->
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                        <div class="flex items-center gap-1.5 font-bold">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>@Loc.Get("TrustWaterproof")</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 font-bold">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>@Loc.Get("TrustDoorstep")</span>
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 text-center leading-relaxed">
+                        @Loc.Get("CheckoutDisclaimer")
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
+}

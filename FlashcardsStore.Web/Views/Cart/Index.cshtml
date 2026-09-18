@@ -1,0 +1,123 @@
+@model CartViewModel
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    ViewData["Title"] = Loc.Get("CartPageTitle");
+    var isRtl = Loc.IsRtl;
+    var nextArrow = isRtl ? "←" : "→";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-[#18061A]">@Loc.Get("CartPageTitle")</h1>
+            <p class="text-sm text-[#6B5D6E] mt-1">@Loc.Get("CartSubtitle")</p>
+        </div>
+        <a asp-controller="Catalog" asp-action="Index" class="inline-flex items-center gap-1.5 text-sm font-bold text-[#D4AF37] hover:text-[#18061A] transition">
+            <span>@Loc.Get("ContinueShopping")</span>
+            <span class="font-mono text-base">@nextArrow</span>
+        </a>
+    </div>
+
+    @if (Model.IsEmpty)
+    {
+        <div class="bg-white rounded-3xl p-12 sm:p-16 text-center border border-[#D4AF37]/25 shadow-sm max-w-xl mx-auto space-y-4">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-[#290A2E]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
+                <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-black text-[#18061A]">@Loc.Get("CartEmptyTitle")</h2>
+            <p class="text-sm text-[#6B5D6E] leading-relaxed max-w-md mx-auto">
+                @Loc.Get("CartEmptySub")
+            </p>
+            <div class="pt-3">
+                <a asp-controller="Catalog" asp-action="Index" class="btn-gold-primary px-8 py-3.5 shadow-md">
+                    @Loc.Get("CartBrowsePacksNow")
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- Cart Items Table Container -->
+            <div class="lg:col-span-8 bg-white rounded-2xl border border-[#D4AF37]/25 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-[#FAF5EE] flex items-center justify-between bg-[#FAF8F5]">
+                    <h2 class="text-base font-extrabold text-[#18061A]">@Loc.Get("CartSelectedPacksHeader", Model.TotalItems)</h2>
+                    <span class="text-xs font-bold text-[#D4AF37]">@Loc.Get("CartPricesCurrencyNote")</span>
+                </div>
+
+                <div class="divide-y divide-[#FAF5EE]">
+                    @foreach (var item in Model.Items)
+                    {
+                        var itemName = Loc.GetLocalized(item.ProductNameAr, item.ProductName);
+                        var itemSub = isRtl ? item.ProductName : item.ProductNameAr;
+
+                        <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            
+                            <div class="flex items-center gap-4">
+                                <img src="@item.ImageUrl" alt="@itemName" class="w-20 h-20 rounded-xl object-contain p-1 border border-[#D4AF37]/25 flex-shrink-0 bg-slate-50" />
+                                <div>
+                                    <h3 class="text-base font-extrabold text-[#18061A]">@itemName</h3>
+                                    <p class="text-xs font-semibold text-[#8C7B8E] en-card-content">@itemSub</p>
+                                    <div class="text-xs text-[#D4AF37] font-bold mt-1">
+                                        @Loc.Get("CartItemPriceLabel") @item.UnitPrice.ToString("F0") @Loc.Get("Currency")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between w-full sm:w-auto gap-6">
+                                <!-- Quantity Controls (Form POST) -->
+                                <div class="flex items-center gap-2">
+                                    <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="inline">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="hidden" name="quantity" value="@(item.Quantity - 1)" />
+                                        <button type="submit" class="cart-quantity-btn" title="@Loc.Get("CartDecreaseQty")">-</button>
+                                    </form>
+
+                                    <span class="w-8 text-center text-sm font-black text-[#18061A]">@item.Quantity</span>
+
+                                    <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="inline">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="hidden" name="quantity" value="@(item.Quantity + 1)" />
+                                        <button type="submit" class="cart-quantity-btn" title="@Loc.Get("CartIncreaseQty")">+</button>
+                                    </form>
+                                </div>
+
+                                <!-- Subtotal -->
+                                <div class="text-end min-w-[90px]">
+                                    <span class="block text-xs text-[#8C7B8E]">@Loc.Get("CartTotalLabel")</span>
+                                    <span class="text-base font-black text-[#18061A]">@item.SubTotal.ToString("F0") @Loc.Get("Currency")</span>
+                                </div>
+
+                                <!-- Delete with SVG -->
+                                <form asp-controller="Cart" asp-action="RemoveItem" method="post" class="inline">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" title="@Loc.Get("CartRemoveItem")" class="cart-delete-btn">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Order Summary Column -->
+            <div class="lg:col-span-4">
+                <partial name="_CartSummary" model="Model" />
+            </div>
+
+        </div>
+    }
+
+</div>

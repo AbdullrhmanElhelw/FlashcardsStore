@@ -1,0 +1,302 @@
+@using FlashcardsStore.Application.Common
+@model PagedResult<ProductCardViewModel>
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    ViewData["Title"] = Loc.Get("CatalogTitle") + " - " + Loc.Get("BrandName");
+    var categories = ViewBag.Categories as IReadOnlyList<CategoryDto> ?? new List<CategoryDto>();
+    var currentFilter = ViewBag.CurrentFilter as ProductFilterDto ?? new ProductFilterDto();
+    var currentGrade = currentFilter.GradeLevel ?? "";
+    var currentCatId = currentFilter.CategoryId ?? 0;
+    var currentSort = currentFilter.SortBy ?? "";
+    var currentSearch = currentFilter.SearchTerm ?? "";
+
+    // Build base URL for pagination links (preserves all current filters)
+    var pageBase = $"/Catalog?gradeLevel={Uri.EscapeDataString(currentGrade)}&categoryId={currentCatId}&searchTerm={Uri.EscapeDataString(currentSearch)}&sortBy={Uri.EscapeDataString(currentSort)}";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/catalog.css" asp-append-version="true" />
+}
+
+<!-- Compact Header Banner -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#18061A] via-[#2A0C2F] to-[#18061A] border border-amber-300/30 p-5 sm:p-6 shadow-lg text-white">
+        <div class="absolute -top-12 -right-12 w-48 h-48 bg-[#D4AF37]/15 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-2 text-start">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-amber-300/40 text-[11px] font-bold text-[#F6ECC9]">
+                    <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span>@Loc.Get("CatalogHeaderBadge")</span>
+                </div>
+                <h1 class="text-lg sm:text-2xl lg:text-3xl font-black text-white leading-snug">
+                    @Loc.Get("CatalogHeaderTitle")
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium max-w-2xl">
+                    @Loc.Get("CatalogHeaderSubtitle")
+                </p>
+            </div>
+            <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+                <a href="https://wa.me/201099887766?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B3%20%D8%AE%D9%84%D9%88%D8%AF%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A8%D8%B7%D8%A7%D9%82%D8%A7%D8%AA%20%D8%A7%D9%84%D9%81%D9%84%D8%A7%D8%B4%20%D9%83%D8%A7%D8%B1%D8%AF%D8%B2"
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition whitespace-nowrap">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z"/>
+                    </svg>
+                    <span>@Loc.Get("WhatsAppInquire")</span>
+                </a>
+                <a href="#catalog-section" class="btn-gold-primary inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black shadow-md whitespace-nowrap">
+                    <span>@Loc.Get("BrowsePacks")</span>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Catalog Section -->
+<section id="catalog-section" class="pt-4 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Filter Toolbar -->
+    <div class="mb-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+
+        <!-- Hidden Inputs for HTMX Filters -->
+        <input type="hidden" id="filter-category-id" name="categoryId" value="@currentCatId" />
+        <input type="hidden" id="filter-grade-level" name="gradeLevel" value="@currentGrade" />
+        <input type="hidden" id="filter-sort-by" name="sortBy" value="@currentSort" />
+
+        <!-- Top Row: Search + Sort + Result Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5 border-b border-slate-100">
+            <!-- Title + Count -->
+            <div class="flex items-center gap-2.5 shrink-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shrink-0"></span>
+                <h2 class="text-base sm:text-lg font-black text-slate-900 leading-none">@Loc.Get("CatalogTitle")</h2>
+                <span id="catalog-total-count" class="text-xs font-bold text-[#8D6711] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                    @Loc.Get("PacksCount", Model.TotalCount)
+                </span>
+            </div>
+
+            <div class="flex items-center gap-2 @(Loc.IsRtl ? "sm:mr-auto" : "sm:ml-auto") w-full sm:w-auto">
+                <!-- Live Search -->
+                <div class="relative flex-1 sm:w-72">
+                    <span class="absolute @(Loc.IsRtl ? "right-3" : "left-3") top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </span>
+                    <input type="text"
+                           id="filter-search-input"
+                           name="searchTerm"
+                           value="@currentSearch"
+                           placeholder="@Loc.Get("SearchPlaceholder")"
+                           hx-get="/Catalog/Filter"
+                           hx-trigger="keyup changed delay:350ms, search"
+                           hx-target="#catalog-grid"
+                           hx-include="#filter-category-id, #filter-grade-level, #filter-sort-by"
+                           class="w-full @(Loc.IsRtl ? "pr-9 pl-3" : "pl-9 pr-3") py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-medium placeholder:text-slate-400 bg-slate-50" />
+                </div>
+
+                <!-- Sort By -->
+                <div class="relative shrink-0">
+                    <select id="filter-sort-select"
+                            name="sortBy"
+                            hx-get="/Catalog/Filter"
+                            hx-trigger="change"
+                            hx-target="#catalog-grid"
+                            hx-include="#filter-category-id, #filter-grade-level, #filter-search-input"
+                            onchange="document.getElementById('filter-sort-by').value = this.value"
+                            class="appearance-none @(Loc.IsRtl ? "pr-8 pl-3" : "pl-8 pr-3") py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-bold text-slate-700 bg-white cursor-pointer">
+                        @{
+                            var sortOptions = new[] {
+                                ("", Loc.Get("SortNewest")),
+                                ("price_asc", Loc.Get("SortPriceAsc")),
+                                ("price_desc", Loc.Get("SortPriceDesc")),
+                                ("name", Loc.Get("SortName"))
+                            };
+                            foreach (var (val, label) in sortOptions)
+                            {
+                                if (val == currentSort)
+                                {
+                                    <option value="@val" selected>@label</option>
+                                }
+                                else
+                                {
+                                    <option value="@val">@label</option>
+                                }
+                            }
+                        }
+                    </select>
+                    <span class="absolute @(Loc.IsRtl ? "left-2.5" : "right-2.5") top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Level Filters -->
+        <div class="px-4 sm:px-5 py-3 border-b border-slate-100">
+            <div class="flex items-center gap-1.5 mb-2.5">
+                <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+                <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("GradeLevel")</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button type="button"
+                        hx-get="/Catalog/Filter"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-grade-level').value = ''; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="grade-filter-pill @(string.IsNullOrEmpty(currentGrade) ? "active" : "")">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                    <span>@Loc.Get("AllGrades")</span>
+                </button>
+                <button type="button"
+                        hx-get="/Catalog/Filter?gradeLevel=kg"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-grade-level').value = 'kg'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="grade-filter-pill @(currentGrade == "kg" ? "active" : "")">
+                    <svg class="w-3.5 h-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>@Loc.Get("GradeKg")</span>
+                </button>
+                <button type="button"
+                        hx-get="/Catalog/Filter?gradeLevel=primary-1-3"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-grade-level').value = 'primary-1-3'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="grade-filter-pill @(currentGrade == "primary-1-3" ? "active" : "")">
+                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span>@Loc.Get("GradePrimary13")</span>
+                </button>
+                <button type="button"
+                        hx-get="/Catalog/Filter?gradeLevel=primary-4-6"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-grade-level').value = 'primary-4-6'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="grade-filter-pill @(currentGrade == "primary-4-6" ? "active" : "")">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <span>@Loc.Get("GradePrimary46")</span>
+                </button>
+                <button type="button"
+                        hx-get="/Catalog/Filter?gradeLevel=prep"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-grade-level').value = 'prep'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="grade-filter-pill @(currentGrade == "prep" ? "active" : "")">
+                    <svg class="w-3.5 h-3.5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <span>@Loc.Get("GradePrep")</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Skill Category Filters -->
+        <div class="px-4 sm:px-5 py-3">
+            <div class="flex items-center gap-1.5 mb-2.5">
+                <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("SkillCategory")</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button type="button"
+                        hx-get="/Catalog/Filter"
+                        hx-target="#catalog-grid"
+                        hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
+                        @@click="document.getElementById('filter-category-id').value = '0'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                        class="category-filter-pill @(currentCatId == 0 ? "active" : "")">
+                    <span>@Loc.Get("AllSkills")</span>
+                </button>
+                @foreach (var cat in categories)
+                {
+                    var displayName = Loc.GetLocalized(cat.NameAr, cat.Name);
+
+                    <button type="button"
+                            hx-get="/Catalog/Filter?categoryId=@cat.Id"
+                            hx-target="#catalog-grid"
+                            hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
+                            @@click="document.getElementById('filter-category-id').value = '@cat.Id'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                            class="category-filter-pill @(currentCatId == cat.Id ? "active" : "")">
+                        <span>@displayName</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Skeleton Loading Template (shown while HTMX fetches) -->
+    <template id="catalog-skeleton">
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            @for (int s = 0; s < 8; s++)
+            {
+                <div class="animate-pulse rounded-2xl overflow-hidden border border-slate-100 bg-white p-2">
+                    <div class="h-32 sm:h-36 bg-slate-100 rounded-xl"></div>
+                    <div class="p-2 space-y-2">
+                        <div class="h-2.5 bg-slate-100 rounded-full w-1/3"></div>
+                        <div class="h-4 bg-slate-200 rounded-full w-3/4"></div>
+                        <div class="h-2.5 bg-slate-100 rounded-full w-full"></div>
+                        <div class="h-8 bg-slate-100 rounded-lg mt-2"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </template>
+
+    <!-- Product Grid (Compact Amazon-style: 2 cards per row on mobile, 4 on desktop) -->
+    <div id="catalog-grid"
+         class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 transition-opacity duration-200"
+         hx-on::before-request="this.style.opacity='0.3'"
+         hx-on::after-settle="this.style.opacity='1'; document.getElementById('catalog-section')?.scrollIntoView({behavior:'smooth', block:'start'})">
+        <partial name="_ProductGrid" model="Model" />
+    </div>
+
+    <!-- Pagination Container -->
+    <div id="catalog-pagination-container">
+        @{
+            ViewBag.PaginationBaseUrl = pageBase;
+            ViewBag.PagedInfo = Model;
+        }
+        <partial name="_Pagination" />
+    </div>
+
+</section>
+
+@section Scripts {
+<script>
+    // Sync sort hidden input whenever select changes (ensures grade/cat filters include correct sort)
+    document.addEventListener('DOMContentLoaded', function () {
+        var sortSelect = document.getElementById('filter-sort-select');
+        var sortHidden = document.getElementById('filter-sort-by');
+        if (sortSelect && sortHidden) {
+            sortSelect.addEventListener('change', function () {
+                sortHidden.value = this.value;
+            });
+        }
+
+        // Pagination scroll to catalog section
+        document.querySelectorAll('[data-scroll-catalog]').forEach(function (link) {
+            link.addEventListener('click', function () {
+                setTimeout(function () {
+                    document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        });
+    });
+</script>
+}

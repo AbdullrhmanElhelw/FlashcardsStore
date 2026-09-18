@@ -1,0 +1,319 @@
+/* ==========================================================================
+   Kholoud Elnady English Academy - Design Tokens & Enterprise Global Styles
+   Identity: Royal Midnight Plum (#18061A) & Metallic Champagne Gold (#D4AF37)
+   Zero inline CSS / Strictly isolated
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Plum Palette */
+  --brand-plum-950: #100312;
+  --brand-plum-900: #18061A;
+  --brand-plum-850: #200823;
+  --brand-plum-800: #290A2E;
+  --brand-plum-700: #3D1045;
+  --brand-plum-600: #571762;
+
+  /* Metallic Gold Palette */
+  --brand-gold-100: #FBF6E5;
+  --brand-gold-200: #F6ECC9;
+  --brand-gold-300: #ECD793;
+  --brand-gold-400: #E2C364;
+  --brand-gold-500: #D4AF37;
+  --brand-gold-600: #B88E23;
+  --brand-gold-700: #8D6711;
+
+  /* Neutral Luxury Tones */
+  --brand-cream-50: #FAF8F5;
+  --brand-cream-100: #F3EFEA;
+  --brand-cream-200: #E6DFD5;
+  --surface-white: #FFFFFF;
+  --surface-dark: #18061A;
+  --text-dark: #1E1220;
+  --text-muted: #6B5D6E;
+  --text-light: #FBF6E5;
+
+  /* Accents */
+  --success-emerald: #059669;
+  --danger-crimson: #E11D48;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden !important;
+  overflow-x: clip !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  background-color: #FAF8F5;
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+  overflow-x: clip !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  position: relative;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html[dir="rtl"] body {
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="ltr"] body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  direction: ltr;
+  text-align: left;
+}
+
+/* English Flashcard Content Override (always LTR with English font) */
+.en-card-content {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Direction-aware drawer positioning */
+html[dir="ltr"] .cart-drawer-panel {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 10px 0 40px rgba(16, 3, 18, 0.5);
+}
+
+/* Smooth Transitions */
+* {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Luxury Typography & Gradients
+   ========================================================================== */
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FBF6E5 0%, #D4AF37 50%, #C39626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-solid {
+  color: var(--brand-gold-500);
+}
+
+.text-plum-dark {
+  color: var(--brand-plum-900);
+}
+
+/* ==========================================================================
+   Glassmorphism & Surfaces
+   ========================================================================== */
+
+.navbar-glass {
+  background: rgba(24, 6, 26, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 10px 30px -10px rgba(16, 3, 18, 0.5);
+}
+
+.glass-plum-card {
+  background: rgba(41, 10, 46, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 20px 40px -15px rgba(16, 3, 18, 0.6);
+}
+
+.glass-light-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 10px 30px -5px rgba(24, 6, 26, 0.05);
+}
+
+/* ==========================================================================
+   Luxury Buttons (Next.js / React Style)
+   ========================================================================== */
+
+.btn-gold-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.875rem;
+  background: linear-gradient(135deg, #F6ECC9 0%, #D4AF37 50%, #B88E23 100%);
+  color: #100312;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px -2px rgba(212, 175, 55, 0.45);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 40px;
+  min-width: 44px;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .btn-gold-primary {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+}
+
+.btn-gold-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px 0 rgba(212, 175, 55, 0.6);
+  background: linear-gradient(135deg, #FAF1D4 0%, #E0BE4C 50%, #C79C2E 100%);
+  color: #100312;
+}
+
+.btn-gold-primary:active {
+  transform: translateY(0);
+}
+
+.btn-plum-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.875rem;
+  background: rgba(41, 10, 46, 0.8);
+  color: #FBF6E5;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-plum-secondary:hover {
+  background: rgba(56, 14, 63, 0.95);
+  border-color: rgba(212, 175, 55, 0.6);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.btn-outline-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--brand-gold-500);
+  border: 1px solid var(--brand-gold-500);
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-outline-gold:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--brand-gold-400);
+  color: var(--brand-gold-300);
+}
+
+/* ==========================================================================
+   Toast Notification Styling
+   ========================================================================== */
+
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: var(--brand-plum-900);
+  color: #FFFFFF;
+  box-shadow: 0 20px 30px -10px rgba(16, 3, 18, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.toast.toast-success {
+  border-right: 4px solid var(--success-emerald);
+}
+
+.toast.toast-error {
+  border-right: 4px solid var(--danger-crimson);
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Custom Luxury Scrollbar
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18061A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3D1045;
+  border-radius: 6px;
+  border: 2px solid #18061A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* HTMX Loading Indicator */
+.htmx-indicator {
+  display: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  display: inline-block;
+}

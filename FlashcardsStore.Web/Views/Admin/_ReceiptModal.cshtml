@@ -1,0 +1,31 @@
+<!-- Admin Receipt Preview Modal -->
+<div id="receipt-modal" class="receipt-modal-backdrop" style="display: none;">
+    <div class="receipt-modal-dialog">
+        
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <div>
+                <h3 id="modal-receipt-title" class="text-base font-extrabold text-slate-900">إيصال التحويل البنكي</h3>
+                <p id="modal-receipt-details" class="text-xs text-slate-500 mt-0.5"></p>
+            </div>
+            <button type="button" 
+                    onclick="closeReceiptModal()" 
+                    class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-4 overflow-y-auto flex items-center justify-center bg-slate-900">
+            <img id="modal-receipt-img" src="#" alt="Payment Receipt" class="receipt-image-preview" />
+        </div>
+
+        <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+            <span>تأكد من مطابقة رقم العملية وقيمة التحويل قبل الاعتماد</span>
+            <button type="button" onclick="closeReceiptModal()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 font-bold text-slate-800 transition-colors">
+                إغلاق النافذة
+            </button>
+        </div>
+
+    </div>
+</div>

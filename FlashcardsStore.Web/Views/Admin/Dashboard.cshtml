@@ -1,0 +1,224 @@
+@model AdminDashboardDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "لوحة تحكم الأكاديمية - نظرة عامة";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Top Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">نظرة عامة على المتجر</h1>
+            <p class="text-sm text-slate-500 mt-1">مرحباً بكِ في لوحة إدارة محتوى وطلبات أكاديمية خلود النادي لتعليم اللغة الإنجليزية</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+            <a asp-controller="Admin" asp-action="CreateProduct" class="admin-btn-primary">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>إضافة باقة كروت جديدة</span>
+            </a>
+
+            <a asp-controller="Admin" asp-action="Products" class="admin-btn-secondary">
+                <span>إدارة الكروت</span>
+            </a>
+
+            <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">
+                <span>إدارة الأقسام</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+        
+        <div class="metric-card">
+            <div class="flex items-center justify-between text-slate-400 mb-2">
+                <span class="text-xs font-bold">إجمالي الطلبات</span>
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-slate-900">@Model.TotalOrders</span>
+            <span class="block text-[11px] text-slate-400 mt-1">منذ الإطلاق</span>
+        </div>
+
+        <div class="metric-card border-amber-200 bg-amber-50/40">
+            <div class="flex items-center justify-between text-amber-600 mb-2">
+                <span class="text-xs font-black">تحويلات قيد المراجعة</span>
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-amber-600">@Model.PendingVerificationOrders</span>
+            <a asp-controller="Admin" asp-action="Orders" asp-route-status="PendingVerification" class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 mt-1 hover:underline">
+                <span>مراجعة الآن</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="metric-card border-emerald-200 bg-emerald-50/40">
+            <div class="flex items-center justify-between text-emerald-600 mb-2">
+                <span class="text-xs font-black">طلبات واتساب</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-emerald-600">@Model.WhatsAppPendingOrders</span>
+            <a asp-controller="Admin" asp-action="Orders" asp-route-status="WhatsAppPending" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 mt-1 hover:underline">
+                <span>عرض الطلبات</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="metric-card">
+            <div class="flex items-center justify-between text-indigo-600 mb-2">
+                <span class="text-xs font-bold">طلبات معتمدة</span>
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-indigo-600">@Model.ApprovedOrders</span>
+            <span class="block text-[11px] text-slate-400 mt-1">جاهزة للشحن</span>
+        </div>
+
+        <div class="metric-card border-rose-200 bg-rose-50/30">
+            <div class="flex items-center justify-between text-rose-500 mb-2">
+                <span class="text-xs font-bold">مخزون منخفض</span>
+                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-2xl font-black text-rose-600">@Model.LowStockProductsCount</span>
+            <span class="block text-[11px] text-slate-400 mt-1">أقل من 5 باقات</span>
+        </div>
+
+        <div class="metric-card bg-gradient-to-br from-[#18061A] to-[#290A2E] text-white border-[#D4AF37]/40 shadow-lg">
+            <div class="flex items-center justify-between text-[#F6ECC9] mb-2">
+                <span class="text-xs font-bold">إجمالي المبيعات</span>
+                <div class="w-8 h-8 rounded-lg bg-[#D4AF37]/20 text-[#D4AF37] flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <span class="text-xl font-black text-gold-gradient">@Model.TotalRevenue.ToString("F0") <small class="text-xs font-bold text-[#F6ECC9]">ج.م</small></span>
+            <span class="block text-[11px] text-slate-400 mt-1">الطلبات المعتمدة</span>
+        </div>
+
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="admin-table-container">
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <h3 class="text-base font-extrabold text-slate-900">أحدث الطلبات المستلمة</h3>
+            <a asp-controller="Admin" asp-action="Orders" class="text-xs font-bold text-[#290A2E] hover:text-[#D4AF37] inline-flex items-center gap-1 transition-colors">
+                <span>عرض كافة الطلبات</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full admin-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>اسم العميل</th>
+                        <th>الهاتف والمحافظة</th>
+                        <th>طريقة الدفع</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentOrders.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-8 text-slate-400">
+                                لا توجد طلبات مسجلة حتى الآن
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td class="font-mono font-bold text-[#290A2E]">
+                                    <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@o.Id" class="hover:underline">
+                                        @o.OrderNumber
+                                    </a>
+                                </td>
+                                <td class="font-bold text-slate-800">
+                                    @o.CustomerName
+                                    <span class="block text-[11px] font-normal text-slate-400">@o.CustomerType</span>
+                                </td>
+                                <td>
+                                    <span dir="ltr" class="font-mono text-xs block">@o.CustomerPhone</span>
+                                    <span class="text-xs text-slate-500">@o.Governorate</span>
+                                </td>
+                                <td>
+                                    @if (o.PaymentMethod == PaymentMethod.WalletTransfer)
+                                    {
+                                        <span class="text-xs font-bold text-[#290A2E] bg-[#18061A]/5 border border-[#D4AF37]/30 px-2 py-0.5 rounded-md">
+                                            محفظة @(o.HasPaymentProof ? "(مرفق إيصال)" : "")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                                            واتساب
+                                        </span>
+                                    }
+                                </td>
+                                <td class="font-black text-slate-900">
+                                    @o.GrandTotal.ToString("F0") ج.م
+                                </td>
+                                <td>
+                                    <partial name="_OrderStatusBadge" model="o.Status" />
+                                </td>
+                                <td class="text-xs text-slate-400">
+                                    @o.OrderDate.ToString("MM/dd - hh:mm tt")
+                                </td>
+                                <td>
+                                    <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@o.Id" 
+                                       class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#18061A]/5 hover:text-[#290A2E] text-slate-700 font-bold text-xs inline-flex items-center gap-1 transition-colors">
+                                        <span>معاينة</span>
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}
