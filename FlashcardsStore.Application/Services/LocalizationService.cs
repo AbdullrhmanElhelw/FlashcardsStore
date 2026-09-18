@@ -390,7 +390,44 @@ public class LocalizationService : ILocalizationService
         { "SenderPhoneLabel", ("رقم المحفظة التي قمت بالتحويل منها (للتأكد)", "Sender Phone / Wallet Number (for verification)") },
         { "TrxRefLabel", ("رقم العملية المرجعي / كود التحويل (اختياري)", "Transaction Reference / ID (Optional)") },
         { "SubmitReceipt", ("إرسال الإيصال وتأكيد حجز الطلب", "Submit Receipt & Confirm Order") },
-        { "OrSendViaWhatsApp", ("أو إرسال صورة الإيصال مباشرة عبر واتساب الأكاديمية", "Or send receipt directly via Academy WhatsApp") }
+        { "OrSendViaWhatsApp", ("أو إرسال صورة الإيصال مباشرة عبر واتساب الأكاديمية", "Or send receipt directly via Academy WhatsApp") },
+
+        // Wishlist
+        { "NavWishlist", ("المفضلة", "Wishlist") },
+        { "AddToWishlist", ("حفظ في المفضلة", "Save to Wishlist") },
+        { "RemoveFromWishlist", ("إزالة من المفضلة", "Remove from Wishlist") },
+        { "InWishlist", ("محفوظ بالمفضلة", "Saved in Wishlist") },
+        { "WishlistTitle", ("قائمة البطاقات المفضلة", "Saved Flashcards Wishlist") },
+        { "WishlistSubtitle", ("الكروت التي قمت بحفظها للرجوع إليها وشرائها لاحقاً", "Flashcard packs you saved to review or purchase later") },
+        { "WishlistEmptyTitle", ("قائمة المفضلة فارغة حالياً", "Your Wishlist is Empty") },
+        { "WishlistEmptyDesc", ("لم تقم بحفظ أي باقات بعد. استكشف مجموعات الفلاش كاردز واحفظ ما يناسب طفلك أو طلابك بالضغط على علامة القلب.", "You haven't saved any packs yet. Explore our flashcards collection and save packs by tapping the heart icon.") },
+        { "WishlistMoveToCart", ("نقل إلى السلة", "Move to Cart") },
+        { "WishlistClearAll", ("مسح كل المفضلة", "Clear Wishlist") },
+        { "WishlistTotalItems", ("عدد الباقات المحفوظة: {0}", "{0} saved packs") },
+        { "WishlistAddedToast", ("تمت إضافة الباقة للمفضلة بنجاح", "Pack added to wishlist") },
+        { "WishlistRemovedToast", ("تمت إزالة الباقة من المفضلة", "Pack removed from wishlist") },
+
+        // Reviews & Ratings
+        { "ReviewsSectionTitle", ("آراء وتجارب أولياء الأمور والمعلمين", "Parent & Teacher Reviews & Ratings") },
+        { "ReviewsSectionSubtitle", ("تجارب حقيقية موثقة من أمهات ومعلمات استخدمن كروت أكاديمية خلود النادي", "Verified testimonials from parents and educators who used our flashcards") },
+        { "ReviewsRatingOutOf", ("من 5 نجوم", "out of 5 stars") },
+        { "ReviewsTotalCount", ("بناءً على {0} تقييم موثق", "Based on {0} verified reviews") },
+        { "WriteReviewButton", ("أضف تقييمك وتجربتك", "Write a Review") },
+        { "ReviewFormTitle", ("شاركنا تجربتك مع هذه الباقة", "Share Your Experience with this Pack") },
+        { "ReviewRatingLabel", ("تقييمك بالنجوم *", "Your Rating *") },
+        { "ReviewNameLabel", ("الاسم بالكامل *", "Full Name *") },
+        { "ReviewNamePlaceholder", ("مثال: أ. منى السيد (ولية أمر)", "e.g. Mrs. Mona El-Sayed (Parent)") },
+        { "ReviewRoleLabel", ("صفتك التعليمية *", "Your Role *") },
+        { "ReviewRoleParent", ("ولي أمر (أم / أب)", "Parent (Mother / Father)") },
+        { "ReviewRoleTeacher", ("معلمة لغة إنجليزية", "English Teacher") },
+        { "ReviewRoleSchool", ("إدارة حضانة / مدرسة", "School / Nursery") },
+        { "ReviewRoleSpecialist", ("أخصائي تخاطب وتنمية مهارات", "Speech & Skills Specialist") },
+        { "ReviewCommentLabel", ("رأيك وتجربتك بالتفصيل *", "Your Detailed Review *") },
+        { "ReviewCommentPlaceholder", ("كيف ساعدت هذه الكروت طفلك أو طلابك في تعلم النطق أو القراءة؟ ما رأيك في خامة الورق وسرعة الاستفادة؟", "How did these cards help your child or students? What do you think of durability and progress?") },
+        { "ReviewSubmitButton", ("إرسال التقييم الآن", "Submit Review Now") },
+        { "ReviewSuccessMessage", ("شكراً لك! تم تسجيل تقييمك بنجاح وسعداء جداً برأيك.", "Thank you! Your review has been submitted successfully.") },
+        { "VerifiedBuyerBadge", ("مشتري موثق", "Verified Purchase") },
+        { "ReviewsNoReviewsYet", ("لا توجد تقييمات مسجلة لهذه الباقة بعد. كن أول من يشاركنا رأيه!", "No reviews for this pack yet. Be the first to share your feedback!") }
     };
 
     public bool IsRtl

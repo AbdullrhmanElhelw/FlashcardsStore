@@ -1,0 +1,176 @@
+@model IReadOnlyList<FlashcardsStore.Application.DTOs.Reviews.ReviewDto>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "إدارة تقييمات وآراء العملاء";
+    var totalReviews = Model.Count;
+    var approvedCount = Model.Count(r => r.IsApproved);
+    var avgScore = totalReviews > 0 ? Model.Average(r => r.Rating).ToString("F1") : "5.0";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <span class="text-slate-900">التقييمات والمراجعات</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">تقييمات وآراء أولياء الأمور والمعلمين</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">إدارة واعتماد تجارب العملاء المعروضة على باقات الفلاش كاردز</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-600 bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-2xs">
+                إجمالي التقييمات: <strong class="text-slate-900">@totalReviews</strong>
+            </span>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200">
+                متوسط التقييم العام: <strong class="text-[#8D6711]">★ @avgScore</strong>
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Stats Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-slate-500 block">إجمالي التقييمات</span>
+                <span class="text-2xl font-black text-slate-900 mt-1 block">@totalReviews</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-emerald-200 bg-emerald-50/20 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-emerald-700 block">التقييمات المعتمدة (الظاهرة)</span>
+                <span class="text-2xl font-black text-emerald-700 mt-1 block">@approvedCount</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-amber-200 bg-amber-50/20 shadow-xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-[#8D6711] block">متوسط الرضا العام</span>
+                <span class="text-2xl font-black text-[#8D6711] mt-1 block">@avgScore / 5.0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-[#8D6711] flex items-center justify-center">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Reviews -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-start text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 font-black">
+                            <th class="py-3.5 px-4 text-start">الباقة</th>
+                            <th class="py-3.5 px-4 text-start">العميل والصفة</th>
+                            <th class="py-3.5 px-4 text-start">التقييم</th>
+                            <th class="py-3.5 px-4 text-start">الرأي والملاحظات</th>
+                            <th class="py-3.5 px-4 text-start">التاريخ</th>
+                            <th class="py-3.5 px-4 text-start">الحالة</th>
+                            <th class="py-3.5 px-4 text-end">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                        @foreach (var r in Model)
+                        {
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-3 px-4 font-bold text-slate-900">
+                                    <span class="block">@r.ProductNameAr</span>
+                                    <span class="block text-[10px] text-slate-400 font-mono">@r.ProductName</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="block font-black text-slate-900">@r.CustomerName</span>
+                                    <span class="block text-[10px] text-slate-500">@r.Role</span>
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <div class="flex items-center gap-1 text-amber-400">
+                                        @for (int s = 1; s <= 5; s++)
+                                        {
+                                            <svg class="w-3.5 h-3.5 @(s <= r.Rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-slate-200 fill-slate-200")" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        }
+                                        <span class="text-[11px] font-bold text-slate-700 ms-1 font-mono">@r.Rating/5</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 max-w-xs sm:max-w-md">
+                                    <p class="line-clamp-2 text-slate-800 text-[11px] leading-relaxed">@r.Comment</p>
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap text-[11px] font-mono text-slate-400">
+                                    @r.CreatedAt.ToString("yyyy/MM/dd")
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    @if (r.IsApproved)
+                                    {
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            <span>معتمد</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            <span>مخفي</span>
+                                        </span>
+                                    }
+                                </td>
+                                <td class="py-3 px-4 whitespace-nowrap text-end">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <!-- Toggle Approval -->
+                                        <form asp-controller="Admin" asp-action="ToggleReviewApproval" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@r.Id" />
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[10px] font-bold border @(r.IsApproved ? "border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100" : "border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100") transition-colors">
+                                                @(r.IsApproved ? "إخفاء" : "اعتماد")
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete -->
+                                        <form asp-controller="Admin" asp-action="DeleteReview" method="post" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا التقييم نهائياً؟');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@r.Id" />
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[10px] font-bold border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors">
+                                                حذف
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="py-12 px-4 text-center space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-[#8D6711] mx-auto flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                </div>
+                <h3 class="text-sm font-black text-slate-900">لا توجد تقييمات مسجلة بعد</h3>
+                <p class="text-xs text-slate-400">ستظهر هنا أي تقييمات يشاركها أولياء الأمور والمعلمون من صفحات المنتجات.</p>
+            </div>
+        }
+    </div>
+
+</div>

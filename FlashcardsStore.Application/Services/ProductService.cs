@@ -139,6 +139,21 @@ public class ProductService : IProductService
 
     public async Task<Result<ProductDto>> CreateProductAsync(CreateProductDto dto, CancellationToken cancellationToken = default)
     {
+        var descAr = dto.DescriptionAr?.Trim() ?? "";
+        var descEn = dto.Description?.Trim() ?? "";
+
+        if (string.IsNullOrWhiteSpace(descAr) && string.IsNullOrWhiteSpace(descEn))
+        {
+            return Result<ProductDto>.Failure("يرجى إدخال وصف للباقة باللغة العربية أو الإنجليزية على الأقل");
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.Slug))
+        {
+            dto.Slug = !string.IsNullOrWhiteSpace(dto.Name)
+                ? dto.Name.ToLowerInvariant().Replace(" ", "-").Replace("/", "-")
+                : "pack-" + Guid.NewGuid().ToString("N")[..8];
+        }
+
         if (await _productRepository.ExistsBySlugAsync(dto.Slug, null, cancellationToken))
         {
             return Result<ProductDto>.Failure("الرابط المخصص (Slug) مستخدم بالفعل لمنتج آخر");
@@ -146,11 +161,11 @@ public class ProductService : IProductService
 
         var product = new Product
         {
-            Name = dto.Name,
-            NameAr = dto.NameAr,
+            Name = string.IsNullOrWhiteSpace(dto.Name) ? (dto.NameAr ?? "") : dto.Name,
+            NameAr = string.IsNullOrWhiteSpace(dto.NameAr) ? (dto.Name ?? "") : dto.NameAr,
             Slug = dto.Slug,
-            Description = dto.Description,
-            DescriptionAr = dto.DescriptionAr,
+            Description = descEn,
+            DescriptionAr = descAr,
             TargetAudience = dto.TargetAudience,
             GradeLevel = dto.GradeLevel,
             CardCount = dto.CardCount,
@@ -176,14 +191,22 @@ public class ProductService : IProductService
         if (product == null)
             return Result<ProductDto>.Failure("المنتج غير موجود");
 
+        var descAr = dto.DescriptionAr?.Trim() ?? "";
+        var descEn = dto.Description?.Trim() ?? "";
+
+        if (string.IsNullOrWhiteSpace(descAr) && string.IsNullOrWhiteSpace(descEn))
+        {
+            return Result<ProductDto>.Failure("يرجى إدخال وصف للباقة باللغة العربية أو الإنجليزية على الأقل");
+        }
+
         if (await _productRepository.ExistsBySlugAsync(dto.Slug, dto.Id, cancellationToken))
             return Result<ProductDto>.Failure("الرابط المخصص مستخدم بالفعل لمنتج آخر");
 
-        product.Name = dto.Name;
-        product.NameAr = dto.NameAr;
+        product.Name = string.IsNullOrWhiteSpace(dto.Name) ? (dto.NameAr ?? product.Name) : dto.Name;
+        product.NameAr = string.IsNullOrWhiteSpace(dto.NameAr) ? (dto.Name ?? product.NameAr) : dto.NameAr;
         product.Slug = dto.Slug;
-        product.Description = dto.Description;
-        product.DescriptionAr = dto.DescriptionAr;
+        product.Description = descEn;
+        product.DescriptionAr = descAr;
         product.TargetAudience = dto.TargetAudience;
         product.GradeLevel = dto.GradeLevel;
         product.CardCount = dto.CardCount;
@@ -217,24 +240,39 @@ public class ProductService : IProductService
     public async Task<IReadOnlyList<ProductCardViewModel>> GetFeaturedCardsAsync(CancellationToken cancellationToken = default)
     {
         var products = await _productRepository.GetFeaturedProductsAsync(cancellationToken);
-        return products.Select(p => new ProductCardViewModel
-        {
-            Id = p.Id,
-            Name = p.Name,
-            NameAr = p.NameAr,
-            Slug = p.Slug,
-            TargetAudience = p.TargetAudience,
-            GradeLevel = p.GradeLevel,
-            CardCount = p.CardCount,
-            Price = p.Price,
-            AvailableStockQuantity = p.AvailableStockQuantity,
-            ImageUrl = p.ImageUrl,
-            BackPreviewText = p.BackPreviewText,
-            BackKeyPoints = p.BackKeyPoints,
-            CategoryName = p.Category?.Name ?? string.Empty,
-            CategoryNameAr = p.Category?.NameAr ?? string.Empty
-        }).ToList();
+        return products.Select(MapToCardViewModel).ToList();
     }
+
+    public async Task<IReadOnlyList<ProductCardViewModel>> GetCardsByIdsAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default)
+    {
+        var idList = ids.Distinct().ToList();
+        if (!idList.Any())
+            return Array.Empty<ProductCardViewModel>();
+
+        var all = await _productRepository.GetAllWithCategoryAsync(cancellationToken);
+        return all
+            .Where(p => idList.Contains(p.Id) && p.IsActive)
+            .Select(MapToCardViewModel)
+            .ToList();
+    }
+
+    private static ProductCardViewModel MapToCardViewModel(Product p) => new()
+    {
+        Id = p.Id,
+        Name = p.Name,
+        NameAr = p.NameAr,
+        Slug = p.Slug,
+        TargetAudience = p.TargetAudience,
+        GradeLevel = p.GradeLevel,
+        CardCount = p.CardCount,
+        Price = p.Price,
+        AvailableStockQuantity = p.AvailableStockQuantity,
+        ImageUrl = p.ImageUrl,
+        BackPreviewText = p.BackPreviewText,
+        BackKeyPoints = p.BackKeyPoints,
+        CategoryName = p.Category?.Name ?? string.Empty,
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+    };
 
     private static ProductDto MapToDto(Product p) => new()
     {

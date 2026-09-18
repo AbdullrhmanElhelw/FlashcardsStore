@@ -6,8 +6,19 @@
     var secondaryName = isRtl ? Model.Name : Model.NameAr;
     var categoryDisplay = isRtl ? Model.CategoryNameAr : Model.CategoryName;
     var categorySub = isRtl ? Model.CategoryName : Model.CategoryNameAr;
-    var mainDesc = isRtl ? Model.DescriptionAr : (string.IsNullOrWhiteSpace(Model.Description) ? Model.DescriptionAr : Model.Description);
-    var secondaryDesc = isRtl ? Model.Description : Model.DescriptionAr;
+
+    // Dynamic description according to selected language
+    var mainDesc = isRtl 
+        ? (!string.IsNullOrWhiteSpace(Model.DescriptionAr) ? Model.DescriptionAr : Model.Description)
+        : (!string.IsNullOrWhiteSpace(Model.Description) ? Model.Description : Model.DescriptionAr);
+
+    var secondaryDesc = isRtl 
+        ? (!string.IsNullOrWhiteSpace(Model.Description) && Model.Description != mainDesc ? Model.Description : "")
+        : (!string.IsNullOrWhiteSpace(Model.DescriptionAr) && Model.DescriptionAr != mainDesc ? Model.DescriptionAr : "");
+
+    var reviews = ViewBag.Reviews as IReadOnlyList<FlashcardsStore.Application.DTOs.Reviews.ReviewDto> ?? new List<FlashcardsStore.Application.DTOs.Reviews.ReviewDto>();
+    var reviewSummary = ViewBag.ReviewSummary as FlashcardsStore.Application.DTOs.Reviews.ProductReviewSummaryDto 
+        ?? new FlashcardsStore.Application.DTOs.Reviews.ProductReviewSummaryDto { ProductId = Model.Id, AverageRating = 5.0, TotalReviews = reviews.Count };
 
     var audienceDisplay = Model.TargetAudience;
     if (!isRtl && !string.IsNullOrEmpty(audienceDisplay))
@@ -109,7 +120,7 @@
                 </span>
             </div>
 
-            <!-- Titles -->
+            <!-- Titles & Star Rating Bar -->
             <div>
                 <h1 class="text-2xl sm:text-4xl font-black text-[#18061A] leading-snug">
                     @primaryName
@@ -117,6 +128,22 @@
                 <h2 class="text-base sm:text-lg font-bold text-[#D4AF37] mt-1 en-card-content">
                     @secondaryName
                 </h2>
+
+                <!-- Rating Quick Indicator -->
+                <div class="flex items-center gap-2 mt-2">
+                    <div class="flex items-center text-amber-400">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <svg class="w-4 h-4 @(i <= Math.Round(reviewSummary.AverageRating) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-slate-300 fill-slate-200")" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        }
+                    </div>
+                    <a href="#reviews-section" class="text-xs font-bold text-slate-600 hover:text-[#8D6711] transition-colors flex items-center gap-1">
+                        <span class="font-black text-slate-900">@reviewSummary.AverageRating.ToString("F1")</span>
+                        <span class="text-slate-400">(@reviewSummary.TotalReviews @(isRtl ? "تقييم" : "reviews"))</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Price & Availability -->
@@ -148,8 +175,8 @@
                     @mainDesc
                 </p>
 
-                <!-- Sub Description Box -->
-                @if (!string.IsNullOrWhiteSpace(secondaryDesc) && secondaryDesc != mainDesc)
+                <!-- Sub Description Box (when bilingual descriptions exist) -->
+                @if (!string.IsNullOrWhiteSpace(secondaryDesc))
                 {
                     <div class="bg-[#FAF8F5] rounded-xl p-4 border border-[#E6DFD5] text-xs text-[#524355] leading-relaxed @(isRtl ? "en-card-content" : "")">
                         <strong class="block text-[#18061A] font-bold mb-1">@Loc.GetLocalized("نظرة تعليمية شاملة:", "Educational Overview:")</strong>
@@ -178,15 +205,15 @@
             <div class="bg-gradient-to-r from-[#18061A] to-[#290A2E] border border-[#D4AF37]/35 rounded-2xl p-6 space-y-4 text-white">
                 <h4 class="font-extrabold text-[#FBF6E5] text-sm">@Loc.Get("DetailsOrderHeader")</h4>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="flex flex-col sm:flex-row items-stretch gap-3">
                     @if (Model.InStock)
                     {
-                        <!-- Option 1: Add to Cart & Pay via Wallet -->
+                        <!-- Option 1: Add to Cart -->
                         <button type="button"
                                 hx-post="/Cart/AddToCart?productId=@Model.Id&quantity=1"
                                 hx-target="#cart-drawer-container"
                                 hx-swap="innerHTML"
-                                class="btn-gold-primary w-full py-3.5 px-4 text-sm font-black shadow-lg flex items-center justify-center gap-2">
+                                class="btn-gold-primary flex-grow py-3.5 px-4 text-sm font-black shadow-lg flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 text-[#100312]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                             </svg>
@@ -195,18 +222,30 @@
                     }
                     else
                     {
-                        <button type="button" disabled class="w-full py-3.5 px-4 rounded-xl bg-[#290A2E] text-[#8C7B8E] font-bold text-sm cursor-not-allowed border border-[#D4AF37]/20">
+                        <button type="button" disabled class="flex-grow py-3.5 px-4 rounded-xl bg-[#290A2E] text-[#8C7B8E] font-bold text-sm cursor-not-allowed border border-[#D4AF37]/20">
                             @Loc.Get("DetailsOutOfStockAction")
                         </button>
                     }
+
+                    <!-- Wishlist Toggle Button -->
+                    <button type="button"
+                            @@click="$store.wishlist.toggle(@Model.Id)"
+                            class="px-4 py-3.5 rounded-xl border flex items-center justify-center gap-2 font-bold text-xs transition-all shadow-md shrink-0 cursor-pointer"
+                            :class="{ 'border-rose-400 bg-rose-50 text-rose-600': $store.wishlist && $store.wishlist.has(@Model.Id), 'border-white/20 bg-white/10 text-white hover:bg-white/20': !$store.wishlist || !$store.wishlist.has(@Model.Id) }"
+                            title="@Loc.Get("AddToWishlist")">
+                        <svg class="w-5 h-5 transition-colors" :fill="$store.wishlist && $store.wishlist.has(@Model.Id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span x-text="$store.wishlist && $store.wishlist.has(@Model.Id) ? '@Loc.Get("InWishlist")' : '@Loc.Get("AddToWishlist")'"></span>
+                    </button>
 
                     <!-- Option 2: Direct WhatsApp Order -->
                     <a href="@directWhatsAppUrl"
                        target="_blank"
                        rel="noopener noreferrer"
-                       class="w-full py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                       class="py-3.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg transition shrink-0">
                         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z"/>
                         </svg>
                         <span>@Loc.Get("DetailsWhatsAppDirect")</span>
                     </a>
@@ -223,5 +262,272 @@
         </div>
 
     </div>
+
+    <!-- =========================================================================
+         CUSTOMER REVIEWS & RATINGS SECTION
+         ========================================================================= -->
+    <section id="reviews-section" class="mt-16 pt-12 border-t border-amber-200/80 space-y-8"
+             x-data="{
+                 formOpen: false,
+                 submitting: false,
+                 successMsg: '',
+                 errorMsg: '',
+                 rating: 5,
+                 customerName: '',
+                 role: 'ولي أمر',
+                 comment: '',
+                 async submitReview() {
+                     if (!this.customerName.trim() || !this.comment.trim()) {
+                         this.errorMsg = '@Loc.GetLocalized("يرجى كتابة الاسم والتعليق كاملاً", "Please enter your name and comment")';
+                         return;
+                     }
+                     this.submitting = true;
+                     this.errorMsg = '';
+                     try {
+                         const resp = await fetch('/Catalog/AddReview', {
+                             method: 'POST',
+                             headers: { 'Content-Type': 'application/json' },
+                             body: JSON.stringify({
+                                 productId: @Model.Id,
+                                 customerName: this.customerName,
+                                 role: this.role,
+                                 rating: this.rating,
+                                 comment: this.comment
+                             })
+                         });
+                         const data = await resp.json();
+                         if (data.success) {
+                             this.successMsg = '@Loc.Get("ReviewSuccessMessage")';
+                             this.customerName = '';
+                             this.comment = '';
+                             this.formOpen = false;
+                             if (window.showToast) window.showToast(this.successMsg, 'success');
+                             setTimeout(() => window.location.reload(), 1500);
+                         } else {
+                             this.errorMsg = data.message || 'حدث خطأ أثناء الإرسال';
+                         }
+                     } catch(e) {
+                         this.errorMsg = 'حدث خطأ بالاتصال، يرجى المحاولة لاحقاً';
+                     } finally {
+                         this.submitting = false;
+                     }
+                 }
+             }">
+
+        <!-- Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-bold text-[#8D6711] mb-2">
+                    <svg class="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span>@Loc.Get("ReviewsSectionTitle")</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900">@Loc.Get("ReviewsSectionTitle")</h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">@Loc.Get("ReviewsSectionSubtitle")</p>
+            </div>
+
+            <!-- Add Review Toggle CTA -->
+            <button type="button" 
+                    @@click="formOpen = !formOpen"
+                    class="btn-gold-primary px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md shrink-0 cursor-pointer">
+                <svg class="w-4 h-4 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span x-text="formOpen ? '@Loc.GetLocalized("إلغاء", "Cancel")' : '@Loc.Get("WriteReviewButton")'"></span>
+            </button>
+        </div>
+
+        <!-- Rating Summary Box (Score + Distribution Bars) -->
+        <div class="bg-white rounded-2xl p-6 sm:p-8 border border-amber-200/80 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            
+            <!-- Left Score Column -->
+            <div class="md:col-span-4 text-center md:border-e md:border-slate-100 md:pe-6 space-y-2">
+                <span class="text-5xl font-black text-slate-900 block font-mono">@reviewSummary.AverageRating.ToString("F1")</span>
+                <div class="flex items-center justify-center gap-1 text-amber-400">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <svg class="w-5 h-5 @(i <= Math.Round(reviewSummary.AverageRating) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-slate-200 fill-slate-200")" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    }
+                </div>
+                <span class="block text-xs font-bold text-slate-500">@Loc.Get("ReviewsTotalCount", reviewSummary.TotalReviews)</span>
+            </div>
+
+            <!-- Right Distribution Bars Column -->
+            <div class="md:col-span-8 space-y-2">
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <span class="w-12 text-slate-600 shrink-0">5 @Loc.GetLocalized("نجوم", "stars")</span>
+                    <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#D4AF37] rounded-full transition-all duration-500" style="width: @reviewSummary.FiveStarPercentage%"></div>
+                    </div>
+                    <span class="w-10 text-end text-slate-400 font-mono">@reviewSummary.FiveStarCount</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <span class="w-12 text-slate-600 shrink-0">4 @Loc.GetLocalized("نجوم", "stars")</span>
+                    <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-400 rounded-full transition-all duration-500" style="width: @reviewSummary.FourStarPercentage%"></div>
+                    </div>
+                    <span class="w-10 text-end text-slate-400 font-mono">@reviewSummary.FourStarCount</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <span class="w-12 text-slate-600 shrink-0">3 @Loc.GetLocalized("نجوم", "stars")</span>
+                    <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-300 rounded-full transition-all duration-500" style="width: @reviewSummary.ThreeStarPercentage%"></div>
+                    </div>
+                    <span class="w-10 text-end text-slate-400 font-mono">@reviewSummary.ThreeStarCount</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <span class="w-12 text-slate-600 shrink-0">2 @Loc.GetLocalized("نجوم", "stars")</span>
+                    <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-200 rounded-full transition-all duration-500" style="width: @reviewSummary.TwoStarPercentage%"></div>
+                    </div>
+                    <span class="w-10 text-end text-slate-400 font-mono">@reviewSummary.TwoStarCount</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs font-bold">
+                    <span class="w-12 text-slate-600 shrink-0">1 @Loc.GetLocalized("نجمة", "star")</span>
+                    <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-slate-200 rounded-full transition-all duration-500" style="width: @reviewSummary.OneStarPercentage%"></div>
+                    </div>
+                    <span class="w-10 text-end text-slate-400 font-mono">@reviewSummary.OneStarCount</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Interactive Review Form Modal/Accordion -->
+        <div x-show="formOpen" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="bg-white rounded-2xl p-6 sm:p-8 border-2 border-[#D4AF37]/40 shadow-lg space-y-5"
+             style="display: none;">
+            
+            <div class="border-b border-slate-100 pb-4">
+                <h3 class="text-base font-black text-slate-900">@Loc.Get("ReviewFormTitle")</h3>
+                <p class="text-xs text-slate-500 mt-0.5">@Loc.GetLocalized("تقييمك يساعد أولياء الأمور والمعلمات الأخريات في اختيار الباقات الأنسب لأطفالهم.", "Your review helps other parents and teachers select the best learning cards.")</p>
+            </div>
+
+            <!-- Error Banner -->
+            <template x-if="errorMsg">
+                <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold" x-text="errorMsg"></div>
+            </template>
+
+            <form @@submit.prevent="submitReview()" class="space-y-4">
+                
+                <!-- Star Rating Picker -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("ReviewRatingLabel")</label>
+                    <div class="flex items-center gap-2">
+                        <template x-for="star in [1, 2, 3, 4, 5]" :key="star">
+                            <button type="button" @@click="rating = star" class="p-1 text-2xl transition-transform hover:scale-125 focus:outline-none">
+                                <svg class="w-7 h-7" :class="star <= rating ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-slate-200 fill-slate-100'" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </button>
+                        </template>
+                        <span class="ms-2 text-xs font-black text-[#8D6711]" x-text="rating + ' / 5'"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("ReviewNameLabel")</label>
+                        <input type="text" x-model="customerName" required placeholder="@Loc.Get("ReviewNamePlaceholder")" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:border-[#D4AF37] focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("ReviewRoleLabel")</label>
+                        <select x-model="role" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold bg-white focus:border-[#D4AF37] focus:ring-1 focus:ring-amber-200 focus:outline-none">
+                            <option value="ولي أمر (أم / أب)">@Loc.Get("ReviewRoleParent")</option>
+                            <option value="معلمة لغة إنجليزية">@Loc.Get("ReviewRoleTeacher")</option>
+                            <option value="إدارة حضانة / مدرسة">@Loc.Get("ReviewRoleSchool")</option>
+                            <option value="أخصائي تخاطب وتنمية مهارات">@Loc.Get("ReviewRoleSpecialist")</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("ReviewCommentLabel")</label>
+                    <textarea x-model="comment" rows="3" required placeholder="@Loc.Get("ReviewCommentPlaceholder")" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:border-[#D4AF37] focus:ring-1 focus:ring-amber-200 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" @@click="formOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">
+                        @Loc.GetLocalized("إلغاء", "Cancel")
+                    </button>
+                    <button type="submit" :disabled="submitting" class="btn-gold-primary px-6 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center gap-2">
+                        <span x-show="!submitting">@Loc.Get("ReviewSubmitButton")</span>
+                        <span x-show="submitting">@Loc.GetLocalized("جاري الإرسال...", "Submitting...")</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Reviews List Cards Grid -->
+        <div class="space-y-4">
+            @if (reviews != null && reviews.Count > 0)
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach (var r in reviews)
+                    {
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs space-y-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <!-- Avatar initials circle -->
+                                    <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-[#8D6711] font-black text-sm flex items-center justify-center shrink-0">
+                                        @(r.CustomerName.Length > 0 ? r.CustomerName.Substring(0, 1) : "U")
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-black text-slate-900 leading-tight">@r.CustomerName</h4>
+                                        <span class="text-[11px] font-bold text-slate-500">@r.Role</span>
+                                    </div>
+                                </div>
+
+                                <div class="text-end shrink-0 space-y-1">
+                                    <div class="flex items-center gap-0.5 text-amber-400">
+                                        @for (int s = 1; s <= 5; s++)
+                                        {
+                                            <svg class="w-3.5 h-3.5 @(s <= r.Rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-slate-200 fill-slate-200")" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        }
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 font-mono block">@r.CreatedAt.ToString("yyyy/MM/dd")</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                                @r.Comment
+                            </p>
+
+                            @if (r.IsVerifiedBuyer)
+                            {
+                                <div class="pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>@Loc.Get("VerifiedBuyerBadge")</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 text-center space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-[#8D6711] mx-auto flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                    <p class="text-xs font-bold text-slate-500">@Loc.Get("ReviewsNoReviewsYet")</p>
+                </div>
+            }
+        </div>
+
+    </section>
 
 </div>

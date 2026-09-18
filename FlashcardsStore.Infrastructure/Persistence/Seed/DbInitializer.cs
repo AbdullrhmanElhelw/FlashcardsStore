@@ -287,6 +287,138 @@ public static class DbInitializer
             await context.AdminUsers.AddAsync(admin);
             await context.SaveChangesAsync();
         }
+
+        // Ensure Reviews Table Exists
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(@"
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Reviews')
+                BEGIN
+                    CREATE TABLE [Reviews] (
+                        [Id] int NOT NULL IDENTITY,
+                        [ProductId] int NOT NULL,
+                        [CustomerName] nvarchar(150) NOT NULL,
+                        [Role] nvarchar(100) NOT NULL,
+                        [Rating] int NOT NULL,
+                        [Comment] nvarchar(1000) NOT NULL,
+                        [IsApproved] bit NOT NULL,
+                        [IsVerifiedBuyer] bit NOT NULL,
+                        [CreatedAt] datetime2 NOT NULL,
+                        [CreatedBy] nvarchar(max) NULL,
+                        [UpdatedAt] datetime2 NULL,
+                        [UpdatedBy] nvarchar(max) NULL,
+                        [IsDeleted] bit NOT NULL,
+                        [DeletedAt] datetime2 NULL,
+                        CONSTRAINT [PK_Reviews] PRIMARY KEY ([Id]),
+                        CONSTRAINT [FK_Reviews_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Product] ([Id]) ON DELETE CASCADE
+                    );
+                END
+            ");
+        }
+        catch
+        {
+            // Table may already exist or running in non-SQL Server environment
+        }
+
+        // Seed Reviews
+        if (await context.Products.AnyAsync() && !await context.Reviews.AnyAsync())
+        {
+            var firstProduct = await context.Products.FirstOrDefaultAsync(p => p.Slug == "short-vowels-pack");
+            var secondProduct = await context.Products.FirstOrDefaultAsync(p => p.Slug == "blends-and-digraphs-pack");
+            var thirdProduct = await context.Products.FirstOrDefaultAsync(p => p.Slug == "cvc-word-builder");
+
+            var reviews = new List<Review>();
+
+            if (firstProduct != null)
+            {
+                reviews.AddRange(new[]
+                {
+                    new Review
+                    {
+                        ProductId = firstProduct.Id,
+                        CustomerName = "أ. مروة سالم",
+                        Role = "أم لطفلين (KG2 & Primary 1)",
+                        Rating = 5,
+                        Comment = "الكروت ممتازة وخامتها قوية جداً وسلوفان حراري ضد القطع، ابني حبها وبدأ ينطق أصوات الحركات القصيرة لوحده وبسرعة.",
+                        IsApproved = true,
+                        IsVerifiedBuyer = true,
+                        CreatedAt = DateTime.UtcNow.AddDays(-12)
+                    },
+                    new Review
+                    {
+                        ProductId = firstProduct.Id,
+                        CustomerName = "Miss Yasmin Taha",
+                        Role = "English Teacher - KG Stage",
+                        Rating = 5,
+                        Comment = "Used these cards in my phonics classes. The illustrations are vivid and the font size is ideal for small group learning.",
+                        IsApproved = true,
+                        IsVerifiedBuyer = true,
+                        CreatedAt = DateTime.UtcNow.AddDays(-8)
+                    },
+                    new Review
+                    {
+                        ProductId = firstProduct.Id,
+                        CustomerName = "أ. دينا خليل",
+                        Role = "معلمة تأسيس لغات",
+                        Rating = 5,
+                        Comment = "باركود النطق الصوتي في ظهر الكارت فكرة عبقرية، ساعدت أولياء الأمور يتابعوا مع أطفالهم النطق الصح في البيت.",
+                        IsApproved = true,
+                        IsVerifiedBuyer = true,
+                        CreatedAt = DateTime.UtcNow.AddDays(-3)
+                    }
+                });
+            }
+
+            if (secondProduct != null)
+            {
+                reviews.AddRange(new[]
+                {
+                    new Review
+                    {
+                        ProductId = secondProduct.Id,
+                        CustomerName = "أ. إيمان عبد الرحمن",
+                        Role = "ولية أمر (Primary 2)",
+                        Rating = 5,
+                        Comment = "بنتي كانت بتتلخبط بين sh و ch و th، الصندوق ده فرق معاها جداً وبقت تدمج وتقرأ الجمل السريعة بكل ثقة.",
+                        IsApproved = true,
+                        IsVerifiedBuyer = true,
+                        CreatedAt = DateTime.UtcNow.AddDays(-10)
+                    },
+                    new Review
+                    {
+                        ProductId = secondProduct.Id,
+                        CustomerName = "Mr. Ahmed Mansour",
+                        Role = "Primary English Coordinator",
+                        Rating = 5,
+                        Comment = "Outstanding cardstock, safe rounded corners, and brilliant color grouping. One of the best resources we acquired.",
+                        IsApproved = true,
+                        IsVerifiedBuyer = true,
+                        CreatedAt = DateTime.UtcNow.AddDays(-5)
+                    }
+                });
+            }
+
+            if (thirdProduct != null)
+            {
+                reviews.Add(new Review
+                {
+                    ProductId = thirdProduct.Id,
+                    CustomerName = "أ. فاطمة النجار",
+                    Role = "أخصائية تنمية مهارات وتخاطب",
+                    Rating = 5,
+                    Comment = "أزرار الصوتيات التفاعلية في الكارت فكرة ممتازة بتساعد الطفل على تجزئة الكلمة ودمجها للقراءة بسلاسة.",
+                    IsApproved = true,
+                    IsVerifiedBuyer = true,
+                    CreatedAt = DateTime.UtcNow.AddDays(-4)
+                });
+            }
+
+            if (reviews.Count > 0)
+            {
+                await context.Reviews.AddRangeAsync(reviews);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 
     public static string HashPassword(string password)

@@ -47,14 +47,14 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">اسم الباقة بالعربية *</label>
-                    <input asp-for="NameAr" required class="admin-form-input" />
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">اسم الباقة بالعربية</label>
+                    <input asp-for="NameAr" class="admin-form-input" />
                     <span asp-validation-for="NameAr" class="text-xs text-rose-600 mt-1 block"></span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الاسم بالإنجليزية *</label>
-                    <input asp-for="Name" required class="admin-form-input font-mono" />
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الاسم بالإنجليزية</label>
+                    <input asp-for="Name" class="admin-form-input font-mono" />
                     <span asp-validation-for="Name" class="text-xs text-rose-600 mt-1 block"></span>
                 </div>
 
@@ -69,6 +69,7 @@
                     <span asp-validation-for="CategoryId" class="text-xs text-rose-600 mt-1 block"></span>
                 </div>
             </div>
+            <p class="text-[11px] text-slate-400 font-medium">يمكنك إدخال اسم الباقة بالعربية أو الإنجليزية أو كليهما (أحدهما إلزامي على الأقل).</p>
         </div>
 
         <!-- Section 2: Pricing, Stock & Specs -->
@@ -220,19 +221,24 @@
 
         <!-- Section 4: Descriptions & Learning Points -->
         <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
-            <h2 class="text-base font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span>
-                <span>الوصف ومحتوى ظهر الكارت التعليمي</span>
-            </h2>
+            <div>
+                <h2 class="text-base font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span>
+                    <span>الوصف ومحتوى ظهر الكارت التعليمي</span>
+                </h2>
+                <p class="text-xs text-slate-400 font-medium mt-1">
+                    يمكنك كتابة الوصف بالعربية أو الإنجليزية أو كليهما، وسيقوم المتجر تلقائياً بعرض الوصف المطابق للغة التي يختارها العميل.
+                </p>
+            </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الوصف بالعربية *</label>
-                    <textarea asp-for="DescriptionAr" rows="2" required class="admin-form-textarea"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الوصف بالعربية</label>
+                    <textarea asp-for="DescriptionAr" rows="2" class="admin-form-textarea"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الوصف بالإنجليزية</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الوصف بالإنجليزية (English Description)</label>
                     <textarea asp-for="Description" rows="2" class="admin-form-textarea font-mono text-xs"></textarea>
                 </div>
 

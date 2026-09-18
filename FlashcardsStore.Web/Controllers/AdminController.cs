@@ -17,6 +17,7 @@ public class AdminController : Controller
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
     private readonly IFileStorageService _fileStorageService;
+    private readonly IReviewService _reviewService;
     private const string AdminSessionKey = "AdminLoggedInUser";
 
     public AdminController(
@@ -25,7 +26,8 @@ public class AdminController : Controller
         IAdminUserRepository adminUserRepository,
         IProductService productService,
         ICategoryService categoryService,
-        IFileStorageService fileStorageService)
+        IFileStorageService fileStorageService,
+        IReviewService reviewService)
     {
         _orderService = orderService;
         _paymentProofService = paymentProofService;
@@ -33,6 +35,7 @@ public class AdminController : Controller
         _productService = productService;
         _categoryService = categoryService;
         _fileStorageService = fileStorageService;
+        _reviewService = reviewService;
     }
 
     private async Task<string> GenerateUniqueSlugAsync(string? name, string? nameAr, int? currentProductId = null, CancellationToken cancellationToken = default)
@@ -635,5 +638,52 @@ public class AdminController : Controller
         }
 
         return RedirectToAction("Categories");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Reviews()
+    {
+        if (!IsAdminAuthenticated) return RedirectToAction("Login");
+
+        var reviews = await _reviewService.GetAllReviewsAsync();
+        return View(reviews);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleReviewApproval(int id)
+    {
+        if (!IsAdminAuthenticated) return RedirectToAction("Login");
+
+        var result = await _reviewService.ToggleApprovalAsync(id);
+        if (!result.IsSuccess)
+        {
+            TempData["ErrorMessage"] = result.Error;
+        }
+        else
+        {
+            TempData["SuccessMessage"] = "تم تعديل حالة اعتماد التقييم بنجاح ✓";
+        }
+
+        return RedirectToAction("Reviews");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteReview(int id)
+    {
+        if (!IsAdminAuthenticated) return RedirectToAction("Login");
+
+        var result = await _reviewService.DeleteReviewAsync(id);
+        if (!result.IsSuccess)
+        {
+            TempData["ErrorMessage"] = result.Error;
+        }
+        else
+        {
+            TempData["SuccessMessage"] = "تم حذف التقييم بنجاح ✓";
+        }
+
+        return RedirectToAction("Reviews");
     }
 }

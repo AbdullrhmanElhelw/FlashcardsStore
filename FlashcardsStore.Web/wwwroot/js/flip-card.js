@@ -1,22 +1,22 @@
-// FlashcardsStore - Dedicated 3D Flip Card Mobile Interaction Handler
+// FlashcardsStore - 3D Flip Card Handler
+// Flipping ONLY occurs when user clicks the dedicated flip button ([data-action="flip-card"], .flip-hint-badge, .flip-back-btn).
+// Standard clicks on card image, title, or buttons navigate to product details or perform actions.
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Click / Tap Flip Handler across desktop and mobile
+    // Dedicated Flip Button Click Handler
     document.addEventListener('click', (e) => {
-        const flipCard = e.target.closest('.flip-card');
-        if (!flipCard) return;
-
-        // If clicked on an action button, link, or input inside the card, do not toggle the flip
-        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) {
+        const flipBtn = e.target.closest('[data-action="flip-card"], .flip-hint-badge, .flip-back-btn');
+        if (flipBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const flipCard = flipBtn.closest('.flip-card');
+            if (flipCard) {
+                flipCard.classList.toggle('is-flipped');
+            }
             return;
         }
 
-        // Deliberate click on card canvas flips the card smoothly
-        flipCard.classList.toggle('is-flipped');
-    });
-
-    // Reset flip when clicking outside
-    document.addEventListener('click', (e) => {
+        // Reset any flipped cards when clicking outside all cards
         if (!e.target.closest('.flip-card')) {
             document.querySelectorAll('.flip-card.is-flipped').forEach(card => {
                 card.classList.remove('is-flipped');
@@ -24,3 +24,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+

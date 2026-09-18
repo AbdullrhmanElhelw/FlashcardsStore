@@ -8,11 +8,16 @@ public class CatalogController : Controller
 {
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
+    private readonly IReviewService _reviewService;
 
-    public CatalogController(IProductService productService, ICategoryService categoryService)
+    public CatalogController(
+        IProductService productService,
+        ICategoryService categoryService,
+        IReviewService reviewService)
     {
         _productService = productService;
         _categoryService = categoryService;
+        _reviewService = reviewService;
     }
 
     [HttpGet]
@@ -61,6 +66,33 @@ public class CatalogController : Controller
             return NotFound();
         }
 
+        var reviews = await _reviewService.GetReviewsByProductIdAsync(product.Id);
+        var reviewSummary = await _reviewService.GetProductReviewSummaryAsync(product.Id);
+
+        ViewBag.Reviews = reviews;
+        ViewBag.ReviewSummary = reviewSummary;
+
         return View(product);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddReview([FromBody] FlashcardsStore.Application.DTOs.Reviews.CreateReviewDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return Json(new { success = false, message = string.Join(" | ", errors) });
+        }
+
+        var result = await _reviewService.AddReviewAsync(dto);
+        if (!result.IsSuccess)
+        {
+            return Json(new { success = false, message = result.Error });
+        }
+
+        return Json(new { success = true, review = result.Value });
     }
 }

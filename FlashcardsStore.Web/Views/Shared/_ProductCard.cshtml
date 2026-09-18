@@ -41,24 +41,42 @@
 
             <!-- Front Face: Compact Artwork, Clear Price & Direct Add-to-Cart -->
             <div class="flip-card-front">
-                <!-- Compact Artwork -->
-                <div class="card-artwork group">
-                    <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-105" />
+                <!-- Compact Artwork with direct Click to Details -->
+                <div class="card-artwork group relative">
+                    <!-- Clickable Artwork Image Link -->
+                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                       class="w-full h-full flex items-center justify-center cursor-pointer p-1.5"
+                       title="@primaryTitle">
+                        <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                    </a>
 
-                    <!-- Quick Flip Button (Small icon) -->
-                    <button type="button" 
-                            onclick="event.stopPropagation(); this.closest('.flip-card').classList.toggle('is-flipped')" 
-                            class="flip-hint-badge"
-                            title="@Loc.Get("FlipCard")">
-                        <svg class="w-3 h-3 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                    </button>
-
-                    <!-- Category Pill (Ultra-compact) -->
+                    <!-- Category Pill (Top Start Corner) -->
                     <span class="category-pill-compact">
                         @categoryDisplay
                     </span>
+
+                    <!-- Wishlist Toggle Heart Button (Top End Corner, completely separate from category pill) -->
+                    <button type="button"
+                            onclick="event.stopPropagation()"
+                            @@click.stop="$store.wishlist.toggle(@Model.Id)"
+                            class="wishlist-card-btn"
+                            :class="{ '!text-rose-500 !bg-rose-50 !border-rose-300': $store.wishlist && $store.wishlist.has(@Model.Id), 'text-slate-400 hover:text-rose-500': !$store.wishlist || !$store.wishlist.has(@Model.Id) }"
+                            title="@Loc.Get("AddToWishlist")">
+                        <svg class="w-4 h-4 transition-colors pointer-events-none" :fill="$store.wishlist && $store.wishlist.has(@Model.Id) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                    </button>
+
+                    <!-- Quick Flip Button (Bottom End Corner) -->
+                    <button type="button" 
+                            data-action="flip-card"
+                            onclick="event.stopPropagation(); this.closest('.flip-card').classList.toggle('is-flipped')" 
+                            class="flip-hint-badge"
+                            title="@Loc.Get("FlipCard")">
+                        <svg class="w-3.5 h-3.5 text-[#D4AF37] pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Info Body -->
@@ -70,7 +88,7 @@
                             <span class="text-[#8D6711] bg-amber-50 px-1.5 py-0.5 rounded shrink-0">@Loc.Get("CardsCountLabel", Model.CardCount)</span>
                         </div>
 
-                        <!-- Card Title -->
+                        <!-- Card Title (Clickable link to details) -->
                         <h3 class="text-xs sm:text-sm font-black text-slate-900 leading-snug line-clamp-1 hover:text-[#B88E23] transition-colors">
                             <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug">
                                 @primaryTitle
@@ -131,7 +149,7 @@
                                onclick="event.stopPropagation()"
                                class="p-1.5 sm:p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center shrink-0 min-h-[34px] sm:min-h-[36px] min-w-[34px] sm:min-w-[36px]"
                                title="@Loc.Get("Details")">
-                                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="w-4 h-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
@@ -147,18 +165,27 @@
                     <div class="flex items-center justify-between border-b border-[#D4AF37]/20 pb-1.5">
                         <span class="text-[10px] font-bold text-[#D4AF37]">@Loc.Get("CardContent")</span>
                         <button type="button" 
+                                data-action="flip-card"
                                 onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('is-flipped')"
-                                class="text-[10px] text-[#FBF6E5]/80 hover:text-white flex items-center gap-1">
+                                class="text-[10px] text-[#FBF6E5]/80 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
                             <span>@Loc.Get("FrontFace")</span>
+                            <svg class="w-3 h-3 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
                         </button>
                     </div>
 
-                    <h4 class="text-xs sm:text-sm font-black text-white leading-tight line-clamp-1">@primaryTitle</h4>
+                    <h4 class="text-xs sm:text-sm font-black text-white leading-tight line-clamp-1">
+                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" class="hover:text-[#D4AF37] transition-colors">
+                            @primaryTitle
+                        </a>
+                    </h4>
 
-                    <!-- English Preview Box (LTR) -->
-                    <div class="back-preview-box text-left en-card-content text-[10px] sm:text-[11px] text-[#FBF6E5]/90 leading-snug bg-black/30 p-2 rounded-lg border border-white/10 line-clamp-3">
+                    <!-- English Preview Box (LTR) with click to details -->
+                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug"
+                       class="back-preview-box block text-left en-card-content text-[10px] sm:text-[11px] text-[#FBF6E5]/90 leading-snug bg-black/30 p-2 rounded-lg border border-white/10 hover:border-[#D4AF37]/40 transition-colors line-clamp-3">
                         @Model.BackPreviewText
-                    </div>
+                    </a>
 
                     <!-- Key Features Points -->
                     <div class="space-y-1 my-1">
@@ -181,26 +208,36 @@
                         <span class="text-sm sm:text-base font-black text-white">@Model.Price.ToString("F0") <small class="text-[10px] font-bold text-[#D4AF37]">@currency</small></span>
                     </div>
 
-                    @if (Model.InStock)
-                    {
-                        <button type="button"
-                                hx-post="/Cart/AddToCart?productId=@Model.Id&quantity=1"
-                                hx-target="#cart-drawer-container"
-                                hx-swap="innerHTML"
-                                onclick="event.stopPropagation()"
-                                class="btn-gold-primary w-full py-1.5 rounded-lg font-black text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-sm min-h-[34px]">
-                            <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            <span>@Loc.Get("AddToCart")</span>
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="button" disabled class="w-full py-1.5 rounded-lg bg-[#290A2E] text-[#8C7B8E] font-bold text-[11px] cursor-not-allowed border border-[#D4AF37]/20 min-h-[34px]">
-                            @Loc.Get("OutOfStock")
-                        </button>
-                    }
+                    <div class="flex items-center gap-1.5">
+                        @if (Model.InStock)
+                        {
+                            <button type="button"
+                                    hx-post="/Cart/AddToCart?productId=@Model.Id&quantity=1"
+                                    hx-target="#cart-drawer-container"
+                                    hx-swap="innerHTML"
+                                    onclick="event.stopPropagation()"
+                                    class="btn-gold-primary flex-1 py-1.5 rounded-lg font-black text-[11px] sm:text-xs flex items-center justify-center gap-1 shadow-sm min-h-[34px]">
+                                <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                <span>@Loc.Get("AddToCart")</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" disabled class="flex-1 py-1.5 rounded-lg bg-[#290A2E] text-[#8C7B8E] font-bold text-[11px] cursor-not-allowed border border-[#D4AF37]/20 min-h-[34px]">
+                                @Loc.Get("OutOfStock")
+                            </button>
+                        }
+
+                        <!-- Details Icon Link on Back Face -->
+                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                           onclick="event.stopPropagation()"
+                           class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] sm:text-xs transition-colors flex items-center justify-center min-h-[34px] border border-white/20 shrink-0"
+                           title="@Loc.Get("Details")">
+                            <span>@Loc.Get("Details")</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
