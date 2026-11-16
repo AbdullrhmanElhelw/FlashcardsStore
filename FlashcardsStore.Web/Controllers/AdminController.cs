@@ -1,3 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FlashcardsStore.Application.DTOs.Admin;
 using FlashcardsStore.Application.DTOs.Categories;
@@ -9,6 +13,7 @@ using FlashcardsStore.Infrastructure.Persistence.Seed;
 
 namespace FlashcardsStore.Web.Controllers;
 
+[Authorize(Roles = "Administrator")]
 public class AdminController : Controller
 {
     private readonly IOrderService _orderService;
@@ -18,7 +23,8 @@ public class AdminController : Controller
     private readonly ICategoryService _categoryService;
     private readonly IFileStorageService _fileStorageService;
     private readonly IReviewService _reviewService;
-    private const string AdminSessionKey = "AdminLoggedInUser";
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IUnitOfWork _unitOfWork;
 
     public AdminController(
         IOrderService orderService,
@@ -27,7 +33,9 @@ public class AdminController : Controller
         IProductService productService,
         ICategoryService categoryService,
         IFileStorageService fileStorageService,
-        IReviewService reviewService)
+        IReviewService reviewService,
+        IPasswordHasher passwordHasher,
+        IUnitOfWork unitOfWork)
     {
         _orderService = orderService;
         _paymentProofService = paymentProofService;
@@ -36,6 +44,8 @@ public class AdminController : Controller
         _categoryService = categoryService;
         _fileStorageService = fileStorageService;
         _reviewService = reviewService;
+        _passwordHasher = passwordHasher;
+        _unitOfWork = unitOfWork;
     }
 
     private async Task<string> GenerateUniqueSlugAsync(string? name, string? nameAr, int? currentProductId = null, CancellationToken cancellationToken = default)
@@ -62,13 +72,13 @@ public class AdminController : Controller
         }
     }
 
-    private bool IsAdminAuthenticated => !string.IsNullOrEmpty(HttpContext.Session.GetString(AdminSessionKey));
-    private string CurrentAdminUser => HttpContext.Session.GetString(AdminSessionKey) ?? "admin";
+    private string CurrentAdminUser => User.Identity?.Name ?? "admin";
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Login(string? returnUrl)
     {
-        if (IsAdminAuthenticated)
+        if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Dashboard");
         }
@@ -78,6 +88,7 @@ public class AdminController : Controller
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> LoginSubmit(AdminLoginDto dto, string? returnUrl, CancellationToken cancellationToken)
     {
@@ -88,13 +99,40 @@ public class AdminController : Controller
         }
 
         var user = await _adminUserRepository.GetByUsernameAsync(dto.Username.Trim(), cancellationToken);
-        if (user == null || !DbInitializer.VerifyPassword(dto.Password, user.PasswordHash))
+        if (user == null || !_passwordHasher.VerifyPassword(dto.Password, user.PasswordHash))
         {
             ModelState.AddModelError(string.Empty, "بيانات الدخول غير صحيحة");
             return View("Login", dto);
         }
 
-        HttpContext.Session.SetString(AdminSessionKey, user.Username);
+        // Auto-upgrade legacy password hash to salted PBKDF2 if needed
+        if (!user.PasswordHash.StartsWith("$pbkdf2-sha256$"))
+        {
+            user.PasswordHash = _passwordHasher.HashPassword(dto.Password);
+        }
+        user.LastLoginAt = DateTime.UtcNow;
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.GivenName, user.FullName ?? user.Username),
+            new(ClaimTypes.Email, user.Email ?? string.Empty),
+            new(ClaimTypes.Role, user.Role)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+        };
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
 
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
@@ -106,17 +144,15 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        HttpContext.Session.Remove(AdminSessionKey);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
 
     [HttpGet]
     public async Task<IActionResult> Dashboard(CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
-
         var metrics = await _orderService.GetAdminDashboardMetricsAsync(cancellationToken);
         return View(metrics);
     }
@@ -124,7 +160,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Orders(OrderStatus? status, string? search, int page = 1, CancellationToken cancellationToken = default)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         const int pageSize = 15;
         IReadOnlyList<FlashcardsStore.Application.DTOs.Orders.OrderSummaryDto> orders;
@@ -171,7 +206,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> OrderDetails(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var order = await _orderService.GetOrderByIdAsync(id, cancellationToken);
         if (order == null)
@@ -186,7 +220,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddOrderNote(int id, string notes, OrderStatus? newStatus, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var order = await _orderService.GetOrderByIdAsync(id, cancellationToken);
         if (order == null) return NotFound();
@@ -208,7 +241,6 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> Approve(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return Unauthorized();
 
         var result = await _orderService.ApproveOrderAsync(id, CurrentAdminUser, cancellationToken);
         if (!result.Succeeded)
@@ -228,7 +260,6 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> Reject(int id, string? reason, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return Unauthorized();
 
         var result = await _orderService.RejectOrderAsync(id, CurrentAdminUser, reason, cancellationToken);
         if (!result.Succeeded)
@@ -248,7 +279,6 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateStatus(int id, OrderStatus newStatus, string? notes, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return Unauthorized();
 
         var result = await _orderService.UpdateOrderStatusAsync(id, newStatus, CurrentAdminUser, notes, cancellationToken);
         if (result.Succeeded)
@@ -267,7 +297,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Products(int? categoryId, string? search, int page = 1, CancellationToken cancellationToken = default)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         const int pageSize = 10;
         var allProducts = await _productService.GetAllProductsAsync(cancellationToken);
@@ -314,7 +343,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> CreateProduct(CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         ViewBag.Categories = await _categoryService.GetAllCategoriesAsync(cancellationToken);
         return View(new CreateProductDto
@@ -333,7 +361,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateProduct(CreateProductDto dto, List<IFormFile>? imageFiles, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         if (string.IsNullOrWhiteSpace(dto.Slug))
         {
@@ -386,7 +413,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditProduct(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var product = await _productService.GetByIdAsync(id, cancellationToken);
         if (product == null) return NotFound();
@@ -420,7 +446,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditProduct(UpdateProductDto dto, List<IFormFile>? imageFiles, string? existingImages, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         if (string.IsNullOrWhiteSpace(dto.Slug))
         {
@@ -479,7 +504,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteProduct(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var result = await _productService.DeleteProductAsync(id, cancellationToken);
         if (!result.Succeeded)
@@ -497,7 +521,6 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> ToggleProductStatus(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return Unauthorized();
 
         var product = await _productService.GetByIdAsync(id, cancellationToken);
         if (product == null) return NotFound();
@@ -539,7 +562,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Categories(CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var categories = await _categoryService.GetAllCategoriesAsync(cancellationToken);
         return View(categories);
@@ -548,7 +570,6 @@ public class AdminController : Controller
     [HttpGet]
     public IActionResult CreateCategory()
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         return View(new CreateCategoryDto { DisplayOrder = 10 });
     }
@@ -557,7 +578,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateCategory(CreateCategoryDto dto, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         if (string.IsNullOrWhiteSpace(dto.Slug))
         {
@@ -583,7 +603,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditCategory(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var category = await _categoryService.GetByIdAsync(id, cancellationToken);
         if (category == null) return NotFound();
@@ -603,7 +622,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditCategory(UpdateCategoryDto dto, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         if (!ModelState.IsValid)
         {
@@ -625,7 +643,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var result = await _categoryService.DeleteCategoryAsync(id, cancellationToken);
         if (!result.Succeeded)
@@ -643,7 +660,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Reviews()
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var reviews = await _reviewService.GetAllReviewsAsync();
         return View(reviews);
@@ -653,7 +669,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleReviewApproval(int id)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var result = await _reviewService.ToggleApprovalAsync(id);
         if (!result.IsSuccess)
@@ -672,7 +687,6 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        if (!IsAdminAuthenticated) return RedirectToAction("Login");
 
         var result = await _reviewService.DeleteReviewAsync(id);
         if (!result.IsSuccess)

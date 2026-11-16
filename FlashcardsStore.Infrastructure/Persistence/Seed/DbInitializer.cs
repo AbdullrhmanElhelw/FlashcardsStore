@@ -421,16 +421,9 @@ public static class DbInitializer
         }
     }
 
-    public static string HashPassword(string password)
-    {
-        var bytes = Encoding.UTF8.GetBytes(password);
-        var hash = SHA256.HashData(bytes);
-        return Convert.ToHexString(hash);
-    }
+    private static readonly FlashcardsStore.Infrastructure.Security.PasswordHasher _hasher = new();
 
-    public static bool VerifyPassword(string enteredPassword, string storedHash)
-    {
-        var enteredHash = HashPassword(enteredPassword);
-        return string.Equals(enteredHash, storedHash, StringComparison.OrdinalIgnoreCase);
-    }
+    public static string HashPassword(string password) => _hasher.HashPassword(password);
+
+    public static bool VerifyPassword(string enteredPassword, string storedHash) => _hasher.VerifyPassword(enteredPassword, storedHash);
 }

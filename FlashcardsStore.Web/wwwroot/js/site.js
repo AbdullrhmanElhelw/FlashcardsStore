@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Global HTMX Event Listeners
+    // Attach CSRF RequestVerificationToken automatically to every HTMX request
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (tokenInput && tokenInput.value) {
+            event.detail.headers['RequestVerificationToken'] = tokenInput.value;
+        }
+    });
+
     document.body.addEventListener('htmx:afterOnLoad', (event) => {
         // Look for custom toast headers
         const toastMsg = event.detail.xhr.getResponseHeader('HX-Toast-Message');

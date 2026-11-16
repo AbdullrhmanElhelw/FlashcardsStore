@@ -26,6 +26,11 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1E1220] selection:bg-[#D4AF37] selection:text-[#18061A] overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false }">
 
+    <!-- Global Anti-Forgery Token for HTMX & AJAX -->
+    <form id="global-antiforgery-form" style="display:none;" aria-hidden="true">
+        @Html.AntiForgeryToken()
+    </form>
+
     <!-- Navigation Header -->
     <partial name="_Navbar" />
 
