@@ -12,6 +12,7 @@ public class ProductCardViewModel
     public decimal Price { get; set; }
     public int AvailableStockQuantity { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;

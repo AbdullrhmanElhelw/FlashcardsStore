@@ -320,6 +320,21 @@ public static class DbInitializer
             // Table may already exist or running in non-SQL Server environment
         }
 
+        // Ensure Product.AudioUrl column exists for custom teacher voice notes
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(@"
+                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Product') AND name = 'AudioUrl')
+                BEGIN
+                    ALTER TABLE [Product] ADD [AudioUrl] nvarchar(500) NULL;
+                END
+            ");
+        }
+        catch
+        {
+            // Column may already exist
+        }
+
         // Seed Reviews
         if (await context.Products.AnyAsync() && !await context.Reviews.AnyAsync())
         {

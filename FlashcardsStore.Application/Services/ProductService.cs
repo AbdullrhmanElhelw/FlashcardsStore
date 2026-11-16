@@ -157,6 +157,7 @@ public class ProductService : IProductService
             Price = dto.Price,
             StockQuantity = dto.StockQuantity,
             ImageUrl = dto.ImageUrl,
+            AudioUrl = dto.AudioUrl,
             BackPreviewText = dto.BackPreviewText,
             BackKeyPoints = dto.BackKeyPoints,
             CategoryId = dto.CategoryId,
@@ -198,6 +199,7 @@ public class ProductService : IProductService
         product.Price = dto.Price;
         product.StockQuantity = dto.StockQuantity;
         product.ImageUrl = dto.ImageUrl;
+        product.AudioUrl = dto.AudioUrl;
         product.BackPreviewText = dto.BackPreviewText;
         product.BackKeyPoints = dto.BackKeyPoints;
         product.CategoryId = dto.CategoryId;
@@ -253,6 +255,7 @@ public class ProductService : IProductService
         Price = p.Price,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryName = p.Category?.Name ?? string.Empty,
@@ -276,6 +279,7 @@ public class ProductService : IProductService
         ReservedStockQuantity = p.ReservedStockQuantity,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryId = p.CategoryId,
@@ -300,6 +304,7 @@ public class ProductService : IProductService
         StockQuantity = p.StockQuantity,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryId = p.CategoryId,

@@ -272,6 +272,36 @@
             </script>
 
             <!-- =========================================================================
+                 TEACHER EXCLUSIVE VOICE NOTE (IF RECORDED / UPLOADED BY MISS KHOLOUD)
+                 ========================================================================= -->
+            @if (!string.IsNullOrWhiteSpace(Model.AudioUrl))
+            {
+                <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#18061A] via-[#240A28] to-[#120314] text-white border-2 border-[#D4AF37] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#B88E23] text-slate-950 flex items-center justify-center font-bold text-xl shadow-md shrink-0">
+                            🎙️
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-black text-[#D4AF37]">
+                                    @Loc.GetLocalized("شرح ونطق صوتي حصري للباقة", "Official Voice Note")
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+                                    @Loc.GetLocalized("بصوت ميس خلود النادي ✓", "By Miss Kholoud ✓")
+                                </span>
+                            </div>
+                            <p class="text-xs text-white/80 font-medium mt-1">
+                                @Loc.GetLocalized("تسجيل صوتي خاص من المعلمة لتأسيس طفلك وتوضيح النطق السليم لكروت الباقة", "Special voice recording from the teacher for your child foundation and clear pronunciation")
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Audio Player -->
+                    <audio src="@Model.AudioUrl" controls class="h-10 w-full sm:w-72 max-w-full rounded-xl shrink-0"></audio>
+                </div>
+            }
+
+            <!-- =========================================================================
                  INTERACTIVE AUDIO PRONUNCIATION PREVIEW (NATIVE SPEECH SYNTHESIS)
                  ========================================================================= -->
             <div x-data="pronunciationPlayer('product-pronunciation-data')"

@@ -226,3 +226,40 @@ window.playQuickCardPronunciation = function(btnElement, textToSay) {
 
     window.speechSynthesis.speak(utterance);
 };
+
+// Global Teacher Voice Note Player for uploaded audio recordings
+let currentPlayingAudio = null;
+window.playAudioNote = function(btnElement, audioUrl) {
+    if (!audioUrl) return;
+
+    if (currentPlayingAudio) {
+        currentPlayingAudio.pause();
+        currentPlayingAudio = null;
+        document.querySelectorAll('.audio-quick-btn').forEach(b => {
+            b.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-600');
+            const wave = b.querySelector('.soundwave-container');
+            if (wave) wave.classList.add('hidden');
+        });
+    }
+
+    const audio = new Audio(audioUrl);
+    currentPlayingAudio = audio;
+
+    const waveSpan = btnElement.querySelector('.soundwave-container');
+    btnElement.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-600');
+    if (waveSpan) waveSpan.classList.remove('hidden');
+
+    audio.onended = () => {
+        btnElement.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-600');
+        if (waveSpan) waveSpan.classList.add('hidden');
+        currentPlayingAudio = null;
+    };
+
+    audio.onerror = () => {
+        btnElement.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-600');
+        if (waveSpan) waveSpan.classList.add('hidden');
+        currentPlayingAudio = null;
+    };
+
+    audio.play();
+};

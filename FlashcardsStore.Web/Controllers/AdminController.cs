@@ -359,9 +359,8 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateProduct(CreateProductDto dto, List<IFormFile>? imageFiles, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateProduct(CreateProductDto dto, List<IFormFile>? imageFiles, IFormFile? audioFile, CancellationToken cancellationToken)
     {
-
         if (string.IsNullOrWhiteSpace(dto.Slug))
         {
             dto.Slug = await GenerateUniqueSlugAsync(dto.Name, dto.NameAr, null, cancellationToken);
@@ -391,6 +390,18 @@ public class AdminController : Controller
             dto.ImageUrl = "/images/cards/card-phonics-1.svg";
         }
         ModelState.Remove(nameof(dto.ImageUrl));
+
+        // Handle Audio Voice Note Upload / In-Browser Recording
+        if (audioFile != null && audioFile.Length > 0)
+        {
+            var ext = Path.GetExtension(audioFile.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext)) ext = ".webm";
+            var fileName = audioFile.FileName.Contains('.') ? audioFile.FileName : $"{Guid.NewGuid():N}{ext}";
+            using var audioStream = audioFile.OpenReadStream();
+            var savedAudioPath = await _fileStorageService.SaveFileAsync(audioStream, fileName, "audio", cancellationToken);
+            dto.AudioUrl = savedAudioPath;
+        }
+        ModelState.Remove(nameof(dto.AudioUrl));
 
         if (!ModelState.IsValid)
         {
@@ -432,6 +443,7 @@ public class AdminController : Controller
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             ImageUrl = product.ImageUrl,
+            AudioUrl = product.AudioUrl,
             BackPreviewText = product.BackPreviewText,
             BackKeyPoints = product.BackKeyPoints,
             CategoryId = product.CategoryId,
@@ -444,9 +456,8 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditProduct(UpdateProductDto dto, List<IFormFile>? imageFiles, string? existingImages, CancellationToken cancellationToken)
+    public async Task<IActionResult> EditProduct(UpdateProductDto dto, List<IFormFile>? imageFiles, string? existingImages, IFormFile? audioFile, string? existingAudio, CancellationToken cancellationToken)
     {
-
         if (string.IsNullOrWhiteSpace(dto.Slug))
         {
             dto.Slug = await GenerateUniqueSlugAsync(dto.Name, dto.NameAr, dto.Id, cancellationToken);
@@ -481,6 +492,22 @@ public class AdminController : Controller
             dto.ImageUrl = "/images/cards/card-phonics-1.svg";
         }
         ModelState.Remove(nameof(dto.ImageUrl));
+
+        // Handle Audio Voice Note Upload / In-Browser Recording
+        if (audioFile != null && audioFile.Length > 0)
+        {
+            var ext = Path.GetExtension(audioFile.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext)) ext = ".webm";
+            var fileName = audioFile.FileName.Contains('.') ? audioFile.FileName : $"{Guid.NewGuid():N}{ext}";
+            using var audioStream = audioFile.OpenReadStream();
+            var savedAudioPath = await _fileStorageService.SaveFileAsync(audioStream, fileName, "audio", cancellationToken);
+            dto.AudioUrl = savedAudioPath;
+        }
+        else if (!string.IsNullOrWhiteSpace(existingAudio))
+        {
+            dto.AudioUrl = existingAudio;
+        }
+        ModelState.Remove(nameof(dto.AudioUrl));
 
         if (!ModelState.IsValid)
         {
