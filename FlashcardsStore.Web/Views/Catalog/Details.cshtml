@@ -266,10 +266,15 @@
                 </div>
             </div>
 
+            <!-- Hidden JSON data for Pronunciation Studio -->
+            <script id="product-pronunciation-data" type="application/json">
+                @Html.Raw(sampleWordsJson)
+            </script>
+
             <!-- =========================================================================
                  INTERACTIVE AUDIO PRONUNCIATION PREVIEW (NATIVE SPEECH SYNTHESIS)
                  ========================================================================= -->
-            <div x-data="pronunciationPlayer(@Html.Raw(sampleWordsJson))"
+            <div x-data="pronunciationPlayer('product-pronunciation-data')"
                  x-show="isSupported && words && words.length > 0"
                  class="bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5EEDC] border-2 border-[#D4AF37]/50 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4 text-start">
                 

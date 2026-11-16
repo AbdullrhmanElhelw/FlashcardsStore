@@ -3,19 +3,34 @@
  * Native Web Speech API with dual accents (US/UK) and speed toggle (Normal / Slow for Kids).
  */
 document.addEventListener('alpine:init', () => {
-    Alpine.data('pronunciationPlayer', (initialWords = []) => ({
-        words: initialWords,
-        currentWord: null,
-        currentType: null, // 'word' or 'sentence'
-        isPlaying: false,
-        isAllPlaying: false,
-        currentIndex: -1,
-        accent: 'US', // 'US' or 'UK'
-        rate: 0.9,    // 0.9 normal, 0.75 for slow for kids
-        pitch: 1.05,
-        voices: [],
-        speechSynth: typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null,
-        isSupported: typeof window !== 'undefined' && 'speechSynthesis' in window,
+    Alpine.data('pronunciationPlayer', (wordsOrElementId = []) => {
+        let initialWords = [];
+        if (typeof wordsOrElementId === 'string') {
+            const el = document.getElementById(wordsOrElementId);
+            if (el) {
+                try {
+                    initialWords = JSON.parse(el.textContent || '[]');
+                } catch (e) {
+                    console.error('Error parsing words json:', e);
+                }
+            }
+        } else if (Array.isArray(wordsOrElementId)) {
+            initialWords = wordsOrElementId;
+        }
+
+        return {
+            words: initialWords,
+            currentWord: null,
+            currentType: null, // 'word' or 'sentence'
+            isPlaying: false,
+            isAllPlaying: false,
+            currentIndex: -1,
+            accent: 'US', // 'US' or 'UK'
+            rate: 0.9,    // 0.9 normal, 0.72 for slow for kids
+            pitch: 1.05,
+            voices: [],
+            speechSynth: typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null,
+            isSupported: typeof window !== 'undefined' && 'speechSynthesis' in window,
 
         init() {
             if (!this.isSupported) return;
@@ -173,7 +188,8 @@ document.addEventListener('alpine:init', () => {
         toggleSpeed() {
             this.rate = this.rate === 0.9 ? 0.72 : 0.9;
         }
-    }));
+    };
+});
 });
 
 // Global Quick Pronunciation function for any card or element
