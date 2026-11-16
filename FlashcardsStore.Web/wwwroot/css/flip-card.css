@@ -248,3 +248,40 @@ html[dir="ltr"] .category-pill-compact {
   border-radius: 8px;
   padding: 6px 8px;
 }
+
+/* ==========================================================================
+   Soundwave & Audio Pronunciation Styles
+   ========================================================================== */
+.soundwave-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+  vertical-align: middle;
+}
+
+.soundwave-bar {
+  width: 2.5px;
+  background-color: currentColor;
+  border-radius: 9999px;
+  animation: soundwave-bounce 0.8s ease-in-out infinite alternate;
+}
+
+.soundwave-bar:nth-child(1) { height: 4px; animation-delay: 0.1s; }
+.soundwave-bar:nth-child(2) { height: 11px; animation-delay: 0.25s; }
+.soundwave-bar:nth-child(3) { height: 7px; animation-delay: 0.4s; }
+
+@keyframes soundwave-bounce {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1.1); }
+}
+
+.audio-pulse-ring {
+  animation: audio-ring 1.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+@keyframes audio-ring {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}

@@ -54,23 +54,8 @@ public class ProductService : IProductService
         var pagedItems = query
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
-            .Select(p => new ProductCardViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                NameAr = p.NameAr,
-                Slug = p.Slug,
-                TargetAudience = p.TargetAudience,
-                GradeLevel = p.GradeLevel,
-                CardCount = p.CardCount,
-                Price = p.Price,
-                AvailableStockQuantity = p.AvailableStockQuantity,
-                ImageUrl = p.ImageUrl,
-                BackPreviewText = p.BackPreviewText,
-                BackKeyPoints = p.BackKeyPoints,
-                CategoryName = p.Category?.Name ?? string.Empty,
-                CategoryNameAr = p.Category?.NameAr ?? string.Empty
-            }).ToList();
+            .Select(MapToCardViewModel)
+            .ToList();
 
         return new PagedResult<ProductCardViewModel>
         {
@@ -271,7 +256,8 @@ public class ProductService : IProductService
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryName = p.Category?.Name ?? string.Empty,
-        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty,
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
     };
 
     private static ProductDto MapToDto(Product p) => new()
@@ -318,6 +304,7 @@ public class ProductService : IProductService
         BackKeyPoints = p.BackKeyPoints,
         CategoryId = p.CategoryId,
         CategoryName = p.Category?.Name ?? string.Empty,
-        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty,
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
     };
 }

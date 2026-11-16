@@ -17,4 +17,5 @@ public class ProductCardViewModel
     public string CategoryName { get; set; } = string.Empty;
     public string CategoryNameAr { get; set; } = string.Empty;
     public bool InStock => AvailableStockQuantity > 0;
+    public IReadOnlyList<FlashcardsStore.Application.Common.PronunciationItem> SampleWords { get; set; } = new List<FlashcardsStore.Application.Common.PronunciationItem>();
 }
