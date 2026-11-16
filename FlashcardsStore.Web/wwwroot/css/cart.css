@@ -114,3 +114,19 @@ html[dir="ltr"] .cart-drawer-panel {
   50% { transform: scale(1.3); }
   100% { transform: scale(1); }
 }
+
+/* HTMX Request Feedback States */
+.htmx-request {
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.cart-item-row.htmx-request {
+  opacity: 0.45;
+  filter: grayscale(40%);
+}
+
+#cart-drawer-container.htmx-request {
+  cursor: wait;
+}

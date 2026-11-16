@@ -93,7 +93,7 @@ public class OrderService : IOrderService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         // Generate Order Number: EGY-YYYYMMDD-XXXX
-        var randomSuffix = new Random().Next(1000, 9999);
+        var randomSuffix = Random.Shared.Next(1000, 9999);
         var orderNumber = $"EGY-{DateTime.UtcNow:yyyyMMdd}-{randomSuffix}";
 
         // Calculate shipping fee according to Egyptian governorate
@@ -361,7 +361,14 @@ public class OrderService : IOrderService
             return 50.00m;
         }
 
-        if (gov.Contains("الإسكندرية") || gov.Contains("القليوبية") || gov.Contains("الشرقية") || gov.Contains("الدقهلية") || gov.Contains("الغربية") || gov.Contains("المنوفية") || gov.Contains("البحيرة") || gov.Contains("دمياط") || gov.Contains("كفر الشيخ"))
+        if (gov.Contains("الإسكندرية") || gov.Contains("القليوبية") || gov.Contains("الشرقية") ||
+            gov.Contains("الدقهلية") || gov.Contains("الغربية") || gov.Contains("المنوفية") ||
+            gov.Contains("البحيرة") || gov.Contains("دمياط") || gov.Contains("كفر الشيخ") ||
+            gov.Contains("بورسعيد") || gov.Contains("الإسماعيلية") || gov.Contains("السويس") ||
+            gov.Equals("Alexandria", StringComparison.OrdinalIgnoreCase) ||
+            gov.Equals("Port Said", StringComparison.OrdinalIgnoreCase) ||
+            gov.Equals("Ismailia", StringComparison.OrdinalIgnoreCase) ||
+            gov.Equals("Suez", StringComparison.OrdinalIgnoreCase))
         {
             return 60.00m;
         }

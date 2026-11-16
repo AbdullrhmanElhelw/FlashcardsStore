@@ -1,0 +1,35 @@
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var isRtl = Loc.IsRtl;
+    var defaultMsg = isRtl
+        ? Uri.EscapeDataString("مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز التعليمية لأطفالي من الأكاديمية.")
+        : Uri.EscapeDataString("Hello Miss Kholoud, I would like to inquire about interactive flashcards for my children from the academy.");
+    var waUrl = $"https://wa.me/201099887766?text={defaultMsg}";
+    var label = isRtl ? "تواصل واتساب مباشر مع مس خلود" : "Chat on WhatsApp with Miss Kholoud";
+    var positionClass = isRtl ? "left-4 sm:left-6" : "right-4 sm:right-6";
+    var tooltipPos = isRtl ? "right-full mr-3" : "left-full ml-3";
+}
+
+<!-- Floating WhatsApp Action Widget -->
+<aside class="fixed bottom-5 sm:bottom-7 @positionClass z-40 group flex items-center" aria-label="@label">
+    <a href="@waUrl"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-xl shadow-emerald-950/25 transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300/60"
+       title="@label">
+        
+        <!-- Subtle pulsing radar effect -->
+        <span class="absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-35 animate-ping -z-10"></span>
+
+        <!-- WhatsApp Icon SVG -->
+        <svg class="w-7 h-7 sm:w-8 sm:h-8 fill-current drop-shadow-sm" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z"/>
+        </svg>
+
+        <!-- Modern Floating Badge / Tooltip on Hover -->
+        <span class="absolute @tooltipPos top-1/2 -translate-y-1/2 hidden md:inline-flex items-center gap-1.5 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 bg-slate-900/95 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-700/60">
+            <span class="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></span>
+            <span>@label</span>
+        </span>
+    </a>
+</aside>
