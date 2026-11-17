@@ -52,15 +52,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const isLtr = document.documentElement.dir === 'ltr' || document.documentElement.lang === 'en';
         const currency = isLtr ? ' EGP' : ' ج.م';
 
-        let shipping = 60;
+        const feeCairo = parseFloat(govSelect.dataset.feeCairo || '50');
+        const feeDelta = parseFloat(govSelect.dataset.feeDelta || '60');
+        const feeUpper = parseFloat(govSelect.dataset.feeUpper || '75');
+        const freeThreshold = parseFloat(govSelect.dataset.freeThreshold || '0');
+
+        let shipping = feeDelta;
         if (['القاهرة', 'الجيزة', 'Cairo', 'Giza'].includes(gov)) {
-            shipping = 50;
+            shipping = feeCairo;
         } else if (['الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'مطروح', 'الوادي الجديد', 'شمال سيناء', 'جنوب سيناء',
                     'Fayoum', 'Beni Suef', 'Minya', 'Asyut', 'Sohag', 'Qena', 'Luxor', 'Aswan', 'Red Sea', 'Matrouh', 'New Valley', 'North Sinai', 'South Sinai'].includes(gov)) {
-            shipping = 75;
+            shipping = feeUpper;
         }
 
-        shippingDisplay.innerText = shipping.toFixed(0) + ' ' + currency;
+        if (freeThreshold > 0 && subtotal >= freeThreshold) {
+            shipping = 0;
+        }
+
+        if (shipping === 0) {
+            shippingDisplay.innerText = isLtr ? 'Free Shipping 🎉' : 'شحن مجاني 🎉';
+        } else {
+            shippingDisplay.innerText = shipping.toFixed(0) + ' ' + currency;
+        }
         const total = subtotal + shipping;
         grandTotalDisplay.innerText = total.toFixed(0) + ' ' + currency;
     }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using FlashcardsStore.Application.DTOs.Admin;
 using FlashcardsStore.Application.DTOs.Categories;
 using FlashcardsStore.Application.DTOs.Products;
+using FlashcardsStore.Application.DTOs.Settings;
 using FlashcardsStore.Application.Interfaces.Persistence;
 using FlashcardsStore.Application.Interfaces.Services;
 using FlashcardsStore.Domain.Enums;
@@ -24,6 +25,7 @@ public class AdminController : Controller
     private readonly IFileStorageService _fileStorageService;
     private readonly IReviewService _reviewService;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IStoreSettingsService _storeSettingsService;
     private readonly IUnitOfWork _unitOfWork;
 
     public AdminController(
@@ -35,6 +37,7 @@ public class AdminController : Controller
         IFileStorageService fileStorageService,
         IReviewService reviewService,
         IPasswordHasher passwordHasher,
+        IStoreSettingsService storeSettingsService,
         IUnitOfWork unitOfWork)
     {
         _orderService = orderService;
@@ -45,6 +48,7 @@ public class AdminController : Controller
         _fileStorageService = fileStorageService;
         _reviewService = reviewService;
         _passwordHasher = passwordHasher;
+        _storeSettingsService = storeSettingsService;
         _unitOfWork = unitOfWork;
     }
 
@@ -726,5 +730,34 @@ public class AdminController : Controller
         }
 
         return RedirectToAction("Reviews");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Settings(CancellationToken cancellationToken)
+    {
+        var settings = await _storeSettingsService.GetSettingsAsync(cancellationToken);
+        return View(settings);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Settings(StoreSettingsDto dto, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "يرجى مراجعة الحقول المطلوبة والتأكد من صحة البيانات.";
+            return View(dto);
+        }
+
+        var adminUser = User.Identity?.Name ?? "المشرف";
+        var result = await _storeSettingsService.UpdateSettingsAsync(dto, adminUser, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            TempData["ErrorMessage"] = result.Error ?? "حدث خطأ أثناء حفظ الإعدادات.";
+            return View(dto);
+        }
+
+        TempData["SuccessMessage"] = "تم حفظ وتحديث إعدادات المتجر وبيانات التواصل والدفع بنجاح! ✓";
+        return RedirectToAction(nameof(Settings));
     }
 }

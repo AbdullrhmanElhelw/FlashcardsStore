@@ -1,8 +1,11 @@
 @model CheckoutDto
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     ViewData["Title"] = Loc.Get("CheckoutTitle");
     var cart = ViewBag.Cart as CartViewModel ?? new CartViewModel();
+    var settings = SettingsService.GetCachedSettings();
+    var initialShipping = SettingsService.CalculateShippingFee("القاهرة", cart.SubTotal);
     var isRtl = Loc.IsRtl;
     var arrowPath = isRtl ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7";
 }
@@ -142,31 +145,36 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label asp-for="Governorate" class="block text-xs font-bold text-slate-700 mb-1.5">@Loc.Get("Governorate")</label>
-                            <select id="governorate-select" asp-for="Governorate" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-900 bg-white">
-                                <option value="القاهرة">@(isRtl ? "القاهرة (شحن 50 ج.م)" : "Cairo (Shipping 50 EGP)")</option>
-                                <option value="الجيزة">@(isRtl ? "الجيزة (شحن 50 ج.م)" : "Giza (Shipping 50 EGP)")</option>
-                                <option value="الإسكندرية">@(isRtl ? "الإسكندرية (شحن 60 ج.م)" : "Alexandria (Shipping 60 EGP)")</option>
-                                <option value="القليوبية">@(isRtl ? "القليوبية (شحن 60 ج.م)" : "Qalyubia (Shipping 60 EGP)")</option>
-                                <option value="الشرقية">@(isRtl ? "الشرقية (شحن 60 ج.م)" : "Sharqia (Shipping 60 EGP)")</option>
-                                <option value="الدقهلية">@(isRtl ? "الدقهلية (شحن 60 ج.م)" : "Daqahlia (Shipping 60 EGP)")</option>
-                                <option value="الغربية">@(isRtl ? "الغربية (شحن 60 ج.م)" : "Gharbia (Shipping 60 EGP)")</option>
-                                <option value="المنوفية">@(isRtl ? "المنوفية (شحن 60 ج.م)" : "Menofia (Shipping 60 EGP)")</option>
-                                <option value="البحيرة">@(isRtl ? "البحيرة (شحن 60 ج.م)" : "Beheira (Shipping 60 EGP)")</option>
-                                <option value="دمياط">@(isRtl ? "دمياط (شحن 60 ج.م)" : "Damietta (Shipping 60 EGP)")</option>
-                                <option value="كفر الشيخ">@(isRtl ? "كفر الشيخ (شحن 60 ج.م)" : "Kafr El-Sheikh (Shipping 60 EGP)")</option>
-                                <option value="بورسعيد">@(isRtl ? "بورسعيد (شحن 60 ج.م)" : "Port Said (Shipping 60 EGP)")</option>
-                                <option value="الإسماعيلية">@(isRtl ? "الإسماعيلية (شحن 60 ج.م)" : "Ismailia (Shipping 60 EGP)")</option>
-                                <option value="السويس">@(isRtl ? "السويس (شحن 60 ج.م)" : "Suez (Shipping 60 EGP)")</option>
-                                <option value="الفيوم">@(isRtl ? "الفيوم (شحن 75 ج.م)" : "Fayoum (Shipping 75 EGP)")</option>
-                                <option value="بني سويف">@(isRtl ? "بني سويف (شحن 75 ج.م)" : "Beni Suef (Shipping 75 EGP)")</option>
-                                <option value="المنيا">@(isRtl ? "المنيا (شحن 75 ج.م)" : "Minya (Shipping 75 EGP)")</option>
-                                <option value="أسيوط">@(isRtl ? "أسيوط (شحن 75 ج.م)" : "Asyut (Shipping 75 EGP)")</option>
-                                <option value="سوهاج">@(isRtl ? "سوهاج (شحن 75 ج.م)" : "Sohag (Shipping 75 EGP)")</option>
-                                <option value="قنا">@(isRtl ? "قنا (شحن 75 ج.م)" : "Qena (Shipping 75 EGP)")</option>
-                                <option value="الأقصر">@(isRtl ? "الأقصر (شحن 75 ج.م)" : "Luxor (Shipping 75 EGP)")</option>
-                                <option value="أسوان">@(isRtl ? "أسوان (شحن 75 ج.م)" : "Aswan (Shipping 75 EGP)")</option>
-                                <option value="البحر الأحمر">@(isRtl ? "البحر الأحمر (شحن 75 ج.م)" : "Red Sea (Shipping 75 EGP)")</option>
-                                <option value="مطروح">@(isRtl ? "مطروح (شحن 75 ج.م)" : "Matrouh (Shipping 75 EGP)")</option>
+                            <select id="governorate-select" asp-for="Governorate" 
+                                    data-fee-cairo="@settings.ShippingFeeCairoGiza.ToString("F0")"
+                                    data-fee-delta="@settings.ShippingFeeDeltaCanal.ToString("F0")"
+                                    data-fee-upper="@settings.ShippingFeeUpperEgypt.ToString("F0")"
+                                    data-free-threshold="@settings.FreeShippingThreshold.ToString("F0")"
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-900 bg-white">
+                                <option value="القاهرة">@(isRtl ? $"القاهرة (شحن {settings.ShippingFeeCairoGiza:F0} ج.م)" : $"Cairo (Shipping {settings.ShippingFeeCairoGiza:F0} EGP)")</option>
+                                <option value="الجيزة">@(isRtl ? $"الجيزة (شحن {settings.ShippingFeeCairoGiza:F0} ج.م)" : $"Giza (Shipping {settings.ShippingFeeCairoGiza:F0} EGP)")</option>
+                                <option value="الإسكندرية">@(isRtl ? $"الإسكندرية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Alexandria (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="القليوبية">@(isRtl ? $"القليوبية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Qalyubia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="الشرقية">@(isRtl ? $"الشرقية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Sharqia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="الدقهلية">@(isRtl ? $"الدقهلية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Daqahlia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="الغربية">@(isRtl ? $"الغربية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Gharbia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="المنوفية">@(isRtl ? $"المنوفية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Menofia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="البحيرة">@(isRtl ? $"البحيرة (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Beheira (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="دمياط">@(isRtl ? $"دمياط (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Damietta (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="كفر الشيخ">@(isRtl ? $"كفر الشيخ (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Kafr El-Sheikh (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="بورسعيد">@(isRtl ? $"بورسعيد (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Port Said (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="الإسماعيلية">@(isRtl ? $"الإسماعيلية (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Ismailia (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="السويس">@(isRtl ? $"السويس (شحن {settings.ShippingFeeDeltaCanal:F0} ج.م)" : $"Suez (Shipping {settings.ShippingFeeDeltaCanal:F0} EGP)")</option>
+                                <option value="الفيوم">@(isRtl ? $"الفيوم (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Fayoum (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="بني سويف">@(isRtl ? $"بني سويف (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Beni Suef (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="المنيا">@(isRtl ? $"المنيا (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Minya (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="أسيوط">@(isRtl ? $"أسيوط (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Asyut (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="سوهاج">@(isRtl ? $"سوهاج (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Sohag (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="قنا">@(isRtl ? $"قنا (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Qena (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="الأقصر">@(isRtl ? $"الأقصر (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Luxor (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="أسوان">@(isRtl ? $"أسوان (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Aswan (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="البحر الأحمر">@(isRtl ? $"البحر الأحمر (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Red Sea (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
+                                <option value="مطروح">@(isRtl ? $"مطروح (شحن {settings.ShippingFeeUpperEgypt:F0} ج.م)" : $"Matrouh (Shipping {settings.ShippingFeeUpperEgypt:F0} EGP)")</option>
                             </select>
                         </div>
 
@@ -295,11 +303,11 @@
                         </div>
                         <div class="flex items-center justify-between text-slate-600">
                             <span>@Loc.Get("ShippingGovernorateLabel")</span>
-                            <span id="shipping-cost-display" class="font-bold text-slate-900">50 @Loc.Get("Currency")</span>
+                            <span id="shipping-cost-display" class="font-bold text-slate-900">@(initialShipping == 0 ? (isRtl ? "شحن مجاني 🎉" : "Free Shipping 🎉") : ($"{initialShipping:F0} {Loc.Get("Currency")}"))</span>
                         </div>
                         <div class="flex items-center justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-100">
                             <span>@Loc.Get("TotalPayableLabel")</span>
-                            <span id="grand-total-display" class="text-2xl font-black text-slate-900">@((cart.SubTotal + 50).ToString("F0")) @Loc.Get("Currency")</span>
+                            <span id="grand-total-display" class="text-2xl font-black text-slate-900">@((cart.SubTotal + initialShipping).ToString("F0")) @Loc.Get("Currency")</span>
                         </div>
                     </div>
 

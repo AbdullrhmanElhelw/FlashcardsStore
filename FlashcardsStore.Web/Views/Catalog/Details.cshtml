@@ -1,5 +1,6 @@
 @model ProductDetailDto
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     var isRtl = Loc.IsRtl;
     var primaryName = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);
@@ -44,9 +45,9 @@
 
     ViewData["Title"] = primaryName + " - " + Loc.Get("BrandName");
     var whatsAppMsg = isRtl 
-        ? Uri.EscapeDataString($"مرحباً مس خلود، أود الاستفسار وطلب باقة الفلاش كاردز: {Model.NameAr} ({Model.Name}) بسعر {Model.Price:F0} ج.م من أكاديمية خلود النادي")
-        : Uri.EscapeDataString($"Hello Miss Kholoud, I would like to inquire about and order the flashcards pack: {Model.Name} ({Model.NameAr}) for {Model.Price:F0} EGP from Kholoud Elnady English Academy");
-    var directWhatsAppUrl = $"https://wa.me/201099887766?text={whatsAppMsg}";
+        ? $"مرحباً مس خلود، أود الاستفسار وطلب باقة الفلاش كاردز: {Model.NameAr} ({Model.Name}) بسعر {Model.Price:F0} ج.م من أكاديمية خلود النادي"
+        : $"Hello Miss Kholoud, I would like to inquire about and order the flashcards pack: {Model.Name} ({Model.NameAr}) for {Model.Price:F0} EGP from Kholoud Elnady English Academy";
+    var directWhatsAppUrl = SettingsService.GetWhatsAppLink(whatsAppMsg);
 
     var sampleWordsJson = System.Text.Json.JsonSerializer.Serialize(Model.SampleWords.Select(w => new {
         word = w.Word,

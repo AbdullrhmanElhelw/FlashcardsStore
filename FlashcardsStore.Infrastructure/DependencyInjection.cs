@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IPaymentProofRepository, PaymentProofRepository>();
         services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+        services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Register File Storage

@@ -1,6 +1,7 @@
 @using FlashcardsStore.Application.Common
 @model PagedResult<ProductCardViewModel>
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     ViewData["Title"] = Loc.Get("CatalogTitle") + " - " + Loc.Get("BrandName");
     var categories = ViewBag.Categories as IReadOnlyList<CategoryDto> ?? new List<CategoryDto>();
@@ -39,7 +40,7 @@
                 </p>
             </div>
             <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
-                <a href="https://wa.me/201099887766?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B3%20%D8%AE%D9%84%D9%88%D8%AF%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A8%D8%B7%D8%A7%D9%82%D8%A7%D8%AA%20%D8%A7%D9%84%D9%81%D9%84%D8%A7%D8%B4%20%D9%83%D8%A7%D8%B1%D8%AF%D8%B2"
+                <a href="@SettingsService.GetWhatsAppLink(Loc.IsRtl ? "مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز" : "Hello Miss Kholoud, I would like to inquire about flashcards")"
                    target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition whitespace-nowrap">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">

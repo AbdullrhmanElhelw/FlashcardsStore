@@ -1,10 +1,11 @@
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     var isRtl = Loc.IsRtl;
     var defaultMsg = isRtl
-        ? Uri.EscapeDataString("مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز التعليمية لأطفالي من الأكاديمية.")
-        : Uri.EscapeDataString("Hello Miss Kholoud, I would like to inquire about interactive flashcards for my children from the academy.");
-    var waUrl = $"https://wa.me/201099887766?text={defaultMsg}";
+        ? "مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز التعليمية لأطفالي من الأكاديمية."
+        : "Hello Miss Kholoud, I would like to inquire about interactive flashcards for my children from the academy.";
+    var waUrl = SettingsService.GetWhatsAppLink(defaultMsg);
     var label = isRtl ? "تواصل واتساب مباشر مع مس خلود" : "Chat on WhatsApp with Miss Kholoud";
     var positionClass = isRtl ? "left-4 sm:left-6" : "right-4 sm:right-6";
     var tooltipPos = isRtl ? "right-full mr-3" : "left-full ml-3";

@@ -335,6 +335,50 @@ public static class DbInitializer
             // Column may already exist
         }
 
+        // Ensure StoreSettings table exists
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(@"
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'StoreSettings')
+                BEGIN
+                    CREATE TABLE [StoreSettings] (
+                        [Id] int NOT NULL IDENTITY,
+                        [StoreNameAr] nvarchar(200) NOT NULL,
+                        [StoreNameEn] nvarchar(200) NOT NULL,
+                        [WhatsAppNumber] nvarchar(50) NOT NULL,
+                        [ContactPhone] nvarchar(50) NOT NULL,
+                        [ContactEmail] nvarchar(150) NOT NULL,
+                        [StoreAddressAr] nvarchar(300) NOT NULL,
+                        [StoreAddressEn] nvarchar(300) NOT NULL,
+                        [VodafoneCashNumber] nvarchar(50) NOT NULL,
+                        [InstaPayAddress] nvarchar(100) NOT NULL,
+                        [InstaPayAccountName] nvarchar(150) NOT NULL,
+                        [PaymentInstructionsAr] nvarchar(max) NULL,
+                        [ShippingFeeCairoGiza] decimal(18,2) NOT NULL,
+                        [ShippingFeeDeltaCanal] decimal(18,2) NOT NULL,
+                        [ShippingFeeUpperEgypt] decimal(18,2) NOT NULL,
+                        [FreeShippingThreshold] decimal(18,2) NOT NULL,
+                        [EstimatedDeliveryTimeAr] nvarchar(200) NOT NULL,
+                        [AnnouncementBarEnabled] bit NOT NULL,
+                        [AnnouncementTextAr] nvarchar(500) NOT NULL,
+                        [AnnouncementTextEn] nvarchar(500) NOT NULL,
+                        [AnnouncementLink] nvarchar(500) NULL,
+                        [CreatedAt] datetime2 NOT NULL,
+                        [CreatedBy] nvarchar(max) NULL,
+                        [UpdatedAt] datetime2 NULL,
+                        [UpdatedBy] nvarchar(max) NULL,
+                        [IsDeleted] bit NOT NULL,
+                        [DeletedAt] datetime2 NULL,
+                        CONSTRAINT [PK_StoreSettings] PRIMARY KEY ([Id])
+                    );
+                END
+            ");
+        }
+        catch
+        {
+            // Table may already exist
+        }
+
         // Seed Reviews
         if (await context.Products.AnyAsync() && !await context.Reviews.AnyAsync())
         {
@@ -433,6 +477,37 @@ public static class DbInitializer
                 await context.Reviews.AddRangeAsync(reviews);
                 await context.SaveChangesAsync();
             }
+        }
+
+        // Seed Default Store Settings
+        if (!await context.StoreSettings.AnyAsync())
+        {
+            var defaultSettings = new StoreSettings
+            {
+                StoreNameAr = "أكاديمية خلود النادي للغة الإنجليزية",
+                StoreNameEn = "Kholoud Elnady English Academy",
+                WhatsAppNumber = "01099887766",
+                ContactPhone = "01099887766",
+                ContactEmail = "info@kholoudelnady-academy.com",
+                StoreAddressAr = "القاهرة - المعادي / الدقي، جمهورية مصر العربية",
+                StoreAddressEn = "Cairo, Egypt",
+                VodafoneCashNumber = "01099887766",
+                InstaPayAddress = "kholoud.elnady@instapay",
+                InstaPayAccountName = "Kholoud Elnady English Academy",
+                PaymentInstructionsAr = "يرجى تحويل إجمالي قيمة الطلب إلى محفظة فودافون كاش أو عبر تطبيق إنستاباي، والاحتفاظ بلقطة الشاشة (Screenshot) ورفعها عبر صفحة الطلب لتأكيد الحجز فوراً.",
+                ShippingFeeCairoGiza = 50.00m,
+                ShippingFeeDeltaCanal = 60.00m,
+                ShippingFeeUpperEgypt = 75.00m,
+                FreeShippingThreshold = 500.00m,
+                EstimatedDeliveryTimeAr = "التوصيل السريع خلال 48 إلى 72 ساعة لجميع محافظات مصر",
+                AnnouncementBarEnabled = true,
+                AnnouncementTextAr = "🎉 عروض التأسيس: شحن مجاني لأي طلب بقيمة 500 جنيه أو أكثر لجميع محافظات مصر! 🚚",
+                AnnouncementTextEn = "🎉 Foundation Offer: Free shipping on orders over 500 EGP to all Egyptian governorates! 🚚",
+                AnnouncementLink = "/Catalog"
+            };
+
+            await context.StoreSettings.AddAsync(defaultSettings);
+            await context.SaveChangesAsync();
         }
     }
 

@@ -18,6 +18,7 @@ public class OrderService : IOrderService
     private readonly IStockReservationService _stockReservationService;
     private readonly IWhatsAppLinkBuilder _whatsAppLinkBuilder;
     private readonly IWalletMessageGenerator _walletMessageGenerator;
+    private readonly IStoreSettingsService _storeSettingsService;
     private readonly IUnitOfWork _unitOfWork;
 
     public OrderService(
@@ -27,6 +28,7 @@ public class OrderService : IOrderService
         IStockReservationService stockReservationService,
         IWhatsAppLinkBuilder whatsAppLinkBuilder,
         IWalletMessageGenerator walletMessageGenerator,
+        IStoreSettingsService storeSettingsService,
         IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
@@ -35,6 +37,7 @@ public class OrderService : IOrderService
         _stockReservationService = stockReservationService;
         _whatsAppLinkBuilder = whatsAppLinkBuilder;
         _walletMessageGenerator = walletMessageGenerator;
+        _storeSettingsService = storeSettingsService;
         _unitOfWork = unitOfWork;
     }
 
@@ -96,9 +99,9 @@ public class OrderService : IOrderService
         var randomSuffix = Random.Shared.Next(1000, 9999);
         var orderNumber = $"EGY-{DateTime.UtcNow:yyyyMMdd}-{randomSuffix}";
 
-        // Calculate shipping fee according to Egyptian governorate
-        var shippingFee = CalculateShippingFee(checkout.Governorate);
+        // Calculate shipping fee according to Egyptian governorate & store settings
         var totalAmount = items.Sum(i => i.SubTotal);
+        var shippingFee = _storeSettingsService.CalculateShippingFee(checkout.Governorate, totalAmount);
 
         var order = new Order
         {
@@ -353,29 +356,8 @@ public class OrderService : IOrderService
         };
     }
 
-    private static decimal CalculateShippingFee(string governorate)
-    {
-        var gov = governorate?.Trim() ?? "";
-        if (gov.Contains("القاهرة") || gov.Contains("الجيزة") || gov.Equals("Cairo", StringComparison.OrdinalIgnoreCase) || gov.Equals("Giza", StringComparison.OrdinalIgnoreCase))
-        {
-            return 50.00m;
-        }
-
-        if (gov.Contains("الإسكندرية") || gov.Contains("القليوبية") || gov.Contains("الشرقية") ||
-            gov.Contains("الدقهلية") || gov.Contains("الغربية") || gov.Contains("المنوفية") ||
-            gov.Contains("البحيرة") || gov.Contains("دمياط") || gov.Contains("كفر الشيخ") ||
-            gov.Contains("بورسعيد") || gov.Contains("الإسماعيلية") || gov.Contains("السويس") ||
-            gov.Equals("Alexandria", StringComparison.OrdinalIgnoreCase) ||
-            gov.Equals("Port Said", StringComparison.OrdinalIgnoreCase) ||
-            gov.Equals("Ismailia", StringComparison.OrdinalIgnoreCase) ||
-            gov.Equals("Suez", StringComparison.OrdinalIgnoreCase))
-        {
-            return 60.00m;
-        }
-
-        // Upper Egypt, Red Sea, Sinai, Matrouh, etc.
-        return 75.00m;
-    }
+    private decimal CalculateShippingFee(string governorate, decimal subtotal = 0m) =>
+        _storeSettingsService.CalculateShippingFee(governorate, subtotal);
 
     private static OrderDetailDto MapToDetailDto(Order order) => new()
     {
