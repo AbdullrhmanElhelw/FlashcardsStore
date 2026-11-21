@@ -1,0 +1,20 @@
+using FlashcardsStore.Mobile.ViewModels;
+
+namespace FlashcardsStore.Mobile.Pages;
+
+public partial class PaymentPage : ContentPage
+{
+    private readonly PaymentViewModel _viewModel;
+
+    public PaymentPage(PaymentViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = _viewModel = viewModel;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await _viewModel.LoadConfigCommand.ExecuteAsync(null);
+    }
+}

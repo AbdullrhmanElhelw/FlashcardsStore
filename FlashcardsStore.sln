@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.Web", "FlashcardsStore.Web\FlashcardsStore.Web.csproj", "{41DECF07-0BA7-40A4-8EA4-767D5E0C2A5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.Mobile", "FlashcardsStore.Mobile\FlashcardsStore.Mobile.csproj", "{2CBFC903-48C5-4391-9A7D-5846E17E3607}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{41DECF07-0BA7-40A4-8EA4-767D5E0C2A5A}.Release|x64.Build.0 = Release|Any CPU
 		{41DECF07-0BA7-40A4-8EA4-767D5E0C2A5A}.Release|x86.ActiveCfg = Release|Any CPU
 		{41DECF07-0BA7-40A4-8EA4-767D5E0C2A5A}.Release|x86.Build.0 = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|x64.Build.0 = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Debug|x86.Build.0 = Debug|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x64.ActiveCfg = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x64.Build.0 = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x86.ActiveCfg = Release|Any CPU
+		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

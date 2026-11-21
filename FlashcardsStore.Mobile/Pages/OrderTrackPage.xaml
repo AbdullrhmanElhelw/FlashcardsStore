@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             x:Class="FlashcardsStore.Mobile.Pages.OrderTrackPage"
+             x:DataType="vm:OrderTrackViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="تتبع طلبك" Style="{StaticResource HeadingLabelStyle}" />
+            <Label Text="أدخلي رقم الطلب ورقم الهاتف الذي سجلته عند الشراء." Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+
+            <Label Text="رقم الطلب" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="مثال: EGY-20261120-1234" Text="{Binding OrderNumber}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="رقم الهاتف" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="رقم الهاتف المسجل بالطلب" Keyboard="Telephone" Text="{Binding PhoneNumber}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Button Text="ابحث عن الطلب"
+                    Command="{Binding SearchOrderCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Style="{StaticResource PrimaryPurpleButtonStyle}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+
+            <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding HasResult}" BackgroundColor="#FFFDF8" Stroke="{StaticResource BrandGold}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding TrackingResult.OrderNumber, StringFormat='الطلب {0}'}" Style="{StaticResource SectionTitleStyle}" FontSize="18" />
+                    <Label Text="{Binding TrackingResult.CustomerName, StringFormat='العميل: {0}'}" Style="{StaticResource BodyLabelStyle}" />
+                    <Label Text="{Binding TrackingResult.StatusDescriptionAr, StringFormat='الحالة: {0}'}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" TextColor="{StaticResource BrandPurple}" />
+                    <Label Text="{Binding TrackingResult.GrandTotal, StringFormat='الإجمالي: {0:0.##} ج.م'}" Style="{StaticResource BodyLabelStyle}" />
+                    <Label Text="{Binding TrackingResult.ItemCount, StringFormat='عدد المنتجات: {0}'}" Style="{StaticResource BodyLabelStyle}" />
+                    <Label Text="{Binding ProofNote}" Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

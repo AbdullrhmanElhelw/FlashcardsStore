@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             x:Class="FlashcardsStore.Mobile.Pages.RegisterPage"
+             x:DataType="vm:RegisterViewModel"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,14" Spacing="10">
+
+            <VerticalStackLayout Spacing="4" HorizontalOptions="Center" Margin="0,4,0,8">
+                <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="84" WidthRequest="160" HorizontalOptions="Center" />
+                <Label Text="إنشاء حساب جديد" Style="{StaticResource HeadingLabelStyle}" HorizontalTextAlignment="Center" />
+                <Label Text="أنشئي حسابك لمتابعة طلباتك بسهولة" Style="{StaticResource MutedLabelStyle}" FontSize="13" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                    <Image Source="auth_person.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Placeholder="الاسم بالكامل" Text="{Binding FullName}" Style="{StaticResource BrandEntryStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                    <Image Source="auth_email.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Placeholder="البريد الإلكتروني" Keyboard="Email" Text="{Binding Email}" Style="{StaticResource BrandEntryStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                    <Image Source="auth_phone.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Placeholder="رقم الهاتف" Keyboard="Telephone" Text="{Binding PhoneNumber}" Style="{StaticResource BrandEntryStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Grid ColumnDefinitions="24,*,Auto" ColumnSpacing="10">
+                    <Image Source="auth_lock.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Placeholder="كلمة المرور (8 أحرف على الأقل)" IsPassword="{Binding IsPasswordHidden}" Text="{Binding Password}" Style="{StaticResource BrandEntryStyle}" />
+                    <Button Grid.Column="2" Text="👁" Command="{Binding TogglePasswordVisibilityCommand}" BackgroundColor="Transparent" TextColor="{StaticResource MutedText}" Padding="6,0" WidthRequest="40" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                    <Image Source="auth_lock.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Placeholder="تأكيد كلمة المرور" IsPassword="{Binding IsPasswordHidden}" Text="{Binding ConfirmPassword}" Style="{StaticResource BrandEntryStyle}" />
+                </Grid>
+            </Border>
+
+            <Label Text="بإنشاء الحساب، أوافق على الشروط وسياسة الخصوصية."
+                   Style="{StaticResource MutedLabelStyle}"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,4" />
+
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+
+            <Button Text="إنشاء الحساب"
+                    Command="{Binding RegisterCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Style="{StaticResource PrimaryPurpleButtonStyle}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4" Margin="0,10">
+                <Label Text="لديك حساب بالفعل؟" Style="{StaticResource BodyLabelStyle}" VerticalOptions="Center" />
+                <Button Text="تسجيل الدخول"
+                        Command="{Binding GoBackToLoginCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource BrandGoldDark}"
+                        FontFamily="Cairo"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Padding="4,0" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

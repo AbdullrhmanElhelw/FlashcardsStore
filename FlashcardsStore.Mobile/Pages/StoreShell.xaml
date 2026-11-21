@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="FlashcardsStore.Mobile.Pages.StoreShell"
+       FlowDirection="RightToLeft"
+       Shell.NavBarIsVisible="False"
+       Shell.TabBarBackgroundColor="{StaticResource BrandInk}"
+       Shell.TabBarForegroundColor="{StaticResource BrandGold}"
+       Shell.TabBarTitleColor="{StaticResource SurfaceWhite}"
+       Shell.TabBarUnselectedColor="{StaticResource TabUnselected}">
+
+    <TabBar x:Name="MainTabBar">
+        <Tab x:Name="HomeTab" Title="الرئيسية" Icon="home_house.png" />
+        <Tab x:Name="WishlistTab" Title="المفضلة" Icon="home_favorite.png" />
+        <Tab x:Name="CartTab" Title="السلة" Icon="home_cart.png" />
+        <Tab x:Name="OrdersTab" Title="تتبع الطلب" Icon="home_orders.png" />
+        <Tab x:Name="AccountTab" Title="حسابي" Icon="home_account.png" />
+    </TabBar>
+</Shell>

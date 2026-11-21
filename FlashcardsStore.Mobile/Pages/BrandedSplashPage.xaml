@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FlashcardsStore.Mobile.Pages.BrandedSplashPage"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#190611" Offset="0.0" />
+            <GradientStop Color="#2A0B1C" Offset="0.5" />
+            <GradientStop Color="#190611" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <Grid>
+        <VerticalStackLayout x:Name="BrandMark"
+                             WidthRequest="340"
+                             HeightRequest="310"
+                             Spacing="0"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+            <Image Source="logo_gold.png"
+                   Aspect="AspectFit"
+                   WidthRequest="310"
+                   HeightRequest="250"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+            <ActivityIndicator IsRunning="True"
+                               Color="#D8B96E"
+                               WidthRequest="22"
+                               HeightRequest="22"
+                               HorizontalOptions="Center"
+                               Margin="0,24,0,0" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

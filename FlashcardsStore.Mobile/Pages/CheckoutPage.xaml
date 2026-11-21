@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             x:Class="FlashcardsStore.Mobile.Pages.CheckoutPage"
+             x:DataType="vm:CheckoutViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+            <Label Text="بيانات الطلب" Style="{StaticResource HeadingLabelStyle}" />
+            <Label Text="أدخلي بيانات التواصل وعنوان التوصيل بدقة." Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+
+            <Label Text="نوع العميل" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Picker Title="نوع العميل" ItemsSource="{Binding CustomerTypeOptions}" SelectedIndex="{Binding SelectedCustomerTypeIndex}" Style="{StaticResource BrandPickerStyle}" />
+            </Border>
+
+            <Label Text="الاسم بالكامل *" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="الاسم بالكامل" Text="{Binding FullName}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="رقم الهاتف *" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="01012345678" Keyboard="Telephone" Text="{Binding PhoneNumber}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="رقم واتساب (اختياري)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="رقم واتساب" Keyboard="Telephone" Text="{Binding WhatsAppNumber}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="البريد الإلكتروني (اختياري)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="البريد الإلكتروني" Keyboard="Email" Text="{Binding Email}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="عنوان التوصيل" Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" />
+
+            <Label Text="المحافظة *" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Picker Title="اختر المحافظة" ItemsSource="{Binding Governorates}" SelectedItem="{Binding SelectedGovernorate}" Style="{StaticResource BrandPickerStyle}" />
+            </Border>
+
+            <Label Text="المدينة / المنطقة *" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="المدينة" Text="{Binding City}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="العنوان بالتفصيل *" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="الشارع، رقم المبنى، الدور..." Text="{Binding ShippingAddress}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="ملاحظات (اختياري)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="ملاحظات إضافية" Text="{Binding Notes}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="طريقة الدفع" Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Picker Title="اختر طريقة الدفع" ItemsSource="{Binding PaymentMethodOptions}" SelectedIndex="{Binding SelectedPaymentMethodIndex}" Style="{StaticResource BrandPickerStyle}" />
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}" BackgroundColor="{StaticResource BrandGoldSoft}" Stroke="{StaticResource BrandGold}">
+                <Label Text="{Binding TotalsSummary}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+
+            <Button Text="تأكيد الطلب"
+                    Command="{Binding SubmitOrderCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Style="{StaticResource PrimaryPurpleButtonStyle}"
+                    Margin="0,6,0,20" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

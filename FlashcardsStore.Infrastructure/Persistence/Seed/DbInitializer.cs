@@ -11,6 +11,8 @@ public static class DbInitializer
     {
         // Ensure created if migrations not yet applied
         await context.Database.EnsureCreatedAsync();
+        await context.Database.ExecuteSqlRawAsync(
+            "IF COL_LENGTH('dbo.Customer', 'PasswordHash') IS NULL ALTER TABLE [dbo].[Customer] ADD [PasswordHash] nvarchar(256) NULL;");
 
         // Seed Categories
         if (!await context.Categories.AnyAsync())

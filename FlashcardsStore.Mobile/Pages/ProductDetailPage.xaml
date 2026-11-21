@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:api="clr-namespace:FlashcardsStore.Mobile.Models.Api"
+             x:Class="FlashcardsStore.Mobile.Pages.ProductDetailPage"
+             x:Name="ThisDetailPage"
+             x:DataType="vm:ProductDetailViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18" Spacing="14">
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+
+            <VerticalStackLayout Spacing="12" IsVisible="{Binding HasProduct}">
+                <!-- Product Image -->
+                <Border Style="{StaticResource CardBorderStyle}" Padding="12">
+                    <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" HeightRequest="260" />
+                </Border>
+
+                <!-- Title & Price -->
+                <Label Text="{Binding Product.NameAr}" Style="{StaticResource HeadingLabelStyle}" FontSize="22" />
+                <Label Text="{Binding Product.Name}" Style="{StaticResource MutedLabelStyle}" FontSize="14" />
+
+                <HorizontalStackLayout Spacing="10">
+                    <Border BackgroundColor="{StaticResource BrandGoldLight}" Stroke="{StaticResource BrandGold}" StrokeShape="RoundRectangle 10" Padding="10,4">
+                        <Label Text="{Binding Product.Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                    </Border>
+                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 10" Padding="10,4">
+                        <Label Text="{Binding Product.CardCount, StringFormat='{0} بطاقة'}" FontFamily="Cairo" FontSize="13" TextColor="{StaticResource BrandInk}" />
+                    </Border>
+                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 10" Padding="10,4">
+                        <Label Text="{Binding Product.CategoryNameAr}" FontFamily="Cairo" FontSize="13" TextColor="{StaticResource BrandInk}" />
+                    </Border>
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding StockLabel}" Style="{StaticResource BodyLabelStyle}" FontSize="13" TextColor="{StaticResource SuccessGreen}" />
+
+                <!-- Actions -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Text="أضف للسلة"
+                            Command="{Binding AddToCartCommand}"
+                            IsEnabled="{Binding CanAddToCart}"
+                            Style="{StaticResource PrimaryPurpleButtonStyle}" />
+                    <Button Grid.Column="1"
+                            Text="{Binding FavoriteButtonText}"
+                            Command="{Binding ToggleFavoriteCommand}"
+                            Style="{StaticResource SecondaryCreamButtonStyle}" />
+                </Grid>
+
+                <!-- Teacher Voice Note (if available) -->
+                <Button Text="🎙️ استمع إلى شرح وصوت المعلمة"
+                        Command="{Binding PlayTeacherVoiceCommand}"
+                        IsVisible="{Binding HasTeacherVoice}"
+                        Style="{StaticResource PrimaryGoldButtonStyle}" />
+
+                <!-- Description -->
+                <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding HasDescription}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="عن الباقة" Style="{StaticResource SectionTitleStyle}" FontSize="15" />
+                        <Label Text="{Binding Product.DescriptionAr}" Style="{StaticResource BodyLabelStyle}" />
+                        <Label Text="{Binding Product.TargetAudience, StringFormat='الفئة المستهدفة: {0}'}" Style="{StaticResource MutedLabelStyle}" />
+                        <Label Text="{Binding Product.GradeLevel, StringFormat='الصف الدراسي: {0}'}" Style="{StaticResource MutedLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Interactive Pronunciation Studio -->
+                <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding HasSampleWords}" BackgroundColor="#FFFDF8" Stroke="{StaticResource BrandGold}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Label Text="🔊 أستوديو النطق الصوتي" Style="{StaticResource SectionTitleStyle}" VerticalTextAlignment="Center" />
+                            <Button Grid.Column="1"
+                                    Text="{Binding SpeedModeLabel}"
+                                    Command="{Binding ToggleSpeedModeCommand}"
+                                    Style="{StaticResource SecondaryCreamButtonStyle}"
+                                    FontSize="11"
+                                    Padding="10,6" />
+                        </Grid>
+
+                        <Button Text="▶ استمع لكل الكلمات بالترتيب"
+                                Command="{Binding PlayAllWordsCommand}"
+                                Style="{StaticResource PrimaryGoldButtonStyle}"
+                                MinimumHeightRequest="42"
+                                FontSize="13" />
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding SampleWords}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="api:PronunciationItem">
+                                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 12" Padding="10">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                            <Label Text="{Binding IconEmoji}" FontSize="22" VerticalTextAlignment="Center" />
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                <HorizontalStackLayout Spacing="6">
+                                                    <Label Text="{Binding Word}" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                                                    <Label Text="{Binding Phonetic}" FontSize="12" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                                                </HorizontalStackLayout>
+                                                <Label Text="{Binding ExampleSentence}" FontSize="12" TextColor="{StaticResource MutedText}" />
+                                            </VerticalStackLayout>
+                                            <Button Grid.Column="2"
+                                                    Text="🔊"
+                                                    Command="{Binding Source={x:Reference ThisDetailPage}, Path=BindingContext.SpeakWordCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    Style="{StaticResource SecondaryCreamButtonStyle}"
+                                                    WidthRequest="44"
+                                                    HeightRequest="40"
+                                                    Padding="0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Customer Reviews -->
+                <Label Text="آراء العملاء" Style="{StaticResource SectionTitleStyle}" Margin="0,6,0,0" />
+                <Label Text="{Binding ReviewSummaryText}" Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reviews}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="api:ProductReview">
+                            <Border Style="{StaticResource CardBorderStyle}" Padding="12">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding CustomerName}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                                        <Label Grid.Column="1" Text="{Binding StarsText}" TextColor="{StaticResource BrandGold}" FontSize="13" />
+                                    </Grid>
+                                    <Label Text="{Binding Role}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                    <Label Text="{Binding Comment}" Style="{StaticResource BodyLabelStyle}" FontSize="13" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Add Review Form -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="أضيفي تقييمك" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="الاسم" Text="{Binding ReviewerName}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="الصفة (ولي أمر / معلمة / مدرسة)" Text="{Binding ReviewerRole}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Picker Title="التقييم" ItemsSource="{Binding RatingOptions}" SelectedIndex="{Binding SelectedRatingIndex}" Style="{StaticResource BrandPickerStyle}" />
+                        </Border>
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Editor Placeholder="اكتبي رأيك وتجربتك (5 أحرف على الأقل)" Text="{Binding ReviewComment}" Style="{StaticResource BrandEditorStyle}" />
+                        </Border>
+                        <Button Text="إرسال التقييم"
+                                Command="{Binding SubmitReviewCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Style="{StaticResource PrimaryPurpleButtonStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

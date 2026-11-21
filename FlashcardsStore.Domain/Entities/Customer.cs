@@ -9,6 +9,7 @@ public class Customer : BaseEntity
     public string PhoneNumber { get; set; } = string.Empty;
     public string? WhatsAppNumber { get; set; }
     public string? Email { get; set; }
+    public string? PasswordHash { get; set; }
     public string ShippingAddress { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public string Governorate { get; set; } = string.Empty;

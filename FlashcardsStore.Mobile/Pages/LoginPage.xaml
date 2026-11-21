@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:conv="clr-namespace:FlashcardsStore.Mobile.Converters"
+             x:Class="FlashcardsStore.Mobile.Pages.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="{Binding IsSignedIn}"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.Resources>
+        <conv:InverseBoolConverter x:Key="InverseBool" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,18" Spacing="12">
+
+            <!-- Brand Header -->
+            <VerticalStackLayout Spacing="6" HorizontalOptions="Center" Margin="0,6,0,10">
+                <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="96" WidthRequest="180" HorizontalOptions="Center" />
+                <Label Text="أهلاً بعودتك" Style="{StaticResource HeadingLabelStyle}" HorizontalTextAlignment="Center" />
+                <Label Text="سجّلي الدخول لمتابعة طلباتك وبطاقات طفلك"
+                       Style="{StaticResource MutedLabelStyle}"
+                       FontSize="13"
+                       HorizontalTextAlignment="Center"
+                       IsVisible="{Binding IsNotSignedIn}" />
+            </VerticalStackLayout>
+
+            <!-- Signed-Out: Login Form -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding IsNotSignedIn}">
+                <Label Text="البريد الإلكتروني" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                <Border Style="{StaticResource InputBoxBorderStyle}">
+                    <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                        <Image Source="auth_email.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                        <Entry Grid.Column="1"
+                               Placeholder="أدخلي بريدك الإلكتروني"
+                               Keyboard="Email"
+                               Text="{Binding Email}"
+                               Style="{StaticResource BrandEntryStyle}" />
+                    </Grid>
+                </Border>
+
+                <Label Text="كلمة المرور" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" Margin="0,4,0,0" />
+                <Border Style="{StaticResource InputBoxBorderStyle}">
+                    <Grid ColumnDefinitions="24,*,Auto" ColumnSpacing="10">
+                        <Image Source="auth_lock.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                        <Entry Grid.Column="1"
+                               Placeholder="أدخلي كلمة المرور"
+                               IsPassword="{Binding IsPasswordHidden}"
+                               Text="{Binding Password}"
+                               Style="{StaticResource BrandEntryStyle}" />
+                        <Button Grid.Column="2"
+                                Text="👁"
+                                Command="{Binding TogglePasswordVisibilityCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource MutedText}"
+                                Padding="6,0"
+                                WidthRequest="40" />
+                    </Grid>
+                </Border>
+
+                <Button Text="نسيت كلمة المرور؟"
+                        Command="{Binding ForgotPasswordCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource BrandInk}"
+                        FontFamily="Cairo"
+                        FontSize="13"
+                        HorizontalOptions="End" />
+
+                <Label Text="{Binding ErrorMessage}"
+                       Style="{StaticResource ErrorLabelStyle}"
+                       IsVisible="{Binding HasError}" />
+
+                <Button Text="تسجيل الدخول"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        Style="{StaticResource PrimaryPurpleButtonStyle}" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+
+                <!-- Divider -->
+                <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12" Margin="0,6">
+                    <BoxView HeightRequest="1" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="أو" FontFamily="Cairo" FontSize="14" TextColor="{StaticResource BrandGold}" />
+                    <BoxView Grid.Column="2" HeightRequest="1" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                </Grid>
+
+                <Button Text="تواصلي معنا عبر واتساب"
+                        Command="{Binding ContactWhatsAppCommand}"
+                        Style="{StaticResource WhatsAppOutlineButtonStyle}" />
+
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="4" Margin="0,8">
+                    <Label Text="ليس لديك حساب؟" Style="{StaticResource BodyLabelStyle}" VerticalOptions="Center" />
+                    <Button Text="إنشاء حساب جديد"
+                            Command="{Binding GoToRegisterCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource BrandGoldDark}"
+                            FontFamily="Cairo"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Padding="4,0" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Signed-In: Profile Summary -->
+            <VerticalStackLayout Spacing="14" IsVisible="{Binding IsSignedIn}">
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding CustomerName}" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="{Binding CustomerEmail, StringFormat='البريد الإلكتروني: {0}'}" Style="{StaticResource BodyLabelStyle}" />
+                        <Label Text="{Binding CustomerPhone, StringFormat='رقم الهاتف: {0}'}" Style="{StaticResource BodyLabelStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="تسجيل الخروج"
+                        Command="{Binding LogoutCommand}"
+                        Style="{StaticResource PrimaryPurpleButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:conv="clr-namespace:FlashcardsStore.Mobile.Converters"
+             x:Class="FlashcardsStore.Mobile.Pages.PaymentPage"
+             x:DataType="vm:PaymentViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <conv:StringNotEmptyConverter x:Key="StringNotEmpty" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="تم تسجيل طلبك ✓" Style="{StaticResource HeadingLabelStyle}" />
+
+            <Border Style="{StaticResource CardBorderStyle}" BackgroundColor="{StaticResource BrandGoldSoft}" Stroke="{StaticResource BrandGold}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding OrderNumber, StringFormat='رقم الطلب: {0}'}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                    <Label Text="{Binding GrandTotal, StringFormat='الإجمالي شامل الشحن: {0:0.##} ج.م'}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                    <Label Text="حوّلي المبلغ إلى إحدى وسائل الدفع التالية ثم ارفعي صورة الإيصال." Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Payment Details -->
+            <Label Text="بيانات الدفع" Style="{StaticResource SectionTitleStyle}" />
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Vodafone Cash / المحافظ الذكية" Style="{StaticResource MutedLabelStyle}" />
+                        <Label Text="{Binding VodafoneCashNumber}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="نسخ" Command="{Binding CopyVodafoneCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="InstaPay" Style="{StaticResource MutedLabelStyle}" />
+                        <Label Text="{Binding InstaPayAddress}" Style="{StaticResource SectionTitleStyle}" FontSize="15" />
+                        <Label Text="{Binding InstaPayAccountName, StringFormat='اسم المستلم: {0}'}" Style="{StaticResource MutedLabelStyle}" IsVisible="{Binding InstaPayAccountName, Converter={StaticResource StringNotEmpty}}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="نسخ" Command="{Binding CopyInstaPayCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding PaymentInstructionsAr, Converter={StaticResource StringNotEmpty}}">
+                <Label Text="{Binding PaymentInstructionsAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" />
+            </Border>
+
+            <Button Text="التواصل عبر واتساب"
+                    Command="{Binding OpenWhatsAppCommand}"
+                    IsVisible="{Binding HasWhatsAppLink}"
+                    Style="{StaticResource WhatsAppOutlineButtonStyle}" />
+
+            <!-- Upload Proof -->
+            <Label Text="رفع إيصال التحويل" Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" />
+
+            <Label Text="المحفظة أو البنك" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Picker Title="اختر المحفظة" ItemsSource="{Binding WalletOptions}" SelectedItem="{Binding SelectedWallet}" Style="{StaticResource BrandPickerStyle}" />
+            </Border>
+
+            <Label Text="رقم الهاتف المحول منه" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="رقم الهاتف المحول منه" Keyboard="Telephone" Text="{Binding SenderPhone}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Label Text="رقم العملية (اختياري)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+            <Border Style="{StaticResource InputBoxBorderStyle}">
+                <Entry Placeholder="رقم العملية" Text="{Binding TransactionReference}" Style="{StaticResource BrandEntryStyle}" />
+            </Border>
+
+            <Button Text="اختيار صورة الإيصال"
+                    Command="{Binding PickReceiptCommand}"
+                    Style="{StaticResource SecondaryCreamButtonStyle}" />
+            <Label Text="{Binding SelectedFileName}" Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
+
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+
+            <Button Text="إرسال الإيصال"
+                    Command="{Binding UploadReceiptCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Style="{StaticResource PrimaryPurpleButtonStyle}"
+                    Margin="0,4,0,20" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

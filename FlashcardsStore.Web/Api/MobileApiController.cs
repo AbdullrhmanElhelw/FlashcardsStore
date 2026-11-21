@@ -4,7 +4,10 @@ using FlashcardsStore.Application.DTOs.Cart;
 using FlashcardsStore.Application.DTOs.Orders;
 using FlashcardsStore.Application.DTOs.PaymentProof;
 using FlashcardsStore.Application.DTOs.Products;
+using FlashcardsStore.Application.DTOs.Reviews;
+using FlashcardsStore.Application.Interfaces.Persistence;
 using FlashcardsStore.Application.Interfaces.Services;
+using FlashcardsStore.Domain.Entities;
 
 namespace FlashcardsStore.Web.Api;
 
@@ -26,6 +29,10 @@ public class MobileApiController : ControllerBase
     private readonly IOrderService _orders;
     private readonly IPaymentProofService _proofs;
     private readonly IStoreSettingsService _settings;
+    private readonly IReviewService _reviews;
+    private readonly ICustomerRepository _customers;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly IValidator<PaymentProofUploadDto> _proofValidator;
 
     public MobileApiController(
@@ -34,7 +41,11 @@ public class MobileApiController : ControllerBase
         IOrderService orders,
         IPaymentProofService proofs,
         IStoreSettingsService settings,
-        IValidator<PaymentProofUploadDto> proofValidator)
+        IValidator<PaymentProofUploadDto> proofValidator,
+        IReviewService reviews,
+        ICustomerRepository customers,
+        IUnitOfWork unitOfWork,
+        IPasswordHasher passwordHasher)
     {
         _products = products;
         _categories = categories;
@@ -42,7 +53,56 @@ public class MobileApiController : ControllerBase
         _proofs = proofs;
         _settings = settings;
         _proofValidator = proofValidator;
+        _reviews = reviews;
+        _customers = customers;
+        _unitOfWork = unitOfWork;
+        _passwordHasher = passwordHasher;
     }
+
+    [HttpPost("auth/register")]
+    public async Task<ActionResult<MobileCustomerProfile>> Register(
+        [FromBody] MobileCustomerRegisterRequest request,
+        CancellationToken ct)
+    {
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (await _customers.GetByEmailAsync(email, ct) is not null)
+            return Conflict(new { error = "يوجد حساب مسجل بهذا البريد الإلكتروني" });
+        if (await _customers.GetAccountByPhoneAsync(request.PhoneNumber.Trim(), ct) is not null)
+            return Conflict(new { error = "رقم الهاتف مرتبط بحساب آخر بالفعل" });
+
+        if (request.PhoneNumber.Count(char.IsDigit) < 7)
+            return BadRequest(new { error = "أدخل رقم هاتف صحيحاً" });
+
+        var customer = new Customer
+        {
+            FullName = request.FullName.Trim(),
+            Email = email,
+            PhoneNumber = request.PhoneNumber.Trim(),
+            PasswordHash = _passwordHasher.HashPassword(request.Password),
+            ShippingAddress = string.Empty,
+            City = string.Empty,
+            Governorate = string.Empty
+        };
+        await _customers.AddAsync(customer, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
+
+        return Ok(ToCustomerProfile(customer));
+    }
+
+    [HttpPost("auth/login")]
+    public async Task<ActionResult<MobileCustomerProfile>> Login(
+        [FromBody] MobileCustomerLoginRequest request,
+        CancellationToken ct)
+    {
+        var customer = await _customers.GetByEmailAsync(request.Email, ct);
+        if (customer?.PasswordHash is null || !_passwordHasher.VerifyPassword(request.Password, customer.PasswordHash))
+            return Unauthorized(new { error = "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
+
+        return Ok(ToCustomerProfile(customer));
+    }
+
+    private static MobileCustomerProfile ToCustomerProfile(Customer customer)
+        => new(customer.Id, customer.FullName, customer.Email ?? string.Empty, customer.PhoneNumber);
 
     [HttpGet("config")]
     public async Task<ActionResult<MobileStoreConfig>> GetConfig(CancellationToken ct)
@@ -106,6 +166,32 @@ public class MobileApiController : ControllerBase
     {
         var product = await _products.GetProductDetailBySlugAsync(slug, ct);
         return product == null ? NotFound(new { error = "المنتج غير موجود" }) : Ok(product);
+    }
+
+    [HttpPost("products/by-ids")]
+    public async Task<IActionResult> GetProductsByIds([FromBody] List<int>? ids, CancellationToken ct)
+    {
+        if (ids == null || ids.Count == 0) return Ok(Array.Empty<ProductCardViewModel>());
+        return Ok(await _products.GetCardsByIdsAsync(ids.Where(id => id > 0).Distinct().Take(50), ct));
+    }
+
+    [HttpGet("products/{productId:int}/reviews")]
+    public async Task<IActionResult> GetReviews(int productId)
+        => Ok(new
+        {
+            reviews = await _reviews.GetReviewsByProductIdAsync(productId),
+            summary = await _reviews.GetProductReviewSummaryAsync(productId)
+        });
+
+    [HttpPost("products/{productId:int}/reviews")]
+    public async Task<IActionResult> AddReview(int productId, [FromBody] CreateReviewDto request)
+    {
+        if (request.ProductId != productId) return BadRequest(new { error = "المنتج المحدد غير صحيح" });
+
+        var result = await _reviews.AddReviewAsync(request);
+        return result.IsSuccess
+            ? Ok(new { success = true, review = result.Value })
+            : BadRequest(new { error = result.Error });
     }
 
     [HttpGet("shipping-fee")]

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPaper}" />
+        <Setter Property="FlowDirection" Value="RightToLeft" />
+    </Style>
+
+    <Style x:Key="HeadingLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+    </Style>
+
+    <Style x:Key="SectionTitleStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+    </Style>
+
+    <Style x:Key="BodyLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+    </Style>
+
+    <Style x:Key="MutedLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{StaticResource MutedText}" />
+    </Style>
+
+    <Style x:Key="ErrorLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource DangerRed}" />
+    </Style>
+
+    <Style x:Key="BrandEntryStyle" TargetType="Entry">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
+    </Style>
+
+    <Style x:Key="BrandEditorStyle" TargetType="Editor">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
+        <Setter Property="AutoSize" Value="TextChanges" />
+        <Setter Property="MinimumHeightRequest" Value="80" />
+    </Style>
+
+    <Style x:Key="BrandPickerStyle" TargetType="Picker">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+    </Style>
+
+    <Style x:Key="PrimaryPurpleButtonStyle" TargetType="Button">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource SurfaceWhite}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPurple}" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="18,12" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="PrimaryGoldButtonStyle" TargetType="Button">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandGold}" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="18,12" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="SecondaryCreamButtonStyle" TargetType="Button">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandGoldLight}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="14,10" />
+    </Style>
+
+    <Style x:Key="WhatsAppOutlineButtonStyle" TargetType="Button">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource WhatsAppDark}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="BorderColor" Value="{StaticResource WhatsAppBorder}" />
+        <Setter Property="BorderWidth" Value="1.5" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="HeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="CardBorderStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+        <Setter Property="Stroke" Value="{StaticResource CardBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="14" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+    </Style>
+
+    <Style x:Key="InputBoxBorderStyle" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceWhite}" />
+        <Setter Property="Stroke" Value="{StaticResource CardBorder}" />
+        <Setter Property="StrokeThickness" Value="1.2" />
+        <Setter Property="Padding" Value="12,4" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+    </Style>
+
+</ResourceDictionary>
