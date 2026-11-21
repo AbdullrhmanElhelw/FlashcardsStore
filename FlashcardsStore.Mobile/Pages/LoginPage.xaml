@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.LoginPage"
              x:DataType="vm:LoginViewModel"
              Title="{Binding Title}"
@@ -9,89 +10,57 @@
              NavigationPage.HasNavigationBar="False">
 
     <Grid>
-        <!-- Top-Right Luxury Plum & Gold Corner Wave (Matches Reference) -->
-        <Path Data="M 0,0 L 108,0 C 92,48 52,78 0,92 Z"
-              Fill="#4B1633"
-              Stroke="{StaticResource BrandGold}"
-              StrokeThickness="1.5"
-              HorizontalOptions="Start"
-              VerticalOptions="Start"
-              InputTransparent="True" />
 
-        <ScrollView>
-            <VerticalStackLayout Padding="24,22,24,28" Spacing="10">
+        <!-- ==================== 1. GUEST / LOGIN VIEW ==================== -->
+        <Grid IsVisible="{Binding IsNotSignedIn}">
+            <!-- Top-Right Luxury Plum & Gold Corner Wave -->
+            <Path Data="M 0,0 L 108,0 C 92,48 52,78 0,92 Z"
+                  Fill="#4B1633"
+                  Stroke="{StaticResource BrandGold}"
+                  StrokeThickness="1.5"
+                  HorizontalOptions="Start"
+                  VerticalOptions="Start"
+                  InputTransparent="True" />
 
-                <!-- Brand Header -->
-                <VerticalStackLayout Spacing="4" HorizontalOptions="Center" Margin="0,4,0,2">
-                    <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="86" WidthRequest="175" HorizontalOptions="Center" />
-                    <Label Text="أهلاً بعودتك" Style="{StaticResource HeadingLabelStyle}" FontSize="24" HorizontalTextAlignment="Center" />
-                    <Label Text="سجّلي الدخول لمتابعة طلباتك وبطاقات طفلك"
-                           Style="{StaticResource MutedLabelStyle}"
-                           FontSize="13"
-                           TextColor="{StaticResource BrandInk}"
-                           HorizontalTextAlignment="Center"
-                           IsVisible="{Binding IsNotSignedIn}" />
-                </VerticalStackLayout>
+            <ScrollView>
+                <VerticalStackLayout Padding="24,22,24,28" Spacing="10">
 
-                <!-- Gold Ornamental Divider -->
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,0,0,6">
-                    <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
-                    <Label Text="♡" FontSize="15" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
-                    <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center" Margin="0,4,0,2">
+                        <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="84" WidthRequest="170" HorizontalOptions="Center" />
+                        <Label Text="أهلاً بعودتك" Style="{StaticResource HeadingLabelStyle}" FontSize="24" HorizontalTextAlignment="Center" />
+                        <Label Text="سجّلي الدخول لمتابعة طلباتك وبطاقات طفلك"
+                               Style="{StaticResource MutedLabelStyle}"
+                               FontSize="13"
+                               TextColor="{StaticResource BrandInk}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
 
-                <!-- Signed-Out: Login Form -->
-                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsNotSignedIn}">
+                    <!-- Gold Ornamental Divider -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,0,0,6">
+                        <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                        <Label Text="♡" FontSize="15" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                        <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
                     <Label Text="البريد الإلكتروني" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" Margin="6,0" />
-                    <Border BackgroundColor="{StaticResource SurfaceWhite}"
-                            Stroke="{StaticResource DividerGold}"
-                            StrokeThickness="1.2"
-                            StrokeShape="RoundRectangle 26"
-                            HeightRequest="52"
-                            Padding="16,0">
+                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource DividerGold}" StrokeThickness="1.2" StrokeShape="RoundRectangle 26" HeightRequest="52" Padding="16,0">
                         <Grid ColumnDefinitions="22,*" ColumnSpacing="10">
                             <Image Source="auth_email.png" WidthRequest="19" HeightRequest="19" VerticalOptions="Center" />
-                            <Entry Grid.Column="1"
-                                   Placeholder="أدخلي بريدك الإلكتروني"
-                                   Keyboard="Email"
-                                   Text="{Binding Email}"
-                                   VerticalOptions="Center"
-                                   Style="{StaticResource BrandEntryStyle}" />
+                            <Entry Grid.Column="1" Placeholder="أدخلي بريدك الإلكتروني" Keyboard="Email" Text="{Binding Email}" VerticalOptions="Center" Style="{StaticResource BrandEntryStyle}" />
                         </Grid>
                     </Border>
 
                     <Label Text="كلمة المرور" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" Margin="6,4,6,0" />
-                    <Border BackgroundColor="{StaticResource SurfaceWhite}"
-                            Stroke="{StaticResource DividerGold}"
-                            StrokeThickness="1.2"
-                            StrokeShape="RoundRectangle 26"
-                            HeightRequest="52"
-                            Padding="16,0">
+                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource DividerGold}" StrokeThickness="1.2" StrokeShape="RoundRectangle 26" HeightRequest="52" Padding="16,0">
                         <Grid ColumnDefinitions="22,*,36" ColumnSpacing="10">
                             <Image Source="auth_lock.png" WidthRequest="19" HeightRequest="19" VerticalOptions="Center" />
-                            <Entry Grid.Column="1"
-                                   Placeholder="أدخلي كلمة المرور"
-                                   IsPassword="{Binding IsPasswordHidden}"
-                                   Text="{Binding Password}"
-                                   VerticalOptions="Center"
-                                   Style="{StaticResource BrandEntryStyle}" />
-                            <ImageButton Grid.Column="2"
-                                         Source="auth_eye.png"
-                                         Command="{Binding TogglePasswordVisibilityCommand}"
-                                         BackgroundColor="Transparent"
-                                         Padding="6"
-                                         WidthRequest="32"
-                                         HeightRequest="32"
-                                         VerticalOptions="Center" />
+                            <Entry Grid.Column="1" Placeholder="أدخلي كلمة المرور" IsPassword="{Binding IsPasswordHidden}" Text="{Binding Password}" VerticalOptions="Center" Style="{StaticResource BrandEntryStyle}" />
+                            <ImageButton Grid.Column="2" Source="auth_eye.png" Command="{Binding TogglePasswordVisibilityCommand}" BackgroundColor="Transparent" Padding="6" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" />
                         </Grid>
                     </Border>
 
-                    <Label Text="{Binding ErrorMessage}"
-                           Style="{StaticResource ErrorLabelStyle}"
-                           IsVisible="{Binding HasError}"
-                           HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" HorizontalTextAlignment="Center" />
 
-                    <!-- Pill Primary Button -->
                     <Button Text="—   تسجيل الدخول   —"
                             Command="{Binding LoginCommand}"
                             IsEnabled="{Binding IsNotBusy}"
@@ -126,64 +95,173 @@
                         <BoxView Grid.Column="2" HeightRequest="1" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
                     </Grid>
 
-                    <!-- WhatsApp Pill Outline Button -->
-                    <Border BackgroundColor="{StaticResource SurfaceWhite}"
-                            Stroke="{StaticResource WhatsAppBorder}"
-                            StrokeThickness="1.3"
-                            StrokeShape="RoundRectangle 26"
-                            HeightRequest="50">
+                    <!-- WhatsApp Pill Button -->
+                    <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource WhatsAppBorder}" StrokeThickness="1.3" StrokeShape="RoundRectangle 26" HeightRequest="50">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ContactWhatsAppCommand}" />
                         </Border.GestureRecognizers>
                         <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
                             <Image Source="icon_whatsapp.png" WidthRequest="22" HeightRequest="22" />
-                            <Label Text="تواصلي معنا عبر واتساب"
-                                   FontFamily="Cairo"
-                                   FontSize="14"
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource WhatsAppDark}"
-                                   VerticalTextAlignment="Center" />
+                            <Label Text="تواصلي معنا عبر واتساب" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource WhatsAppDark}" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
                     </Border>
 
-                    <!-- Register Footer Link -->
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="6" Margin="0,8">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="6" Margin="0,6">
                         <Label Text="ليس لديك حساب؟" Style="{StaticResource BodyLabelStyle}" VerticalOptions="Center" />
-                        <Label Text="إنشاء حساب جديد"
-                               FontFamily="Cairo"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource BrandGoldDark}"
-                               TextDecorations="Underline"
-                               VerticalOptions="Center">
+                        <Label Text="إنشاء حساب جديد" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" TextDecorations="Underline" VerticalOptions="Center">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
                             </Label.GestureRecognizers>
                         </Label>
                     </HorizontalStackLayout>
-                </VerticalStackLayout>
 
-                <!-- Signed-In: Profile Summary -->
-                <VerticalStackLayout Spacing="14" IsVisible="{Binding IsSignedIn}">
-                    <Border Stroke="{StaticResource BrandGold}"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 20"
-                            Padding="18"
-                            Shadow="{Shadow Brush='#18061A', Opacity='0.12', Radius='10', Offset='0,4'}">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#2A0B1E" Offset="0.0" />
-                                <GradientStop Color="#4B1633" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <VerticalStackLayout Spacing="6">
-                            <Label Text="عضو أكاديمية خلود النادي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGold}" />
-                            <Label Text="{Binding CustomerName}" FontFamily="Cairo" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
-                            <Label Text="{Binding CustomerEmail, StringFormat='البريد الإلكتروني: {0}'}" FontFamily="Cairo" FontSize="13" TextColor="#E6DDF0" />
-                            <Label Text="{Binding CustomerPhone, StringFormat='رقم الهاتف: {0}'}" FontFamily="Cairo" FontSize="13" TextColor="#E6DDF0" />
+                    <!-- Subtle App Settings for Guest -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="16" Margin="0,6,0,0">
+                        <Label Text="✨ جولة التطبيق" FontFamily="Cairo" FontSize="12" TextColor="{StaticResource MutedText}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ReplayOnboardingCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <Label Text="•" TextColor="{StaticResource DividerGold}" FontSize="12" />
+                        <Label Text="⚙️ إعدادات الاتصال" FontFamily="Cairo" FontSize="12" TextColor="{StaticResource MutedText}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleConnectionSettingsCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding IsConnectionSettingsVisible}" Margin="0,4,0,0">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="عنوان خادم المتجر (API)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" FontSize="13" />
+                            <Border Style="{StaticResource InputBoxBorderStyle}">
+                                <Entry Text="{Binding ServerUrl}" Placeholder="http://10.0.2.2:5059/" Keyboard="Url" Style="{StaticResource BrandEntryStyle}" />
+                            </Border>
+                            <Button Text="حفظ عنوان الخادم" Command="{Binding SaveServerUrlCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" />
                         </VerticalStackLayout>
                     </Border>
 
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!-- ==================== 2. SIGNED-IN ACCOUNT & SETTINGS VIEW ==================== -->
+        <Grid RowDefinitions="Auto,*" IsVisible="{Binding IsSignedIn}">
+            <controls:BrandHeaderView Grid.Row="0"
+                                      HeaderTitle="حسابي والإعدادات"
+                                      HeaderSubtitle="إدارة حسابك وتفضيلات التطبيق" />
+
+            <ScrollView Grid.Row="1">
+                <VerticalStackLayout Padding="16,14,16,28" Spacing="14">
+
+                    <!-- Member Card -->
+                    <Border Stroke="{StaticResource BrandGold}"
+                            StrokeThickness="1.2"
+                            StrokeShape="RoundRectangle 20"
+                            Padding="18"
+                            Shadow="{Shadow Brush='#18061A', Opacity='0.14', Radius='12', Offset='0,5'}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#190611" Offset="0.0" />
+                                <GradientStop Color="#3A102A" Offset="0.6" />
+                                <GradientStop Color="#190611" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid ColumnDefinitions="56,*" ColumnSpacing="14">
+                            <Border BackgroundColor="#2A0B1E" Stroke="{StaticResource BrandGold}" StrokeThickness="1.5" StrokeShape="RoundRectangle 28" WidthRequest="56" HeightRequest="56" VerticalOptions="Center">
+                                <Label Text="{Binding CustomerInitial}" FontFamily="Cairo" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="✨ عضو أكاديمية خلود النادي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGold}" />
+                                <Label Text="{Binding CustomerName}" FontFamily="Cairo" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                                <Label Text="{Binding CustomerEmail}" FontFamily="Cairo" FontSize="12" TextColor="#E6DDF0" />
+                                <Label Text="{Binding CustomerPhone}" FontFamily="Cairo" FontSize="12" TextColor="#D9CEE0" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- Quick Account Shortcuts -->
+                    <Label Text="الوصول السريع" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource CardBorderStyle}" Padding="10,12" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenOrdersCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="📦" FontSize="22" HorizontalTextAlignment="Center" />
+                                <Label Text="تتبع طلباتي" FontFamily="Cairo" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Padding="10,12" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenWishlistCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="♡" FontSize="22" TextColor="{StaticResource BrandPurple}" HorizontalTextAlignment="Center" />
+                                <Label Text="المفضلة" FontFamily="Cairo" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Padding="10,12" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenCartCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="🛒" FontSize="22" HorizontalTextAlignment="Center" />
+                                <Label Text="السلة" FontFamily="Cairo" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- App & Support Settings Card -->
+                    <Label Text="إعدادات التطبيق والدعم" Style="{StaticResource SectionTitleStyle}" FontSize="16" Margin="0,4,0,0" />
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="14,6" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                        <VerticalStackLayout Spacing="0">
+
+                            <!-- Replay Onboarding -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ReplayOnboardingCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="✨" FontSize="17" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="1" Text="إعادة عرض الجولة التعريفية" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="←" FontSize="15" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="{StaticResource CardBorder}" />
+
+                            <!-- WhatsApp Support -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ContactWhatsAppCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Image Source="icon_whatsapp.png" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="تواصل مباشر مع ميس خلود (واتساب)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="←" FontSize="15" TextColor="{StaticResource WhatsAppDark}" VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="{StaticResource CardBorder}" />
+
+                            <!-- Server Connection Settings Toggle -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleConnectionSettingsCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="⚙️" FontSize="17" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="1" Text="إعدادات الاتصال بالخادم (API)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="⌄" FontSize="16" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <!-- Collapsible Server URL Panel -->
+                            <VerticalStackLayout IsVisible="{Binding IsConnectionSettingsVisible}" Spacing="8" Padding="4,4,4,12">
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Text="{Binding ServerUrl}" Placeholder="http://10.0.2.2:5059/" Keyboard="Url" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Button Text="حفظ عنوان الخادم" Command="{Binding SaveServerUrlCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" />
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Logout -->
                     <Button Text="تسجيل الخروج"
                             Command="{Binding LogoutCommand}"
                             BackgroundColor="#4B1633"
@@ -192,10 +270,12 @@
                             FontAttributes="Bold"
                             FontSize="15"
                             CornerRadius="26"
-                            HeightRequest="50" />
-                </VerticalStackLayout>
+                            HeightRequest="50"
+                            Margin="0,6,0,0" />
 
-            </VerticalStackLayout>
-        </ScrollView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
     </Grid>
 </ContentPage>

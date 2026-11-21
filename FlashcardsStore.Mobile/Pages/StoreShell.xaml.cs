@@ -20,4 +20,6 @@ public partial class StoreShell : Shell
 
     public void SelectCartTab() => MainTabBar.CurrentItem = CartTab;
     public void SelectHomeTab() => MainTabBar.CurrentItem = HomeTab;
+    public void SelectWishlistTab() => MainTabBar.CurrentItem = WishlistTab;
+    public void SelectOrdersTab() => MainTabBar.CurrentItem = OrdersTab;
 }

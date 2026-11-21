@@ -53,6 +53,22 @@ public sealed class MauiNavigationService(IServiceProvider services) : INavigati
         }
     }
 
+    public void SwitchToWishlistTab()
+    {
+        if (Shell.Current is StoreShell shell)
+        {
+            shell.SelectWishlistTab();
+        }
+    }
+
+    public void SwitchToOrdersTab()
+    {
+        if (Shell.Current is StoreShell shell)
+        {
+            shell.SelectOrdersTab();
+        }
+    }
+
     public async Task PushRegisterAsync()
     {
         var nav = GetNavigation();

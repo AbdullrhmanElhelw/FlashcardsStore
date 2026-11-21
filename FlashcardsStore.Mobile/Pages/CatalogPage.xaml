@@ -503,30 +503,6 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <!-- Server URL Settings -->
-                    <Button Text="إعداد الاتصال بالخادم"
-                            Command="{Binding ToggleSettingsCommand}"
-                            BackgroundColor="Transparent"
-                            TextColor="{StaticResource BrandGoldDark}"
-                            FontFamily="Cairo"
-                            FontSize="12"
-                            HorizontalOptions="Center" />
-
-                    <Border Style="{StaticResource CardBorderStyle}" Margin="16,0" IsVisible="{Binding IsSettingsVisible}">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="عنوان خادم المتجر (API)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" FontSize="13" />
-                            <Border Style="{StaticResource InputBoxBorderStyle}">
-                                <Entry Text="{Binding ServerUrl}"
-                                       Placeholder="http://10.0.2.2:5059/"
-                                       Keyboard="Url"
-                                       Style="{StaticResource BrandEntryStyle}" />
-                            </Border>
-                            <Button Text="حفظ عنوان الخادم"
-                                    Command="{Binding SaveServerUrlCommand}"
-                                    Style="{StaticResource SecondaryCreamButtonStyle}" />
-                        </VerticalStackLayout>
-                    </Border>
-
                 </VerticalStackLayout>
             </ScrollView>
         </RefreshView>

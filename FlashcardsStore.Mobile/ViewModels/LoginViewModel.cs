@@ -15,27 +15,21 @@ public sealed partial class LoginViewModel : BaseViewModel
     private readonly INavigationService _navigation;
     private readonly IDialogService _dialogs;
 
-    [ObservableProperty]
-    private string _email = string.Empty;
-
-    [ObservableProperty]
-    private string _password = string.Empty;
-
-    [ObservableProperty]
-    private bool _isPasswordHidden = true;
+    [ObservableProperty] private string _email = string.Empty;
+    [ObservableProperty] private string _password = string.Empty;
+    [ObservableProperty] private bool _isPasswordHidden = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotSignedIn))]
     private bool _isSignedIn;
 
-    [ObservableProperty]
-    private string _customerName = string.Empty;
+    [ObservableProperty] private string _customerName = string.Empty;
+    [ObservableProperty] private string _customerEmail = string.Empty;
+    [ObservableProperty] private string _customerPhone = string.Empty;
+    [ObservableProperty] private string _customerInitial = "خ";
 
-    [ObservableProperty]
-    private string _customerEmail = string.Empty;
-
-    [ObservableProperty]
-    private string _customerPhone = string.Empty;
+    [ObservableProperty] private bool _isConnectionSettingsVisible;
+    [ObservableProperty] private string _serverUrl = string.Empty;
 
     public bool IsNotSignedIn => !IsSignedIn;
 
@@ -50,6 +44,7 @@ public sealed partial class LoginViewModel : BaseViewModel
         _navigation = navigation;
         _dialogs = dialogs;
         Title = "حسابي";
+        ServerUrl = _api.BaseUrl;
     }
 
     public void RefreshSessionState()
@@ -58,6 +53,10 @@ public sealed partial class LoginViewModel : BaseViewModel
         CustomerName = _session.CustomerName;
         CustomerEmail = _session.CustomerEmail;
         CustomerPhone = _session.CustomerPhone;
+        CustomerInitial = string.IsNullOrWhiteSpace(CustomerName)
+            ? "خ"
+            : CustomerName.Trim().Substring(0, 1);
+        ServerUrl = _api.BaseUrl;
     }
 
     [RelayCommand]
@@ -110,15 +109,49 @@ public sealed partial class LoginViewModel : BaseViewModel
 
     [RelayCommand]
     private Task ContactWhatsAppAsync()
-        => OpenWhatsAppAsync("مرحباً، أحتاج مساعدة في تسجيل الدخول.");
+        => OpenWhatsAppAsync("مرحباً مس خلود، لدي استفسار بخصوص بطاقات الفلاش كاردز.");
 
     [RelayCommand]
-    private void Logout()
+    private void OpenOrders() => _navigation.SwitchToOrdersTab();
+
+    [RelayCommand]
+    private void OpenWishlist() => _navigation.SwitchToWishlistTab();
+
+    [RelayCommand]
+    private void OpenCart() => _navigation.SwitchToCartTab();
+
+    [RelayCommand]
+    private void ReplayOnboarding() => _navigation.SetOnboardingRoot();
+
+    [RelayCommand]
+    private void ToggleConnectionSettings() => IsConnectionSettingsVisible = !IsConnectionSettingsVisible;
+
+    [RelayCommand]
+    private async Task SaveServerUrlAsync()
     {
+        try
+        {
+            _api.SetBaseUrl(ServerUrl);
+            IsConnectionSettingsVisible = false;
+            await _dialogs.ShowToastAsync("تم حفظ عنوان الخادم بنجاح");
+        }
+        catch (ArgumentException ex)
+        {
+            await _dialogs.ShowAlertAsync("خطأ", ex.Message);
+        }
+    }
+
+    [RelayCommand]
+    private async Task LogoutAsync()
+    {
+        if (!await _dialogs.ShowConfirmAsync("تسجيل الخروج", "هل تريدين تسجيل الخروج من حسابك؟"))
+            return;
+
         _session.Clear();
         Email = string.Empty;
         Password = string.Empty;
         RefreshSessionState();
+        await _dialogs.ShowToastAsync("تم تسجيل الخروج بنجاح");
     }
 
     private async Task OpenWhatsAppAsync(string message)

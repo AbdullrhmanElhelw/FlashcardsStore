@@ -31,8 +31,6 @@ public sealed partial class CatalogViewModel : BaseViewModel
     [ObservableProperty] private bool _canGoNext;
     [ObservableProperty] private int _cartBadgeCount;
     [ObservableProperty] private bool _hasCartItems;
-    [ObservableProperty] private bool _isSettingsVisible;
-    [ObservableProperty] private string _serverUrl = string.Empty;
     [ObservableProperty] private bool _hasFeatured;
     [ObservableProperty] private bool _isRefreshing;
 
@@ -61,7 +59,6 @@ public sealed partial class CatalogViewModel : BaseViewModel
         _dialogs = dialogs;
         Title = "الرئيسية";
         _selectedSortOption = SortOptions[0];
-        ServerUrl = _api.BaseUrl;
 
         SeedGrades();
         _cart.Changed += (_, _) => RefreshCartAndFavoritesState();
@@ -219,25 +216,6 @@ public sealed partial class CatalogViewModel : BaseViewModel
 
     [RelayCommand]
     private void OpenCart() => _navigation.SwitchToCartTab();
-
-    [RelayCommand]
-    private void ToggleSettings() => IsSettingsVisible = !IsSettingsVisible;
-
-    [RelayCommand]
-    private async Task SaveServerUrlAsync()
-    {
-        try
-        {
-            _api.SetBaseUrl(ServerUrl);
-            IsSettingsVisible = false;
-            _initialized = false;
-            await InitializeAsync();
-        }
-        catch (ArgumentException ex)
-        {
-            await _dialogs.ShowAlertAsync("خطأ", ex.Message);
-        }
-    }
 
     private async Task LoadProductsAsync()
     {

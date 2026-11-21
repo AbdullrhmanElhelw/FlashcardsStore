@@ -9,6 +9,8 @@ public interface INavigationService
     void SetLoginRoot();
     void SwitchToCartTab();
     void SwitchToHomeTab();
+    void SwitchToWishlistTab();
+    void SwitchToOrdersTab();
     Task PushRegisterAsync();
     Task PushLoginForCheckoutAsync();
     Task CompleteAuthFlowAsync();
