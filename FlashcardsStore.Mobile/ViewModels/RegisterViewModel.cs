@@ -92,8 +92,8 @@ public sealed partial class RegisterViewModel : BaseViewModel
                 ConfirmPassword = ConfirmPassword
             });
             _session.Save(customer);
-            await _dialogs.ShowAlertAsync("أهلاً بكِ", "تم إنشاء الحساب بنجاح، أهلاً بكِ في أكاديمية خلود النادي.");
             await _navigation.CompleteAuthFlowAsync();
+            await _dialogs.ShowToastAsync("تم إنشاء الحساب بنجاح، أهلاً بكِ");
         }
         catch (MobileApiException ex)
         {

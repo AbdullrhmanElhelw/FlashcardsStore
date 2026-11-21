@@ -15,7 +15,11 @@
                                   HeaderTitle="قائمة المفضلة"
                                   HeaderSubtitle="الباقات المحفوظة للعودة لاحقاً" />
 
-        <ScrollView Grid.Row="1">
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}"
+                     RefreshColor="{StaticResource BrandGold}">
+        <ScrollView>
             <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
 
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
@@ -78,5 +82,6 @@
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
+        </RefreshView>
     </Grid>
 </ContentPage>

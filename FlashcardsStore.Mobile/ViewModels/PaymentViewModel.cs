@@ -79,7 +79,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(VodafoneCashNumber)) return;
         await Clipboard.Default.SetTextAsync(VodafoneCashNumber);
-        await _dialogs.ShowAlertAsync("تم النسخ ✓", $"تم نسخ رقم فودافون كاش: {VodafoneCashNumber}");
+        await _dialogs.ShowToastAsync($"تم نسخ رقم فودافون كاش: {VodafoneCashNumber}");
     }
 
     [RelayCommand]
@@ -87,7 +87,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(InstaPayAddress)) return;
         await Clipboard.Default.SetTextAsync(InstaPayAddress);
-        await _dialogs.ShowAlertAsync("تم النسخ ✓", $"تم نسخ عنوان InstaPay: {InstaPayAddress}");
+        await _dialogs.ShowToastAsync($"تم نسخ عنوان InstaPay: {InstaPayAddress}");
     }
 
     [RelayCommand]

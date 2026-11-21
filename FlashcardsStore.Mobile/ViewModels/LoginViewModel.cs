@@ -88,8 +88,8 @@ public sealed partial class LoginViewModel : BaseViewModel
             });
             _session.Save(customer);
             RefreshSessionState();
-            await _dialogs.ShowAlertAsync("أهلاً بعودتك", $"تم تسجيل الدخول بنجاح يا {customer.FullName}.");
             await _navigation.CompleteAuthFlowAsync();
+            await _dialogs.ShowToastAsync($"أهلاً بعودتك يا {customer.FullName}");
         }
         catch (MobileApiException ex)
         {

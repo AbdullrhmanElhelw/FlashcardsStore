@@ -90,7 +90,7 @@
                                 <Label Text="شرح ونطق صوتي حصري مسجّل لهذه الباقة" FontFamily="Cairo" FontSize="11" TextColor="{StaticResource BrandInk}" />
                             </VerticalStackLayout>
                             <Button Grid.Column="1"
-                                    Text="تشغيل ▶"
+                                    Text="{Binding TeacherVoiceButtonText}"
                                     Command="{Binding PlayTeacherVoiceCommand}"
                                     Style="{StaticResource PrimaryGoldButtonStyle}"
                                     MinimumHeightRequest="40"

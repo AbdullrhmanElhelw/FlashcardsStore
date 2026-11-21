@@ -12,6 +12,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     private readonly IMobileApiClient _api;
     private readonly ICartStore _cart;
     private readonly ISpeechService _speech;
+    private readonly IAudioPlayerService _audioPlayer;
     private readonly ICustomerSessionService _session;
     private readonly IDialogService _dialogs;
 
@@ -39,6 +40,10 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     private bool _isKidSlowMode;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TeacherVoiceButtonText))]
+    private bool _isPlayingTeacherVoice;
+
+    [ObservableProperty]
     private string _reviewSummaryText = "لا توجد تقييمات بعد";
 
     [ObservableProperty] private string _reviewerName = string.Empty;
@@ -64,21 +69,25 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         : (Product.InStock ? $"متوفر — الكمية المتاحة: {Product.AvailableStockQuantity}" : "غير متوفر حالياً");
     public string FavoriteButtonText => IsFavorite ? "في المفضلة ♥" : "أضف للمفضلة ♡";
     public string SpeedModeLabel => IsKidSlowMode ? "🐢 بطيء للأطفال (0.75x)" : "⚡ سرعة طبيعية (1.0x)";
+    public string TeacherVoiceButtonText => IsPlayingTeacherVoice ? "إيقاف ⏹" : "تشغيل ▶";
 
     public ProductDetailViewModel(
         IMobileApiClient api,
         ICartStore cart,
         ISpeechService speech,
+        IAudioPlayerService audioPlayer,
         ICustomerSessionService session,
         IDialogService dialogs)
     {
         _api = api;
         _cart = cart;
         _speech = speech;
+        _audioPlayer = audioPlayer;
         _session = session;
         _dialogs = dialogs;
         Title = "تفاصيل المنتج";
         ReviewerName = session.CustomerName;
+        _audioPlayer.PlaybackStateChanged += (_, playing) => IsPlayingTeacherVoice = playing;
     }
 
     public void SetSlug(string slug)
@@ -149,8 +158,17 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     private async Task PlayTeacherVoiceAsync()
     {
         if (Product is null || string.IsNullOrWhiteSpace(Product.AudioUrl)) return;
-        await Launcher.Default.OpenAsync(_api.GetImageUrl(Product.AudioUrl));
+        try
+        {
+            await _audioPlayer.TogglePlayAsync(_api.GetImageUrl(Product.AudioUrl));
+        }
+        catch (Exception ex)
+        {
+            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+        }
     }
+
+    public void StopTeacherVoice() => _audioPlayer.Stop();
 
     [RelayCommand]
     private async Task AddToCartAsync()
@@ -169,7 +187,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
                 AvailableStockQuantity = Product.AvailableStockQuantity,
                 InStock = Product.InStock
             });
-            await _dialogs.ShowAlertAsync("السلة ✓", $"تمت إضافة «{Product.NameAr}» إلى السلة");
+            await _dialogs.ShowToastAsync($"تمت إضافة «{Product.NameAr}» إلى السلة");
         }
         catch (InvalidOperationException ex)
         {

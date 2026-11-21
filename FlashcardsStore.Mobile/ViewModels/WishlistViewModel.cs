@@ -18,6 +18,9 @@ public sealed partial class WishlistViewModel : BaseViewModel
     [NotifyPropertyChangedFor(nameof(IsEmpty))]
     private bool _hasItems;
 
+    [ObservableProperty]
+    private bool _isRefreshing;
+
     public bool IsEmpty => !HasItems && !IsBusy && !HasError;
     public ObservableCollection<ProductCardDisplayItem> Items { get; } = new();
 
@@ -71,6 +74,13 @@ public sealed partial class WishlistViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        await LoadAsync();
+        IsRefreshing = false;
+    }
+
+    [RelayCommand]
     private Task OpenProductAsync(ProductCardDisplayItem? item)
         => item is null ? Task.CompletedTask : _navigation.PushProductDetailAsync(item.Slug);
 
@@ -92,7 +102,7 @@ public sealed partial class WishlistViewModel : BaseViewModel
         try
         {
             _cart.Add(item.Source);
-            await _dialogs.ShowAlertAsync("السلة", $"تمت إضافة «{item.NameAr}» إلى السلة ✓");
+            await _dialogs.ShowToastAsync($"تمت إضافة «{item.NameAr}» إلى السلة");
         }
         catch (InvalidOperationException ex)
         {

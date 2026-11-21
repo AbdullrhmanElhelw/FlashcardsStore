@@ -99,8 +99,12 @@
             </Grid>
         </Border>
 
-        <!-- Scrollable Store Content -->
-        <ScrollView Grid.Row="1" x:Name="HomeScroll">
+        <!-- Scrollable Store Content with Pull-to-Refresh -->
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}"
+                     RefreshColor="{StaticResource BrandGold}">
+        <ScrollView x:Name="HomeScroll">
             <VerticalStackLayout Spacing="12" Padding="0,10,0,28">
 
                 <!-- Announcement Banner -->
@@ -499,5 +503,6 @@
 
             </VerticalStackLayout>
         </ScrollView>
+        </RefreshView>
     </Grid>
 </ContentPage>

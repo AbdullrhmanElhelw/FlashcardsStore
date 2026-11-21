@@ -17,4 +17,10 @@ public partial class ProductDetailPage : ContentPage
         base.OnAppearing();
         await _viewModel.LoadCommand.ExecuteAsync(null);
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.StopTeacherVoice();
+    }
 }

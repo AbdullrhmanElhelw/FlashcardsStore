@@ -34,6 +34,7 @@ public sealed partial class CatalogViewModel : BaseViewModel
     [ObservableProperty] private bool _isSettingsVisible;
     [ObservableProperty] private string _serverUrl = string.Empty;
     [ObservableProperty] private bool _hasFeatured;
+    [ObservableProperty] private bool _isRefreshing;
 
     public ObservableCollection<CategoryChipItem> Categories { get; } = new();
     public ObservableCollection<GradeChipItem> Grades { get; } = new();
@@ -123,6 +124,14 @@ public sealed partial class CatalogViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        _initialized = false;
+        await InitializeAsync();
+        IsRefreshing = false;
+    }
+
+    [RelayCommand]
     private async Task SearchAsync()
     {
         _currentPage = 1;
@@ -192,7 +201,7 @@ public sealed partial class CatalogViewModel : BaseViewModel
         {
             _cart.Add(item.Source);
             RefreshCartAndFavoritesState();
-            await _dialogs.ShowAlertAsync("السلة ✓", $"تمت إضافة «{item.NameAr}» إلى السلة");
+            await _dialogs.ShowToastAsync($"تمت إضافة «{item.NameAr}» إلى السلة");
         }
         catch (InvalidOperationException ex)
         {
