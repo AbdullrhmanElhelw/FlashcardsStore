@@ -4,10 +4,10 @@
        x:Class="FlashcardsStore.Mobile.Pages.StoreShell"
        FlowDirection="RightToLeft"
        Shell.NavBarIsVisible="False"
-       Shell.TabBarBackgroundColor="{StaticResource BrandInk}"
+       Shell.TabBarBackgroundColor="#2A0B1E"
        Shell.TabBarForegroundColor="{StaticResource BrandGold}"
-       Shell.TabBarTitleColor="{StaticResource SurfaceWhite}"
-       Shell.TabBarUnselectedColor="{StaticResource TabUnselected}">
+       Shell.TabBarTitleColor="{StaticResource BrandGoldLight}"
+       Shell.TabBarUnselectedColor="#C9B9CB">
 
     <TabBar x:Name="MainTabBar">
         <Tab x:Name="HomeTab" Title="الرئيسية" Icon="home_house.png" />

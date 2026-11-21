@@ -25,9 +25,9 @@
                         <Label Text="أدخلي بيانات التواصل لتنسيق التوصيل بدقة." Style="{StaticResource MutedLabelStyle}" />
 
                         <Label Text="نوع العميل" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
-                        <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Picker Title="نوع العميل" ItemsSource="{Binding CustomerTypeOptions}" SelectedIndex="{Binding SelectedCustomerTypeIndex}" Style="{StaticResource BrandPickerStyle}" />
-                        </Border>
+                        <controls:BrandDropdown Title="نوع العميل"
+                                                ItemsSource="{Binding CustomerTypeOptions}"
+                                                SelectedIndex="{Binding SelectedCustomerTypeIndex}" />
 
                         <Label Text="الاسم بالكامل *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
                         <Border Style="{StaticResource InputBoxBorderStyle}">
@@ -57,9 +57,9 @@
                         <Label Text="2. عنوان التوصيل والمحافظة" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
 
                         <Label Text="المحافظة *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
-                        <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Picker Title="اختر المحافظة" ItemsSource="{Binding Governorates}" SelectedItem="{Binding SelectedGovernorate}" Style="{StaticResource BrandPickerStyle}" />
-                        </Border>
+                        <controls:BrandDropdown Title="اختر المحافظة"
+                                                ItemsSource="{Binding Governorates}"
+                                                SelectedItem="{Binding SelectedGovernorate}" />
 
                         <Label Text="المدينة / المنطقة *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
                         <Border Style="{StaticResource InputBoxBorderStyle}">
@@ -82,9 +82,9 @@
                 <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="3. طريقة الدفع" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
-                        <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Picker Title="اختر طريقة الدفع" ItemsSource="{Binding PaymentMethodOptions}" SelectedIndex="{Binding SelectedPaymentMethodIndex}" Style="{StaticResource BrandPickerStyle}" />
-                        </Border>
+                        <controls:BrandDropdown Title="اختر طريقة الدفع"
+                                                ItemsSource="{Binding PaymentMethodOptions}"
+                                                SelectedIndex="{Binding SelectedPaymentMethodIndex}" />
 
                         <Border BackgroundColor="{StaticResource BrandGoldSoft}" Stroke="{StaticResource BrandGold}" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="14">
                             <Label Text="{Binding TotalsSummary}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />

@@ -82,9 +82,9 @@
                         <Label Text="رفع إيصال التحويل" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
 
                         <Label Text="المحفظة أو البنك" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
-                        <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Picker Title="اختر المحفظة" ItemsSource="{Binding WalletOptions}" SelectedItem="{Binding SelectedWallet}" Style="{StaticResource BrandPickerStyle}" />
-                        </Border>
+                        <controls:BrandDropdown Title="اختر المحفظة"
+                                                ItemsSource="{Binding WalletOptions}"
+                                                SelectedItem="{Binding SelectedWallet}" />
 
                         <Label Text="رقم الهاتف المحول منه" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
                         <Border Style="{StaticResource InputBoxBorderStyle}">

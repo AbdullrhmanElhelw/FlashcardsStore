@@ -208,9 +208,9 @@
                             <Border Style="{StaticResource InputBoxBorderStyle}">
                                 <Entry Placeholder="الصفة (ولي أمر / معلمة / مدرسة)" Text="{Binding ReviewerRole}" Style="{StaticResource BrandEntryStyle}" />
                             </Border>
-                            <Border Style="{StaticResource InputBoxBorderStyle}">
-                                <Picker Title="التقييم" ItemsSource="{Binding RatingOptions}" SelectedIndex="{Binding SelectedRatingIndex}" Style="{StaticResource BrandPickerStyle}" />
-                            </Border>
+                            <controls:BrandDropdown Title="التقييم"
+                                                    ItemsSource="{Binding RatingOptions}"
+                                                    SelectedIndex="{Binding SelectedRatingIndex}" />
                             <Border Style="{StaticResource InputBoxBorderStyle}">
                                 <Editor Placeholder="اكتبي رأيك وتجربتك (5 أحرف على الأقل)" Text="{Binding ReviewComment}" Style="{StaticResource BrandEditorStyle}" />
                             </Border>

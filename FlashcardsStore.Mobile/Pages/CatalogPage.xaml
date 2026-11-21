@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
              xmlns:ui="clr-namespace:FlashcardsStore.Mobile.Models.Ui"
+             xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.CatalogPage"
              x:Name="ThisCatalogPage"
              x:DataType="vm:CatalogViewModel"
@@ -276,13 +277,10 @@
 
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                             <Label Text="ترتيب حسب" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
-                            <Border Grid.Column="1" Style="{StaticResource InputBoxBorderStyle}" Padding="8,0" HeightRequest="42">
-                                <Picker Title="ترتيب المنتجات"
-                                        ItemsSource="{Binding SortOptions}"
-                                        SelectedItem="{Binding SelectedSortOption}"
-                                        VerticalOptions="Center"
-                                        Style="{StaticResource BrandPickerStyle}" />
-                            </Border>
+                            <controls:BrandDropdown Grid.Column="1"
+                                                    Title="ترتيب المنتجات"
+                                                    ItemsSource="{Binding SortOptions}"
+                                                    SelectedItem="{Binding SelectedSortOption}" />
                             <Button Grid.Column="2"
                                     Text="مسح الفلاتر"
                                     Command="{Binding ClearFiltersCommand}"
