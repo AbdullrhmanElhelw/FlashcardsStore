@@ -4,11 +4,14 @@ namespace FlashcardsStore.Mobile.Services.Abstractions;
 
 public interface INavigationService
 {
+    void SetOnboardingRoot();
     void SetStoreRoot();
     void SetLoginRoot();
     void SwitchToCartTab();
     void SwitchToHomeTab();
     Task PushRegisterAsync();
+    Task PushLoginForCheckoutAsync();
+    Task CompleteAuthFlowAsync();
     Task PopAsync();
     Task PushProductDetailAsync(string slug);
     Task PushCheckoutAsync();

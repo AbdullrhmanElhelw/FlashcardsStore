@@ -31,6 +31,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ISpeechService, MauiSpeechService>();
 
         // ViewModels
+        builder.Services.AddTransient<OnboardingViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<CatalogViewModel>();
@@ -43,6 +44,7 @@ public static class MauiProgram
 
         // Pages & Shell
         builder.Services.AddTransient<BrandedSplashPage>();
+        builder.Services.AddTransient<OnboardingPage>();
         builder.Services.AddTransient<StoreShell>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterPage>();

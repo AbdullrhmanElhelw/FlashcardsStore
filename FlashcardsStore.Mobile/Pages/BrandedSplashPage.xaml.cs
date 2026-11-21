@@ -1,17 +1,16 @@
 using FlashcardsStore.Mobile.Services.Abstractions;
+using FlashcardsStore.Mobile.ViewModels;
 
 namespace FlashcardsStore.Mobile.Pages;
 
 public partial class BrandedSplashPage : ContentPage
 {
-    private readonly ICustomerSessionService _session;
     private readonly INavigationService _navigation;
     private bool _hasStarted;
 
-    public BrandedSplashPage(ICustomerSessionService session, INavigationService navigation)
+    public BrandedSplashPage(INavigationService navigation)
     {
         InitializeComponent();
-        _session = session;
         _navigation = navigation;
     }
 
@@ -29,13 +28,14 @@ public partial class BrandedSplashPage : ContentPage
         await Task.Delay(700);
         await BrandMark.FadeToAsync(0, 220, Easing.CubicIn);
 
-        if (_session.IsSignedIn)
+        var hasSeenOnboarding = Preferences.Default.Get(OnboardingViewModel.SeenOnboardingKey, false);
+        if (hasSeenOnboarding)
         {
             _navigation.SetStoreRoot();
         }
         else
         {
-            _navigation.SetLoginRoot();
+            _navigation.SetOnboardingRoot();
         }
     }
 }

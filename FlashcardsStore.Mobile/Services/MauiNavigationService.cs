@@ -7,6 +7,17 @@ namespace FlashcardsStore.Mobile.Services;
 
 public sealed class MauiNavigationService(IServiceProvider services) : INavigationService
 {
+    private bool _pendingCheckoutAfterAuth;
+
+    public void SetOnboardingRoot()
+    {
+        var window = Application.Current?.Windows.FirstOrDefault();
+        if (window is not null)
+        {
+            window.Page = services.GetRequiredService<OnboardingPage>();
+        }
+    }
+
     public void SetStoreRoot()
     {
         var window = Application.Current?.Windows.FirstOrDefault();
@@ -48,6 +59,43 @@ public sealed class MauiNavigationService(IServiceProvider services) : INavigati
         if (nav is not null)
         {
             await nav.PushAsync(services.GetRequiredService<RegisterPage>());
+        }
+    }
+
+    public async Task PushLoginForCheckoutAsync()
+    {
+        var nav = GetNavigation();
+        if (nav is null) return;
+
+        _pendingCheckoutAfterAuth = true;
+        var loginPage = services.GetRequiredService<LoginPage>();
+        Shell.SetTabBarIsVisible(loginPage, false);
+        await nav.PushAsync(loginPage);
+    }
+
+    public async Task CompleteAuthFlowAsync()
+    {
+        if (_pendingCheckoutAfterAuth)
+        {
+            _pendingCheckoutAfterAuth = false;
+            var nav = GetNavigation();
+            if (nav is not null)
+            {
+                await nav.PopToRootAsync();
+                await nav.PushAsync(services.GetRequiredService<CheckoutPage>());
+                return;
+            }
+        }
+
+        // If user registered/logged in from Account tab, return to root of Account tab inside StoreShell.
+        var currentNav = GetNavigation();
+        if (currentNav is not null && currentNav.NavigationStack.Count > 1)
+        {
+            await currentNav.PopToRootAsync();
+        }
+        else if (Application.Current?.Windows.FirstOrDefault()?.Page is not StoreShell)
+        {
+            SetStoreRoot();
         }
     }
 

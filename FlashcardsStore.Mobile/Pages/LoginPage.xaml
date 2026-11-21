@@ -7,7 +7,6 @@
              x:DataType="vm:LoginViewModel"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
-             Shell.TabBarIsVisible="{Binding IsSignedIn}"
              NavigationPage.HasNavigationBar="False">
 
     <ContentPage.Resources>

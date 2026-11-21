@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:ui="clr-namespace:FlashcardsStore.Mobile.Models.Ui"
+             x:Class="FlashcardsStore.Mobile.Pages.OnboardingPage"
+             x:DataType="vm:OnboardingViewModel"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20,16,20,28" RowSpacing="12">
+
+        <!-- Top Bar: Brand Emblem + Skip -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+            <Border BackgroundColor="{StaticResource SurfaceWhite}"
+                    Stroke="#E8DAB8"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    Padding="4">
+                <Image Source="logo.png" Aspect="AspectFit" />
+            </Border>
+
+            <Button Grid.Column="2"
+                    Text="تخطي"
+                    Command="{Binding SkipCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource BrandGoldDark}"
+                    FontFamily="Cairo"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    Padding="10,4" />
+        </Grid>
+
+        <!-- Carousel Slides -->
+        <CarouselView Grid.Row="1"
+                      ItemsSource="{Binding Slides}"
+                      Position="{Binding CurrentPosition, Mode=TwoWay}"
+                      IndicatorView="OnboardingIndicator"
+                      Loop="False">
+            <CarouselView.ItemTemplate>
+                <DataTemplate x:DataType="ui:OnboardingSlide">
+                    <VerticalStackLayout VerticalOptions="Center" Spacing="18" Padding="10,0">
+                        <Border BackgroundColor="{StaticResource SurfaceWhite}"
+                                Stroke="{StaticResource CardBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 28"
+                                Padding="24"
+                                HeightRequest="290"
+                                Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='12', Offset='0,4'}">
+                            <Image Source="{Binding ImageName}" Aspect="AspectFit" />
+                        </Border>
+
+                        <Label Text="{Binding Title}"
+                               Style="{StaticResource HeadingLabelStyle}"
+                               FontSize="22"
+                               HorizontalTextAlignment="Center" />
+
+                        <Label Text="{Binding Description}"
+                               Style="{StaticResource BodyLabelStyle}"
+                               FontSize="14"
+                               TextColor="{StaticResource MutedText}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <!-- Bottom Indicator + Action Button -->
+        <VerticalStackLayout Grid.Row="2" Spacing="16">
+            <IndicatorView x:Name="OnboardingIndicator"
+                           IndicatorColor="{StaticResource CardBorder}"
+                           SelectedIndicatorColor="{StaticResource BrandGold}"
+                           IndicatorSize="10"
+                           HorizontalOptions="Center" />
+
+            <Button Text="{Binding NextButtonText}"
+                    Command="{Binding NextOrFinishCommand}"
+                    Style="{StaticResource PrimaryPurpleButtonStyle}" />
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

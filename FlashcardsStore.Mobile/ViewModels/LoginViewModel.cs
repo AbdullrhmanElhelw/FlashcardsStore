@@ -88,8 +88,8 @@ public sealed partial class LoginViewModel : BaseViewModel
             });
             _session.Save(customer);
             RefreshSessionState();
-            _navigation.SetStoreRoot();
             await _dialogs.ShowAlertAsync("أهلاً بعودتك", $"تم تسجيل الدخول بنجاح يا {customer.FullName}.");
+            await _navigation.CompleteAuthFlowAsync();
         }
         catch (MobileApiException ex)
         {
@@ -119,7 +119,6 @@ public sealed partial class LoginViewModel : BaseViewModel
         Email = string.Empty;
         Password = string.Empty;
         RefreshSessionState();
-        _navigation.SetLoginRoot();
     }
 
     private async Task OpenWhatsAppAsync(string message)

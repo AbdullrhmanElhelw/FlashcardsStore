@@ -10,6 +10,7 @@ public sealed partial class CartViewModel : BaseViewModel
 {
     private readonly ICartStore _cart;
     private readonly IMobileApiClient _api;
+    private readonly ICustomerSessionService _session;
     private readonly INavigationService _navigation;
     private readonly IDialogService _dialogs;
 
@@ -29,11 +30,13 @@ public sealed partial class CartViewModel : BaseViewModel
     public CartViewModel(
         ICartStore cart,
         IMobileApiClient api,
+        ICustomerSessionService session,
         INavigationService navigation,
         IDialogService dialogs)
     {
         _cart = cart;
         _api = api;
+        _session = session;
         _navigation = navigation;
         _dialogs = dialogs;
         Title = "السلة";
@@ -97,7 +100,17 @@ public sealed partial class CartViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task ProceedToCheckoutAsync() => _navigation.PushCheckoutAsync();
+    private async Task ProceedToCheckoutAsync()
+    {
+        if (_session.IsSignedIn)
+        {
+            await _navigation.PushCheckoutAsync();
+            return;
+        }
+
+        await _dialogs.ShowAlertAsync("تسجيل الدخول", "يرجى تسجيل الدخول أو إنشاء حساب جديد لإتمام عملية الشراء.");
+        await _navigation.PushLoginForCheckoutAsync();
+    }
 
     [RelayCommand]
     private void BrowseCatalog() => _navigation.SwitchToHomeTab();
