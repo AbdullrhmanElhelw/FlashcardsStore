@@ -3,62 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
              xmlns:ui="clr-namespace:FlashcardsStore.Mobile.Models.Ui"
+             xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.WishlistPage"
              x:Name="ThisWishlistPage"
              x:DataType="vm:WishlistViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="16" Spacing="12">
-            <Label Text="قائمة المفضلة" Style="{StaticResource HeadingLabelStyle}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:BrandHeaderView Grid.Row="0"
+                                  HeaderTitle="قائمة المفضلة"
+                                  HeaderSubtitle="الباقات المحفوظة للعودة لاحقاً" />
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
-            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
 
-            <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding IsEmpty}" Padding="24">
-                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                    <Label Text="♡" FontSize="36" HorizontalTextAlignment="Center" TextColor="{StaticResource BrandGold}" />
-                    <Label Text="لم تضيفي أي باقة للمفضلة بعد" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+
+                <Border Style="{StaticResource CardBorderStyle}"
+                        IsVisible="{Binding IsEmpty}"
+                        Padding="28"
+                        Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="♡" FontSize="40" HorizontalTextAlignment="Center" TextColor="{StaticResource BrandGold}" />
+                        <Label Text="لم تضيفي أي باقة للمفضلة بعد" Style="{StaticResource SectionTitleStyle}" FontSize="15" HorizontalTextAlignment="Center" />
+                        <Label Text="اضغطي على علامة القلب في أي باقة لحفظها هنا." Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="10" IsVisible="{Binding HasItems}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="ui:ProductCardDisplayItem">
+                            <Border Style="{StaticResource CardBorderStyle}"
+                                    Padding="12"
+                                    Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+                                <Grid ColumnDefinitions="92,*" ColumnSpacing="12">
+                                    <Border BackgroundColor="{StaticResource BrandPaper}" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="6" WidthRequest="92" HeightRequest="92">
+                                        <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                        <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Button Text="عرض"
+                                                    Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.OpenProductCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    Style="{StaticResource SecondaryCreamButtonStyle}"
+                                                    Padding="12,6" />
+                                            <Button Text="للسلة"
+                                                    Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.AddToCartCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    Style="{StaticResource PrimaryPurpleButtonStyle}"
+                                                    MinimumHeightRequest="36"
+                                                    FontSize="12"
+                                                    Padding="12,6" />
+                                            <Button Text="إزالة"
+                                                    Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.RemoveFavoriteCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="{StaticResource DangerRed}"
+                                                    FontFamily="Cairo"
+                                                    FontSize="12"
+                                                    Padding="6,6" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
-            </Border>
-
-            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="10" IsVisible="{Binding HasItems}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="ui:ProductCardDisplayItem">
-                        <Border Style="{StaticResource CardBorderStyle}">
-                            <Grid ColumnDefinitions="92,*" ColumnSpacing="12">
-                                <Image Source="{Binding FullImageUrl}" WidthRequest="90" HeightRequest="90" Aspect="AspectFit" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                                    <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" />
-                                    <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Button Text="عرض"
-                                                Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.OpenProductCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Style="{StaticResource SecondaryCreamButtonStyle}"
-                                                Padding="12,6" />
-                                        <Button Text="للسلة"
-                                                Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.AddToCartCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Style="{StaticResource PrimaryPurpleButtonStyle}"
-                                                MinimumHeightRequest="36"
-                                                FontSize="12"
-                                                Padding="12,6" />
-                                        <Button Text="إزالة"
-                                                Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.RemoveFavoriteCommand}"
-                                                CommandParameter="{Binding .}"
-                                                BackgroundColor="Transparent"
-                                                TextColor="{StaticResource DangerRed}"
-                                                FontFamily="Cairo"
-                                                FontSize="12"
-                                                Padding="6,6" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

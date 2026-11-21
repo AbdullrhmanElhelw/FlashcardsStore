@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FlashcardsStore.Mobile.Controls.BrandHeaderView"
+             x:Name="ThisHeader">
+
+    <Border BackgroundColor="{StaticResource SurfaceWhite}"
+            StrokeThickness="0"
+            Padding="14,10"
+            Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+
+            <!-- Optional Back Button (for pushed pages) -->
+            <Border Grid.Column="0"
+                    IsVisible="{Binding Source={x:Reference ThisHeader}, Path=ShowBackButton}"
+                    BackgroundColor="{StaticResource BrandPaper}"
+                    Stroke="{StaticResource CardBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackTapped" />
+                </Border.GestureRecognizers>
+                <Label Text="→"
+                       FontFamily="Cairo"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource BrandInk}"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />
+            </Border>
+
+            <!-- Title & Subtitle -->
+            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                <Label Text="{Binding Source={x:Reference ThisHeader}, Path=HeaderTitle}"
+                       FontFamily="Cairo"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource BrandInk}"
+                       LineBreakMode="TailTruncation" />
+                <Label Text="{Binding Source={x:Reference ThisHeader}, Path=HeaderSubtitle}"
+                       FontFamily="Cairo"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource BrandGoldDark}"
+                       LineBreakMode="TailTruncation" />
+            </VerticalStackLayout>
+
+            <!-- Brand Logo Mark -->
+            <Border Grid.Column="2"
+                    BackgroundColor="{StaticResource BrandPaper}"
+                    Stroke="#E8DAB8"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    Padding="4"
+                    VerticalOptions="Center">
+                <Image Source="logo.png" Aspect="AspectFit" />
+            </Border>
+
+        </Grid>
+    </Border>
+</ContentView>

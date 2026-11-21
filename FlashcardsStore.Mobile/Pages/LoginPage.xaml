@@ -106,11 +106,22 @@
 
             <!-- Signed-In: Profile Summary -->
             <VerticalStackLayout Spacing="14" IsVisible="{Binding IsSignedIn}">
-                <Border Style="{StaticResource CardBorderStyle}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="{Binding CustomerName}" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="{Binding CustomerEmail, StringFormat='البريد الإلكتروني: {0}'}" Style="{StaticResource BodyLabelStyle}" />
-                        <Label Text="{Binding CustomerPhone, StringFormat='رقم الهاتف: {0}'}" Style="{StaticResource BodyLabelStyle}" />
+                <Border Stroke="{StaticResource BrandGold}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="18"
+                        Shadow="{Shadow Brush='#18061A', Opacity='0.12', Radius='10', Offset='0,4'}">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#18061A" Offset="0.0" />
+                            <GradientStop Color="#290A2E" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="عضو أكاديمية خلود النادي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGold}" />
+                        <Label Text="{Binding CustomerName}" FontFamily="Cairo" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                        <Label Text="{Binding CustomerEmail, StringFormat='البريد الإلكتروني: {0}'}" FontFamily="Cairo" FontSize="13" TextColor="#E6DDF0" />
+                        <Label Text="{Binding CustomerPhone, StringFormat='رقم الهاتف: {0}'}" FontFamily="Cairo" FontSize="13" TextColor="#E6DDF0" />
                     </VerticalStackLayout>
                 </Border>
 

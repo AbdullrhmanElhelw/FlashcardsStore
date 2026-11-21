@@ -3,110 +3,127 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
              xmlns:cart="clr-namespace:FlashcardsStore.Mobile.Models.Cart"
+             xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.CartPage"
              x:Name="ThisCartPage"
              x:DataType="vm:CartViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="16" Spacing="12">
-            <Label Text="سلة التسوق" Style="{StaticResource HeadingLabelStyle}" />
+    <Grid RowDefinitions="Auto,*">
+        <controls:BrandHeaderView Grid.Row="0"
+                                  HeaderTitle="سلة التسوق"
+                                  HeaderSubtitle="مراجعة الباقات قبل إتمام الطلب" />
 
-            <!-- Empty State -->
-            <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding IsEmpty}" Padding="24">
-                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                    <Label Text="🛒" FontSize="38" HorizontalTextAlignment="Center" />
-                    <Label Text="سلتك فارغة. ابدئي باكتشاف البطاقات التعليمية." Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
-                    <Button Text="تصفحي المتجر"
-                            Command="{Binding BrowseCatalogCommand}"
-                            Style="{StaticResource PrimaryGoldButtonStyle}" />
-                </VerticalStackLayout>
-            </Border>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
 
-            <!-- Cart Items -->
-            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="10" IsVisible="{Binding HasItems}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="cart:CartEntry">
-                        <Border Style="{StaticResource CardBorderStyle}">
-                            <Grid ColumnDefinitions="88,*" ColumnSpacing="12">
-                                <Image Source="{Binding ImageUrl}" WidthRequest="86" HeightRequest="86" Aspect="AspectFit" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                    <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" />
-                                    <Label Style="{StaticResource MutedLabelStyle}" FontSize="13">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" />
-                                                <Span Text="  ×  " />
-                                                <Span Text="{Binding Quantity}" />
-                                                <Span Text="  =  " />
-                                                <Span Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}" TextColor="{StaticResource BrandGoldDark}" FontAttributes="Bold" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Button Text="−"
-                                                Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.DecreaseQuantityCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Style="{StaticResource SecondaryCreamButtonStyle}"
-                                                WidthRequest="40"
-                                                HeightRequest="36"
-                                                Padding="0" />
-                                        <Label Text="{Binding Quantity}"
-                                               Style="{StaticResource BodyLabelStyle}"
-                                               FontAttributes="Bold"
-                                               VerticalTextAlignment="Center"
-                                               WidthRequest="26"
-                                               HorizontalTextAlignment="Center" />
-                                        <Button Text="+"
-                                                Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.IncreaseQuantityCommand}"
-                                                CommandParameter="{Binding .}"
-                                                IsEnabled="{Binding CanIncrease}"
-                                                Style="{StaticResource SecondaryCreamButtonStyle}"
-                                                WidthRequest="40"
-                                                HeightRequest="36"
-                                                Padding="0" />
-                                        <Button Text="حذف"
-                                                Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.RemoveItemCommand}"
-                                                CommandParameter="{Binding .}"
-                                                BackgroundColor="Transparent"
-                                                TextColor="{StaticResource DangerRed}"
-                                                FontFamily="Cairo"
-                                                FontSize="12"
-                                                Padding="8,0" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </VerticalStackLayout>
-
-            <!-- Summary & Actions -->
-            <VerticalStackLayout Spacing="10" IsVisible="{Binding HasItems}">
-                <Border Style="{StaticResource CardBorderStyle}" BackgroundColor="{StaticResource BrandGoldSoft}" Stroke="{StaticResource BrandGold}">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout Spacing="2">
-                            <Label Text="الإجمالي قبل الشحن" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
-                            <Label Text="{Binding ItemCount, StringFormat='{0} قطعة'}" Style="{StaticResource MutedLabelStyle}" />
-                        </VerticalStackLayout>
-                        <Label Grid.Column="1"
-                               Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}"
-                               FontFamily="Cairo"
-                               FontSize="19"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource BrandInk}"
-                               VerticalTextAlignment="Center" />
-                    </Grid>
+                <!-- Empty State -->
+                <Border Style="{StaticResource CardBorderStyle}"
+                        IsVisible="{Binding IsEmpty}"
+                        Padding="28"
+                        Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <Label Text="🛒" FontSize="40" HorizontalTextAlignment="Center" />
+                        <Label Text="سلتك فارغة. ابدئي باكتشاف البطاقات التعليمية." Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Button Text="تصفحي المتجر"
+                                Command="{Binding BrowseCatalogCommand}"
+                                Style="{StaticResource PrimaryGoldButtonStyle}" />
+                    </VerticalStackLayout>
                 </Border>
 
-                <Button Text="إتمام الشراء"
-                        Command="{Binding ProceedToCheckoutCommand}"
-                        Style="{StaticResource PrimaryPurpleButtonStyle}" />
-                <Button Text="إفراغ السلة"
-                        Command="{Binding ClearCartCommand}"
-                        Style="{StaticResource SecondaryCreamButtonStyle}" />
+                <!-- Cart Items -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}" Spacing="10" IsVisible="{Binding HasItems}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="cart:CartEntry">
+                            <Border Style="{StaticResource CardBorderStyle}"
+                                    Padding="12"
+                                    Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+                                <Grid ColumnDefinitions="88,*" ColumnSpacing="12">
+                                    <Border BackgroundColor="{StaticResource BrandPaper}" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="6" WidthRequest="88" HeightRequest="88">
+                                        <Image Source="{Binding ImageUrl}" Aspect="AspectFit" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                        <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
+                                        <Label Style="{StaticResource MutedLabelStyle}" FontSize="13">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" />
+                                                    <Span Text="  ×  " />
+                                                    <Span Text="{Binding Quantity}" />
+                                                    <Span Text="  =  " />
+                                                    <Span Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}" TextColor="{StaticResource BrandGoldDark}" FontAttributes="Bold" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Button Text="−"
+                                                    Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.DecreaseQuantityCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    Style="{StaticResource SecondaryCreamButtonStyle}"
+                                                    WidthRequest="38"
+                                                    HeightRequest="34"
+                                                    Padding="0" />
+                                            <Label Text="{Binding Quantity}"
+                                                   Style="{StaticResource BodyLabelStyle}"
+                                                   FontAttributes="Bold"
+                                                   VerticalTextAlignment="Center"
+                                                   WidthRequest="24"
+                                                   HorizontalTextAlignment="Center" />
+                                            <Button Text="+"
+                                                    Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.IncreaseQuantityCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    IsEnabled="{Binding CanIncrease}"
+                                                    Style="{StaticResource SecondaryCreamButtonStyle}"
+                                                    WidthRequest="38"
+                                                    HeightRequest="34"
+                                                    Padding="0" />
+                                            <Button Text="حذف"
+                                                    Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.RemoveItemCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="{StaticResource DangerRed}"
+                                                    FontFamily="Cairo"
+                                                    FontSize="12"
+                                                    Padding="8,0" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Summary & Actions -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasItems}">
+                    <Border Style="{StaticResource CardBorderStyle}"
+                            BackgroundColor="{StaticResource BrandGoldSoft}"
+                            Stroke="{StaticResource BrandGold}"
+                            Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="الإجمالي قبل الشحن" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                                <Label Text="{Binding ItemCount, StringFormat='{0} قطعة مختارة'}" Style="{StaticResource MutedLabelStyle}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}"
+                                   FontFamily="Cairo"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource BrandInk}"
+                                   VerticalTextAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Button Text="إتمام الشراء"
+                            Command="{Binding ProceedToCheckoutCommand}"
+                            Style="{StaticResource PrimaryPurpleButtonStyle}" />
+                    <Button Text="إفراغ السلة"
+                            Command="{Binding ClearCartCommand}"
+                            Style="{StaticResource SecondaryCreamButtonStyle}" />
+                </VerticalStackLayout>
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>
