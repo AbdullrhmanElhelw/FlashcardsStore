@@ -14,495 +14,521 @@
     <Grid RowDefinitions="Auto,*">
 
         <!-- Executive Navbar (Matches Web _Navbar.cshtml) -->
-        <Border Grid.Row="0"
-                BackgroundColor="{StaticResource SurfaceWhite}"
-                StrokeThickness="0"
-                Padding="14,10"
-                Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
-            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+        <VerticalStackLayout Grid.Row="0" Spacing="0">
+            <Border BackgroundColor="{StaticResource SurfaceWhite}"
+                    StrokeThickness="0"
+                    Padding="14,10"
+                    Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
 
-                <!-- Brand Emblem + Name (Start / Right in RTL) -->
-                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                    <Border BackgroundColor="{StaticResource BrandPaper}"
-                            Stroke="#E8DAB8"
+                    <!-- Brand Emblem + Name -->
+                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                        <Border BackgroundColor="{StaticResource BrandPaper}"
+                                Stroke="#E8DAB8"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                Padding="4">
+                            <Image Source="logo.png" Aspect="AspectFit" />
+                        </Border>
+                        <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                            <Label Text="أكاديمية خلود النادي"
+                                   FontFamily="Cairo"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource BrandInk}"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Text="بطاقات الفلاش كاردز التعليمية"
+                                   FontFamily="Cairo"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource BrandGoldDark}"
+                                   LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+                    <!-- Search Action -->
+                    <Border Grid.Column="1"
+                            BackgroundColor="{StaticResource BrandPaper}"
+                            Stroke="{StaticResource CardBorder}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 12"
                             WidthRequest="42"
-                            HeightRequest="42"
-                            Padding="4">
-                        <Image Source="logo.png" Aspect="AspectFit" />
-                    </Border>
-                    <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                        <Label Text="أكاديمية خلود النادي"
-                               FontFamily="Cairo"
-                               FontSize="15"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource BrandInk}"
-                               LineBreakMode="TailTruncation" />
-                        <Label Text="بطاقات الفلاش كاردز التعليمية"
-                               FontFamily="Cairo"
-                               FontSize="11"
-                               FontAttributes="Bold"
-                               TextColor="{StaticResource BrandGoldDark}"
-                               LineBreakMode="TailTruncation" />
-                    </VerticalStackLayout>
-                </HorizontalStackLayout>
-
-                <!-- Search Action -->
-                <Border Grid.Column="1"
-                        BackgroundColor="{StaticResource BrandPaper}"
-                        Stroke="{StaticResource CardBorder}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 12"
-                        WidthRequest="42"
-                        HeightRequest="42">
-                    <ImageButton Source="home_search.png"
-                                 Clicked="OnSearchToggleClicked"
-                                 BackgroundColor="Transparent"
-                                 Padding="9" />
-                </Border>
-
-                <!-- Cart Action + Badge -->
-                <Grid Grid.Column="2" WidthRequest="46" HeightRequest="44">
-                    <Border BackgroundColor="{StaticResource BrandGoldSoft}"
-                            Stroke="#E2CE9F"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 12"
-                            WidthRequest="42"
-                            HeightRequest="42"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center">
-                        <ImageButton Source="home_cart.png"
-                                     Command="{Binding OpenCartCommand}"
+                            HeightRequest="42">
+                        <ImageButton Source="home_search.png"
+                                     Clicked="OnSearchToggleClicked"
                                      BackgroundColor="Transparent"
-                                     Padding="8" />
+                                     Padding="9" />
                     </Border>
-                    <Border BackgroundColor="{StaticResource BrandPurple}"
-                            Stroke="{StaticResource SurfaceWhite}"
-                            StrokeThickness="1.5"
-                            StrokeShape="RoundRectangle 10"
-                            WidthRequest="20"
-                            HeightRequest="20"
-                            HorizontalOptions="End"
-                            VerticalOptions="Start"
-                            InputTransparent="True"
-                            IsVisible="{Binding HasCartItems}">
-                        <Label Text="{Binding CartBadgeCount}"
-                               TextColor="White"
-                               FontSize="10"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center"
-                               VerticalTextAlignment="Center" />
-                    </Border>
-                </Grid>
 
-            </Grid>
-        </Border>
+                    <!-- Cart Action + Badge -->
+                    <Grid Grid.Column="2" WidthRequest="46" HeightRequest="44">
+                        <Border BackgroundColor="{StaticResource BrandGoldSoft}"
+                                Stroke="#E2CE9F"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+                            <ImageButton Source="home_cart.png"
+                                         Command="{Binding OpenCartCommand}"
+                                         BackgroundColor="Transparent"
+                                         Padding="8" />
+                        </Border>
+                        <Border BackgroundColor="{StaticResource BrandPurple}"
+                                Stroke="{StaticResource SurfaceWhite}"
+                                StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 10"
+                                WidthRequest="20"
+                                HeightRequest="20"
+                                HorizontalOptions="End"
+                                VerticalOptions="Start"
+                                InputTransparent="True"
+                                IsVisible="{Binding HasCartItems}">
+                            <Label Text="{Binding CartBadgeCount}"
+                                   TextColor="White"
+                                   FontSize="10"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
+
+                </Grid>
+            </Border>
+            <BoxView HeightRequest="1.2" Color="#E8DAB8" />
+        </VerticalStackLayout>
 
         <!-- Scrollable Store Content with Pull-to-Refresh -->
         <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}"
                      RefreshColor="{StaticResource BrandGold}">
-        <ScrollView x:Name="HomeScroll">
-            <VerticalStackLayout Spacing="12" Padding="0,10,0,28">
+            <ScrollView x:Name="HomeScroll">
+                <VerticalStackLayout Spacing="12" Padding="0,10,0,28">
 
-                <!-- Announcement Banner -->
-                <Border IsVisible="{Binding HasAnnouncement}"
-                        BackgroundColor="{StaticResource BrandGoldSoft}"
-                        Stroke="#E8DAB8"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="12,8"
-                        Margin="16,0">
-                    <Label Text="{Binding AnnouncementText}"
-                           Style="{StaticResource BodyLabelStyle}"
-                           FontSize="12"
-                           FontAttributes="Bold"
-                           MaxLines="2"
-                           LineBreakMode="TailTruncation"
-                           HorizontalTextAlignment="Center" />
-                </Border>
+                    <!-- Announcement Banner -->
+                    <Border IsVisible="{Binding HasAnnouncement}"
+                            BackgroundColor="{StaticResource BrandGoldSoft}"
+                            Stroke="#E8DAB8"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12,8"
+                            Margin="16,0">
+                        <Label Text="{Binding AnnouncementText}"
+                               Style="{StaticResource BodyLabelStyle}"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               MaxLines="2"
+                               LineBreakMode="TailTruncation"
+                               HorizontalTextAlignment="Center" />
+                    </Border>
 
-                <!-- Luxury Brand Hero Banner (Highlights logo_gold.png) -->
-                <Border Margin="16,0"
-                        Padding="16,14"
-                        Stroke="{StaticResource BrandGold}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 18"
-                        Shadow="{Shadow Brush='#18061A', Opacity='0.14', Radius='12', Offset='0,5'}">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#18061A" Offset="0.0" />
-                            <GradientStop Color="#2D0C33" Offset="0.6" />
-                            <GradientStop Color="#18061A" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Grid ColumnDefinitions="*,90" ColumnSpacing="10">
-                        <VerticalStackLayout Spacing="4" VerticalOptions="Center">
-                            <Border BackgroundColor="#290A2E"
-                                    Stroke="{StaticResource BrandGold}"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 10"
-                                    Padding="8,2"
-                                    HorizontalOptions="Start">
-                                <Label Text="✨ معتمد تعليمياً للأطفال"
+                    <!-- Luxury Brand Hero Banner -->
+                    <Border Margin="16,0"
+                            Padding="16,14"
+                            Stroke="{StaticResource BrandGold}"
+                            StrokeThickness="1.2"
+                            StrokeShape="RoundRectangle 20"
+                            Shadow="{Shadow Brush='#18061A', Opacity='0.14', Radius='12', Offset='0,5'}">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#190611" Offset="0.0" />
+                                <GradientStop Color="#360F29" Offset="0.55" />
+                                <GradientStop Color="#190611" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Grid ColumnDefinitions="*,78" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="5" VerticalOptions="Center">
+                                <Border BackgroundColor="#2A0B1E"
+                                        Stroke="{StaticResource BrandGold}"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 10"
+                                        Padding="9,2"
+                                        HorizontalOptions="Start">
+                                    <Label Text="✨ معتمد تعليمياً للأطفال"
+                                           FontFamily="Cairo"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource BrandGoldLight}" />
+                                </Border>
+                                <Label Text="أهلاً بيكي في أكاديمية خلود النادي"
                                        FontFamily="Cairo"
-                                       FontSize="10"
+                                       FontSize="16"
                                        FontAttributes="Bold"
                                        TextColor="{StaticResource BrandGoldLight}" />
-                            </Border>
-                            <Label Text="أهلاً بيكي في أكاديمية خلود النادي"
-                                   FontFamily="Cairo"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource BrandGoldLight}" />
-                            <Label Text="تعلمي الإنجليزية بالصوتيات واللعب بطريقة ممتعة وفعّالة"
-                                   FontFamily="Cairo"
-                                   FontSize="12"
-                                   TextColor="#E6DDF0" />
-                        </VerticalStackLayout>
-                        <Image Grid.Column="1"
-                               Source="logo_gold.png"
-                               Aspect="AspectFit"
-                               HeightRequest="76"
-                               WidthRequest="88"
-                               VerticalOptions="Center" />
-                    </Grid>
-                </Border>
-
-                <!-- Categories Chips -->
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="تصفحي حسب المجموعة"
-                           Style="{StaticResource BodyLabelStyle}"
-                           FontAttributes="Bold"
-                           Margin="18,0" />
-                    <CollectionView ItemsSource="{Binding Categories}"
-                                    HeightRequest="46"
-                                    Margin="12,0"
-                                    ItemsLayout="HorizontalList"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="ui:CategoryChipItem">
-                                <Border Margin="4,2"
-                                        Padding="12,6"
-                                        StrokeShape="RoundRectangle 20"
-                                        StrokeThickness="1.2"
-                                        Stroke="{StaticResource CardBorder}"
-                                        BackgroundColor="{StaticResource SurfaceWhite}">
-                                    <Border.Triggers>
-                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
-                                            <Setter Property="BackgroundColor" Value="{StaticResource BrandPurple}" />
-                                            <Setter Property="Stroke" Value="{StaticResource BrandPurple}" />
-                                        </DataTrigger>
-                                    </Border.Triggers>
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.SelectCategoryCommand}"
-                                                              CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="{Binding IconName}" WidthRequest="17" HeightRequest="17" IsVisible="{Binding HasIcon}" />
-                                        <Label Text="{Binding Title}"
-                                               FontFamily="Cairo"
-                                               FontSize="12"
-                                               FontAttributes="Bold"
-                                               TextColor="{StaticResource BrandInk}"
-                                               VerticalTextAlignment="Center">
-                                            <Label.Triggers>
-                                                <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
-                                                    <Setter Property="TextColor" Value="White" />
-                                                </DataTrigger>
-                                            </Label.Triggers>
-                                        </Label>
-                                    </HorizontalStackLayout>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-
-                <!-- Search & Filters Card -->
-                <Border Style="{StaticResource CardBorderStyle}"
-                        Margin="16,0"
-                        Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="ابحثي عن البطاقات" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
-                        <Grid ColumnDefinitions="*,82" ColumnSpacing="8">
-                            <Border Style="{StaticResource InputBoxBorderStyle}" HeightRequest="48" Padding="12,0">
-                                <Entry x:Name="SearchEntry"
-                                       Placeholder="ابحثي عن بطاقات أو صف دراسي"
-                                       Text="{Binding SearchQuery}"
-                                       ReturnType="Search"
-                                       ReturnCommand="{Binding SearchCommand}"
-                                       VerticalOptions="Center"
-                                       Style="{StaticResource BrandEntryStyle}" />
-                            </Border>
-                            <Button Grid.Column="1"
-                                    Text="بحث"
-                                    Command="{Binding SearchCommand}"
-                                    Style="{StaticResource PrimaryGoldButtonStyle}"
-                                    HeightRequest="48"
-                                    Padding="0" />
+                                <Label Text="تأسيس الإنجليزية بالصوتيات واللعب التفاعلي"
+                                       FontFamily="Cairo"
+                                       FontSize="12"
+                                       TextColor="#E6DDF0" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="1"
+                                   Source="logo_gold.png"
+                                   Aspect="AspectFit"
+                                   HeightRequest="72"
+                                   WidthRequest="76"
+                                   VerticalOptions="Center" />
                         </Grid>
+                    </Border>
 
-                        <Label Text="المرحلة الدراسية" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
-                        <CollectionView ItemsSource="{Binding Grades}"
-                                        HeightRequest="40"
+                    <!-- Trust Highlights Strip -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" Margin="16,0">
+                        <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
+                            <Label Text="🔊 نطق تفاعلي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
+                            <Label Text="🛡️ كوشيه 350 جم" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                        </Border>
+                        <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
+                            <Label Text="🚚 شحن لمصر" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
+
+                    <!-- Categories Chips -->
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6" Margin="16,0">
+                            <BoxView WidthRequest="3" HeightRequest="16" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
+                            <Label Text="تصفحي حسب المجموعة" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                        <CollectionView ItemsSource="{Binding Categories}"
+                                        HeightRequest="44"
+                                        Margin="12,0"
+                                        HorizontalScrollBarVisibility="Never"
                                         ItemsLayout="HorizontalList"
                                         SelectionMode="None">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="ui:GradeChipItem">
+                                <DataTemplate x:DataType="ui:CategoryChipItem">
                                     <Border Margin="4,2"
-                                            Padding="12,5"
-                                            StrokeShape="RoundRectangle 16"
-                                            StrokeThickness="1"
+                                            Padding="12,6"
+                                            StrokeShape="RoundRectangle 20"
+                                            StrokeThickness="1.2"
                                             Stroke="{StaticResource CardBorder}"
-                                            BackgroundColor="{StaticResource BrandPaper}">
+                                            BackgroundColor="{StaticResource SurfaceWhite}">
                                         <Border.Triggers>
                                             <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
-                                                <Setter Property="BackgroundColor" Value="{StaticResource BrandGold}" />
-                                                <Setter Property="Stroke" Value="{StaticResource BrandGoldDark}" />
+                                                <Setter Property="BackgroundColor" Value="{StaticResource BrandPurple}" />
+                                                <Setter Property="Stroke" Value="{StaticResource BrandPurple}" />
                                             </DataTrigger>
                                         </Border.Triggers>
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.SelectGradeCommand}"
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.SelectCategoryCommand}"
                                                                   CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
-                                        <Label Text="{Binding Title}"
-                                               FontFamily="Cairo"
-                                               FontSize="12"
-                                               FontAttributes="Bold"
-                                               TextColor="{StaticResource BrandInk}"
-                                               VerticalTextAlignment="Center" />
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Image Source="{Binding IconName}" WidthRequest="17" HeightRequest="17" IsVisible="{Binding HasIcon}" />
+                                            <Label Text="{Binding Title}"
+                                                   FontFamily="Cairo"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{StaticResource BrandInk}"
+                                                   VerticalTextAlignment="Center">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="TextColor" Value="White" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- Search & Filters Card -->
+                    <Border Style="{StaticResource CardBorderStyle}"
+                            Margin="16,0"
+                            Padding="12"
+                            Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,78" ColumnSpacing="8">
+                                <Border Style="{StaticResource InputBoxBorderStyle}" HeightRequest="46" Padding="12,0">
+                                    <Entry x:Name="SearchEntry"
+                                           Placeholder="ابحثي عن بطاقات أو صف دراسي"
+                                           Text="{Binding SearchQuery}"
+                                           ReturnType="Search"
+                                           ReturnCommand="{Binding SearchCommand}"
+                                           VerticalOptions="Center"
+                                           Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Button Grid.Column="1"
+                                        Text="بحث"
+                                        Command="{Binding SearchCommand}"
+                                        Style="{StaticResource PrimaryGoldButtonStyle}"
+                                        HeightRequest="46"
+                                        MinimumHeightRequest="46"
+                                        Padding="0" />
+                            </Grid>
+
+                            <CollectionView ItemsSource="{Binding Grades}"
+                                            HeightRequest="38"
+                                            HorizontalScrollBarVisibility="Never"
+                                            ItemsLayout="HorizontalList"
+                                            SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="ui:GradeChipItem">
+                                        <Border Margin="3,2"
+                                                Padding="11,4"
+                                                StrokeShape="RoundRectangle 16"
+                                                StrokeThickness="1"
+                                                Stroke="{StaticResource CardBorder}"
+                                                BackgroundColor="{StaticResource BrandPaper}">
+                                            <Border.Triggers>
+                                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource BrandGold}" />
+                                                    <Setter Property="Stroke" Value="{StaticResource BrandGoldDark}" />
+                                                </DataTrigger>
+                                            </Border.Triggers>
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.SelectGradeCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="{Binding Title}"
+                                                   FontFamily="Cairo"
+                                                   FontSize="11"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{StaticResource BrandInk}"
+                                                   VerticalTextAlignment="Center" />
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                <Label Text="ترتيب حسب" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
+                                <controls:BrandDropdown Grid.Column="1"
+                                                        Title="ترتيب المنتجات"
+                                                        ItemsSource="{Binding SortOptions}"
+                                                        SelectedItem="{Binding SelectedSortOption}" />
+                                <Button Grid.Column="2"
+                                        Text="مسح الفلاتر"
+                                        Command="{Binding ClearFiltersCommand}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource BrandPurple}"
+                                        FontFamily="Cairo"
+                                        FontAttributes="Bold"
+                                        FontSize="12"
+                                        Padding="6,4" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Loading / Error -->
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" Margin="18,0" />
+
+                    <!-- Featured Products Carousel -->
+                    <VerticalStackLayout Spacing="8" Padding="16,4" IsVisible="{Binding HasFeatured}">
+                        <HorizontalStackLayout Spacing="6">
+                            <BoxView WidthRequest="3" HeightRequest="20" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
+                            <Label Text="المنتجات المميزة" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                        <CollectionView ItemsSource="{Binding FeaturedProducts}"
+                                        HeightRequest="282"
+                                        HorizontalScrollBarVisibility="Never"
+                                        ItemsLayout="HorizontalList"
+                                        SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="ui:ProductCardDisplayItem">
+                                    <Border Style="{StaticResource CardBorderStyle}"
+                                            WidthRequest="178"
+                                            Margin="0,2,10,6"
+                                            Padding="10"
+                                            Shadow="{Shadow Brush='#18061A', Opacity='0.07', Radius='10', Offset='0,4'}">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.OpenProductCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="6">
+                                            <Border BackgroundColor="{StaticResource BrandPaper}"
+                                                    Stroke="Transparent"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    HeightRequest="116"
+                                                    Padding="6">
+                                                <Grid>
+                                                    <Image Source="logo.png" Aspect="AspectFit" Opacity="0.16" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                    <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" />
+                                                    <Border BackgroundColor="{StaticResource SuccessSoft}"
+                                                            Stroke="#A7DFC0"
+                                                            StrokeThickness="1"
+                                                            StrokeShape="RoundRectangle 8"
+                                                            Padding="6,2"
+                                                            HorizontalOptions="Start"
+                                                            VerticalOptions="End"
+                                                            IsVisible="{Binding HasTeacherVoice}">
+                                                        <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
+                                                    </Border>
+                                                    <Button Text="{Binding FavoriteIcon}"
+                                                            Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            BackgroundColor="{StaticResource SurfaceWhite}"
+                                                            TextColor="{StaticResource BrandPurple}"
+                                                            FontSize="14"
+                                                            WidthRequest="30"
+                                                            HeightRequest="30"
+                                                            CornerRadius="15"
+                                                            Padding="0"
+                                                            HorizontalOptions="End"
+                                                            VerticalOptions="Start" />
+                                                </Grid>
+                                            </Border>
+                                            <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
+                                            <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            <Button Text="أضف للسلة"
+                                                    Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    IsEnabled="{Binding InStock}"
+                                                    Style="{StaticResource PrimaryPurpleButtonStyle}"
+                                                    FontSize="12"
+                                                    MinimumHeightRequest="36"
+                                                    Padding="8,6" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <!-- Browse Promo Banner -->
+                    <Border Margin="16,4" Padding="16,14" Stroke="#E2CE9F" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#F5E7C7" Offset="0.0" />
+                                <GradientStop Color="#E9CC8D" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBrowseBannerTapped" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="44,*,40" ColumnSpacing="10">
+                            <Border BackgroundColor="{StaticResource BrandGold}" Stroke="Transparent" StrokeShape="RoundRectangle 22" WidthRequest="44" HeightRequest="44">
+                                <Label Text="←" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <Label Grid.Column="1"
+                                   Text="استكشفي جميع بطاقات الفلاش كاردز&#x0a;وجميع المستويات"
+                                   Style="{StaticResource BodyLabelStyle}"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                            <Label Grid.Column="2" Text="🃏" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Full Catalog Section -->
+                    <VerticalStackLayout x:Name="ProductsSection" Spacing="10" Padding="16,4">
+                        <HorizontalStackLayout Spacing="6">
+                            <BoxView WidthRequest="3" HeightRequest="20" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
+                            <Label Text="اكتشفي كل البطاقات والمستويات" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding ResultSummary}" Style="{StaticResource MutedLabelStyle}" TextColor="{StaticResource BrandGoldDark}" />
+
+                        <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="ui:ProductCardDisplayItem">
+                                    <Border Style="{StaticResource CardBorderStyle}"
+                                            Padding="10"
+                                            Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.OpenProductCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="5">
+                                            <Border BackgroundColor="{StaticResource BrandPaper}"
+                                                    Stroke="Transparent"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    HeightRequest="118"
+                                                    Padding="6">
+                                                <Grid>
+                                                    <Image Source="logo.png" Aspect="AspectFit" Opacity="0.16" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                    <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" />
+                                                    <Border BackgroundColor="{StaticResource SuccessSoft}"
+                                                            Stroke="#A7DFC0"
+                                                            StrokeThickness="1"
+                                                            StrokeShape="RoundRectangle 8"
+                                                            Padding="6,2"
+                                                            HorizontalOptions="Start"
+                                                            VerticalOptions="End"
+                                                            IsVisible="{Binding HasTeacherVoice}">
+                                                        <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
+                                                    </Border>
+                                                    <Button Text="{Binding FavoriteIcon}"
+                                                            Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            BackgroundColor="{StaticResource SurfaceWhite}"
+                                                            TextColor="{StaticResource BrandPurple}"
+                                                            FontSize="14"
+                                                            WidthRequest="30"
+                                                            HeightRequest="30"
+                                                            CornerRadius="15"
+                                                            Padding="0"
+                                                            HorizontalOptions="End"
+                                                            VerticalOptions="Start" />
+                                                </Grid>
+                                            </Border>
+                                            <Label Text="{Binding CategoryNameAr}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
+                                            <Label Text="{Binding CardCount, StringFormat='{0} بطاقة'}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            <Label Text="{Binding StockText}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Button Text="أضف للسلة"
+                                                    Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    IsEnabled="{Binding InStock}"
+                                                    Style="{StaticResource PrimaryPurpleButtonStyle}"
+                                                    FontSize="12"
+                                                    MinimumHeightRequest="36"
+                                                    Padding="8,6" />
+                                        </VerticalStackLayout>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
 
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                            <Label Text="ترتيب حسب" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
-                            <controls:BrandDropdown Grid.Column="1"
-                                                    Title="ترتيب المنتجات"
-                                                    ItemsSource="{Binding SortOptions}"
-                                                    SelectedItem="{Binding SelectedSortOption}" />
-                            <Button Grid.Column="2"
-                                    Text="مسح الفلاتر"
-                                    Command="{Binding ClearFiltersCommand}"
-                                    BackgroundColor="Transparent"
-                                    TextColor="{StaticResource BrandPurple}"
-                                    FontFamily="Cairo"
-                                    FontAttributes="Bold"
-                                    FontSize="12"
-                                    Padding="8,4" />
-                        </Grid>
+                        <!-- Pagination -->
+                        <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" Margin="0,8">
+                            <Button Text="السابق"
+                                    Command="{Binding PreviousPageCommand}"
+                                    IsEnabled="{Binding CanGoPrevious}"
+                                    Style="{StaticResource SecondaryCreamButtonStyle}" />
+                            <Label Text="{Binding PageLabel}" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
+                            <Button Text="التالي"
+                                    Command="{Binding NextPageCommand}"
+                                    IsEnabled="{Binding CanGoNext}"
+                                    Style="{StaticResource SecondaryCreamButtonStyle}" />
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
-                </Border>
 
-                <!-- Loading / Error -->
-                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
-                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" Margin="18,0" />
+                    <!-- Server URL Settings -->
+                    <Button Text="إعداد الاتصال بالخادم"
+                            Command="{Binding ToggleSettingsCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource BrandGoldDark}"
+                            FontFamily="Cairo"
+                            FontSize="12"
+                            HorizontalOptions="Center" />
 
-                <!-- Featured Products Carousel -->
-                <VerticalStackLayout Spacing="8" Padding="16,4" IsVisible="{Binding HasFeatured}">
-                    <Label Text="المنتجات المميزة" Style="{StaticResource SectionTitleStyle}" FontSize="19" />
-                    <CollectionView ItemsSource="{Binding FeaturedProducts}"
-                                    HeightRequest="282"
-                                    ItemsLayout="HorizontalList"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="ui:ProductCardDisplayItem">
-                                <Border Style="{StaticResource CardBorderStyle}"
-                                        WidthRequest="178"
-                                        Margin="0,2,10,6"
-                                        Padding="10"
-                                        Shadow="{Shadow Brush='#18061A', Opacity='0.07', Radius='10', Offset='0,4'}">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.OpenProductCommand}"
-                                                              CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <VerticalStackLayout Spacing="6">
-                                        <Border BackgroundColor="{StaticResource BrandPaper}"
-                                                Stroke="Transparent"
-                                                StrokeShape="RoundRectangle 12"
-                                                HeightRequest="116"
-                                                Padding="6">
-                                            <Grid>
-                                                <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" />
-                                                <Border BackgroundColor="{StaticResource SuccessSoft}"
-                                                        Stroke="#A7DFC0"
-                                                        StrokeThickness="1"
-                                                        StrokeShape="RoundRectangle 8"
-                                                        Padding="6,2"
-                                                        HorizontalOptions="Start"
-                                                        VerticalOptions="End"
-                                                        IsVisible="{Binding HasTeacherVoice}">
-                                                    <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
-                                                </Border>
-                                                <Button Text="{Binding FavoriteIcon}"
-                                                        Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                        BackgroundColor="{StaticResource SurfaceWhite}"
-                                                        TextColor="{StaticResource BrandPurple}"
-                                                        FontSize="14"
-                                                        WidthRequest="30"
-                                                        HeightRequest="30"
-                                                        CornerRadius="15"
-                                                        Padding="0"
-                                                        HorizontalOptions="End"
-                                                        VerticalOptions="Start" />
-                                            </Grid>
-                                        </Border>
-                                        <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
-                                        <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                        <Button Text="أضف للسلة"
-                                                Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
-                                                CommandParameter="{Binding .}"
-                                                IsEnabled="{Binding InStock}"
-                                                Style="{StaticResource PrimaryPurpleButtonStyle}"
-                                                FontSize="12"
-                                                MinimumHeightRequest="36"
-                                                Padding="8,6" />
-                                    </VerticalStackLayout>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="16,0" IsVisible="{Binding IsSettingsVisible}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="عنوان خادم المتجر (API)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" FontSize="13" />
+                            <Border Style="{StaticResource InputBoxBorderStyle}">
+                                <Entry Text="{Binding ServerUrl}"
+                                       Placeholder="http://10.0.2.2:5059/"
+                                       Keyboard="Url"
+                                       Style="{StaticResource BrandEntryStyle}" />
+                            </Border>
+                            <Button Text="حفظ عنوان الخادم"
+                                    Command="{Binding SaveServerUrlCommand}"
+                                    Style="{StaticResource SecondaryCreamButtonStyle}" />
+                        </VerticalStackLayout>
+                    </Border>
+
                 </VerticalStackLayout>
-
-                <!-- Browse Promo Banner -->
-                <Border Margin="16,4" Padding="16,14" Stroke="#E2CE9F" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#F5E7C7" Offset="0.0" />
-                            <GradientStop Color="#E9CC8D" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnBrowseBannerTapped" />
-                    </Border.GestureRecognizers>
-                    <Grid ColumnDefinitions="44,*,40" ColumnSpacing="10">
-                        <Border BackgroundColor="{StaticResource BrandGold}" Stroke="Transparent" StrokeShape="RoundRectangle 22" WidthRequest="44" HeightRequest="44">
-                            <Label Text="←" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
-                        </Border>
-                        <Label Grid.Column="1"
-                               Text="استكشفي جميع بطاقات الفلاش كاردز&#x0a;وجميع المستويات"
-                               Style="{StaticResource BodyLabelStyle}"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center"
-                               VerticalTextAlignment="Center" />
-                        <Label Grid.Column="2" Text="🃏" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
-                    </Grid>
-                </Border>
-
-                <!-- Full Catalog Section -->
-                <VerticalStackLayout x:Name="ProductsSection" Spacing="10" Padding="16,4">
-                    <Label Text="اكتشفي كل البطاقات والمستويات" Style="{StaticResource SectionTitleStyle}" FontSize="19" />
-                    <Label Text="{Binding ResultSummary}" Style="{StaticResource MutedLabelStyle}" TextColor="{StaticResource BrandGoldDark}" />
-
-                    <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="ui:ProductCardDisplayItem">
-                                <Border Style="{StaticResource CardBorderStyle}"
-                                        Padding="10"
-                                        Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.OpenProductCommand}"
-                                                              CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <VerticalStackLayout Spacing="5">
-                                        <Border BackgroundColor="{StaticResource BrandPaper}"
-                                                Stroke="Transparent"
-                                                StrokeShape="RoundRectangle 12"
-                                                HeightRequest="118"
-                                                Padding="6">
-                                            <Grid>
-                                                <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" />
-                                                <Border BackgroundColor="{StaticResource SuccessSoft}"
-                                                        Stroke="#A7DFC0"
-                                                        StrokeThickness="1"
-                                                        StrokeShape="RoundRectangle 8"
-                                                        Padding="6,2"
-                                                        HorizontalOptions="Start"
-                                                        VerticalOptions="End"
-                                                        IsVisible="{Binding HasTeacherVoice}">
-                                                    <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
-                                                </Border>
-                                                <Button Text="{Binding FavoriteIcon}"
-                                                        Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                        BackgroundColor="{StaticResource SurfaceWhite}"
-                                                        TextColor="{StaticResource BrandPurple}"
-                                                        FontSize="14"
-                                                        WidthRequest="30"
-                                                        HeightRequest="30"
-                                                        CornerRadius="15"
-                                                        Padding="0"
-                                                        HorizontalOptions="End"
-                                                        VerticalOptions="Start" />
-                                            </Grid>
-                                        </Border>
-                                        <Label Text="{Binding CategoryNameAr}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                        <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
-                                        <Label Text="{Binding CardCount, StringFormat='{0} بطاقة'}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                        <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                        <Label Text="{Binding StockText}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                        <Button Text="أضف للسلة"
-                                                Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
-                                                CommandParameter="{Binding .}"
-                                                IsEnabled="{Binding InStock}"
-                                                Style="{StaticResource PrimaryPurpleButtonStyle}"
-                                                FontSize="12"
-                                                MinimumHeightRequest="36"
-                                                Padding="8,6" />
-                                    </VerticalStackLayout>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                    <!-- Pagination -->
-                    <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" Margin="0,8">
-                        <Button Text="السابق"
-                                Command="{Binding PreviousPageCommand}"
-                                IsEnabled="{Binding CanGoPrevious}"
-                                Style="{StaticResource SecondaryCreamButtonStyle}" />
-                        <Label Text="{Binding PageLabel}" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
-                        <Button Text="التالي"
-                                Command="{Binding NextPageCommand}"
-                                IsEnabled="{Binding CanGoNext}"
-                                Style="{StaticResource SecondaryCreamButtonStyle}" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-
-                <!-- Server URL Settings -->
-                <Button Text="إعداد الاتصال بالخادم"
-                        Command="{Binding ToggleSettingsCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="{StaticResource BrandGoldDark}"
-                        FontFamily="Cairo"
-                        FontSize="12"
-                        HorizontalOptions="Center" />
-
-                <Border Style="{StaticResource CardBorderStyle}" Margin="16,0" IsVisible="{Binding IsSettingsVisible}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="عنوان خادم المتجر (API)" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" FontSize="13" />
-                        <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Entry Text="{Binding ServerUrl}"
-                                   Placeholder="http://10.0.2.2:5059/"
-                                   Keyboard="Url"
-                                   Style="{StaticResource BrandEntryStyle}" />
-                        </Border>
-                        <Button Text="حفظ عنوان الخادم"
-                                Command="{Binding SaveServerUrlCommand}"
-                                Style="{StaticResource SecondaryCreamButtonStyle}" />
-                    </VerticalStackLayout>
-                </Border>
-
-            </VerticalStackLayout>
-        </ScrollView>
+            </ScrollView>
         </RefreshView>
     </Grid>
 </ContentPage>

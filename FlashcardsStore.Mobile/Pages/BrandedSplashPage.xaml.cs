@@ -21,11 +21,15 @@ public partial class BrandedSplashPage : ContentPage
         _hasStarted = true;
 
         BrandMark.Opacity = 0;
-        BrandMark.Scale = 0.94;
+        BrandMark.Scale = 0.92;
+        BrandMark.TranslationY = 14;
+
         await Task.WhenAll(
-            BrandMark.FadeToAsync(1, 650, Easing.CubicOut),
-            BrandMark.ScaleToAsync(1, 650, Easing.CubicOut));
-        await Task.Delay(700);
+            BrandMark.FadeToAsync(1, 600, Easing.CubicOut),
+            BrandMark.ScaleToAsync(1, 600, Easing.CubicOut),
+            BrandMark.TranslateToAsync(0, 0, 600, Easing.CubicOut));
+
+        await Task.Delay(750);
         await BrandMark.FadeToAsync(0, 220, Easing.CubicIn);
 
         var hasSeenOnboarding = Preferences.Default.Get(OnboardingViewModel.SeenOnboardingKey, false);
