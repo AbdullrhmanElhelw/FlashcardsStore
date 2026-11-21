@@ -3,6 +3,10 @@ using FlashcardsStore.Mobile.Services;
 using FlashcardsStore.Mobile.Services.Abstractions;
 using FlashcardsStore.Mobile.ViewModels;
 using Microsoft.Extensions.Logging;
+#if ANDROID
+using Android.Content.Res;
+using Microsoft.Maui.Handlers;
+#endif
 
 namespace FlashcardsStore.Mobile;
 
@@ -14,6 +18,8 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .ConfigureFonts(fonts => fonts.AddFont("Cairo.ttf", "Cairo"));
+
+        ConfigurePlatformHandlers();
 
         // Infrastructure & App Services
         builder.Services.AddSingleton(new HttpClient { Timeout = TimeSpan.FromSeconds(30) });
@@ -52,5 +58,18 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
         return builder.Build();
+    }
+
+    private static void ConfigurePlatformHandlers()
+    {
+#if ANDROID
+        var transparent = ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        EntryHandler.Mapper.AppendToMapping("NoUnderline", (handler, _) =>
+            handler.PlatformView.BackgroundTintList = transparent);
+        EditorHandler.Mapper.AppendToMapping("NoUnderline", (handler, _) =>
+            handler.PlatformView.BackgroundTintList = transparent);
+        PickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, _) =>
+            handler.PlatformView.BackgroundTintList = transparent);
+#endif
     }
 }
