@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FlashcardsStore.Mobile.Pages.BrandDialogPage"
+             BackgroundColor="#8818061A"
+             FlowDirection="RightToLeft"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid Padding="28">
+        <Border x:Name="DialogCard"
+                BackgroundColor="{StaticResource SurfaceWhite}"
+                Stroke="{StaticResource BrandGold}"
+                StrokeThickness="1.2"
+                StrokeShape="RoundRectangle 22"
+                Padding="22,20"
+                VerticalOptions="Center"
+                HorizontalOptions="Fill"
+                Shadow="{Shadow Brush='#18061A', Opacity='0.25', Radius='20', Offset='0,8'}">
+
+            <VerticalStackLayout Spacing="12">
+
+                <!-- Brand Emblem Badge -->
+                <Border BackgroundColor="{StaticResource BrandPurple}"
+                        Stroke="{StaticResource BrandGold}"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 26"
+                        WidthRequest="52"
+                        HeightRequest="52"
+                        HorizontalOptions="Center">
+                    <Label x:Name="IconLabel"
+                           Text="✨"
+                           FontSize="22"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center" />
+                </Border>
+
+                <!-- Title -->
+                <Label x:Name="TitleLabel"
+                       Style="{StaticResource SectionTitleStyle}"
+                       FontSize="18"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Message -->
+                <Label x:Name="MessageLabel"
+                       Style="{StaticResource BodyLabelStyle}"
+                       FontSize="14"
+                       TextColor="{StaticResource MutedText}"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Buttons -->
+                <Grid x:Name="ConfirmButtonsGrid"
+                      ColumnDefinitions="*,*"
+                      ColumnSpacing="10"
+                      Margin="0,8,0,0"
+                      IsVisible="False">
+                    <Button x:Name="AcceptButton"
+                            Grid.Column="0"
+                            Clicked="OnAcceptClicked"
+                            Style="{StaticResource PrimaryPurpleButtonStyle}"
+                            MinimumHeightRequest="44" />
+                    <Button x:Name="CancelButton"
+                            Grid.Column="1"
+                            Clicked="OnCancelClicked"
+                            Style="{StaticResource SecondaryCreamButtonStyle}"
+                            MinimumHeightRequest="44" />
+                </Grid>
+
+                <Button x:Name="OkButton"
+                        Clicked="OnOkClicked"
+                        Style="{StaticResource PrimaryGoldButtonStyle}"
+                        MinimumHeightRequest="44"
+                        Margin="0,8,0,0"
+                        IsVisible="False" />
+
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
