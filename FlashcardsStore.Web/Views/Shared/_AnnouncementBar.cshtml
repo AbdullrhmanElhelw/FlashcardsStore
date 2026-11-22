@@ -1,0 +1,65 @@
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var settings = SettingsService.GetCachedSettings();
+    if (!settings.AnnouncementBarEnabled)
+    {
+        return;
+    }
+
+    var isRtl = Loc.IsRtl;
+    var announcementText = isRtl ? settings.AnnouncementTextAr : settings.AnnouncementTextEn;
+    if (string.IsNullOrWhiteSpace(announcementText))
+    {
+        announcementText = settings.AnnouncementTextAr;
+    }
+    var hasLink = !string.IsNullOrWhiteSpace(settings.AnnouncementLink);
+    var linkUrl = settings.AnnouncementLink ?? "#";
+    var ctaLabel = isRtl ? "اكتشف العروض ↗" : "Shop Offers ↗";
+    var dismissTitle = isRtl ? "إغلاق الإعلان" : "Dismiss Announcement";
+}
+
+<aside id="store-announcement-bar" 
+       x-data="{ dismissed: false }" 
+       x-show="!dismissed" 
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100 max-h-12"
+       x-transition:leave-end="opacity-0 max-h-0"
+       class="relative z-50 bg-gradient-to-r from-[#18061A] via-[#2E0935] to-[#18061A] text-white border-b border-amber-400/30 overflow-hidden shadow-xs">
+    
+    <!-- Subtle Shimmer Light Sweep -->
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/10 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-3 text-xs sm:text-[13px] font-bold">
+        
+        <!-- Center Banner Content -->
+        <div class="flex-grow flex items-center justify-center gap-2 text-center truncate">
+            <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0"></span>
+            
+            @if (hasLink)
+            {
+                <a href="@linkUrl" class="group inline-flex items-center gap-1.5 hover:text-amber-200 transition-colors truncate">
+                    <span class="truncate text-amber-100 font-extrabold">@announcementText</span>
+                    <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-black text-amber-300 group-hover:underline shrink-0">
+                        @ctaLabel
+                    </span>
+                </a>
+            }
+            else
+            {
+                <span class="text-amber-100 font-extrabold truncate">@announcementText</span>
+            }
+        </div>
+
+        <!-- Dismiss Close Button -->
+        <button type="button" 
+                @@click="dismissed = true"
+                title="@dismissTitle"
+                aria-label="@dismissTitle"
+                class="shrink-0 p-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+</aside>

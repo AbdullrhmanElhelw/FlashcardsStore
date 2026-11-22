@@ -1,0 +1,9 @@
+namespace FlashcardsStore.Web.Api.Contracts.Config;
+
+public sealed class MobileShippingQuote
+{
+    public decimal ShippingFee { get; set; }
+    public decimal Subtotal { get; set; }
+    public decimal GrandTotal { get; set; }
+    public bool IsFreeShipping { get; set; }
+}

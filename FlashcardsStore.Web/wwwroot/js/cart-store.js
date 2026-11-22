@@ -5,16 +5,27 @@ document.addEventListener('alpine:init', () => {
         isOpen: false,
         count: 0,
 
+        syncScroll() {
+            if (this.isOpen) {
+                document.body.classList.add('overflow-hidden');
+            } else {
+                document.body.classList.remove('overflow-hidden');
+            }
+        },
+
         toggle() {
             this.isOpen = !this.isOpen;
+            this.syncScroll();
         },
 
         open() {
             this.isOpen = true;
+            this.syncScroll();
         },
 
         close() {
             this.isOpen = false;
+            this.syncScroll();
         },
 
         setCount(val) {
@@ -35,6 +46,13 @@ document.addEventListener('alpine:init', () => {
         }
         if (e.detail && e.detail.openDrawer) {
             Alpine.store('cart').open();
+        }
+    });
+
+    // Handle Escape key to close cart and release scroll
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && Alpine.store('cart') && Alpine.store('cart').isOpen) {
+            Alpine.store('cart').close();
         }
     });
 });

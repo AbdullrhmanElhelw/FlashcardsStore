@@ -1,5 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using FlashcardsStore.Application;
 using FlashcardsStore.Infrastructure;
 using FlashcardsStore.Infrastructure.Persistence;
@@ -12,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(UnicodeRanges.All));
 
 // Add MVC Controllers with Views
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
 // Add HttpContextAccessor and Session Support
 builder.Services.AddHttpContextAccessor();
@@ -23,6 +25,33 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.Name = ".FlashcardsStore.Session";
+});
+
+// Configure Enterprise Cookie Authentication for Admin Area
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.LogoutPath = "/Admin/Logout";
+        options.AccessDeniedPath = "/Admin/Login";
+        options.Cookie.Name = ".FlashcardsStore.AdminAuth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization();
+
+// Configure Enterprise Antiforgery Protection (Header support for HTMX & AJAX)
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "RequestVerificationToken";
+    options.Cookie.Name = ".FlashcardsStore.Antiforgery";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
 // Register Cart Session Manager
@@ -84,6 +113,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -18,6 +18,7 @@ public class FlashcardsStoreDbContext : DbContext
     public DbSet<PaymentProof> PaymentProofs => Set<PaymentProof>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,7 @@ public class FlashcardsStoreDbContext : DbContext
         modelBuilder.Entity<PaymentProof>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<AdminUser>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<Review>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<StoreSettings>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -11,8 +11,21 @@ public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
     }
 
-    public async Task<Customer?> GetByPhoneAsync(string phone, CancellationToken cancellationToken = default)
+    public Task<Customer?> GetByPhoneAsync(string phone, CancellationToken cancellationToken = default)
+        => _dbSet.Where(customer => customer.PhoneNumber == phone)
+            .OrderByDescending(customer => customer.PasswordHash != null)
+            .FirstOrDefaultAsync(cancellationToken);
+
+    public Task<Customer?> GetAccountByPhoneAsync(string phone, CancellationToken cancellationToken = default)
+        => _dbSet.FirstOrDefaultAsync(
+            customer => customer.PhoneNumber == phone && customer.PasswordHash != null,
+            cancellationToken);
+
+    public Task<Customer?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.FirstOrDefaultAsync(c => c.PhoneNumber == phone, cancellationToken);
+        var normalizedEmail = email.Trim().ToLower();
+        return _dbSet.FirstOrDefaultAsync(
+            customer => customer.Email != null && customer.Email.ToLower() == normalizedEmail,
+            cancellationToken);
     }
 }

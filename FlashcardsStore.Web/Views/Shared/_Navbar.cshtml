@@ -1,11 +1,13 @@
 @inject FlashcardsStore.Web.Common.CartSessionManager CartManager
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     var initialCartCount = CartManager.GetCartViewModel().TotalItems;
     var isRtl = Loc.IsRtl;
     var targetCulture = isRtl ? "en-US" : "ar-EG";
     var switchLabel = isRtl ? "English" : "العربية";
     var switchTitle = isRtl ? "Switch to English" : "التحويل للغة العربية";
+    var navWhatsAppUrl = SettingsService.GetWhatsAppLink(isRtl ? "مرحباً مس خلود، لدي استفسار بخصوص بطاقات الفلاش كاردز التعليمية" : "Hello Miss Kholoud, I have an inquiry regarding educational flashcards");
 }
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-xs transition-all w-full max-w-full"
         x-data="{ mobileMenuOpen: false }"
@@ -177,7 +179,7 @@
                 </form>
 
                 <!-- Direct WhatsApp Contact (Desktop / Tablet) -->
-                <a href="https://wa.me/201099887766?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B3%20%D8%AE%D9%84%D9%88%D8%AF%D8%8C%20%D9%84%D8%AF%D9%8A%20%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1" 
+                <a href="@navWhatsAppUrl" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200/80 whitespace-nowrap transition-colors shadow-2xs"
@@ -378,7 +380,7 @@
                 <span>@Loc.Get("NavTrackOrder")</span>
             </a>
 
-            <a href="https://wa.me/201099887766?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B3%20%D8%AE%D9%84%D9%88%D8%AF%D8%8C%20%D9%84%D8%AF%D9%8A%20%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1" 
+            <a href="@navWhatsAppUrl" 
                target="_blank"
                rel="noopener noreferrer"
                class="flex items-center gap-2.5 p-2.5 rounded-xl font-bold text-xs text-emerald-700 bg-emerald-50 border border-emerald-200/80 hover:bg-emerald-100 transition-colors">

@@ -17,6 +17,7 @@ public class Product : BaseEntity
     public int ReservedStockQuantity { get; set; }
     public int AvailableStockQuantity => Math.Max(0, StockQuantity - ReservedStockQuantity);
     public string ImageUrl { get; set; } = string.Empty;
+    public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
     public int CategoryId { get; set; }

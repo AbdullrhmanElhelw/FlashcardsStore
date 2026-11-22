@@ -17,6 +17,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>flashcards-store-c48f2178-9e56-4279-b1d6-444a7e937d53</UserSecretsId>
   </PropertyGroup>
 
 </Project>

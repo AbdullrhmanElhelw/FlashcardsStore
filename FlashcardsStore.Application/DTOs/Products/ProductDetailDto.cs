@@ -15,10 +15,12 @@ public class ProductDetailDto
     public int StockQuantity { get; set; }
     public int AvailableStockQuantity { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public string CategoryNameAr { get; set; } = string.Empty;
     public bool InStock => AvailableStockQuantity > 0;
+    public IReadOnlyList<FlashcardsStore.Application.Common.PronunciationItem> SampleWords { get; set; } = new List<FlashcardsStore.Application.Common.PronunciationItem>();
 }

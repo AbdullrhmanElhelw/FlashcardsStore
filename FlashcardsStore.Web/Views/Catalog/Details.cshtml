@@ -1,5 +1,6 @@
 @model ProductDetailDto
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     var isRtl = Loc.IsRtl;
     var primaryName = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);
@@ -44,9 +45,16 @@
 
     ViewData["Title"] = primaryName + " - " + Loc.Get("BrandName");
     var whatsAppMsg = isRtl 
-        ? Uri.EscapeDataString($"مرحباً مس خلود، أود الاستفسار وطلب باقة الفلاش كاردز: {Model.NameAr} ({Model.Name}) بسعر {Model.Price:F0} ج.م من أكاديمية خلود النادي")
-        : Uri.EscapeDataString($"Hello Miss Kholoud, I would like to inquire about and order the flashcards pack: {Model.Name} ({Model.NameAr}) for {Model.Price:F0} EGP from Kholoud Elnady English Academy");
-    var directWhatsAppUrl = $"https://wa.me/201099887766?text={whatsAppMsg}";
+        ? $"مرحباً مس خلود، أود الاستفسار وطلب باقة الفلاش كاردز: {Model.NameAr} ({Model.Name}) بسعر {Model.Price:F0} ج.م من أكاديمية خلود النادي"
+        : $"Hello Miss Kholoud, I would like to inquire about and order the flashcards pack: {Model.Name} ({Model.NameAr}) for {Model.Price:F0} EGP from Kholoud Elnady English Academy";
+    var directWhatsAppUrl = SettingsService.GetWhatsAppLink(whatsAppMsg);
+
+    var sampleWordsJson = System.Text.Json.JsonSerializer.Serialize(Model.SampleWords.Select(w => new {
+        word = w.Word,
+        phonetic = w.Phonetic ?? "",
+        iconEmoji = w.IconEmoji ?? "🔤",
+        exampleSentence = w.ExampleSentence ?? ""
+    }));
 }
 
 @section Styles {
@@ -64,12 +72,43 @@
         <span class="text-[#18061A] font-extrabold">@primaryName</span>
     </nav>
 
+    @{
+        var imagesList = (Model.ImageUrl ?? "")
+            .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        if (imagesList.Count == 0) imagesList.Add("/images/cards/card-phonics-1.svg");
+    }
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-        <!-- Product Visual Preview Column (with 3D Flip Card Component) -->
-        <div class="lg:col-span-5">
+        <!-- Product Visual Preview Column (Dual Mode: Interactive 3D Card + HD Gallery) -->
+        <div class="lg:col-span-5" x-data="{ viewMode: '3d', activeImage: '@imagesList.First()' }">
             <div class="sticky top-28 space-y-4">
-                <div class="max-w-md mx-auto">
+                
+                <!-- View Mode Switcher -->
+                <div class="flex items-center justify-center p-1 bg-white rounded-2xl border border-amber-200/80 shadow-2xs max-w-xs mx-auto">
+                    <button type="button" 
+                            @@click="viewMode = '3d'"
+                            :class="viewMode === '3d' ? 'bg-[#18061A] text-[#FBF6E5] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>@Loc.GetLocalized("تقليب الكارت 3D", "Interactive 3D")</span>
+                    </button>
+                    <button type="button" 
+                            @@click="viewMode = 'gallery'"
+                            :class="viewMode === 'gallery' ? 'bg-[#18061A] text-[#FBF6E5] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>@Loc.GetLocalized("معرض الصور", "HD Photos")</span>
+                    </button>
+                </div>
+
+                <!-- 1. Interactive 3D Card Mode -->
+                <div x-show="viewMode === '3d'" class="max-w-md mx-auto">
                     <!-- Embed Reusable 3D Flip Card for interactive preview -->
                     @{
                         var cardVm = new ProductCardViewModel
@@ -83,21 +122,48 @@
                             CardCount = Model.CardCount,
                             Price = Model.Price,
                             AvailableStockQuantity = Model.AvailableStockQuantity,
-                            ImageUrl = Model.ImageUrl,
+                            ImageUrl = Model.ImageUrl ?? string.Empty,
                             BackPreviewText = Model.BackPreviewText,
                             BackKeyPoints = Model.BackKeyPoints,
                             CategoryName = Model.CategoryName,
-                            CategoryNameAr = Model.CategoryNameAr
+                            CategoryNameAr = Model.CategoryNameAr,
+                            SampleWords = Model.SampleWords
                         };
                     }
                     <partial name="_ProductCard" model="cardVm" />
+                    <div class="flex items-center justify-center gap-2 text-center text-xs font-bold text-slate-500 mt-3">
+                        <svg class="w-4 h-4 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>@Loc.Get("FlipCardTip")</span>
+                    </div>
                 </div>
-                <div class="flex items-center justify-center gap-2 text-center text-xs font-bold text-[#8C7B8E]">
-                    <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>@Loc.Get("FlipCardTip")</span>
+
+                <!-- 2. HD Photo Gallery Mode -->
+                <div x-show="viewMode === 'gallery'" style="display: none;" class="max-w-md mx-auto space-y-3">
+                    <div class="relative bg-white rounded-2xl border-2 border-amber-200/80 p-4 shadow-sm overflow-hidden flex items-center justify-center min-h-[300px]">
+                        <img :src="activeImage" alt="@primaryName" class="w-full h-72 object-contain transition-transform duration-300 hover:scale-105" />
+                        <span class="absolute top-3 @(isRtl ? "left-3" : "right-3") px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[10px] font-bold">
+                            @Loc.GetLocalized("صورة عالية الدقة", "HD Preview")
+                        </span>
+                    </div>
+
+                    @if (imagesList.Count > 1)
+                    {
+                        <div class="flex items-center justify-center gap-2 overflow-x-auto py-1">
+                            @foreach (var img in imagesList)
+                            {
+                                <button type="button" 
+                                        @@click="activeImage = '@img'"
+                                        :class="activeImage === '@img' ? 'border-[#8D6711] ring-2 ring-amber-300' : 'border-slate-200 opacity-70 hover:opacity-100'"
+                                        class="w-16 h-16 rounded-xl border bg-white p-1 transition-all overflow-hidden shrink-0 cursor-pointer">
+                                    <img src="@img" alt="Thumbnail" class="w-full h-full object-contain" />
+                                </button>
+                            }
+                        </div>
+                    }
                 </div>
+
             </div>
         </div>
 
@@ -125,7 +191,7 @@
                 <h1 class="text-2xl sm:text-4xl font-black text-[#18061A] leading-snug">
                     @primaryName
                 </h1>
-                <h2 class="text-base sm:text-lg font-bold text-[#D4AF37] mt-1 en-card-content">
+                <h2 class="text-base sm:text-lg font-bold text-[#8D6711] mt-1 en-card-content">
                     @secondaryName
                 </h2>
 
@@ -150,7 +216,7 @@
             <div class="bg-white rounded-2xl p-6 border border-[#D4AF37]/25 shadow-sm flex items-center justify-between">
                 <div>
                     <span class="block text-xs font-bold text-[#8C7B8E]">@Loc.Get("PackPrice")</span>
-                    <span class="text-3xl sm:text-4xl font-black text-[#18061A]">@Model.Price.ToString("F0") <small class="text-base font-bold text-[#D4AF37]">@Loc.Get("EgyptianPound")</small></span>
+                    <span class="text-3xl sm:text-4xl font-black text-[#18061A]">@Model.Price.ToString("F0") <small class="text-base font-bold text-[#8D6711]">@Loc.Get("EgyptianPound")</small></span>
                 </div>
 
                 <div>
@@ -199,6 +265,240 @@
                         }
                     </div>
                 </div>
+            </div>
+
+            <!-- Hidden JSON data for Pronunciation Studio -->
+            <script id="product-pronunciation-data" type="application/json">
+                @Html.Raw(sampleWordsJson)
+            </script>
+
+            <!-- =========================================================================
+                 TEACHER EXCLUSIVE VOICE NOTE (IF RECORDED / UPLOADED BY MISS KHOLOUD)
+                 ========================================================================= -->
+            @if (!string.IsNullOrWhiteSpace(Model.AudioUrl))
+            {
+                <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#18061A] via-[#240A28] to-[#120314] text-white border-2 border-[#D4AF37] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#B88E23] text-slate-950 flex items-center justify-center font-bold text-xl shadow-md shrink-0">
+                            🎙️
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-black text-[#D4AF37]">
+                                    @Loc.GetLocalized("شرح ونطق صوتي حصري للباقة", "Official Voice Note")
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+                                    @Loc.GetLocalized("بصوت ميس خلود النادي ✓", "By Miss Kholoud ✓")
+                                </span>
+                            </div>
+                            <p class="text-xs text-white/80 font-medium mt-1">
+                                @Loc.GetLocalized("تسجيل صوتي خاص من المعلمة لتأسيس طفلك وتوضيح النطق السليم لكروت الباقة", "Special voice recording from the teacher for your child foundation and clear pronunciation")
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Audio Player -->
+                    <audio src="@Model.AudioUrl" controls class="h-10 w-full sm:w-72 max-w-full rounded-xl shrink-0"></audio>
+                </div>
+            }
+
+            <!-- =========================================================================
+                 INTERACTIVE AUDIO PRONUNCIATION PREVIEW (NATIVE SPEECH SYNTHESIS)
+                 ========================================================================= -->
+            <div x-data="pronunciationPlayer('product-pronunciation-data')"
+                 x-show="isSupported && words && words.length > 0"
+                 class="bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EE] to-[#F5EEDC] border-2 border-[#D4AF37]/50 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4 text-start">
+                
+                <!-- Section Header with Controls -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D4AF37]/25 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#18061A] to-[#290A2E] text-[#D4AF37] flex items-center justify-center shadow-md shrink-0"
+                             :class="{ 'audio-pulse-ring': isPlaying }">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm sm:text-base font-black text-[#18061A]">
+                                    @Loc.GetLocalized("معاينة النطق الصوتي التفاعلي للبطاقات", "Interactive Audio Pronunciation Preview")
+                                </h3>
+                                <span class="px-2 py-0.5 rounded-full bg-[#18061A] text-[#D4AF37] text-[10px] font-black tracking-wide">
+                                    Native Audio
+                                </span>
+                            </div>
+                            <p class="text-xs text-[#6B5D6E] font-medium mt-0.5">
+                                @Loc.GetLocalized("استمع لنطق الكلمات التعليمية بصوت متحدثين أصليين مع إمكانية إبطاء السرعة للأطفال", "Listen to educational card vocabulary with native pronunciation and kid speed mode")
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Voice Accent & Speed Toggles -->
+                    <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                        <!-- Accent Selector -->
+                        <div class="inline-flex rounded-xl p-1 bg-white border border-[#D4AF37]/30 shadow-xs text-xs font-bold">
+                            <button type="button" 
+                                    @@click="setAccent('US')"
+                                    :class="accent === 'US' ? 'bg-[#18061A] text-[#D4AF37] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                                    class="px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1">
+                                <span>🇺🇸</span>
+                                <span>US</span>
+                            </button>
+                            <button type="button" 
+                                    @@click="setAccent('UK')"
+                                    :class="accent === 'UK' ? 'bg-[#18061A] text-[#D4AF37] shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                                    class="px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1">
+                                <span>🇬🇧</span>
+                                <span>UK</span>
+                            </button>
+                        </div>
+
+                        <!-- Speed Toggle (Normal vs Slow for Kids) -->
+                        <button type="button" 
+                                @@click="toggleSpeed()"
+                                :class="rate < 0.85 ? 'bg-amber-100 text-[#8D6711] border-amber-300 ring-2 ring-amber-200' : 'bg-white text-slate-700 border-slate-200'"
+                                class="px-2.5 py-1.5 rounded-xl border text-xs font-black transition-all flex items-center gap-1 shadow-xs cursor-pointer"
+                                title="@Loc.GetLocalized("تبديل سرعة النطق (عادي / بطيء للأطفال)", "Toggle pronunciation speed (Normal / Slow for kids)")">
+                            <span x-text="rate < 0.85 ? '🐢 0.75x بطيء' : '⚡ 1.0x عادي'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sequence Action Bar -->
+                <div class="flex items-center justify-between gap-3 bg-white/80 backdrop-blur-xs p-2.5 rounded-xl border border-[#D4AF37]/25">
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                @@click="playAll()"
+                                class="btn-gold-primary py-1.5 px-3.5 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-xs cursor-pointer">
+                            <template x-if="!isAllPlaying">
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-slate-950" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>@Loc.GetLocalized("استمع لكل الكلمات بالترتيب", "Listen to All Sequence")</span>
+                                </span>
+                            </template>
+                            <template x-if="isAllPlaying">
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-slate-950" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>@Loc.GetLocalized("إيقاف الاستماع", "Stop Playing")</span>
+                                </span>
+                            </template>
+                        </button>
+
+                        <button type="button" 
+                                x-show="isPlaying"
+                                @@click="stop()"
+                                class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                                title="@Loc.GetLocalized("إيقاف", "Stop")">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Live Audio Playing Status Indicator -->
+                    <div class="flex items-center gap-2">
+                        <template x-if="isPlaying">
+                            <div class="flex items-center gap-1.5 text-xs font-bold text-[#8D6711] bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                                <span class="soundwave-container text-[#8D6711]">
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                </span>
+                                <span>@Loc.GetLocalized("جاري النطق:", "Playing:")</span>
+                                <span class="font-black text-slate-900" x-text="currentWord"></span>
+                            </div>
+                        </template>
+                        <template x-if="!isPlaying">
+                            <span class="text-[11px] font-bold text-slate-500 hidden sm:inline">
+                                @Loc.GetLocalized("اضغط على أي كلمة للاستماع الفوري", "Click any word to hear pronunciation")
+                            </span>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Word Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <template x-for="(item, idx) in words" :key="idx">
+                        <div class="group relative bg-white rounded-xl p-3.5 border-2 transition-all flex flex-col justify-between"
+                             :class="{
+                                 'border-[#D4AF37] ring-2 ring-amber-300 shadow-md bg-amber-50/40': currentWord === item.word,
+                                 'border-slate-200/80 hover:border-[#D4AF37]/50 hover:shadow-xs': currentWord !== item.word
+                             }">
+                            
+                            <!-- Card Word & Play Action -->
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-2xl select-none" x-text="item.iconEmoji || '🔤'"></span>
+                                    <div>
+                                        <h4 class="text-base sm:text-lg font-black text-slate-900 leading-tight en-card-content tracking-wide"
+                                            x-text="item.word"></h4>
+                                        <template x-if="item.phonetic">
+                                            <span class="text-[10px] font-mono font-bold text-[#8D6711] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5"
+                                                  x-text="item.phonetic"></span>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- Individual Word Audio Play Button -->
+                                <button type="button" 
+                                        @@click="playWord(item)"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer shrink-0"
+                                        :class="currentWord === item.word && currentType === 'word' ? 'bg-[#18061A] text-[#D4AF37] ring-2 ring-amber-300' : 'bg-slate-100 hover:bg-[#18061A] text-slate-700 hover:text-[#D4AF37]'"
+                                        title="@Loc.GetLocalized("استمع لنطق الكلمة", "Listen to word")">
+                                    <template x-if="currentWord === item.word && currentType === 'word'">
+                                        <span class="soundwave-container text-[#D4AF37]">
+                                            <span class="soundwave-bar"></span>
+                                            <span class="soundwave-bar"></span>
+                                            <span class="soundwave-bar"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="!(currentWord === item.word && currentType === 'word')">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                        </svg>
+                                    </template>
+                                </button>
+                            </div>
+
+                            <!-- Example Sentence with Mini Audio Trigger -->
+                            <template x-if="item.exampleSentence">
+                                <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px] text-slate-600 en-card-content">
+                                    <span class="line-clamp-2 leading-relaxed" x-text="item.exampleSentence"></span>
+                                    <button type="button" 
+                                            @@click="playSentence(item)"
+                                            class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-[#8D6711] transition-colors shrink-0 cursor-pointer"
+                                            :class="{ 'text-[#8D6711] bg-amber-50': currentWord === item.word && currentType === 'sentence' }"
+                                            title="@Loc.GetLocalized("استمع للجملة كاملة", "Listen to sentence")">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Pedagogical Foundation Tip -->
+                <div class="flex items-start gap-2.5 bg-amber-50/70 p-3 rounded-xl border border-amber-200/70 text-xs text-[#524355] leading-relaxed">
+                    <span class="text-base select-none shrink-0">💡</span>
+                    <div>
+                        <strong class="text-[#18061A] font-bold block mb-0.5">
+                            @Loc.GetLocalized("نصيحة ميس خلود لتأسيس طفلك:", "Miss Kholoud's Academy Tip:")
+                        </strong>
+                        <span>
+                            @Loc.GetLocalized("استمعوا للكلمة بالسرعة البطيئة (0.75x) لتمييز صوت حركة الفونكس ومخارج الحروف، ثم كرروها بالسرعة الطبيعية (1.0x) لبناء الطلاقة والثقة في التحدث.", "Listen to the word at slow speed (0.75x) to clearly catch the phoneme sound, then repeat at normal speed (1.0x) to build confidence and speaking fluency.")
+                        </span>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Instant Actions -->
@@ -274,8 +574,9 @@
                  errorMsg: '',
                  rating: 5,
                  customerName: '',
-                 role: 'ولي أمر',
+                 role: 'ولي أمر (أم / أب)',
                  comment: '',
+                 newReviews: [],
                  async submitReview() {
                      if (!this.customerName.trim() || !this.comment.trim()) {
                          this.errorMsg = '@Loc.GetLocalized("يرجى كتابة الاسم والتعليق كاملاً", "Please enter your name and comment")';
@@ -296,13 +597,13 @@
                              })
                          });
                          const data = await resp.json();
-                         if (data.success) {
+                         if (data.success && data.review) {
+                             this.newReviews.unshift(data.review);
                              this.successMsg = '@Loc.Get("ReviewSuccessMessage")';
                              this.customerName = '';
                              this.comment = '';
                              this.formOpen = false;
                              if (window.showToast) window.showToast(this.successMsg, 'success');
-                             setTimeout(() => window.location.reload(), 1500);
                          } else {
                              this.errorMsg = data.message || 'حدث خطأ أثناء الإرسال';
                          }
@@ -467,6 +768,36 @@
 
         <!-- Reviews List Cards Grid -->
         <div class="space-y-4">
+            <!-- Dynamically added reviews without page reload -->
+            <div x-show="newReviews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <template x-for="r in newReviews" :key="r.id">
+                    <div class="bg-amber-50/60 rounded-2xl p-5 border-2 border-amber-300 shadow-xs space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-200 text-[#8D6711] font-black text-sm flex items-center justify-center shrink-0">
+                                    <span x-text="r.customerName ? r.customerName.charAt(0) : 'U'"></span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-900 leading-tight" x-text="r.customerName"></h4>
+                                    <span class="text-[11px] font-bold text-slate-500" x-text="r.role"></span>
+                                </div>
+                            </div>
+                            <div class="text-end shrink-0 space-y-1">
+                                <div class="flex items-center gap-0.5 text-amber-400">
+                                    <template x-for="s in [1, 2, 3, 4, 5]" :key="s">
+                                        <svg class="w-3.5 h-3.5" :class="s <= r.rating ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-slate-200 fill-slate-200'" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    </template>
+                                </div>
+                                <span class="text-[10px] text-emerald-600 font-bold block">@Loc.GetLocalized("تم الإرسال بنجاح ✓", "Added successfully ✓")</span>
+                            </div>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium" x-text="r.comment"></p>
+                    </div>
+                </template>
+            </div>
+
             @if (reviews != null && reviews.Count > 0)
             {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

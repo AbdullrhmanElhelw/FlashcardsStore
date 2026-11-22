@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:svc="clr-namespace:FlashcardsStore.Mobile.Services.Abstractions"
+       x:Class="FlashcardsStore.Mobile.Pages.StoreShell"
+       x:DataType="svc:ILocalizationService"
+       FlowDirection="{Binding FlowDirection}"
+       Shell.NavBarIsVisible="False"
+       Shell.TabBarBackgroundColor="#2A0B1E"
+       Shell.TabBarForegroundColor="{StaticResource BrandGold}"
+       Shell.TabBarTitleColor="{StaticResource BrandGoldLight}"
+       Shell.TabBarUnselectedColor="#C9B9CB">
+
+    <TabBar x:Name="MainTabBar">
+        <Tab x:Name="HomeTab" Title="{Binding [TabHome]}" Icon="home_house.png" />
+        <Tab x:Name="WishlistTab" Title="{Binding [TabWishlist]}" Icon="home_favorite.png" />
+        <Tab x:Name="CartTab" Title="{Binding [TabCart]}" Icon="home_cart.png" />
+        <Tab x:Name="OrdersTab" Title="{Binding [TabOrders]}" Icon="home_orders.png" />
+        <Tab x:Name="AccountTab" Title="{Binding [TabAccount]}" Icon="home_account.png" />
+    </TabBar>
+</Shell>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:ui="clr-namespace:FlashcardsStore.Mobile.Models.Ui"
+             x:Class="FlashcardsStore.Mobile.Pages.OnboardingPage"
+             x:DataType="vm:OnboardingViewModel"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid>
+        <!-- Top-Right Luxury Plum & Gold Corner Wave (Matches Login Design) -->
+        <Path Data="M 0,0 L 108,0 C 92,48 52,78 0,92 Z"
+              Fill="#4B1633"
+              Stroke="{StaticResource BrandGold}"
+              StrokeThickness="1.5"
+              HorizontalOptions="Start"
+              VerticalOptions="Start"
+              InputTransparent="True" />
+
+        <Grid RowDefinitions="Auto,*,Auto" Padding="22,18,22,28" RowSpacing="10">
+
+            <!-- Top Bar: Gold Brand Logo + Skip -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="54" WidthRequest="140" HorizontalOptions="Center" Grid.ColumnSpan="2" />
+                <Label Grid.Column="1"
+                       Text="تخطي"
+                       FontFamily="Cairo"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource BrandGoldDark}"
+                       TextDecorations="Underline"
+                       VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SkipCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
+
+            <!-- Carousel Slides -->
+            <CarouselView Grid.Row="1"
+                          ItemsSource="{Binding Slides}"
+                          Position="{Binding CurrentPosition, Mode=TwoWay}"
+                          IndicatorView="OnboardingIndicator"
+                          Loop="False">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate x:DataType="ui:OnboardingSlide">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="14" Padding="8,0">
+                            <Border BackgroundColor="{StaticResource SurfaceWhite}"
+                                    Stroke="{StaticResource DividerGold}"
+                                    StrokeThickness="1.2"
+                                    StrokeShape="RoundRectangle 28"
+                                    Padding="24"
+                                    HeightRequest="280"
+                                    Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='12', Offset='0,4'}">
+                                <Image Source="{Binding ImageName}" Aspect="AspectFit" />
+                            </Border>
+
+                            <!-- Gold Ornamental Divider -->
+                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                                <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                                <Label Text="♡" FontSize="14" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                                <BoxView HeightRequest="1" WidthRequest="24" Color="{StaticResource DividerGold}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding Title}"
+                                   Style="{StaticResource HeadingLabelStyle}"
+                                   FontSize="22"
+                                   HorizontalTextAlignment="Center" />
+
+                            <Label Text="{Binding Description}"
+                                   Style="{StaticResource BodyLabelStyle}"
+                                   FontSize="14"
+                                   TextColor="{StaticResource MutedText}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <!-- Bottom Indicator + Pill Button -->
+            <VerticalStackLayout Grid.Row="2" Spacing="16">
+                <IndicatorView x:Name="OnboardingIndicator"
+                               IndicatorColor="{StaticResource CardBorder}"
+                               SelectedIndicatorColor="{StaticResource BrandGold}"
+                               IndicatorSize="10"
+                               HorizontalOptions="Center" />
+
+                <Button Text="{Binding NextButtonText, StringFormat='—   {0}   —'}"
+                        Command="{Binding NextOrFinishCommand}"
+                        BackgroundColor="#4B1633"
+                        TextColor="White"
+                        FontFamily="Cairo"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        CornerRadius="26"
+                        HeightRequest="52" />
+            </VerticalStackLayout>
+
+        </Grid>
+    </Grid>
+</ContentPage>

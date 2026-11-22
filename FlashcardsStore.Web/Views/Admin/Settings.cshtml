@@ -1,0 +1,373 @@
+@model FlashcardsStore.Application.DTOs.Settings.StoreSettingsDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "إعدادات المتجر وبيانات التواصل والدفع";
+}
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ activeTab: 'contact', announcementEnabled: @(Model.AnnouncementBarEnabled ? "true" : "false") }">
+
+    <!-- Header & Breadcrumb -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <span class="text-slate-900">إعدادات المتجر</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">إدارة إعدادات المتجر والتواصل والشحن</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">تخصيص بيانات التواصل، أرقام فودافون كاش وإنستاباي، تسعير الشحن للمحافظات والشريط الإعلاني</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-[#8D6711] text-xs font-bold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>متصل بقاعدة البيانات مباشرة</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-8">
+        <button type="button" 
+                @@click="activeTab = 'contact'"
+                :class="activeTab === 'contact' ? 'bg-[#18061A] text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span>بيانات التواصل والواتساب</span>
+        </button>
+
+        <button type="button" 
+                @@click="activeTab = 'payment'"
+                :class="activeTab === 'payment' ? 'bg-[#18061A] text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>بوابات الدفع المصرية</span>
+        </button>
+
+        <button type="button" 
+                @@click="activeTab = 'shipping'"
+                :class="activeTab === 'shipping' ? 'bg-[#18061A] text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1m-6 0a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z" />
+            </svg>
+            <span>الشحن للمحافظات والشحن المجاني</span>
+        </button>
+
+        <button type="button" 
+                @@click="activeTab = 'announcement'"
+                :class="activeTab === 'announcement' ? 'bg-[#18061A] text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2">
+            <svg class="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+            </svg>
+            <span>شريط الإعلانات العلوي</span>
+        </button>
+    </div>
+
+    <!-- Main Settings Form -->
+    <form asp-controller="Admin" asp-action="Settings" method="post" class="space-y-8">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Tab 1: Contact Information -->
+        <div x-show="activeTab === 'contact'" x-transition class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-amber-50 text-[#8D6711] flex items-center justify-center text-sm font-bold">1</span>
+                        <span>بيانات وهوية الأكاديمية والتواصل</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">يتم تحديث هذه البيانات تلقائياً في كامل صفحات المتجر، التذييل، والزر العائم</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="StoreNameAr" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="StoreNameAr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900" />
+                        <span asp-validation-for="StoreNameAr" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="StoreNameEn" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="StoreNameEn" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" />
+                        <span asp-validation-for="StoreNameEn" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="WhatsAppNumber" class="block text-xs font-bold text-slate-700 mb-1.5">
+                            رقم الواتساب الرئيسي للمتجر
+                            <span class="text-emerald-600 font-bold">(يربط زر الواتساب العائم ومراسلات الطلبات)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-emerald-600">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z" />
+                                </svg>
+                            </span>
+                            <input asp-for="WhatsAppNumber" dir="ltr" class="w-full ps-10 pe-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="01099887766" />
+                        </div>
+                        <span asp-validation-for="WhatsAppNumber" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        <p class="text-[11px] text-slate-500 mt-1">يمكن كتابته بصيغة محلية (010...) أو دولية (2010...) ويتم تحويله تلقائياً لرابط صالح.</p>
+                    </div>
+
+                    <div>
+                        <label asp-for="ContactPhone" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="ContactPhone" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="01099887766" />
+                        <span asp-validation-for="ContactPhone" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="ContactEmail" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="ContactEmail" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="info@kholoudelnady-academy.com" />
+                        <span asp-validation-for="ContactEmail" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="StoreAddressAr" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="StoreAddressAr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900" />
+                        <span asp-validation-for="StoreAddressAr" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="StoreAddressEn" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="StoreAddressEn" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" />
+                        <span asp-validation-for="StoreAddressEn" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Payment Gateways & Mobile Wallets -->
+        <div x-show="activeTab === 'payment'" x-transition class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center text-sm font-bold">2</span>
+                        <span>بوابات الدفع والمحافظ الإلكترونية في مصر</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">أرقام وحسابات التحويل المعروضة للعميل عند إتمام الطلب ومراجعة التحويلات</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 rounded-2xl bg-amber-50/50 border border-amber-200 space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                            </span>
+                            <h3 class="text-sm font-black text-slate-900">محفظة فودافون كاش / المحافظ الذكية</h3>
+                        </div>
+
+                        <div>
+                            <label asp-for="VodafoneCashNumber" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                            <input asp-for="VodafoneCashNumber" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="01099887766" />
+                            <span asp-validation-for="VodafoneCashNumber" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                            <p class="text-[11px] text-slate-500 mt-1">يتم استقبال التحويلات عليه من محافظ: فودافون، أورنج، اتصالات، وي باي، والمحافظ البنكية (Smart Wallet).</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-800 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </span>
+                            <h3 class="text-sm font-black text-slate-900">حساب تطبيق إنستاباي (InstaPay)</h3>
+                        </div>
+
+                        <div>
+                            <label asp-for="InstaPayAddress" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                            <input asp-for="InstaPayAddress" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="kholoud.elnady@instapay" />
+                            <span asp-validation-for="InstaPayAddress" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="InstaPayAccountName" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                            <input asp-for="InstaPayAccountName" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900" placeholder="Kholoud Elnady English Academy" />
+                            <span asp-validation-for="InstaPayAccountName" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="PaymentInstructionsAr" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <textarea asp-for="PaymentInstructionsAr" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm text-slate-900" placeholder="اكتب التعليمات الإضافية للعميل عند التحويل..."></textarea>
+                        <span asp-validation-for="PaymentInstructionsAr" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        <p class="text-[11px] text-slate-500 mt-1">تظهر هذه الملاحظات في نافذة تأكيد الدفع وإيصال الطلب للتأكيد على العميل برفع صورة التحويل.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Egyptian Shipping Tiers & Free Shipping -->
+        <div x-show="activeTab === 'shipping'" x-transition class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-sm font-bold">3</span>
+                        <span>تسعير الشحن للمحافظات والشحن المجاني</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">تحديد مصاريف التوصيل لقطاعات مصر المختلفة ووضع حد أدنى للحصول على الشحن المجاني</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500">القطاع الأول</span>
+                            <span class="text-[10px] font-bold bg-amber-100 text-[#8D6711] px-2 py-0.5 rounded-md">القاهرة الكبرى</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900">القاهرة والجيزة</h4>
+                        <div class="pt-2">
+                            <label asp-for="ShippingFeeCairoGiza" class="block text-xs font-bold text-slate-700 mb-1"></label>
+                            <div class="relative">
+                                <input asp-for="ShippingFeeCairoGiza" type="number" step="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-base font-black text-slate-900" />
+                                <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-xs font-bold text-slate-400">ج.م</span>
+                            </div>
+                            <span asp-validation-for="ShippingFeeCairoGiza" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500">القطاع الثاني</span>
+                            <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">بحري والقناة</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900">الإسكندرية، الدلتا، القناة</h4>
+                        <div class="pt-2">
+                            <label asp-for="ShippingFeeDeltaCanal" class="block text-xs font-bold text-slate-700 mb-1"></label>
+                            <div class="relative">
+                                <input asp-for="ShippingFeeDeltaCanal" type="number" step="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-base font-black text-slate-900" />
+                                <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-xs font-bold text-slate-400">ج.م</span>
+                            </div>
+                            <span asp-validation-for="ShippingFeeDeltaCanal" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500">القطاع الثالث</span>
+                            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">قبلي والحدود</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900">الصعيد، سيناء، مطروح والبحر الأحمر</h4>
+                        <div class="pt-2">
+                            <label asp-for="ShippingFeeUpperEgypt" class="block text-xs font-bold text-slate-700 mb-1"></label>
+                            <div class="relative">
+                                <input asp-for="ShippingFeeUpperEgypt" type="number" step="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-base font-black text-slate-900" />
+                                <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-xs font-bold text-slate-400">ج.م</span>
+                            </div>
+                            <span asp-validation-for="ShippingFeeUpperEgypt" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <label asp-for="FreeShippingThreshold" class="text-xs font-black text-emerald-900"></label>
+                            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">محفز مبيعات 🔥</span>
+                        </div>
+                        <div class="relative">
+                            <input asp-for="FreeShippingThreshold" type="number" step="10" class="w-full px-4 py-2.5 rounded-xl border border-emerald-300 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 text-lg font-black text-slate-900" />
+                            <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-xs font-bold text-emerald-700">ج.م</span>
+                        </div>
+                        <span asp-validation-for="FreeShippingThreshold" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        <p class="text-[11px] text-emerald-700 mt-1.5 leading-relaxed">إذا كان إجمالي سلة المشتريات يساوي أو يتجاوز هذا المبلغ، يتم تصفير مصاريف الشحن تلقائياً لجميع المحافظات! (ضع 0 لإلغاء الميزة).</p>
+                    </div>
+
+                    <div>
+                        <label asp-for="EstimatedDeliveryTimeAr" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="EstimatedDeliveryTimeAr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900" />
+                        <span asp-validation-for="EstimatedDeliveryTimeAr" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        <p class="text-[11px] text-slate-500 mt-1">تظهر للعميل في تفاصيل الطلب لإشعاره بميعاد وصول الشحنة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Top Announcement Bar -->
+        <div x-show="activeTab === 'announcement'" x-transition class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-sm font-bold">4</span>
+                            <span>شريط الإعلانات الترويجي العلوي (Announcement Bar)</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">شريط براق أعلى المتجر لعرض العروض الخاصة والشحن المجاني وأكواد الخصم</p>
+                    </div>
+
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" asp-for="AnnouncementBarEnabled" class="sr-only peer" x-model="announcementEnabled">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ms-3 text-xs font-black" :class="announcementEnabled ? 'text-emerald-700' : 'text-slate-400'" x-text="announcementEnabled ? 'الشريط مفعّل ومرئي الآن' : 'الشريط معطّل ومخفي'"></span>
+                    </label>
+                </div>
+
+                <!-- Live Preview of Announcement Bar -->
+                <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-2">
+                    <span class="text-[11px] font-bold text-slate-500 block">معاينة مباشرة لشكل الشريط في أعلى المتجر:</span>
+                    <div x-show="announcementEnabled" x-transition class="bg-gradient-to-r from-[#18061A] via-[#3B0E42] to-[#18061A] text-white py-2.5 px-4 rounded-xl text-center text-xs font-bold border border-amber-300/40 shadow-sm flex items-center justify-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span id="preview-announcement-text" class="text-amber-200 truncate">@Model.AnnouncementTextAr</span>
+                        <a href="#" class="underline text-white hover:text-amber-300 ms-2 text-[11px] font-black">تسوق الآن ↗</a>
+                    </div>
+                    <div x-show="!announcementEnabled" class="p-3 text-center text-xs text-slate-400 font-semibold bg-white rounded-xl border border-dashed border-slate-300">
+                        الشريط معطّل حالياً ولن يظهر لزوار المتجر
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="AnnouncementTextAr" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="AnnouncementTextAr" 
+                               oninput="document.getElementById('preview-announcement-text').innerText = this.value" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900" />
+                        <span asp-validation-for="AnnouncementTextAr" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="AnnouncementTextEn" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="AnnouncementTextEn" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" />
+                        <span asp-validation-for="AnnouncementTextEn" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="AnnouncementLink" class="block text-xs font-bold text-slate-700 mb-1.5"></label>
+                        <input asp-for="AnnouncementLink" dir="ltr" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-amber-200 text-sm font-bold text-slate-900 font-mono" placeholder="/Catalog" />
+                        <span asp-validation-for="AnnouncementLink" class="text-xs font-bold text-rose-600 mt-1 block"></span>
+                        <p class="text-[11px] text-slate-500 mt-1">رابط الصفحة التي يتم فتحها عند الضغط على الإعلان (مثال: /Catalog أو /Catalog/Details?slug=short-vowels-pack).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button Bar (Sticky at bottom on mobile & desktop) -->
+        <div class="sticky bottom-4 z-30 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-slate-300 shadow-xl flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>يتم تطبيق التعديلات فوراً على المتجر وبوابات الدفع</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a asp-controller="Admin" asp-action="Dashboard" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs sm:text-sm font-bold transition">
+                    إلغاء
+                </a>
+                <button type="submit" class="btn-gold-primary px-8 py-2.5 text-xs sm:text-sm font-black shadow-md rounded-xl flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>حفظ وتحديث الإعدادات الآن</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>

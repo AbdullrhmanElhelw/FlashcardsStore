@@ -54,23 +54,8 @@ public class ProductService : IProductService
         var pagedItems = query
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
-            .Select(p => new ProductCardViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                NameAr = p.NameAr,
-                Slug = p.Slug,
-                TargetAudience = p.TargetAudience,
-                GradeLevel = p.GradeLevel,
-                CardCount = p.CardCount,
-                Price = p.Price,
-                AvailableStockQuantity = p.AvailableStockQuantity,
-                ImageUrl = p.ImageUrl,
-                BackPreviewText = p.BackPreviewText,
-                BackKeyPoints = p.BackKeyPoints,
-                CategoryName = p.Category?.Name ?? string.Empty,
-                CategoryNameAr = p.Category?.NameAr ?? string.Empty
-            }).ToList();
+            .Select(MapToCardViewModel)
+            .ToList();
 
         return new PagedResult<ProductCardViewModel>
         {
@@ -172,6 +157,7 @@ public class ProductService : IProductService
             Price = dto.Price,
             StockQuantity = dto.StockQuantity,
             ImageUrl = dto.ImageUrl,
+            AudioUrl = dto.AudioUrl,
             BackPreviewText = dto.BackPreviewText,
             BackKeyPoints = dto.BackKeyPoints,
             CategoryId = dto.CategoryId,
@@ -213,6 +199,7 @@ public class ProductService : IProductService
         product.Price = dto.Price;
         product.StockQuantity = dto.StockQuantity;
         product.ImageUrl = dto.ImageUrl;
+        product.AudioUrl = dto.AudioUrl;
         product.BackPreviewText = dto.BackPreviewText;
         product.BackKeyPoints = dto.BackKeyPoints;
         product.CategoryId = dto.CategoryId;
@@ -268,10 +255,12 @@ public class ProductService : IProductService
         Price = p.Price,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryName = p.Category?.Name ?? string.Empty,
-        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty,
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
     };
 
     private static ProductDto MapToDto(Product p) => new()
@@ -290,6 +279,7 @@ public class ProductService : IProductService
         ReservedStockQuantity = p.ReservedStockQuantity,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryId = p.CategoryId,
@@ -314,10 +304,12 @@ public class ProductService : IProductService
         StockQuantity = p.StockQuantity,
         AvailableStockQuantity = p.AvailableStockQuantity,
         ImageUrl = p.ImageUrl,
+        AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
         CategoryId = p.CategoryId,
         CategoryName = p.Category?.Name ?? string.Empty,
-        CategoryNameAr = p.Category?.NameAr ?? string.Empty
+        CategoryNameAr = p.Category?.NameAr ?? string.Empty,
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
     };
 }

@@ -1,9 +1,11 @@
 @model OrderDetailDto
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
 @{
     ViewData["Title"] = Loc.Get("PaymentInstructionsTitle", Model.OrderNumber);
-    const string vodafoneCash = "01099887766";
-    const string instaPay = "kholoud.elnady@instapay";
+    var settings = SettingsService.GetCachedSettings();
+    var vodafoneCash = settings.VodafoneCashNumber;
+    var instaPay = settings.InstaPayAddress;
     var isRtl = Loc.IsRtl;
     var nextArrow = isRtl ? "←" : "→";
 }

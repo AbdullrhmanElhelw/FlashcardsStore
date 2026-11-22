@@ -28,6 +28,9 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(c => c.Email)
             .HasMaxLength(150);
 
+        builder.Property(c => c.PasswordHash)
+            .HasMaxLength(256);
+
         builder.Property(c => c.ShippingAddress)
             .IsRequired()
             .HasMaxLength(500);

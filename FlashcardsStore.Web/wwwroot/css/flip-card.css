@@ -108,33 +108,44 @@
   transform: scale(1.04);
 }
 
-/* Flip Hint Indicator (Compact 3D Badge at bottom corner) */
+/* Flip Hint Indicator (Comfortable 3D Badge with enlarged touch target) */
 .flip-hint-badge {
   position: absolute;
-  bottom: 7px;
-  background: rgba(15, 23, 42, 0.85);
+  bottom: 8px;
+  background: rgba(15, 23, 42, 0.88);
   color: #F8FAFC;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(212, 175, 55, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
   z-index: 20;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Touch expander for WCAG compliance on mobile (44x44px target) */
+.flip-hint-badge::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
 }
 
 html[dir="rtl"] .flip-hint-badge {
-  left: 7px;
+  left: 8px;
   right: auto;
 }
 
 html[dir="ltr"] .flip-hint-badge {
-  right: 7px;
+  right: 8px;
   left: auto;
 }
 
@@ -142,34 +153,45 @@ html[dir="ltr"] .flip-hint-badge {
   background: #0F172A;
   border-color: #D4AF37;
   transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25);
 }
 
-/* Wishlist Heart Button (Dedicated at top corner opposite category) */
+/* Wishlist Heart Button (Comfortable 32px with touch expander) */
 .wishlist-card-btn {
   position: absolute;
-  top: 7px;
+  top: 8px;
   z-index: 25;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.95);
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wishlist-card-btn::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
 }
 
 html[dir="rtl"] .wishlist-card-btn {
-  left: 7px;
+  left: 8px;
   right: auto;
 }
 
 html[dir="ltr"] .wishlist-card-btn {
-  right: 7px;
+  right: 8px;
   left: auto;
 }
 
@@ -225,4 +247,41 @@ html[dir="ltr"] .category-pill-compact {
   border: 1px solid rgba(212, 175, 55, 0.15);
   border-radius: 8px;
   padding: 6px 8px;
+}
+
+/* ==========================================================================
+   Soundwave & Audio Pronunciation Styles
+   ========================================================================== */
+.soundwave-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+  vertical-align: middle;
+}
+
+.soundwave-bar {
+  width: 2.5px;
+  background-color: currentColor;
+  border-radius: 9999px;
+  animation: soundwave-bounce 0.8s ease-in-out infinite alternate;
+}
+
+.soundwave-bar:nth-child(1) { height: 4px; animation-delay: 0.1s; }
+.soundwave-bar:nth-child(2) { height: 11px; animation-delay: 0.25s; }
+.soundwave-bar:nth-child(3) { height: 7px; animation-delay: 0.4s; }
+
+@keyframes soundwave-bounce {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1.1); }
+}
+
+.audio-pulse-ring {
+  animation: audio-ring 1.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+@keyframes audio-ring {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }

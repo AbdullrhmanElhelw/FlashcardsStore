@@ -19,8 +19,9 @@ public static class DependencyInjection
         services.AddScoped<IStockReservationService, StockReservationService>();
         services.AddScoped<ILocalizationService, LocalizationService>();
         services.AddScoped<IReviewService, ReviewService>();
-        services.AddSingleton<IWhatsAppLinkBuilder, WhatsAppLinkBuilder>();
-        services.AddSingleton<IWalletMessageGenerator, WalletMessageGenerator>();
+        services.AddScoped<IStoreSettingsService, StoreSettingsService>();
+        services.AddScoped<IWhatsAppLinkBuilder, WhatsAppLinkBuilder>();
+        services.AddScoped<IWalletMessageGenerator, WalletMessageGenerator>();
 
         return services;
     }

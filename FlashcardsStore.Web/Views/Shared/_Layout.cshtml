@@ -26,6 +26,14 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1E1220] selection:bg-[#D4AF37] selection:text-[#18061A] overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false }">
 
+    <!-- Global Anti-Forgery Token for HTMX & AJAX -->
+    <form id="global-antiforgery-form" style="display:none;" aria-hidden="true">
+        @Html.AntiForgeryToken()
+    </form>
+
+    <!-- Top Announcement Bar -->
+    <partial name="_AnnouncementBar" />
+
     <!-- Navigation Header -->
     <partial name="_Navbar" />
 
@@ -42,6 +50,9 @@
     <!-- Toast Notification Container -->
     <partial name="_Toast" />
 
+    <!-- Floating WhatsApp Direct Action Button -->
+    <partial name="_FloatingWhatsApp" />
+
     <!-- Footer -->
     <partial name="_Footer" />
 
@@ -50,6 +61,7 @@
     <script src="~/js/cart-store.js" asp-append-version="true"></script>
     <script src="~/js/wishlist-store.js" asp-append-version="true"></script>
     <script src="~/js/flip-card.js" asp-append-version="true"></script>
+    <script src="~/js/pronunciation-player.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

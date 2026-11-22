@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="420" viewBox="0 0 560 420">
+  <defs>
+	<linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFDF8"/><stop offset="1" stop-color="#F3E6CF"/></linearGradient>
+	<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EBD28A"/><stop offset="1" stop-color="#B48931"/></linearGradient>
+  </defs>
+  <circle cx="278" cy="204" r="164" fill="#F2E6CF"/>
+  <circle cx="278" cy="204" r="137" fill="none" stroke="#D7BD7C" stroke-width="1.5" stroke-dasharray="3 9"/>
+  <path d="M77 98c18-21 45-22 62-4M420 87c14 20 10 43-9 57M83 321c18 15 42 13 56-5M425 327c-15-17-12-39 6-52" fill="none" stroke="#C59B45" stroke-width="4" stroke-linecap="round"/>
+  <g transform="rotate(-10 190 224)">
+	<rect x="99" y="142" width="168" height="205" rx="20" fill="url(#paper)" stroke="#87AFC1" stroke-width="7"/>
+	<rect x="111" y="154" width="144" height="181" rx="13" fill="#FFF"/>
+	<path d="M146 239c0-22 18-40 40-40 16 0 28 9 35 21-10 3-17 11-19 21 9 3 16 10 19 18-8 12-21 19-36 19-22 0-39-17-39-39z" fill="#D95E59" stroke="#9E3C40" stroke-width="3"/>
+	<path d="M185 199c-2-12 5-19 16-21 0 11-5 18-16 21zm1 0c-10-10-19-9-26-1 8 7 16 8 26 1z" fill="#5F8A55"/>
+	<path d="M143 296h80M157 318h52" stroke="#D8C8A6" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(8 341 202)">
+	<rect x="281" y="113" width="158" height="193" rx="20" fill="url(#paper)" stroke="#D4B65E" stroke-width="7"/>
+	<rect x="293" y="125" width="134" height="169" rx="13" fill="#FFF"/>
+	<path d="M334 193c8-20 37-21 47-3l11 39h-69l11-36z" fill="#C88A55" stroke="#805A42" stroke-width="3"/>
+	<path d="M337 195l-9-18 20 7m24 11 14-16-3 27" fill="#C88A55" stroke="#805A42" stroke-width="3" stroke-linejoin="round"/>
+	<circle cx="347" cy="204" r="2.5" fill="#2D2630"/><circle cx="369" cy="204" r="2.5" fill="#2D2630"/>
+	<path d="M348 215q10 8 20 0M338 273h44" fill="none" stroke="#684239" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g fill="url(#gold)"><path d="M475 156l7 16 16 7-16 7-7 16-7-16-16-7 16-7z"/><path d="M103 101l5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/></g>
+  <circle cx="458" cy="284" r="7" fill="#D5B45E"/><circle cx="91" cy="258" r="5" fill="#D5B45E"/>
+</svg>

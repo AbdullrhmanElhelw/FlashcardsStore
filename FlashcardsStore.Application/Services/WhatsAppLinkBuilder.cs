@@ -8,13 +8,21 @@ namespace FlashcardsStore.Application.Services;
 
 public class WhatsAppLinkBuilder : IWhatsAppLinkBuilder
 {
-    private const string TeacherWhatsAppEgypt = "201099887766"; // Teacher WhatsApp in international format
+    private readonly IStoreSettingsService _settingsService;
+
+    public WhatsAppLinkBuilder(IStoreSettingsService settingsService)
+    {
+        _settingsService = settingsService;
+    }
 
     public string BuildOrderLink(OrderDetailDto order)
     {
+        var settings = _settingsService.GetCachedSettings();
+        var teacherWhatsAppEgypt = _settingsService.GetWhatsAppNumberInternational();
+
         var sb = new StringBuilder();
         sb.AppendLine("أهلاً بحضرتك يا مس خلود،");
-        sb.AppendLine("أود تأكيد طلب بطاقات الفلاش كاردز التعليمية من أكاديمية خلود النادي للغة الإنجليزية:");
+        sb.AppendLine($"أود تأكيد طلب بطاقات الفلاش كاردز التعليمية من {settings.StoreNameAr}:");
         sb.AppendLine();
         sb.AppendLine($"[رقم الطلب]: {order.OrderNumber}");
         sb.AppendLine($"[الاسم]: {order.CustomerName}");
@@ -44,13 +52,11 @@ public class WhatsAppLinkBuilder : IWhatsAppLinkBuilder
         sb.AppendLine("برجاء إفادتي بميعاد التوصيل وتأكيد استلام الطلب. شكراً جزيلاً.");
 
         var encoded = WebUtility.UrlEncode(sb.ToString());
-        return $"https://wa.me/{TeacherWhatsAppEgypt}?text={encoded}";
+        return $"https://wa.me/{teacherWhatsAppEgypt}?text={encoded}";
     }
 
     public string BuildSupportLink(string? customMessage = null)
     {
-        var msg = customMessage ?? "مرحباً، لدي استفسار بخصوص بطاقات الفلاش كاردز التعليمية للأطفال.";
-        var encoded = WebUtility.UrlEncode(msg);
-        return $"https://wa.me/{TeacherWhatsAppEgypt}?text={encoded}";
+        return _settingsService.GetWhatsAppLink(customMessage);
     }
 }

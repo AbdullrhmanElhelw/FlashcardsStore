@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
+             x:Class="FlashcardsStore.Mobile.Pages.CheckoutPage"
+             x:DataType="vm:CheckoutViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:BrandHeaderView Grid.Row="0"
+                                  HeaderTitle="{Binding Loc[CheckoutHeader]}"
+                                  HeaderSubtitle="{Binding Loc[CheckoutSub]}"
+                                  ShowBackButton="True" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,12,16,28" Spacing="14">
+
+                <!-- Section 1: Customer Details -->
+                <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="1. بيانات العميل والتواصل" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                        <Label Text="أدخلي بيانات التواصل لتنسيق التوصيل بدقة." Style="{StaticResource MutedLabelStyle}" />
+
+                        <Label Text="نوع العميل" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <controls:BrandDropdown Title="نوع العميل"
+                                                ItemsSource="{Binding CustomerTypeOptions}"
+                                                SelectedIndex="{Binding SelectedCustomerTypeIndex}" />
+
+                        <Label Text="الاسم بالكامل *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="الاسم بالكامل" Text="{Binding FullName}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+
+                        <Label Text="رقم الهاتف *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="01012345678" Keyboard="Telephone" Text="{Binding PhoneNumber}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+
+                        <Label Text="رقم واتساب (اختياري)" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="رقم واتساب" Keyboard="Telephone" Text="{Binding WhatsAppNumber}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+
+                        <Label Text="البريد الإلكتروني (اختياري)" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="البريد الإلكتروني" Keyboard="Email" Text="{Binding Email}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section 2: Shipping Address -->
+                <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="2. عنوان التوصيل والمحافظة" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+
+                        <Label Text="المحافظة *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <controls:BrandDropdown Title="اختر المحافظة"
+                                                ItemsSource="{Binding Governorates}"
+                                                SelectedItem="{Binding SelectedGovernorate}" />
+
+                        <Label Text="المدينة / المنطقة *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="المدينة" Text="{Binding City}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+
+                        <Label Text="العنوان بالتفصيل *" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="الشارع، رقم المبنى، الدور..." Text="{Binding ShippingAddress}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+
+                        <Label Text="ملاحظات (اختياري)" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Border Style="{StaticResource InputBoxBorderStyle}">
+                            <Entry Placeholder="ملاحظات إضافية" Text="{Binding Notes}" Style="{StaticResource BrandEntryStyle}" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section 3: Payment & Summary -->
+                <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="3. طريقة الدفع" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                        <controls:BrandDropdown Title="اختر طريقة الدفع"
+                                                ItemsSource="{Binding PaymentMethodOptions}"
+                                                SelectedIndex="{Binding SelectedPaymentMethodIndex}" />
+
+                        <Border BackgroundColor="{StaticResource BrandGoldSoft}" Stroke="{StaticResource BrandGold}" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="14">
+                            <Label Text="{Binding TotalsSummary}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
+
+                <Button Text="تأكيد الطلب الآن"
+                        Command="{Binding SubmitOrderCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        Style="{StaticResource PrimaryPurpleButtonStyle}" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

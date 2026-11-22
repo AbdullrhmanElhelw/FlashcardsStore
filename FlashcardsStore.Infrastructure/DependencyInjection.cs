@@ -31,10 +31,14 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IPaymentProofRepository, PaymentProofRepository>();
         services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+        services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Register File Storage
         services.AddSingleton<IFileStorageService>(new LocalFileStorageService(webRootPath));
+
+        // Register Password Hasher (PBKDF2 SHA-256 with 100,000 iterations & salt)
+        services.AddSingleton<IPasswordHasher, FlashcardsStore.Infrastructure.Security.PasswordHasher>();
 
         // Register Background Hosted Service for 24-hour stock cleanup
         services.AddHostedService<StockReservationCleanupHostedService>();

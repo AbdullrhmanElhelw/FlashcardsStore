@@ -38,7 +38,14 @@ public class LocalFileStorageService : IFileStorageService
             return Task.CompletedTask;
 
         var cleanPath = relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-        var fullPath = Path.Combine(_webRootPath, cleanPath);
+        var fullPath = Path.GetFullPath(Path.Combine(_webRootPath, cleanPath));
+        var rootFullPath = Path.GetFullPath(_webRootPath);
+
+        // Security: Prevent path traversal outside webRoot
+        if (!fullPath.StartsWith(rootFullPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.CompletedTask;
+        }
 
         if (File.Exists(fullPath))
         {
@@ -52,7 +59,15 @@ public class LocalFileStorageService : IFileStorageService
     {
         if (string.IsNullOrWhiteSpace(relativePath)) return false;
         var cleanPath = relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-        var fullPath = Path.Combine(_webRootPath, cleanPath);
+        var fullPath = Path.GetFullPath(Path.Combine(_webRootPath, cleanPath));
+        var rootFullPath = Path.GetFullPath(_webRootPath);
+
+        // Security: Prevent path traversal outside webRoot
+        if (!fullPath.StartsWith(rootFullPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
         return File.Exists(fullPath);
     }
 }
