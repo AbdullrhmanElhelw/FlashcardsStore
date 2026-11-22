@@ -10,11 +10,20 @@ namespace FlashcardsStore.Mobile.Services;
 
 public sealed class MobileApiClient(HttpClient httpClient) : IMobileApiClient
 {
-    public const string DefaultApiBaseUrl = "http://10.0.2.2:5059/";
+    public const string DefaultApiBaseUrl = "https://card-store.runasp.net/";
     private const string ApiPrefix = "api/v1/";
     private static readonly JsonSerializerOptions JsonOptions = CreateJsonOptions();
 
-    public string BaseUrl => Preferences.Default.Get("api_base_url", DefaultApiBaseUrl);
+    public string BaseUrl
+    {
+        get
+        {
+            var saved = Preferences.Default.Get("api_base_url", DefaultApiBaseUrl);
+            return string.IsNullOrWhiteSpace(saved) || saved.Contains("10.0.2.2", StringComparison.OrdinalIgnoreCase)
+                ? DefaultApiBaseUrl
+                : saved;
+        }
+    }
 
     public void SetBaseUrl(string value)
     {
