@@ -14,6 +14,7 @@ public class ProductCard
     public int AvailableStockQuantity { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public string? AudioUrl { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
     public string CategoryNameAr { get; set; } = string.Empty;
     public bool InStock { get; set; }
 

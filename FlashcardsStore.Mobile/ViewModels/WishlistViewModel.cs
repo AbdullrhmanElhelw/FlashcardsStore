@@ -28,13 +28,18 @@ public sealed partial class WishlistViewModel : BaseViewModel
         IMobileApiClient api,
         ICartStore cart,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _cart = cart;
         _navigation = navigation;
         _dialogs = dialogs;
         Title = "المفضلة";
+        loc.LanguageChanged += (_, _) =>
+        {
+            foreach (var item in Items) item.IsRtl = loc.IsRtl;
+        };
     }
 
     [RelayCommand]
@@ -58,7 +63,7 @@ public sealed partial class WishlistViewModel : BaseViewModel
             Items.Clear();
             foreach (var p in products)
             {
-                Items.Add(new ProductCardDisplayItem(p, _api.GetImageUrl(p.ImageUrl), true));
+                Items.Add(new ProductCardDisplayItem(p, _api.GetImageUrl(p.ImageUrl), true, Loc.IsRtl));
             }
             HasItems = Items.Count > 0;
         }

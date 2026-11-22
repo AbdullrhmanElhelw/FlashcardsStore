@@ -13,5 +13,6 @@ public class OrderTracking
     public int ItemCount { get; set; }
     public bool RequiresPaymentProof { get; set; }
     public bool HasUploadedProof { get; set; }
+    public string StatusDescription { get; set; } = string.Empty;
     public string StatusDescriptionAr { get; set; } = string.Empty;
 }

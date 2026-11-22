@@ -7,13 +7,14 @@
              x:Class="FlashcardsStore.Mobile.Pages.WishlistPage"
              x:Name="ThisWishlistPage"
              x:DataType="vm:WishlistViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False">
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="قائمة المفضلة"
-                                  HeaderSubtitle="الباقات المحفوظة للعودة لاحقاً" />
+                                  HeaderTitle="{Binding Loc[WishlistHeader]}"
+                                  HeaderSubtitle="{Binding Loc[WishlistSub]}" />
 
         <RefreshView Grid.Row="1"
                      IsRefreshing="{Binding IsRefreshing}"
@@ -50,22 +51,22 @@
                                         </Grid>
                                     </Border>
                                     <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                                        <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
-                                        <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                        <Label Text="{Binding DisplayName}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding DisplayPrice}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
                                         <HorizontalStackLayout Spacing="8">
-                                            <Button Text="عرض"
+                                            <Button Text="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.Loc[ViewBtn]}"
                                                     Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.OpenProductCommand}"
                                                     CommandParameter="{Binding .}"
                                                     Style="{StaticResource SecondaryCreamButtonStyle}"
                                                     Padding="12,6" />
-                                            <Button Text="للسلة"
+                                            <Button Text="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.Loc[ToCartBtn]}"
                                                     Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.AddToCartCommand}"
                                                     CommandParameter="{Binding .}"
                                                     Style="{StaticResource PrimaryPurpleButtonStyle}"
                                                     MinimumHeightRequest="36"
                                                     FontSize="12"
                                                     Padding="12,6" />
-                                            <Button Text="إزالة"
+                                            <Button Text="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.Loc[RemoveBtn]}"
                                                     Command="{Binding Source={x:Reference ThisWishlistPage}, Path=BindingContext.RemoveFavoriteCommand}"
                                                     CommandParameter="{Binding .}"
                                                     BackgroundColor="Transparent"

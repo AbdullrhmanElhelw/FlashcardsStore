@@ -5,13 +5,14 @@
              xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.OrderTrackPage"
              x:DataType="vm:OrderTrackViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False">
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="تتبع طلبك"
-                                  HeaderSubtitle="متابعة حالة الشحنة والدفع خطوة بخطوة" />
+                                  HeaderTitle="{Binding Loc[TrackHeader]}"
+                                  HeaderSubtitle="{Binding Loc[TrackSub]}" />
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,12,16,24" Spacing="14">

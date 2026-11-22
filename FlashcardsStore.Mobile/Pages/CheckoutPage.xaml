@@ -5,14 +5,15 @@
              xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.CheckoutPage"
              x:DataType="vm:CheckoutViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="إتمام الشراء"
-                                  HeaderSubtitle="الشحن والدفع الآمن داخل مصر"
+                                  HeaderTitle="{Binding Loc[CheckoutHeader]}"
+                                  HeaderSubtitle="{Binding Loc[CheckoutSub]}"
                                   ShowBackButton="True" />
 
         <ScrollView Grid.Row="1">

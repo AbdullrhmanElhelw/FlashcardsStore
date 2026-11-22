@@ -7,6 +7,7 @@
              x:Class="FlashcardsStore.Mobile.Pages.CatalogPage"
              x:Name="ThisCatalogPage"
              x:DataType="vm:CatalogViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
@@ -19,7 +20,7 @@
                     StrokeThickness="0"
                     Padding="14,10"
                     Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
-                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
 
                     <!-- Brand Emblem + Name -->
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
@@ -33,13 +34,13 @@
                             <Image Source="logo.png" Aspect="AspectFill" />
                         </Border>
                         <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                            <Label Text="أكاديمية خلود النادي"
+                            <Label Text="{Binding Loc[BrandName]}"
                                    FontFamily="Cairo"
                                    FontSize="15"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource BrandInk}"
                                    LineBreakMode="TailTruncation" />
-                            <Label Text="بطاقات الفلاش كاردز التعليمية"
+                            <Label Text="{Binding Loc[BrandSubtitle]}"
                                    FontFamily="Cairo"
                                    FontSize="11"
                                    FontAttributes="Bold"
@@ -48,8 +49,28 @@
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
 
-                    <!-- Search Action -->
+                    <!-- Language Switcher (AR / EN) -->
                     <Border Grid.Column="1"
+                            BackgroundColor="{StaticResource BrandPaper}"
+                            Stroke="{StaticResource BrandGold}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="10,0"
+                            HeightRequest="42">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleLanguageCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="{Binding Loc.SwitchButtonLabel}"
+                               FontFamily="Cairo"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource BrandPurple}"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center" />
+                    </Border>
+
+                    <!-- Search Action -->
+                    <Border Grid.Column="2"
                             BackgroundColor="{StaticResource BrandPaper}"
                             Stroke="{StaticResource CardBorder}"
                             StrokeThickness="1"
@@ -63,7 +84,7 @@
                     </Border>
 
                     <!-- Cart Action + Badge -->
-                    <Grid Grid.Column="2" WidthRequest="46" HeightRequest="44">
+                    <Grid Grid.Column="3" WidthRequest="46" HeightRequest="44">
                         <Border BackgroundColor="{StaticResource BrandGoldSoft}"
                                 Stroke="#E2CE9F"
                                 StrokeThickness="1"
@@ -150,7 +171,7 @@
                                         HorizontalOptions="Start">
                                     <HorizontalStackLayout Spacing="5">
                                         <Image Source="icon_sparkles.png" WidthRequest="12" HeightRequest="12" VerticalOptions="Center" />
-                                        <Label Text="معتمد تعليمياً للأطفال"
+                                        <Label Text="{Binding Loc[HeroBadge]}"
                                                FontFamily="Cairo"
                                                FontSize="10"
                                                FontAttributes="Bold"
@@ -158,12 +179,12 @@
                                                VerticalTextAlignment="Center" />
                                     </HorizontalStackLayout>
                                 </Border>
-                                <Label Text="أهلاً بيكي في أكاديمية خلود النادي"
+                                <Label Text="{Binding Loc[HeroTitle]}"
                                        FontFamily="Cairo"
                                        FontSize="16"
                                        FontAttributes="Bold"
                                        TextColor="{StaticResource BrandGoldLight}" />
-                                <Label Text="تأسيس الإنجليزية بالصوتيات واللعب التفاعلي"
+                                <Label Text="{Binding Loc[HeroSubtitle]}"
                                        FontFamily="Cairo"
                                        FontSize="12"
                                        TextColor="#E6DDF0" />
@@ -182,19 +203,19 @@
                         <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
                             <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image Source="icon_audio.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
-                                <Label Text="نطق تفاعلي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                                <Label Text="{Binding Loc[TrustAudio]}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
                             </HorizontalStackLayout>
                         </Border>
                         <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
                             <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image Source="icon_shield.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
-                                <Label Text="كوشيه 350 جم" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                                <Label Text="{Binding Loc[TrustQuality]}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
                             </HorizontalStackLayout>
                         </Border>
                         <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
                             <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image Source="icon_truck.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
-                                <Label Text="شحن لمصر" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                                <Label Text="{Binding Loc[TrustShipping]}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
                             </HorizontalStackLayout>
                         </Border>
                     </Grid>
@@ -203,7 +224,7 @@
                     <VerticalStackLayout Spacing="6">
                         <HorizontalStackLayout Spacing="6" Margin="16,0">
                             <BoxView WidthRequest="3" HeightRequest="16" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
-                            <Label Text="تصفحي حسب المجموعة" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Loc[BrowseByCategory]}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
                         <CollectionView ItemsSource="{Binding Categories}"
                                         HeightRequest="44"
@@ -231,7 +252,7 @@
                                         </Border.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                             <Image Source="{Binding IconName}" WidthRequest="17" HeightRequest="17" IsVisible="{Binding HasIcon}" />
-                                            <Label Text="{Binding Title}"
+                                            <Label Text="{Binding DisplayTitle}"
                                                    FontFamily="Cairo"
                                                    FontSize="12"
                                                    FontAttributes="Bold"
@@ -259,7 +280,7 @@
                             <Grid ColumnDefinitions="*,78" ColumnSpacing="8">
                                 <Border Style="{StaticResource InputBoxBorderStyle}" HeightRequest="46" Padding="12,0">
                                     <Entry x:Name="SearchEntry"
-                                           Placeholder="ابحثي عن بطاقات أو صف دراسي"
+                                           Placeholder="{Binding Loc[SearchPlaceholder]}"
                                            Text="{Binding SearchQuery}"
                                            ReturnType="Search"
                                            ReturnCommand="{Binding SearchCommand}"
@@ -267,7 +288,7 @@
                                            Style="{StaticResource BrandEntryStyle}" />
                                 </Border>
                                 <Button Grid.Column="1"
-                                        Text="بحث"
+                                        Text="{Binding Loc[SearchBtn]}"
                                         Command="{Binding SearchCommand}"
                                         Style="{StaticResource PrimaryGoldButtonStyle}"
                                         HeightRequest="46"
@@ -298,7 +319,7 @@
                                                 <TapGestureRecognizer Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.SelectGradeCommand}"
                                                                       CommandParameter="{Binding .}" />
                                             </Border.GestureRecognizers>
-                                            <Label Text="{Binding Title}"
+                                            <Label Text="{Binding DisplayTitle}"
                                                    FontFamily="Cairo"
                                                    FontSize="11"
                                                    FontAttributes="Bold"
@@ -310,13 +331,13 @@
                             </CollectionView>
 
                             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                                <Label Text="ترتيب حسب" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
+                                <Label Text="{Binding Loc[SortByLabel]}" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
                                 <controls:BrandDropdown Grid.Column="1"
-                                                        Title="ترتيب المنتجات"
+                                                        Title="{Binding Loc[SortTitle]}"
                                                         ItemsSource="{Binding SortOptions}"
                                                         SelectedItem="{Binding SelectedSortOption}" />
                                 <Button Grid.Column="2"
-                                        Text="مسح الفلاتر"
+                                        Text="{Binding Loc[ClearFilters]}"
                                         Command="{Binding ClearFiltersCommand}"
                                         BackgroundColor="Transparent"
                                         TextColor="{StaticResource BrandPurple}"
@@ -336,7 +357,7 @@
                     <VerticalStackLayout Spacing="8" Padding="16,4" IsVisible="{Binding HasFeatured}">
                         <HorizontalStackLayout Spacing="6">
                             <BoxView WidthRequest="3" HeightRequest="20" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
-                            <Label Text="المنتجات المميزة" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Loc[FeaturedTitle]}" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
                         <CollectionView ItemsSource="{Binding FeaturedProducts}"
                                         HeightRequest="282"
@@ -390,9 +411,9 @@
                                                             VerticalOptions="Start" />
                                                 </Grid>
                                             </Border>
-                                            <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
-                                            <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                            <Button Text="أضف للسلة"
+                                            <Label Text="{Binding DisplayName}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
+                                            <Label Text="{Binding DisplayPrice}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            <Button Text="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.Loc[AddToCart]}"
                                                     Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
                                                     CommandParameter="{Binding .}"
                                                     IsEnabled="{Binding InStock}"
@@ -423,7 +444,7 @@
                                 <Label Text="←" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             </Border>
                             <Label Grid.Column="1"
-                                   Text="استكشفي جميع بطاقات الفلاش كاردز&#x0a;وجميع المستويات"
+                                   Text="{Binding Loc[BrowseBannerText]}"
                                    Style="{StaticResource BodyLabelStyle}"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
@@ -436,7 +457,7 @@
                     <VerticalStackLayout x:Name="ProductsSection" Spacing="10" Padding="16,4">
                         <HorizontalStackLayout Spacing="6">
                             <BoxView WidthRequest="3" HeightRequest="20" Color="{StaticResource BrandGold}" VerticalOptions="Center" />
-                            <Label Text="اكتشفي كل البطاقات والمستويات" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
+                            <Label Text="{Binding Loc[AllCardsTitle]}" Style="{StaticResource SectionTitleStyle}" FontSize="19" VerticalTextAlignment="Center" />
                         </HorizontalStackLayout>
                         <Label Text="{Binding ResultSummary}" Style="{StaticResource MutedLabelStyle}" TextColor="{StaticResource BrandGoldDark}" />
 
@@ -489,12 +510,12 @@
                                                             VerticalOptions="Start" />
                                                 </Grid>
                                             </Border>
-                                            <Label Text="{Binding CategoryNameAr}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                            <Label Text="{Binding NameAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
-                                            <Label Text="{Binding CardCount, StringFormat='{0} بطاقة'}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                            <Label Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                            <Label Text="{Binding StockText}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                            <Button Text="أضف للسلة"
+                                            <Label Text="{Binding DisplayCategory}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Label Text="{Binding DisplayName}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
+                                            <Label Text="{Binding DisplayCardCount}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Label Text="{Binding DisplayPrice}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            <Label Text="{Binding DisplayStockText}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Button Text="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.Loc[AddToCart]}"
                                                     Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
                                                     CommandParameter="{Binding .}"
                                                     IsEnabled="{Binding InStock}"
@@ -510,12 +531,12 @@
 
                         <!-- Pagination -->
                         <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" Margin="0,8">
-                            <Button Text="السابق"
+                            <Button Text="{Binding Loc[Previous]}"
                                     Command="{Binding PreviousPageCommand}"
                                     IsEnabled="{Binding CanGoPrevious}"
                                     Style="{StaticResource SecondaryCreamButtonStyle}" />
                             <Label Text="{Binding PageLabel}" Style="{StaticResource MutedLabelStyle}" VerticalTextAlignment="Center" />
-                            <Button Text="التالي"
+                            <Button Text="{Binding Loc[Next]}"
                                     Command="{Binding NextPageCommand}"
                                     IsEnabled="{Binding CanGoNext}"
                                     Style="{StaticResource SecondaryCreamButtonStyle}" />

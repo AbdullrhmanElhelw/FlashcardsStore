@@ -20,6 +20,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
     private string? _selectedGrade;
     private bool _hasNextPage;
     private bool _initialized;
+    private StoreConfig? _lastConfig;
+    private int _lastTotalCount;
+    private int _lastTotalPages = 1;
 
     [ObservableProperty] private string _announcementText = string.Empty;
     [ObservableProperty] private bool _hasAnnouncement;
@@ -41,17 +44,18 @@ public sealed partial class CatalogViewModel : BaseViewModel
 
     public IReadOnlyList<SortOptionItem> SortOptions { get; } = new[]
     {
-        new SortOptionItem { Key = string.Empty, Title = "الأحدث" },
-        new SortOptionItem { Key = "price_asc", Title = "السعر الأقل" },
-        new SortOptionItem { Key = "price_desc", Title = "السعر الأعلى" },
-        new SortOptionItem { Key = "name", Title = "الاسم" }
+        new SortOptionItem { Key = string.Empty, Title = "الأحدث", TitleEn = "Newest" },
+        new SortOptionItem { Key = "price_asc", Title = "السعر الأقل", TitleEn = "Price: Low to High" },
+        new SortOptionItem { Key = "price_desc", Title = "السعر الأعلى", TitleEn = "Price: High to Low" },
+        new SortOptionItem { Key = "name", Title = "الاسم", TitleEn = "Name (A-Z)" }
     };
 
     public CatalogViewModel(
         IMobileApiClient api,
         ICartStore cart,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _cart = cart;
@@ -61,7 +65,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
         _selectedSortOption = SortOptions[0];
 
         SeedGrades();
+        ApplyLocalization();
         _cart.Changed += (_, _) => RefreshCartAndFavoritesState();
+        loc.LanguageChanged += (_, _) => ApplyLocalization();
         RefreshCartAndFavoritesState();
     }
 
@@ -94,9 +100,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
 
             await Task.WhenAll(configTask, categoriesTask, featuredTask);
 
-            var config = configTask.Result;
-            AnnouncementText = config.AnnouncementTextAr;
-            HasAnnouncement = config.AnnouncementBarEnabled && !string.IsNullOrWhiteSpace(config.AnnouncementTextAr);
+            var config = _lastConfig = configTask.Result;
+            AnnouncementText = Loc.GetLocalized(config.AnnouncementTextAr, config.AnnouncementTextEn);
+            HasAnnouncement = config.AnnouncementBarEnabled && !string.IsNullOrWhiteSpace(AnnouncementText);
 
             BuildCategoryChips(categoriesTask.Result);
 
@@ -238,10 +244,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
             _hasNextPage = result.HasNextPage;
             CanGoPrevious = _currentPage > 1;
             CanGoNext = result.HasNextPage;
-            PageLabel = $"صفحة {result.PageIndex} / {Math.Max(1, result.TotalPages)}";
-            ResultSummary = result.TotalCount == 0
-                ? "لا توجد بطاقات مطابقة للبحث"
-                : $"عرض {result.Items.Count} من أصل {result.TotalCount} باقة";
+            _lastTotalCount = result.TotalCount;
+            _lastTotalPages = Math.Max(1, result.TotalPages);
+            UpdatePaginationLabels();
         }
         catch (MobileApiException ex)
         {
@@ -250,7 +255,31 @@ public sealed partial class CatalogViewModel : BaseViewModel
     }
 
     private ProductCardDisplayItem ToDisplayItem(ProductCard p)
-        => new(p, _api.GetImageUrl(p.ImageUrl), _cart.IsFavorite(p.Id));
+        => new(p, _api.GetImageUrl(p.ImageUrl), _cart.IsFavorite(p.Id), Loc.IsRtl);
+
+    private void ApplyLocalization()
+    {
+        var isRtl = Loc.IsRtl;
+        if (_lastConfig is not null)
+        {
+            AnnouncementText = Loc.GetLocalized(_lastConfig.AnnouncementTextAr, _lastConfig.AnnouncementTextEn);
+        }
+        foreach (var c in Categories) c.DisplayTitle = Loc.GetLocalized(c.Title, c.TitleEn);
+        foreach (var g in Grades) g.DisplayTitle = Loc.GetLocalized(g.Title, g.TitleEn);
+        foreach (var s in SortOptions) s.UseEnglish = !isRtl;
+        OnPropertyChanged(nameof(SelectedSortOption));
+        foreach (var p in FeaturedProducts) p.IsRtl = isRtl;
+        foreach (var p in Products) p.IsRtl = isRtl;
+        UpdatePaginationLabels();
+    }
+
+    private void UpdatePaginationLabels()
+    {
+        PageLabel = Loc.IsRtl ? $"صفحة {_currentPage} / {_lastTotalPages}" : $"Page {_currentPage} / {_lastTotalPages}";
+        ResultSummary = _lastTotalCount == 0
+            ? (Loc.IsRtl ? "لا توجد بطاقات مطابقة للبحث" : "No matching flashcard packs")
+            : (Loc.IsRtl ? $"عرض {Products.Count} من أصل {_lastTotalCount} باقة" : $"Showing {Products.Count} of {_lastTotalCount} packs");
+    }
 
     private void RefreshCartAndFavoritesState()
     {
@@ -263,7 +292,15 @@ public sealed partial class CatalogViewModel : BaseViewModel
     private void BuildCategoryChips(List<Category> apiCategories)
     {
         Categories.Clear();
-        Categories.Add(new CategoryChipItem { Id = null, Title = "الكل", IconName = "home_house.png", IsSelected = _selectedCategoryId is null });
+        Categories.Add(new CategoryChipItem
+        {
+            Id = null,
+            Title = "الكل",
+            TitleEn = "All",
+            DisplayTitle = Loc.IsRtl ? "الكل" : "All",
+            IconName = "home_house.png",
+            IsSelected = _selectedCategoryId is null
+        });
         foreach (var c in apiCategories)
         {
             var icon = c.Slug?.ToLowerInvariant() switch
@@ -274,25 +311,40 @@ public sealed partial class CatalogViewModel : BaseViewModel
                 var s when s is not null && s.Contains("sight") => "home_sight_words.png",
                 _ => "home_house.png"
             };
-            Categories.Add(new CategoryChipItem { Id = c.Id, Title = c.NameAr, IconName = icon, IsSelected = _selectedCategoryId == c.Id });
+            Categories.Add(new CategoryChipItem
+            {
+                Id = c.Id,
+                Title = c.NameAr,
+                TitleEn = c.Name,
+                DisplayTitle = Loc.GetLocalized(c.NameAr, c.Name),
+                IconName = icon,
+                IsSelected = _selectedCategoryId == c.Id
+            });
         }
     }
 
     private void SeedGrades()
     {
         Grades.Clear();
-        var items = new (string? val, string label)[]
+        var items = new (string? val, string ar, string en)[]
         {
-            (null, "الكل"),
-            ("KG1 - KG2", "KG1 - KG2"),
-            ("Primary 1", "أولى ابتدائي"),
-            ("Primary 2", "تانية ابتدائي"),
-            ("Primary 3", "تالتة ابتدائي"),
-            ("Primary 4 - 6", "الصفوف العليا")
+            (null, "الكل", "All"),
+            ("KG1 - KG2", "KG1 - KG2", "KG1 - KG2"),
+            ("Primary 1", "أولى ابتدائي", "Primary 1"),
+            ("Primary 2", "تانية ابتدائي", "Primary 2"),
+            ("Primary 3", "تالتة ابتدائي", "Primary 3"),
+            ("Primary 4 - 6", "الصفوف العليا", "Primary 4 - 6")
         };
-        foreach (var (val, label) in items)
+        foreach (var (val, ar, en) in items)
         {
-            Grades.Add(new GradeChipItem { Value = val, Title = label, IsSelected = val is null });
+            Grades.Add(new GradeChipItem
+            {
+                Value = val,
+                Title = ar,
+                TitleEn = en,
+                DisplayTitle = Loc.IsRtl ? ar : en,
+                IsSelected = val is null
+            });
         }
     }
 }

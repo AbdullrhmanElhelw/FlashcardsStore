@@ -36,7 +36,8 @@ public sealed partial class RegisterViewModel : BaseViewModel
         IMobileApiClient api,
         ICustomerSessionService session,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _session = session;

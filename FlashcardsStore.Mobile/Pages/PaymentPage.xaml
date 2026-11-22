@@ -6,6 +6,7 @@
              xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.PaymentPage"
              x:DataType="vm:PaymentViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
@@ -16,8 +17,8 @@
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="تعليمات الدفع"
-                                  HeaderSubtitle="تحويل المحافظ الإلكترونية وإنستاباي"
+                                  HeaderTitle="{Binding Loc[PaymentHeader]}"
+                                  HeaderSubtitle="{Binding Loc[PaymentSub]}"
                                   ShowBackButton="True" />
 
         <ScrollView Grid.Row="1">

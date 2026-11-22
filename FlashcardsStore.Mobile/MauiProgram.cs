@@ -30,6 +30,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
         builder.Services.AddSingleton<ISpeechService, MauiSpeechService>();
         builder.Services.AddSingleton<IAudioPlayerService, MauiAudioPlayerService>();
+        builder.Services.AddSingleton<ILocalizationService, MauiLocalizationService>();
 
         // ViewModels
         builder.Services.AddTransient<OnboardingViewModel>();

@@ -42,7 +42,7 @@ public sealed partial class OnboardingViewModel : BaseViewModel
     public bool IsLastSlide => CurrentPosition >= Slides.Count - 1;
     public string NextButtonText => IsLastSlide ? "ابدئي التسوق الآن" : "التالي";
 
-    public OnboardingViewModel(INavigationService navigation)
+    public OnboardingViewModel(INavigationService navigation, ILocalizationService loc) : base(loc)
     {
         _navigation = navigation;
         Title = "مرحباً بكِ";

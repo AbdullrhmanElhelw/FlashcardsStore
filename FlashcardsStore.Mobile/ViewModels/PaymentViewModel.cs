@@ -38,7 +38,8 @@ public sealed partial class PaymentViewModel : BaseViewModel
     public PaymentViewModel(
         IMobileApiClient api,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _navigation = navigation;

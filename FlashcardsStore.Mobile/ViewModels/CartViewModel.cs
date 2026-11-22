@@ -32,7 +32,8 @@ public sealed partial class CartViewModel : BaseViewModel
         IMobileApiClient api,
         ICustomerSessionService session,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _cart = cart;
         _api = api;

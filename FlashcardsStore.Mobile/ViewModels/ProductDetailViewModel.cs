@@ -67,9 +67,20 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     public string StockLabel => Product is null
         ? string.Empty
         : (Product.InStock ? $"متوفر — الكمية المتاحة: {Product.AvailableStockQuantity}" : "غير متوفر حالياً");
-    public string FavoriteButtonText => IsFavorite ? "في المفضلة ♥" : "أضف للمفضلة ♡";
-    public string SpeedModeLabel => IsKidSlowMode ? "بطيء للأطفال (0.75x)" : "سرعة طبيعية (1.0x)";
-    public string TeacherVoiceButtonText => IsPlayingTeacherVoice ? "إيقاف" : "تشغيل";
+    public string FavoriteButtonText => IsFavorite
+        ? (Loc.IsRtl ? "في المفضلة ♥" : "Saved ♥")
+        : (Loc.IsRtl ? "أضف للمفضلة ♡" : "Wishlist ♡");
+    public string SpeedModeLabel => IsKidSlowMode
+        ? (Loc.IsRtl ? "بطيء للأطفال (0.75x)" : "Kid Slow (0.75x)")
+        : (Loc.IsRtl ? "سرعة طبيعية (1.0x)" : "Normal (1.0x)");
+    public string TeacherVoiceButtonText => IsPlayingTeacherVoice
+        ? (Loc.IsRtl ? "إيقاف" : "Stop")
+        : (Loc.IsRtl ? "تشغيل" : "Play");
+
+    public string DisplayTitle => Product is null ? string.Empty : Loc.GetLocalized(Product.NameAr, Product.Name);
+    public string DisplaySubtitle => Product is null ? string.Empty : (Loc.IsRtl ? Product.Name : Product.NameAr);
+    public string DisplayCategory => Product is null ? string.Empty : Loc.GetLocalized(Product.CategoryNameAr, Product.CategoryName);
+    public string DisplayDescription => Product is null ? string.Empty : Loc.GetLocalized(Product.DescriptionAr, Product.Description);
 
     public ProductDetailViewModel(
         IMobileApiClient api,
@@ -77,7 +88,8 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         ISpeechService speech,
         IAudioPlayerService audioPlayer,
         ICustomerSessionService session,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _cart = cart;
@@ -88,6 +100,16 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         Title = "تفاصيل المنتج";
         ReviewerName = session.CustomerName;
         _audioPlayer.PlaybackStateChanged += (_, playing) => IsPlayingTeacherVoice = playing;
+        loc.LanguageChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(DisplayTitle));
+            OnPropertyChanged(nameof(DisplaySubtitle));
+            OnPropertyChanged(nameof(DisplayCategory));
+            OnPropertyChanged(nameof(DisplayDescription));
+            OnPropertyChanged(nameof(FavoriteButtonText));
+            OnPropertyChanged(nameof(SpeedModeLabel));
+            OnPropertyChanged(nameof(TeacherVoiceButtonText));
+        };
     }
 
     public void SetSlug(string slug)
@@ -108,6 +130,10 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         {
             var detail = await _api.GetProductAsync(_slug);
             Product = detail;
+            OnPropertyChanged(nameof(DisplayTitle));
+            OnPropertyChanged(nameof(DisplaySubtitle));
+            OnPropertyChanged(nameof(DisplayCategory));
+            OnPropertyChanged(nameof(DisplayDescription));
             FullImageUrl = string.IsNullOrWhiteSpace(detail.ImageUrl) ? "logo.png" : _api.GetImageUrl(detail.ImageUrl);
             IsFavorite = _cart.IsFavorite(detail.Id);
 

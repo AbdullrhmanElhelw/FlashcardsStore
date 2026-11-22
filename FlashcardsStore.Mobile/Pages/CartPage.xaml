@@ -7,13 +7,14 @@
              x:Class="FlashcardsStore.Mobile.Pages.CartPage"
              x:Name="ThisCartPage"
              x:DataType="vm:CartViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False">
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="سلة التسوق"
-                                  HeaderSubtitle="مراجعة الباقات قبل إتمام الطلب" />
+                                  HeaderTitle="{Binding Loc[CartHeader]}"
+                                  HeaderSubtitle="{Binding Loc[CartSub]}" />
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,12,16,24" Spacing="12">
@@ -25,8 +26,8 @@
                         Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
                         <Image Source="home_cart.png" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" />
-                        <Label Text="سلتك فارغة. ابدئي باكتشاف البطاقات التعليمية." Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
-                        <Button Text="تصفحي المتجر"
+                        <Label Text="{Binding Loc[CartEmpty]}" Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Button Text="{Binding Loc[BrowseStore]}"
                                 Command="{Binding BrowseCatalogCommand}"
                                 Style="{StaticResource PrimaryGoldButtonStyle}" />
                     </VerticalStackLayout>
@@ -119,10 +120,10 @@
                         </Grid>
                     </Border>
 
-                    <Button Text="إتمام الشراء"
+                    <Button Text="{Binding Loc[ProceedCheckout]}"
                             Command="{Binding ProceedToCheckoutCommand}"
                             Style="{StaticResource PrimaryPurpleButtonStyle}" />
-                    <Button Text="إفراغ السلة"
+                    <Button Text="{Binding Loc[ClearCart]}"
                             Command="{Binding ClearCartCommand}"
                             Style="{StaticResource SecondaryCreamButtonStyle}" />
                 </VerticalStackLayout>

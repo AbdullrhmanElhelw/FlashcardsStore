@@ -25,7 +25,10 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
 
     public bool HasResult => TrackingResult is not null;
 
-    public OrderTrackViewModel(IMobileApiClient api, ICustomerSessionService session)
+    public OrderTrackViewModel(
+        IMobileApiClient api,
+        ICustomerSessionService session,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         Title = "تتبع الطلب";

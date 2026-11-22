@@ -49,7 +49,8 @@ public sealed partial class CheckoutViewModel : BaseViewModel
         ICartStore cart,
         ICustomerSessionService session,
         INavigationService navigation,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        ILocalizationService loc) : base(loc)
     {
         _api = api;
         _cart = cart;

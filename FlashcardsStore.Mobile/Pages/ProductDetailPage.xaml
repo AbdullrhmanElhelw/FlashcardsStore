@@ -7,14 +7,15 @@
              x:Class="FlashcardsStore.Mobile.Pages.ProductDetailPage"
              x:Name="ThisDetailPage"
              x:DataType="vm:ProductDetailViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="Auto,*">
         <controls:BrandHeaderView Grid.Row="0"
-                                  HeaderTitle="تفاصيل الباقة"
-                                  HeaderSubtitle="بطاقات الفلاش كاردز التعليمية"
+                                  HeaderTitle="{Binding Loc[DetailHeaderTitle]}"
+                                  HeaderSubtitle="{Binding Loc[BrandSubtitle]}"
                                   ShowBackButton="True" />
 
         <ScrollView Grid.Row="1">
@@ -41,7 +42,7 @@
                                         Padding="10,4"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Start">
-                                    <Label Text="{Binding Product.CategoryNameAr}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                                    <Label Text="{Binding DisplayCategory}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
                                 </Border>
                             </Grid>
                         </Border>
@@ -49,8 +50,8 @@
 
                     <!-- Title & Price Chips -->
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="{Binding Product.NameAr}" Style="{StaticResource HeadingLabelStyle}" FontSize="21" />
-                        <Label Text="{Binding Product.Name}" Style="{StaticResource MutedLabelStyle}" FontSize="13" />
+                        <Label Text="{Binding DisplayTitle}" Style="{StaticResource HeadingLabelStyle}" FontSize="21" />
+                        <Label Text="{Binding DisplaySubtitle}" Style="{StaticResource MutedLabelStyle}" FontSize="13" />
                     </VerticalStackLayout>
 
                     <HorizontalStackLayout Spacing="8">
@@ -67,7 +68,7 @@
 
                     <!-- Primary Action Row -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Button Text="أضف للسلة"
+                        <Button Text="{Binding Loc[AddToCart]}"
                                 Command="{Binding AddToCartCommand}"
                                 IsEnabled="{Binding CanAddToCart}"
                                 Style="{StaticResource PrimaryPurpleButtonStyle}" />
@@ -106,8 +107,8 @@
                             IsVisible="{Binding HasDescription}"
                             Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="عن الباقة التعليمية" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
-                            <Label Text="{Binding Product.DescriptionAr}" Style="{StaticResource BodyLabelStyle}" />
+                            <Label Text="{Binding Loc[AboutPack]}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                            <Label Text="{Binding DisplayDescription}" Style="{StaticResource BodyLabelStyle}" />
                             <Label Text="{Binding Product.TargetAudience, StringFormat='الفئة المستهدفة: {0}'}" Style="{StaticResource MutedLabelStyle}" />
                             <Label Text="{Binding Product.GradeLevel, StringFormat='الصف الدراسي: {0}'}" Style="{StaticResource MutedLabelStyle}" />
                         </VerticalStackLayout>
@@ -133,9 +134,9 @@
                                     <VerticalStackLayout Spacing="1">
                                         <HorizontalStackLayout Spacing="6">
                                             <Image Source="icon_audio.png" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
-                                            <Label Text="أستوديو النطق الصوتي التفاعلي" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" VerticalTextAlignment="Center" />
+                                            <Label Text="{Binding Loc[AudioStudioTitle]}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" VerticalTextAlignment="Center" />
                                         </HorizontalStackLayout>
-                                        <Label Text="اضغطي على أي كلمة للنطق الصحيح" FontFamily="Cairo" FontSize="11" TextColor="#D9CEE0" />
+                                        <Label Text="{Binding Loc[AudioStudioSubtitle]}" FontFamily="Cairo" FontSize="11" TextColor="#D9CEE0" />
                                     </VerticalStackLayout>
                                     <Button Grid.Column="1"
                                             Text="{Binding SpeedModeLabel}"
@@ -147,7 +148,7 @@
                             </Border>
 
                             <VerticalStackLayout Padding="14,0,14,14" Spacing="10">
-                                <Button Text="▶ استمع لكل الكلمات بالترتيب"
+                                <Button Text="{Binding Loc[PlayAllWords]}"
                                         Command="{Binding PlayAllWordsCommand}"
                                         Style="{StaticResource PrimaryGoldButtonStyle}"
                                         MinimumHeightRequest="42"
