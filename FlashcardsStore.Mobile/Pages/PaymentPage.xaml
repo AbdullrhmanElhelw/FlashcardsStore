@@ -96,9 +96,15 @@
                             <Entry Placeholder="رقم العملية" Text="{Binding TransactionReference}" Style="{StaticResource BrandEntryStyle}" />
                         </Border>
 
-                        <Button Text="📷 اختيار صورة الإيصال"
-                                Command="{Binding PickReceiptCommand}"
-                                Style="{StaticResource SecondaryCreamButtonStyle}" />
+                        <Border BackgroundColor="{StaticResource BrandGoldLight}" Stroke="{StaticResource BrandGold}" StrokeShape="RoundRectangle 12" HeightRequest="46">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding PickReceiptCommand}" />
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="icon_camera.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                                <Label Text="اختيار صورة الإيصال" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
                         <Label Text="{Binding SelectedFileName}" Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
 
                         <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />

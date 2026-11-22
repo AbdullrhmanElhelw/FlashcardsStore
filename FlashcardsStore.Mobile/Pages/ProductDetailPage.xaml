@@ -86,7 +86,10 @@
                             Padding="14">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="🎙️ بصوت ميس خلود النادي" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
+                                <HorizontalStackLayout Spacing="6">
+                                    <Image Source="icon_mic.png" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
+                                    <Label Text="بصوت ميس خلود النادي" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
                                 <Label Text="شرح ونطق صوتي حصري مسجّل لهذه الباقة" FontFamily="Cairo" FontSize="11" TextColor="{StaticResource BrandInk}" />
                             </VerticalStackLayout>
                             <Button Grid.Column="1"
@@ -128,7 +131,10 @@
                                 </Border.Background>
                                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                                     <VerticalStackLayout Spacing="1">
-                                        <Label Text="🔊 أستوديو النطق الصوتي التفاعلي" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Image Source="icon_audio.png" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
+                                            <Label Text="أستوديو النطق الصوتي التفاعلي" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
                                         <Label Text="اضغطي على أي كلمة للنطق الصحيح" FontFamily="Cairo" FontSize="11" TextColor="#D9CEE0" />
                                     </VerticalStackLayout>
                                     <Button Grid.Column="1"
@@ -160,14 +166,19 @@
                                                         </HorizontalStackLayout>
                                                         <Label Text="{Binding ExampleSentence}" FontSize="12" TextColor="{StaticResource MutedText}" />
                                                     </VerticalStackLayout>
-                                                    <Button Grid.Column="2"
-                                                            Text="🔊"
-                                                            Command="{Binding Source={x:Reference ThisDetailPage}, Path=BindingContext.SpeakWordCommand}"
-                                                            CommandParameter="{Binding .}"
-                                                            Style="{StaticResource SecondaryCreamButtonStyle}"
-                                                            WidthRequest="44"
-                                                            HeightRequest="40"
-                                                            Padding="0" />
+                                                    <Border Grid.Column="2"
+                                                            BackgroundColor="{StaticResource BrandGoldLight}"
+                                                            Stroke="{StaticResource BrandGold}"
+                                                            StrokeShape="RoundRectangle 12"
+                                                            WidthRequest="42"
+                                                            HeightRequest="38"
+                                                            VerticalOptions="Center">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisDetailPage}, Path=BindingContext.SpeakWordCommand}"
+                                                                                  CommandParameter="{Binding .}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Image Source="icon_audio.png" WidthRequest="18" HeightRequest="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                    </Border>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

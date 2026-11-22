@@ -27,12 +27,13 @@
                         StrokeShape="RoundRectangle 26"
                         WidthRequest="52"
                         HeightRequest="52"
+                        Padding="12"
                         HorizontalOptions="Center">
-                    <Label x:Name="IconLabel"
-                           Text="✨"
-                           FontSize="22"
-                           HorizontalTextAlignment="Center"
-                           VerticalTextAlignment="Center" />
+                    <Image x:Name="DialogIcon"
+                           Source="icon_sparkles.png"
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
                 </Border>
 
                 <!-- Title -->

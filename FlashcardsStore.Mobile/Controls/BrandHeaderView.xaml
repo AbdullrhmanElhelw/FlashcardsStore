@@ -51,15 +51,15 @@
 
                 <!-- Brand Logo Mark -->
                 <Border Grid.Column="2"
-                        BackgroundColor="{StaticResource BrandPaper}"
-                        Stroke="#E8DAB8"
-                        StrokeThickness="1"
+                        BackgroundColor="#190611"
+                        Stroke="{StaticResource BrandGold}"
+                        StrokeThickness="1.2"
                         StrokeShape="RoundRectangle 12"
-                        WidthRequest="40"
-                        HeightRequest="40"
-                        Padding="4"
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        Padding="0"
                         VerticalOptions="Center">
-                    <Image Source="logo.png" Aspect="AspectFit" />
+                    <Image Source="logo.png" Aspect="AspectFill" />
                 </Border>
 
             </Grid>

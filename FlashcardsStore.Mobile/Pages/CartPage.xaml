@@ -24,7 +24,7 @@
                         Padding="28"
                         Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <Label Text="🛒" FontSize="40" HorizontalTextAlignment="Center" />
+                        <Image Source="home_cart.png" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" />
                         <Label Text="سلتك فارغة. ابدئي باكتشاف البطاقات التعليمية." Style="{StaticResource BodyLabelStyle}" HorizontalTextAlignment="Center" />
                         <Button Text="تصفحي المتجر"
                                 Command="{Binding BrowseCatalogCommand}"

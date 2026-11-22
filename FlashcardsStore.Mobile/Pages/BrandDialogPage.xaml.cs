@@ -9,7 +9,7 @@ public partial class BrandDialogPage : ContentPage
         InitializeComponent();
         TitleLabel.Text = title;
         MessageLabel.Text = message;
-        IconLabel.Text = PickIcon(title);
+        DialogIcon.Source = PickIconSource(title);
 
         if (string.IsNullOrWhiteSpace(cancel))
         {
@@ -56,12 +56,11 @@ public partial class BrandDialogPage : ContentPage
         _tcs.TrySetResult(result);
     }
 
-    private static string PickIcon(string title)
+    private static string PickIconSource(string title)
     {
-        if (title.Contains("السلة")) return "🛒";
-        if (title.Contains("تسجيل") || title.Contains("أهلاً")) return "🔐";
-        if (title.Contains("تم") || title.Contains("شكراً")) return "✓";
-        if (title.Contains("خطأ") || title.Contains("تنبيه")) return "⚠️";
-        return "✨";
+        if (title.Contains("السلة")) return "home_cart.png";
+        if (title.Contains("تسجيل") || title.Contains("أهلاً")) return "auth_lock.png";
+        if (title.Contains("تم") || title.Contains("شكراً")) return "icon_shield.png";
+        return "icon_sparkles.png";
     }
 }

@@ -68,8 +68,8 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         ? string.Empty
         : (Product.InStock ? $"متوفر — الكمية المتاحة: {Product.AvailableStockQuantity}" : "غير متوفر حالياً");
     public string FavoriteButtonText => IsFavorite ? "في المفضلة ♥" : "أضف للمفضلة ♡";
-    public string SpeedModeLabel => IsKidSlowMode ? "🐢 بطيء للأطفال (0.75x)" : "⚡ سرعة طبيعية (1.0x)";
-    public string TeacherVoiceButtonText => IsPlayingTeacherVoice ? "إيقاف ⏹" : "تشغيل ▶";
+    public string SpeedModeLabel => IsKidSlowMode ? "بطيء للأطفال (0.75x)" : "سرعة طبيعية (1.0x)";
+    public string TeacherVoiceButtonText => IsPlayingTeacherVoice ? "إيقاف" : "تشغيل";
 
     public ProductDetailViewModel(
         IMobileApiClient api,

@@ -28,9 +28,6 @@ public sealed partial class LoginViewModel : BaseViewModel
     [ObservableProperty] private string _customerPhone = string.Empty;
     [ObservableProperty] private string _customerInitial = "خ";
 
-    [ObservableProperty] private bool _isConnectionSettingsVisible;
-    [ObservableProperty] private string _serverUrl = string.Empty;
-
     public bool IsNotSignedIn => !IsSignedIn;
 
     public LoginViewModel(
@@ -44,7 +41,6 @@ public sealed partial class LoginViewModel : BaseViewModel
         _navigation = navigation;
         _dialogs = dialogs;
         Title = "حسابي";
-        ServerUrl = _api.BaseUrl;
     }
 
     public void RefreshSessionState()
@@ -56,7 +52,6 @@ public sealed partial class LoginViewModel : BaseViewModel
         CustomerInitial = string.IsNullOrWhiteSpace(CustomerName)
             ? "خ"
             : CustomerName.Trim().Substring(0, 1);
-        ServerUrl = _api.BaseUrl;
     }
 
     [RelayCommand]
@@ -122,24 +117,6 @@ public sealed partial class LoginViewModel : BaseViewModel
 
     [RelayCommand]
     private void ReplayOnboarding() => _navigation.SetOnboardingRoot();
-
-    [RelayCommand]
-    private void ToggleConnectionSettings() => IsConnectionSettingsVisible = !IsConnectionSettingsVisible;
-
-    [RelayCommand]
-    private async Task SaveServerUrlAsync()
-    {
-        try
-        {
-            _api.SetBaseUrl(ServerUrl);
-            IsConnectionSettingsVisible = false;
-            await _dialogs.ShowToastAsync("تم حفظ عنوان الخادم بنجاح");
-        }
-        catch (ArgumentException ex)
-        {
-            await _dialogs.ShowAlertAsync("خطأ", ex.Message);
-        }
-    }
 
     [RelayCommand]
     private async Task LogoutAsync()

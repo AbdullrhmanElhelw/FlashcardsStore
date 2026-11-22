@@ -23,14 +23,14 @@
 
                     <!-- Brand Emblem + Name -->
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                        <Border BackgroundColor="{StaticResource BrandPaper}"
-                                Stroke="#E8DAB8"
-                                StrokeThickness="1"
+                        <Border BackgroundColor="#190611"
+                                Stroke="{StaticResource BrandGold}"
+                                StrokeThickness="1.2"
                                 StrokeShape="RoundRectangle 12"
-                                WidthRequest="42"
-                                HeightRequest="42"
-                                Padding="4">
-                            <Image Source="logo.png" Aspect="AspectFit" />
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                Padding="0">
+                            <Image Source="logo.png" Aspect="AspectFill" />
                         </Border>
                         <VerticalStackLayout Spacing="0" VerticalOptions="Center">
                             <Label Text="أكاديمية خلود النادي"
@@ -146,13 +146,17 @@
                                         Stroke="{StaticResource BrandGold}"
                                         StrokeThickness="1"
                                         StrokeShape="RoundRectangle 10"
-                                        Padding="9,2"
+                                        Padding="9,3"
                                         HorizontalOptions="Start">
-                                    <Label Text="✨ معتمد تعليمياً للأطفال"
-                                           FontFamily="Cairo"
-                                           FontSize="10"
-                                           FontAttributes="Bold"
-                                           TextColor="{StaticResource BrandGoldLight}" />
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Image Source="icon_sparkles.png" WidthRequest="12" HeightRequest="12" VerticalOptions="Center" />
+                                        <Label Text="معتمد تعليمياً للأطفال"
+                                               FontFamily="Cairo"
+                                               FontSize="10"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource BrandGoldLight}"
+                                               VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
                                 </Border>
                                 <Label Text="أهلاً بيكي في أكاديمية خلود النادي"
                                        FontFamily="Cairo"
@@ -176,13 +180,22 @@
                     <!-- Trust Highlights Strip -->
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" Margin="16,0">
                         <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
-                            <Label Text="🔊 نطق تفاعلي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="icon_audio.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                <Label Text="نطق تفاعلي" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
-                            <Label Text="🛡️ كوشيه 350 جم" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="icon_shield.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                <Label Text="كوشيه 350 جم" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
                         </Border>
                         <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="6,7">
-                            <Label Text="🚚 شحن لمصر" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" HorizontalTextAlignment="Center" />
+                            <HorizontalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image Source="icon_truck.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                <Label Text="شحن لمصر" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
                         </Border>
                     </Grid>
 
@@ -358,7 +371,10 @@
                                                             HorizontalOptions="Start"
                                                             VerticalOptions="End"
                                                             IsVisible="{Binding HasTeacherVoice}">
-                                                        <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
+                                                        <HorizontalStackLayout Spacing="3">
+                                                            <Image Source="icon_mic.png" WidthRequest="11" HeightRequest="11" VerticalOptions="Center" />
+                                                            <Label Text="بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                                        </HorizontalStackLayout>
                                                     </Border>
                                                     <Button Text="{Binding FavoriteIcon}"
                                                             Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
@@ -412,7 +428,7 @@
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
                                    VerticalTextAlignment="Center" />
-                            <Label Grid.Column="2" Text="🃏" FontSize="24" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Image Grid.Column="2" Source="home_sight_words.png" WidthRequest="28" HeightRequest="28" HorizontalOptions="Center" VerticalOptions="Center" />
                         </Grid>
                     </Border>
 
@@ -454,7 +470,10 @@
                                                             HorizontalOptions="Start"
                                                             VerticalOptions="End"
                                                             IsVisible="{Binding HasTeacherVoice}">
-                                                        <Label Text="🎙️ بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" />
+                                                        <HorizontalStackLayout Spacing="3">
+                                                            <Image Source="icon_mic.png" WidthRequest="11" HeightRequest="11" VerticalOptions="Center" />
+                                                            <Label Text="بصوت المعلمة" FontFamily="Cairo" FontSize="9" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                                        </HorizontalStackLayout>
                                                     </Border>
                                                     <Button Text="{Binding FavoriteIcon}"
                                                             Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.ToggleFavoriteCommand}"
