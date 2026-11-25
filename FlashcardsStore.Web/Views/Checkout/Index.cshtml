@@ -276,18 +276,16 @@
                         @foreach (var item in cart.Items)
                         {
                             var itemName = Loc.GetLocalized(item.ProductNameAr, item.ProductName);
-                            var itemSub = isRtl ? item.ProductName : item.ProductNameAr;
 
                             <div class="pt-2 flex items-center gap-3">
                                 <div class="relative shrink-0">
-                                    <img src="@item.ImageUrl" alt="@itemName" class="w-13 h-13 rounded-xl object-contain p-1 border border-slate-200 bg-slate-50" />
+                                    <img src="@item.PrimaryImageUrl" alt="@itemName" class="w-13 h-13 rounded-xl object-contain p-1 border border-slate-200 bg-slate-50" />
                                     <span class="absolute -top-1.5 -end-1.5 w-5 h-5 rounded-full bg-slate-950 text-[#F6ECC9] font-black text-[10px] flex items-center justify-center border border-amber-300">
                                         @item.Quantity
                                     </span>
                                 </div>
                                 <div class="flex-grow min-w-0 text-start">
                                     <h4 class="text-xs font-black text-slate-900 leading-snug">@itemName</h4>
-                                    <p class="text-[10px] text-slate-400 en-card-content truncate mt-0.5">@itemSub</p>
                                     <span class="text-[11px] font-bold text-slate-500">@item.UnitPrice.ToString("F0") @Loc.Get("Currency") × @item.Quantity</span>
                                 </div>
                                 <span class="text-xs font-black text-slate-900 shrink-0">@item.SubTotal.ToString("F0") @Loc.Get("Currency")</span>
