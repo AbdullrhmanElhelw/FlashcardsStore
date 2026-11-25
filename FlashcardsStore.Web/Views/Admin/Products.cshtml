@@ -149,7 +149,7 @@
                         </div>
 
                         <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                            <button type="button" hx-post="/Admin/ToggleProductStatus?id=@product.Id" hx-swap="outerHTML" class="cursor-pointer">
+                            <button type="button" hx-post="/Admin/ToggleProductStatus?id=@product.Id" hx-swap="innerHTML" class="cursor-pointer">
                                 <partial name="~/Views/Admin/_ProductStatusBadge.cshtml" model="product.IsActive" />
                             </button>
                             <div class="flex items-center gap-2">
@@ -242,7 +242,7 @@
                             <td>
                                 <button type="button" 
                                         hx-post="/Admin/ToggleProductStatus?id=@product.Id" 
-                                        hx-swap="outerHTML" 
+                                        hx-swap="innerHTML" 
                                         class="cursor-pointer hover:opacity-80 transition"
                                         title="انقر لتغيير حالة العرض بالمتجر">
                                     <partial name="~/Views/Admin/_ProductStatusBadge.cshtml" model="product.IsActive" />

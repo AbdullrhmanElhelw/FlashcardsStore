@@ -227,6 +227,9 @@ public sealed class AdminProductsController : AdminControllerBase
         return RedirectToAction(nameof(Products));
     }
 
+    [HttpGet("ToggleProductStatus")]
+    public IActionResult ToggleProductStatusRedirect() => RedirectToAction(nameof(Products));
+
     [HttpPost("ToggleProductStatus")]
     public async Task<IActionResult> ToggleProductStatus(int id, CancellationToken cancellationToken)
     {

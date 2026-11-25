@@ -52,13 +52,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.Events.OnRedirectToLogin = ctx =>
         {
+            var redirectUri = HttpMethods.IsGet(ctx.Request.Method) ? ctx.RedirectUri : "/Admin/Login";
             if (ctx.Request.Headers["HX-Request"] == "true")
             {
-                ctx.Response.Headers.Append("HX-Redirect", ctx.RedirectUri);
+                ctx.Response.Headers.Append("HX-Redirect", redirectUri);
                 ctx.Response.StatusCode = StatusCodes.Status200OK;
                 return Task.CompletedTask;
             }
-            ctx.Response.Redirect(ctx.RedirectUri);
+            ctx.Response.Redirect(redirectUri);
             return Task.CompletedTask;
         };
     })
