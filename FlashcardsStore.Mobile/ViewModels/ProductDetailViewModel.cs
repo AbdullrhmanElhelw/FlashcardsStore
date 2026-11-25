@@ -29,7 +29,9 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     private ProductDetail? _product;
 
     [ObservableProperty]
-    private string _fullImageUrl = "logo.png";
+    [NotifyPropertyChangedFor(nameof(ImageCountLabel))]
+    [NotifyPropertyChangedFor(nameof(HasMultipleImages))]
+    private int _selectedImageIndex;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FavoriteButtonText))]
@@ -44,38 +46,53 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     private bool _isPlayingTeacherVoice;
 
     [ObservableProperty]
-    private string _reviewSummaryText = "لا توجد تقييمات بعد";
+    private string _reviewSummaryText = string.Empty;
+
+    private double _averageRating;
+    private int _reviewCount;
+    private string? _reviewLoadError;
 
     [ObservableProperty] private string _reviewerName = string.Empty;
     [ObservableProperty] private string _reviewerRole = string.Empty;
     [ObservableProperty] private string _reviewComment = string.Empty;
     [ObservableProperty] private int _selectedRatingIndex;
 
-    public IReadOnlyList<string> RatingOptions { get; } = new[]
+    public IReadOnlyList<string> RatingOptions => new[]
     {
-        "5 نجوم ★★★★★", "4 نجوم ★★★★", "3 نجوم ★★★", "2 نجمتان ★★", "1 نجمة ★"
+        Loc["Rating5Stars"], Loc["Rating4Stars"], Loc["Rating3Stars"], Loc["Rating2Stars"], Loc["Rating1Star"]
     };
 
     public ObservableCollection<PronunciationItem> SampleWords { get; } = new();
+    public ObservableCollection<string> KeyPoints { get; } = new();
     public ObservableCollection<ProductReview> Reviews { get; } = new();
+    public ObservableCollection<string> ProductImages { get; } = new();
 
     public bool HasProduct => Product is not null;
+    public bool HasMultipleImages => ProductImages.Count > 1;
+    public string ImageCountLabel => ProductImages.Count == 0
+        ? string.Empty
+        : Loc.Format("ImageCountFormat", SelectedImageIndex + 1, ProductImages.Count);
     public bool CanAddToCart => Product is not null && Product.InStock && Product.AvailableStockQuantity > 0;
     public bool HasSampleWords => SampleWords.Count > 0;
+    public bool HasKeyPoints => KeyPoints.Count > 0;
     public bool HasTeacherVoice => Product?.HasTeacherVoice == true;
-    public bool HasDescription => !string.IsNullOrWhiteSpace(Product?.DescriptionAr);
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DisplayDescription);
     public string StockLabel => Product is null
         ? string.Empty
-        : (Product.InStock ? $"متوفر — الكمية المتاحة: {Product.AvailableStockQuantity}" : "غير متوفر حالياً");
-    public string FavoriteButtonText => IsFavorite
-        ? (Loc.IsRtl ? "في المفضلة ♥" : "Saved ♥")
-        : (Loc.IsRtl ? "أضف للمفضلة ♡" : "Wishlist ♡");
-    public string SpeedModeLabel => IsKidSlowMode
-        ? (Loc.IsRtl ? "بطيء للأطفال (0.75x)" : "Kid Slow (0.75x)")
-        : (Loc.IsRtl ? "سرعة طبيعية (1.0x)" : "Normal (1.0x)");
-    public string TeacherVoiceButtonText => IsPlayingTeacherVoice
-        ? (Loc.IsRtl ? "إيقاف" : "Stop")
-        : (Loc.IsRtl ? "تشغيل" : "Play");
+        : (Product.InStock ? Loc.Format("AvailableQuantityFormat", Product.AvailableStockQuantity) : Loc["Unavailable"]);
+    public string FavoriteButtonText => Loc[IsFavorite ? "SavedFavorite" : "AddFavorite"];
+    public string SpeedModeLabel => Loc[IsKidSlowMode ? "KidSlow" : "NormalSpeed"];
+    public string TeacherVoiceButtonText => Loc[IsPlayingTeacherVoice ? "Stop" : "Play"];
+    public string PriceLabel => Product is null ? string.Empty : Loc.Format("CurrencyAmount", Product.Price);
+    public string CardCountLabel => Product is null ? string.Empty : Loc.Format("ProductCardCountFormat", Product.CardCount);
+    public string DisplayTargetAudience => Product is null || string.IsNullOrWhiteSpace(Product.TargetAudience)
+        ? string.Empty
+        : Loc.Format("AudienceTarget", Loc.TranslateTargetAudience(Product.TargetAudience));
+    public bool HasTargetAudience => !string.IsNullOrWhiteSpace(DisplayTargetAudience);
+    public string DisplayGradeLevel => Product is null || string.IsNullOrWhiteSpace(Product.GradeLevel)
+        ? string.Empty
+        : Loc.Format("GradeTarget", Loc.TranslateGradeLevel(Product.GradeLevel));
+    public bool HasGradeLevel => !string.IsNullOrWhiteSpace(DisplayGradeLevel);
 
     public string DisplayTitle => Product is null ? string.Empty : Loc.GetLocalized(Product.NameAr, Product.Name);
     public string DisplaySubtitle => Product is null ? string.Empty : (Loc.IsRtl ? Product.Name : Product.NameAr);
@@ -97,7 +114,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         _audioPlayer = audioPlayer;
         _session = session;
         _dialogs = dialogs;
-        Title = "تفاصيل المنتج";
+        Title = Loc["ProductDetailTitle"];
         ReviewerName = session.CustomerName;
         _audioPlayer.PlaybackStateChanged += (_, playing) => IsPlayingTeacherVoice = playing;
         loc.LanguageChanged += (_, _) =>
@@ -105,10 +122,21 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
             OnPropertyChanged(nameof(DisplayTitle));
             OnPropertyChanged(nameof(DisplaySubtitle));
             OnPropertyChanged(nameof(DisplayCategory));
+            Title = Loc["ProductDetailTitle"];
             OnPropertyChanged(nameof(DisplayDescription));
+            OnPropertyChanged(nameof(HasDescription));
+            OnPropertyChanged(nameof(StockLabel));
             OnPropertyChanged(nameof(FavoriteButtonText));
             OnPropertyChanged(nameof(SpeedModeLabel));
             OnPropertyChanged(nameof(TeacherVoiceButtonText));
+            OnPropertyChanged(nameof(PriceLabel));
+            OnPropertyChanged(nameof(CardCountLabel));
+            OnPropertyChanged(nameof(DisplayTargetAudience));
+            OnPropertyChanged(nameof(DisplayGradeLevel));
+            OnPropertyChanged(nameof(RatingOptions));
+            OnPropertyChanged(nameof(ImageCountLabel));
+            RefreshKeyPoints();
+            RefreshReviewSummary();
         };
     }
 
@@ -134,7 +162,23 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
             OnPropertyChanged(nameof(DisplaySubtitle));
             OnPropertyChanged(nameof(DisplayCategory));
             OnPropertyChanged(nameof(DisplayDescription));
-            FullImageUrl = string.IsNullOrWhiteSpace(detail.ImageUrl) ? "logo.png" : _api.GetImageUrl(detail.ImageUrl);
+            OnPropertyChanged(nameof(HasDescription));
+            OnPropertyChanged(nameof(StockLabel));
+            OnPropertyChanged(nameof(PriceLabel));
+            OnPropertyChanged(nameof(CardCountLabel));
+            OnPropertyChanged(nameof(DisplayTargetAudience));
+            OnPropertyChanged(nameof(DisplayGradeLevel));
+            ProductImages.Clear();
+            foreach (var imagePath in (detail.ImageUrl ?? string.Empty)
+                         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                ProductImages.Add(_api.GetImageUrl(imagePath));
+            }
+            if (ProductImages.Count == 0)
+                ProductImages.Add("logo.png");
+            SelectedImageIndex = 0;
+            OnPropertyChanged(nameof(HasMultipleImages));
+            OnPropertyChanged(nameof(ImageCountLabel));
             IsFavorite = _cart.IsFavorite(detail.Id);
 
             SampleWords.Clear();
@@ -143,6 +187,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
                 SampleWords.Add(w);
             }
             OnPropertyChanged(nameof(HasSampleWords));
+            RefreshKeyPoints();
 
             await LoadReviewsInternalAsync(detail.Id);
             _loaded = true;
@@ -190,7 +235,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], ex.Message);
         }
     }
 
@@ -213,11 +258,11 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
                 AvailableStockQuantity = Product.AvailableStockQuantity,
                 InStock = Product.InStock
             });
-            await _dialogs.ShowToastAsync($"تمت إضافة «{Product.NameAr}» إلى السلة");
+            await _dialogs.ShowToastAsync(Loc.Format("AddToCartToast", DisplayTitle));
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["CartProductUnavailable"]);
         }
     }
 
@@ -236,7 +281,7 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
         var commentText = ReviewComment.Trim();
         if (string.IsNullOrWhiteSpace(ReviewerName) || string.IsNullOrWhiteSpace(ReviewerRole) || commentText.Length < 5)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", "أكمل الاسم والصفة واكتب تعليقاً من 5 أحرف على الأقل.");
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["ReviewRequired"]);
             return;
         }
 
@@ -251,13 +296,13 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
                 Comment = commentText,
                 Rating = Math.Max(1, 5 - SelectedRatingIndex)
             });
-            await _dialogs.ShowAlertAsync("شكراً لكِ ✓", "تم إرسال تقييمك للمراجعة وسيظهر بعد الاعتماد.");
+            await _dialogs.ShowAlertAsync(Loc["ThankYou"], Loc["ReviewSubmitted"]);
             ReviewComment = string.Empty;
             ReviewerRole = string.Empty;
         }
         catch (MobileApiException ex)
         {
-            await _dialogs.ShowAlertAsync("خطأ", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["ErrorTitle"], ex.Message);
         }
         finally
         {
@@ -275,13 +320,65 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
             {
                 Reviews.Add(r);
             }
-            ReviewSummaryText = response.Summary.TotalReviews == 0
-                ? "لا توجد تقييمات بعد — كوني أول من يقيّم الباقة"
-                : $"⭐ {response.Summary.AverageRating:0.0} من 5  ·  {response.Summary.TotalReviews} تقييم";
+            _averageRating = response.Summary.AverageRating;
+            _reviewCount = response.Summary.TotalReviews;
+            _reviewLoadError = null;
+            RefreshReviewSummary();
         }
         catch (MobileApiException ex)
         {
-            ReviewSummaryText = $"تعذر تحميل التقييمات: {ex.Message}";
+            _reviewLoadError = ex.Message;
+            RefreshReviewSummary();
         }
+    }
+
+    private void RefreshReviewSummary()
+    {
+        ReviewSummaryText = _reviewLoadError is not null
+            ? $"{Loc["ErrorTitle"]}: {_reviewLoadError}"
+            : _reviewCount == 0
+                ? Loc["NoReviewsBeFirst"]
+                : Loc.Format("ReviewSummaryFormat", _averageRating, _reviewCount);
+    }
+
+    private void RefreshKeyPoints()
+    {
+        KeyPoints.Clear();
+        if (Product is null)
+        {
+            OnPropertyChanged(nameof(HasKeyPoints));
+            OnPropertyChanged(nameof(HasTargetAudience));
+            OnPropertyChanged(nameof(HasGradeLevel));
+            return;
+        }
+
+        var useEnDirect = !Loc.IsRtl && !string.IsNullOrWhiteSpace(Product.BackKeyPointsEn);
+        var raw = useEnDirect ? Product.BackKeyPointsEn : Product.BackKeyPoints;
+
+        foreach (var pt in (raw ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            KeyPoints.Add(useEnDirect ? pt : TranslateKeyPoint(pt));
+        }
+
+        OnPropertyChanged(nameof(HasKeyPoints));
+        OnPropertyChanged(nameof(HasTargetAudience));
+        OnPropertyChanged(nameof(HasGradeLevel));
+    }
+
+    private string TranslateKeyPoint(string pt)
+    {
+        if (Loc.IsRtl || Product is null) return pt;
+        if (pt.Contains("كوشيه") || pt.Contains("350")) return "Premium 350gsm laminated cardstock";
+        if (pt.Contains("زوايا") || pt.Contains("دائرية")) return "Safe rounded corners for children";
+        if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
+        if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable lamination";
+        if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Product.CardCount} Double-sided full color cards";
+        if (pt.Contains("مثال") || pt.Contains("جملة") || pt.Contains("تمارين") || pt.Contains("جمل")) return "Example sentence for each word";
+        if (pt.Contains("كلمة") || pt.Contains("كلمات")) return $"{Product.CardCount} Illustrated words";
+        if (pt.Contains("تقسيم") || pt.Contains("أصوات") || pt.Contains("الأصوات")) return "Sound-group markers";
+        if (pt.Contains("رسمة") || pt.Contains("رسوم") || pt.Contains("صور")) return "Illustration on every card";
+        if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
+        if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
+        return pt;
     }
 }

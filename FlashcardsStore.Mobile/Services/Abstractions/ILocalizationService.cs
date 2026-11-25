@@ -12,6 +12,9 @@ public interface ILocalizationService : INotifyPropertyChanged
 
     string this[string key] { get; }
     string Get(string key);
+    string Format(string key, params object?[] arguments);
     string GetLocalized(string? arabic, string? english);
+    string TranslateTargetAudience(string? raw);
+    string TranslateGradeLevel(string? raw);
     void ToggleLanguage();
 }

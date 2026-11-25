@@ -34,32 +34,56 @@
                                 Stroke="Transparent"
                                 StrokeShape="RoundRectangle 14"
                                 Padding="10">
-                            <Grid>
-                                <Image Source="{Binding FullImageUrl}" Aspect="AspectFit" HeightRequest="245" />
-                                <Border BackgroundColor="{StaticResource BrandPurple}"
-                                        Stroke="Transparent"
-                                        StrokeShape="RoundRectangle 10"
-                                        Padding="10,4"
-                                        HorizontalOptions="Start"
-                                        VerticalOptions="Start">
-                                    <Label Text="{Binding DisplayCategory}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
-                                </Border>
+                            <Grid RowDefinitions="245,Auto">
+                                <Grid Grid.Row="0">
+                                    <CarouselView ItemsSource="{Binding ProductImages}"
+                                                  Position="{Binding SelectedImageIndex, Mode=TwoWay}"
+                                                  IndicatorView="ProductImageIndicator"
+                                                  IsSwipeEnabled="{Binding HasMultipleImages}"
+                                                  Loop="False">
+                                        <CarouselView.ItemTemplate>
+                                            <DataTemplate x:DataType="x:String">
+                                                <Image Source="{Binding .}" Aspect="AspectFit" />
+                                            </DataTemplate>
+                                        </CarouselView.ItemTemplate>
+                                    </CarouselView>
+                                    <Border BackgroundColor="{StaticResource BrandPurple}"
+                                            Stroke="Transparent"
+                                            StrokeShape="RoundRectangle 10"
+                                            Padding="10,4"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Start">
+                                        <Label Text="{Binding DisplayCategory}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                                    </Border>
+                                </Grid>
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" IsVisible="{Binding HasMultipleImages}" Margin="0,8,0,0">
+                                    <IndicatorView x:Name="ProductImageIndicator"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   IndicatorColor="{StaticResource CardBorder}"
+                                                   SelectedIndicatorColor="{StaticResource BrandGold}"
+                                                   IndicatorSize="8" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding ImageCountLabel}"
+                                           Style="{StaticResource MutedLabelStyle}"
+                                           FontSize="11"
+                                           VerticalTextAlignment="Center" />
+                                </Grid>
                             </Grid>
                         </Border>
                     </Border>
 
-                    <!-- Title & Price Chips -->
+                    <!-- Title -->
                     <VerticalStackLayout Spacing="4">
                         <Label Text="{Binding DisplayTitle}" Style="{StaticResource HeadingLabelStyle}" FontSize="21" />
-                        <Label Text="{Binding DisplaySubtitle}" Style="{StaticResource MutedLabelStyle}" FontSize="13" />
                     </VerticalStackLayout>
 
                     <HorizontalStackLayout Spacing="8">
                         <Border BackgroundColor="{StaticResource BrandGold}" Stroke="{StaticResource BrandGoldDark}" StrokeShape="RoundRectangle 12" Padding="12,5">
-                            <Label Text="{Binding Product.Price, StringFormat='{0:0.##} ج.م'}" FontFamily="Cairo" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                            <Label Text="{Binding PriceLabel}" FontFamily="Cairo" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
                         </Border>
                         <Border BackgroundColor="{StaticResource SurfaceWhite}" Stroke="{StaticResource CardBorder}" StrokeShape="RoundRectangle 12" Padding="12,5">
-                            <Label Text="{Binding Product.CardCount, StringFormat='{0} بطاقة'}" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                            <Label Text="{Binding CardCountLabel}" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
                         </Border>
                         <Border BackgroundColor="{StaticResource SuccessSoft}" Stroke="#A7DFC0" StrokeShape="RoundRectangle 12" Padding="10,5">
                             <Label Text="{Binding StockLabel}" FontFamily="Cairo" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
@@ -89,9 +113,9 @@
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <HorizontalStackLayout Spacing="6">
                                     <Image Source="icon_mic.png" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
-                                    <Label Text="بصوت ميس خلود النادي" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                    <Label Text="{Binding Loc[ReviewTeacherVoice]}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
                                 </HorizontalStackLayout>
-                                <Label Text="شرح ونطق صوتي حصري مسجّل لهذه الباقة" FontFamily="Cairo" FontSize="11" TextColor="{StaticResource BrandInk}" />
+                                <Label Text="{Binding Loc[ReviewTeacherVoiceSub]}" FontFamily="Cairo" FontSize="11" TextColor="{StaticResource BrandInk}" />
                             </VerticalStackLayout>
                             <Button Grid.Column="1"
                                     Text="{Binding TeacherVoiceButtonText}"
@@ -109,8 +133,23 @@
                         <VerticalStackLayout Spacing="6">
                             <Label Text="{Binding Loc[AboutPack]}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
                             <Label Text="{Binding DisplayDescription}" Style="{StaticResource BodyLabelStyle}" />
-                            <Label Text="{Binding Product.TargetAudience, StringFormat='الفئة المستهدفة: {0}'}" Style="{StaticResource MutedLabelStyle}" />
-                            <Label Text="{Binding Product.GradeLevel, StringFormat='الصف الدراسي: {0}'}" Style="{StaticResource MutedLabelStyle}" />
+                            <Label Text="{Binding DisplayTargetAudience}" IsVisible="{Binding HasTargetAudience}" Style="{StaticResource MutedLabelStyle}" />
+                            <Label Text="{Binding DisplayGradeLevel}" IsVisible="{Binding HasGradeLevel}" Style="{StaticResource MutedLabelStyle}" />
+
+                            <!-- Key Points / Technical Specs -->
+                            <VerticalStackLayout IsVisible="{Binding HasKeyPoints}" Spacing="6" Margin="0,6,0,0">
+                                <Label Text="{Binding Loc[KeyPointsTitle]}" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding KeyPoints}" Spacing="4">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="x:String">
+                                            <HorizontalStackLayout Spacing="6">
+                                                <Label Text="✓" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                                <Label Text="{Binding .}" Style="{StaticResource BodyLabelStyle}" FontSize="12" />
+                                            </HorizontalStackLayout>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
                         </VerticalStackLayout>
                     </Border>
 
@@ -190,7 +229,7 @@
                     </Border>
 
                     <!-- Customer Reviews -->
-                    <Label Text="آراء أولياء الأمور والمعلمات" Style="{StaticResource SectionTitleStyle}" Margin="0,6,0,0" />
+                    <Label Text="{Binding Loc[CustomerReviews]}" Style="{StaticResource SectionTitleStyle}" Margin="0,6,0,0" />
                     <Label Text="{Binding ReviewSummaryText}" Style="{StaticResource MutedLabelStyle}" FontSize="13" TextColor="{StaticResource BrandGoldDark}" />
 
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Reviews}" Spacing="8">
@@ -213,20 +252,20 @@
                     <!-- Add Review Form -->
                     <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                         <VerticalStackLayout Spacing="8">
-                            <Label Text="أضيفي تقييمك" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                            <Label Text="{Binding Loc[WriteReview]}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
                             <Border Style="{StaticResource InputBoxBorderStyle}">
-                                <Entry Placeholder="الاسم" Text="{Binding ReviewerName}" Style="{StaticResource BrandEntryStyle}" />
+                                <Entry Placeholder="{Binding Loc[NamePlaceholder]}" Text="{Binding ReviewerName}" Style="{StaticResource BrandEntryStyle}" />
                             </Border>
                             <Border Style="{StaticResource InputBoxBorderStyle}">
-                                <Entry Placeholder="الصفة (ولي أمر / معلمة / مدرسة)" Text="{Binding ReviewerRole}" Style="{StaticResource BrandEntryStyle}" />
+                                <Entry Placeholder="{Binding Loc[RoleReviewPlaceholder]}" Text="{Binding ReviewerRole}" Style="{StaticResource BrandEntryStyle}" />
                             </Border>
-                            <controls:BrandDropdown Title="التقييم"
+                            <controls:BrandDropdown Title="{Binding Loc[RatingTitle]}"
                                                     ItemsSource="{Binding RatingOptions}"
                                                     SelectedIndex="{Binding SelectedRatingIndex}" />
                             <Border Style="{StaticResource InputBoxBorderStyle}">
-                                <Editor Placeholder="اكتبي رأيك وتجربتك (5 أحرف على الأقل)" Text="{Binding ReviewComment}" Style="{StaticResource BrandEditorStyle}" />
+                                <Editor Placeholder="{Binding Loc[ReviewCommentPlaceholder]}" Text="{Binding ReviewComment}" Style="{StaticResource BrandEditorStyle}" />
                             </Border>
-                            <Button Text="إرسال التقييم"
+                            <Button Text="{Binding Loc[SubmitReview]}"
                                     Command="{Binding SubmitReviewCommand}"
                                     IsEnabled="{Binding IsNotBusy}"
                                     Style="{StaticResource PrimaryPurpleButtonStyle}" />
