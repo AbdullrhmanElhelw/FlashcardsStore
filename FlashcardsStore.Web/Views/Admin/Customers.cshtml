@@ -10,7 +10,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
         <div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
-                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <a asp-controller="AdminDashboard" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
                 <span>/</span>
                 <span class="text-slate-900">العملاء</span>
             </div>
@@ -18,7 +18,7 @@
             <p class="text-xs sm:text-sm text-slate-500 mt-1">متابعة الحسابات المسجلة من تطبيق الموبايل وعملاء الطلب المباشر من الموقع وسجل مشترياتهم</p>
         </div>
 
-        <a asp-controller="Admin" asp-action="Orders" class="admin-btn-secondary self-start sm:self-auto">
+        <a asp-controller="AdminOrders" asp-action="Orders" class="admin-btn-secondary self-start sm:self-auto">
             <span>الانتقال إلى الطلبات</span>
         </a>
     </div>
@@ -178,7 +178,7 @@
                                     @c.CreatedAt.ToString("yyyy/MM/dd")
                                 </td>
                                 <td class="px-5 py-4 text-center">
-                                    <a asp-controller="Admin" asp-action="Orders" asp-route-search="@c.PhoneNumber"
+                                    <a asp-controller="AdminOrders" asp-action="Orders" asp-route-search="@c.PhoneNumber"
                                        class="inline-flex items-center px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-amber-50 hover:text-[#8D6711] text-slate-700 text-xs font-bold border border-slate-200 transition">
                                         عرض الطلبات
                                     </a>

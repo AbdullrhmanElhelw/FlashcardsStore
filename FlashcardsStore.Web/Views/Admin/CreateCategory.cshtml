@@ -10,22 +10,22 @@
     <div class="flex items-center justify-between border-b border-slate-200 pb-6 mb-8">
         <div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
-                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <a asp-controller="AdminDashboard" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
                 <span>/</span>
-                <a asp-controller="Admin" asp-action="Categories" class="hover:underline">الأقسام</a>
+                <a asp-controller="AdminCategories" asp-action="Categories" class="hover:underline">الأقسام</a>
                 <span>/</span>
                 <span class="text-slate-900">إضافة قسم</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-slate-900">إضافة قسم تعليمي جديد</h1>
         </div>
 
-        <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">
+        <a asp-controller="AdminCategories" asp-action="Categories" class="admin-btn-secondary">
             <span>إلغاء والعودة</span>
         </a>
     </div>
 
     <!-- Form -->
-    <form asp-controller="Admin" asp-action="CreateCategory" method="post" class="space-y-6">
+    <form asp-controller="AdminCategories" asp-action="CreateCategory" method="post" class="space-y-6">
         @Html.AntiForgeryToken()
 
         <div asp-validation-summary="ModelOnly" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold"></div>
@@ -62,7 +62,7 @@
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
-            <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">إلغاء</a>
+            <a asp-controller="AdminCategories" asp-action="Categories" class="admin-btn-secondary">إلغاء</a>
             <button type="submit" class="admin-btn-primary px-8">
                 <span>حفظ وإضافة القسم ✓</span>
             </button>

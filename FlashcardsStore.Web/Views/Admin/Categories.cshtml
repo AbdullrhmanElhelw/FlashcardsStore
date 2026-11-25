@@ -10,7 +10,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 mb-6 gap-4">
         <div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
-                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <a asp-controller="AdminDashboard" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
                 <span>/</span>
                 <span class="text-slate-900">الأقسام والتصنيفات</span>
             </div>
@@ -18,7 +18,7 @@
             <p class="text-xs sm:text-sm text-slate-500 mt-1">تنظيم المواد التعليمية وترتيب ظهورها في الكتالوج وشريط التصفح</p>
         </div>
 
-        <a asp-controller="Admin" asp-action="CreateCategory" class="admin-btn-primary">
+        <a asp-controller="AdminCategories" asp-action="CreateCategory" class="admin-btn-primary">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
@@ -52,7 +52,7 @@
         @{
             var searchTerm = ViewBag.SearchTerm as string;
         }
-        <form asp-controller="Admin" asp-action="Categories" method="get" class="flex flex-col sm:flex-row items-center gap-3">
+        <form asp-controller="AdminCategories" asp-action="Categories" method="get" class="flex flex-col sm:flex-row items-center gap-3">
             <input type="text"
                    name="search"
                    value="@searchTerm"
@@ -62,7 +62,7 @@
                 <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#b89427] text-[#18061A] font-black text-xs transition shrink-0">بحث</button>
                 @if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    <a asp-controller="Admin" asp-action="Categories" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition shrink-0">مسح</a>
+                    <a asp-controller="AdminCategories" asp-action="Categories" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition shrink-0">مسح</a>
                 }
             </div>
         </form>
@@ -112,7 +112,7 @@
                         </td>
 
                         <td>
-                            <a asp-controller="Admin" asp-action="Products" asp-route-categoryId="@cat.Id" 
+                            <a asp-controller="AdminProducts" asp-action="Products" asp-route-categoryId="@cat.Id" 
                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 hover:bg-amber-100 transition">
                                 <span>@cat.ProductCount باقة</span>
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,14 +129,14 @@
 
                         <td>
                             <div class="flex items-center justify-center gap-2">
-                                <a asp-controller="Admin" asp-action="EditCategory" asp-route-id="@cat.Id"
+                                <a asp-controller="AdminCategories" asp-action="EditCategory" asp-route-id="@cat.Id"
                                    class="p-2 text-[#B88E23] hover:text-[#8D6711] hover:bg-amber-50 rounded-lg transition" title="تعديل القسم">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                 </a>
 
-                                <form asp-controller="Admin" asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post" 
+                                <form asp-controller="AdminCategories" asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post" 
                                       onsubmit="return confirm('هل أنت متأكد من حذف قسم «@cat.NameAr»؟');" class="inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition" title="حذف القسم">

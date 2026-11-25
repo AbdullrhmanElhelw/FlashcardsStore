@@ -23,7 +23,7 @@
             <div class="flex items-center gap-1.5">
                 <label for="admin-page-size" class="text-slate-500">لكل صفحة:</label>
                 <select id="admin-page-size"
-                        onchange="var url = this.value; if (window.htmx) { htmx.ajax('GET', url, { target: '#admin-spa-content', select: '#admin-spa-content', swap: 'innerHTML show:window:top' }); history.pushState({}, '', url); } else { window.location.href = url; }"
+                        data-admin-page-size="true"
                         class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-800 text-xs font-bold focus:outline-none focus:border-[#D4AF37]">
                     @foreach (var opt in sizeOptions)
                     {

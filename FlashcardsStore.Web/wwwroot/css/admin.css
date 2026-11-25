@@ -308,3 +308,65 @@
   background: #B91C1C;
   transform: scale(1.1);
 }
+
+/* SPA Navigation Loader & Active Sidebar State */
+#admin-spa-loader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #D4AF37, #F6ECC9, #B88E23);
+  z-index: 9999;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+  opacity: 0;
+}
+
+#admin-spa-loader.htmx-request {
+  transform: scaleX(0.85);
+  opacity: 1;
+}
+
+.sidebar-link.is-active {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.06));
+  color: #F6ECC9;
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+.sidebar-link.is-active svg {
+  color: #D4AF37;
+}
+
+/* Order Packing Slip Print Rules */
+@media print {
+  aside, header, footer, nav, .no-print, #receipt-modal, button, form, .admin-action-bar {
+    display: none !important;
+  }
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+  .lg\:pr-64 {
+    padding-right: 0 !important;
+  }
+  .max-w-6xl {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .print-only-slip {
+    display: block !important;
+  }
+  .screen-only-details {
+    display: none !important;
+  }
+}
+
+@media screen {
+  .print-only-slip {
+    display: none !important;
+  }
+}

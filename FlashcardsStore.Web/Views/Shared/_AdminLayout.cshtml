@@ -33,34 +33,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
-    <style>
-        #admin-spa-loader {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #D4AF37, #F6ECC9, #B88E23);
-            z-index: 9999;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.25s ease, opacity 0.2s ease;
-            opacity: 0;
-        }
-        #admin-spa-loader.htmx-request {
-            transform: scaleX(0.85);
-            opacity: 1;
-        }
-        .sidebar-link.is-active {
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.06));
-            color: #F6ECC9;
-            border-color: rgba(212, 175, 55, 0.45);
-        }
-        .sidebar-link.is-active svg {
-            color: #D4AF37;
-        }
-    </style>
-
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased" x-data="{ sidebarOpen: false }">
@@ -86,7 +58,7 @@
 
         <!-- Brand Header -->
         <div class="flex items-center justify-between px-5 py-5 border-b border-white/10">
-            <a asp-controller="Admin" asp-action="Dashboard"
+            <a asp-controller="AdminDashboard" asp-action="Dashboard"
                hx-boost="true" hx-target="#admin-spa-content" hx-select="#admin-spa-content" hx-swap="innerHTML show:window:top"
                class="flex items-center gap-3">
                 <img src="~/images/brand/logo.png"
@@ -115,7 +87,7 @@
              hx-indicator="#admin-spa-loader"
              class="flex-1 overflow-y-auto px-3.5 py-5 space-y-1.5 text-sm font-bold">
 
-            <a asp-controller="Admin" asp-action="Dashboard" data-nav-group="dashboard"
+            <a asp-controller="AdminDashboard" asp-action="Dashboard" data-nav-group="dashboard"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isDashboard ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -123,7 +95,7 @@
                 <span>لوحة المؤشرات</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Orders" data-nav-group="orders"
+            <a asp-controller="AdminOrders" asp-action="Orders" data-nav-group="orders"
                class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isOrders ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <span class="flex items-center gap-3">
                     <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,7 +109,7 @@
                 }
             </a>
 
-            <a asp-controller="Admin" asp-action="Products" data-nav-group="products"
+            <a asp-controller="AdminProducts" asp-action="Products" data-nav-group="products"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isProducts ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -145,7 +117,7 @@
                 <span>كروت الفلاش كاردز</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Categories" data-nav-group="categories"
+            <a asp-controller="AdminCategories" asp-action="Categories" data-nav-group="categories"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isCategories ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -153,7 +125,7 @@
                 <span>أقسام الكروت</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Customers" data-nav-group="customers"
+            <a asp-controller="AdminCustomers" asp-action="Customers" data-nav-group="customers"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isCustomers ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -161,7 +133,7 @@
                 <span>العملاء والموبايل</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Reviews" data-nav-group="reviews"
+            <a asp-controller="AdminReviews" asp-action="Reviews" data-nav-group="reviews"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isReviews ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
@@ -169,7 +141,7 @@
                 <span>التقييمات والمراجعات</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Settings" data-nav-group="settings"
+            <a asp-controller="AdminSettings" asp-action="Settings" data-nav-group="settings"
                class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isSettings ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
                 <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -196,7 +168,7 @@
                    class="flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 text-xs font-bold transition">
                     <span>المتجر ↗</span>
                 </a>
-                <form asp-controller="Admin" asp-action="Logout" method="post" hx-boost="false">
+                <form asp-controller="AdminAuth" asp-action="Logout" method="post" hx-boost="false">
                     @Html.AntiForgeryToken()
                     <button type="submit"
                             class="w-full flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 text-xs font-bold transition">
@@ -226,7 +198,7 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <a asp-controller="Admin" asp-action="CreateProduct"
+                    <a asp-controller="AdminProducts" asp-action="CreateProduct"
                        hx-boost="true" hx-target="#admin-spa-content" hx-select="#admin-spa-content" hx-swap="innerHTML show:window:top" hx-indicator="#admin-spa-loader"
                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#b89427] text-[#18061A] text-xs font-black transition shadow-xs">
                         <span>+ باقة جديدة</span>
@@ -255,41 +227,8 @@
     <!-- Admin Modular Scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
+    <script src="~/js/admin-spa.js" asp-append-version="true"></script>
     <script src="~/js/admin-voice-recorder.js" asp-append-version="true"></script>
-
-    <script>
-        document.addEventListener('htmx:afterSettle', function () {
-            // Update active sidebar link based on current URL
-            var path = window.location.pathname.toLowerCase();
-            var group = 'dashboard';
-            if (path.includes('/admin/orders') || path.includes('/admin/orderdetails')) group = 'orders';
-            else if (path.includes('/admin/products') || path.includes('/admin/createproduct') || path.includes('/admin/editproduct')) group = 'products';
-            else if (path.includes('/admin/categories') || path.includes('/admin/createcategory') || path.includes('/admin/editcategory')) group = 'categories';
-            else if (path.includes('/admin/customers')) group = 'customers';
-            else if (path.includes('/admin/reviews')) group = 'reviews';
-            else if (path.includes('/admin/settings')) group = 'settings';
-
-            document.querySelectorAll('#admin-sidebar-nav .sidebar-link').forEach(function (el) {
-                if (el.dataset.navGroup === group) {
-                    el.classList.add('is-active');
-                    el.classList.remove('text-slate-300');
-                } else {
-                    el.classList.remove('is-active');
-                    el.classList.add('text-slate-300');
-                }
-            });
-
-            // Close mobile sidebar drawer if open
-            var bodyData = document.body._x_dataStack && document.body._x_dataStack[0];
-            if (bodyData) bodyData.sidebarOpen = false;
-
-            // Sync top bar page title with swapped SPA document title
-            var titleEl = document.getElementById('admin-page-title');
-            if (titleEl && document.title) {
-                titleEl.textContent = document.title.split(' - لوحة التحكم')[0];
-            }
-        });
-    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

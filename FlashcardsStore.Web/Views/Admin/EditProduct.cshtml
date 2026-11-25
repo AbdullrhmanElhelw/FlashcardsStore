@@ -11,9 +11,9 @@
     <div class="flex items-center justify-between border-b border-slate-200 pb-6 mb-8">
         <div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
-                <a asp-controller="Admin" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <a asp-controller="AdminDashboard" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
                 <span>/</span>
-                <a asp-controller="Admin" asp-action="Products" class="hover:underline">كروت الفلاش كاردز</a>
+                <a asp-controller="AdminProducts" asp-action="Products" class="hover:underline">كروت الفلاش كاردز</a>
                 <span>/</span>
                 <span class="text-slate-900">تعديل</span>
             </div>
@@ -24,14 +24,14 @@
             <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" target="_blank" class="admin-btn-secondary">
                 <span>معاينة بالمتجر ↗</span>
             </a>
-            <a asp-controller="Admin" asp-action="Products" class="admin-btn-secondary">
+            <a asp-controller="AdminProducts" asp-action="Products" class="admin-btn-secondary">
                 <span>إلغاء</span>
             </a>
         </div>
     </div>
 
     <!-- Form -->
-    <form asp-controller="Admin" asp-action="EditProduct" method="post" enctype="multipart/form-data" class="space-y-8">
+    <form asp-controller="AdminProducts" asp-action="EditProduct" method="post" enctype="multipart/form-data" class="space-y-8">
         @Html.AntiForgeryToken()
         <input asp-for="Id" type="hidden" />
         <input asp-for="Slug" type="hidden" />
@@ -383,7 +383,7 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-end gap-3 pt-4">
-            <a asp-controller="Admin" asp-action="Products" class="admin-btn-secondary">إلغاء</a>
+            <a asp-controller="AdminProducts" asp-action="Products" class="admin-btn-secondary">إلغاء</a>
             <button type="submit" class="admin-btn-primary px-8">
                 <span>حفظ التعديلات ✓</span>
             </button>

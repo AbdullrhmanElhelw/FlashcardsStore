@@ -19,7 +19,7 @@
 
         <div asp-validation-summary="ModelOnly" class="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold"></div>
 
-        <form asp-controller="Admin" asp-action="LoginSubmit" method="post" class="space-y-4">
+        <form asp-controller="AdminAuth" asp-action="LoginSubmit" method="post" class="space-y-4">
             @Html.AntiForgeryToken()
             <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
 

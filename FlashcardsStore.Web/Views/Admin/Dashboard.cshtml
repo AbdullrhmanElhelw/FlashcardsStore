@@ -14,22 +14,22 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-            <a asp-controller="Admin" asp-action="CreateProduct" class="admin-btn-primary">
+            <a asp-controller="AdminProducts" asp-action="CreateProduct" class="admin-btn-primary">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
                 <span>إضافة باقة كروت جديدة</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Products" class="admin-btn-secondary">
+            <a asp-controller="AdminProducts" asp-action="Products" class="admin-btn-secondary">
                 <span>إدارة الكروت</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Categories" class="admin-btn-secondary">
+            <a asp-controller="AdminCategories" asp-action="Categories" class="admin-btn-secondary">
                 <span>إدارة الأقسام</span>
             </a>
 
-            <a asp-controller="Admin" asp-action="Customers" class="admin-btn-secondary">
+            <a asp-controller="AdminCustomers" asp-action="Customers" class="admin-btn-secondary">
                 <span>العملاء</span>
             </a>
         </div>
@@ -61,7 +61,7 @@
                 </div>
             </div>
             <span class="text-2xl font-black text-amber-600">@Model.PendingVerificationOrders</span>
-            <a asp-controller="Admin" asp-action="Orders" asp-route-status="PendingVerification" class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 mt-1 hover:underline">
+            <a asp-controller="AdminOrders" asp-action="Orders" asp-route-status="PendingVerification" class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 mt-1 hover:underline">
                 <span>مراجعة الآن</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <span class="text-2xl font-black text-emerald-600">@Model.WhatsAppPendingOrders</span>
-            <a asp-controller="Admin" asp-action="Orders" asp-route-status="WhatsAppPending" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 mt-1 hover:underline">
+            <a asp-controller="AdminOrders" asp-action="Orders" asp-route-status="WhatsAppPending" class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 mt-1 hover:underline">
                 <span>عرض الطلبات</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -132,7 +132,7 @@
     <div class="admin-table-container">
         <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <h3 class="text-base font-extrabold text-slate-900">أحدث الطلبات المستلمة</h3>
-            <a asp-controller="Admin" asp-action="Orders" class="text-xs font-bold text-[#290A2E] hover:text-[#D4AF37] inline-flex items-center gap-1 transition-colors">
+            <a asp-controller="AdminOrders" asp-action="Orders" class="text-xs font-bold text-[#290A2E] hover:text-[#D4AF37] inline-flex items-center gap-1 transition-colors">
                 <span>عرض كافة الطلبات</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -169,7 +169,7 @@
                         {
                             <tr>
                                 <td class="font-mono font-bold text-[#290A2E]">
-                                    <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@o.Id" class="hover:underline">
+                                    <a asp-controller="AdminOrders" asp-action="OrderDetails" asp-route-id="@o.Id" class="hover:underline">
                                         @o.OrderNumber
                                     </a>
                                 </td>
@@ -205,7 +205,7 @@
                                     @o.OrderDate.ToString("MM/dd - hh:mm tt")
                                 </td>
                                 <td>
-                                    <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@o.Id" 
+                                    <a asp-controller="AdminOrders" asp-action="OrderDetails" asp-route-id="@o.Id" 
                                        class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#18061A]/5 hover:text-[#290A2E] text-slate-700 font-bold text-xs inline-flex items-center gap-1 transition-colors">
                                         <span>معاينة</span>
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
