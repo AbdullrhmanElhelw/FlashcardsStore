@@ -82,7 +82,7 @@
 
     <!-- Fixed Responsive Sidebar (RTL Right) -->
     <aside :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
-           class="fixed inset-y-0 right-0 z-50 w-68 bg-gradient-to-b from-[#18061A] via-[#220926] to-[#140516] text-slate-200 flex flex-col border-l border-[#D4AF37]/20 shadow-2xl transition-transform duration-200 ease-out">
+           class="fixed inset-y-0 right-0 z-50 w-64 bg-gradient-to-b from-[#18061A] via-[#220926] to-[#140516] text-slate-200 flex flex-col border-l border-[#D4AF37]/20 shadow-2xl transition-transform duration-200 ease-out">
 
         <!-- Brand Header -->
         <div class="flex items-center justify-between px-5 py-5 border-b border-white/10">
@@ -208,21 +208,21 @@
     </aside>
 
     <!-- Main Content Area (Offset by Sidebar on Desktop) -->
-    <div class="lg:pr-68 min-h-screen flex flex-col">
+    <div class="lg:pr-64 min-h-screen flex flex-col">
 
         <!-- Slim Responsive Top Bar -->
         <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 min-w-0">
                     <button type="button"
                             @@click="sidebarOpen = true"
-                            class="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+                            class="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition shrink-0"
                             aria-label="فتح القائمة">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    <span class="text-sm sm:text-base font-black text-slate-800 truncate">@ViewData["Title"]</span>
+                    <span id="admin-page-title" class="text-sm sm:text-base font-black text-slate-800 truncate">@ViewData["Title"]</span>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -282,6 +282,12 @@
             // Close mobile sidebar drawer if open
             var bodyData = document.body._x_dataStack && document.body._x_dataStack[0];
             if (bodyData) bodyData.sidebarOpen = false;
+
+            // Sync top bar page title with swapped SPA document title
+            var titleEl = document.getElementById('admin-page-title');
+            if (titleEl && document.title) {
+                titleEl.textContent = document.title.split(' - لوحة التحكم')[0];
+            }
         });
     </script>
 
