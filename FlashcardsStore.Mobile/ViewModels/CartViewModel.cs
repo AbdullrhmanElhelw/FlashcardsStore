@@ -25,6 +25,8 @@ public sealed partial class CartViewModel : BaseViewModel
     private int _itemCount;
 
     public bool IsEmpty => !HasItems;
+    public string ItemCountLabel => Loc.Format("CartItemsCount", ItemCount);
+    public string SubtotalLabel => Loc.Format("CurrencyAmount", Subtotal);
     public ObservableCollection<CartEntry> Items { get; } = new();
 
     public CartViewModel(
@@ -40,7 +42,12 @@ public sealed partial class CartViewModel : BaseViewModel
         _session = session;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "السلة";
+        Title = Loc["CartTitle"];
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["CartTitle"];
+            Refresh();
+        };
     }
 
     public string ResolveImageUrl(string? url) => _api.GetImageUrl(url);
@@ -55,6 +62,9 @@ public sealed partial class CartViewModel : BaseViewModel
                 ProductId = entry.ProductId,
                 NameAr = entry.NameAr,
                 Name = entry.Name,
+                DisplayName = Loc.GetLocalized(entry.NameAr, entry.Name),
+                PriceLabel = Loc.Format("CurrencyAmount", entry.Price),
+                SubtotalLabel = Loc.Format("CurrencyAmount", entry.Price * entry.Quantity),
                 ImageUrl = _api.GetImageUrl(entry.ImageUrl),
                 Price = entry.Price,
                 Quantity = entry.Quantity,
@@ -64,6 +74,8 @@ public sealed partial class CartViewModel : BaseViewModel
         HasItems = Items.Count > 0;
         Subtotal = _cart.Subtotal;
         ItemCount = _cart.ItemCount;
+        OnPropertyChanged(nameof(ItemCountLabel));
+        OnPropertyChanged(nameof(SubtotalLabel));
     }
 
     [RelayCommand]
@@ -93,7 +105,7 @@ public sealed partial class CartViewModel : BaseViewModel
     [RelayCommand]
     private async Task ClearCartAsync()
     {
-        if (await _dialogs.ShowConfirmAsync("السلة", "هل تريدين إزالة جميع المنتجات من السلة؟"))
+        if (await _dialogs.ShowConfirmAsync(Loc["ClearCartTitle"], Loc["EmptyCartConfirm"]))
         {
             _cart.Clear();
             Refresh();
@@ -109,7 +121,7 @@ public sealed partial class CartViewModel : BaseViewModel
             return;
         }
 
-        await _dialogs.ShowAlertAsync("تسجيل الدخول", "يرجى تسجيل الدخول أو إنشاء حساب جديد لإتمام عملية الشراء.");
+        await _dialogs.ShowAlertAsync(Loc["LoginBtn"], Loc["LoginRequiredCheckout"]);
         await _navigation.PushLoginForCheckoutAsync();
     }
 

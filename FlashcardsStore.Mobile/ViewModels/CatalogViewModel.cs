@@ -61,8 +61,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
         _cart = cart;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "الرئيسية";
+        Title = Loc["TabHome"];
         _selectedSortOption = SortOptions[0];
+        loc.LanguageChanged += (_, _) => Title = Loc["TabHome"];
 
         SeedGrades();
         ApplyLocalization();
@@ -84,7 +85,7 @@ public sealed partial class CatalogViewModel : BaseViewModel
         var warning = _cart.TakeLoadWarning();
         if (!string.IsNullOrWhiteSpace(warning))
         {
-            await _dialogs.ShowAlertAsync("تنبيه", warning);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["CartRestoreWarning"]);
         }
 
         RefreshCartAndFavoritesState();
@@ -204,11 +205,11 @@ public sealed partial class CatalogViewModel : BaseViewModel
         {
             _cart.Add(item.Source);
             RefreshCartAndFavoritesState();
-            await _dialogs.ShowToastAsync($"تمت إضافة «{item.NameAr}» إلى السلة");
+            await _dialogs.ShowToastAsync(Loc.Format("AddToCartToast", item.DisplayName));
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["CartProductUnavailable"]);
         }
     }
 

@@ -17,35 +17,47 @@ public sealed partial class OnboardingViewModel : BaseViewModel
     [NotifyPropertyChangedFor(nameof(NextButtonText))]
     private int _currentPosition;
 
-    public ObservableCollection<OnboardingSlide> Slides { get; } = new()
-    {
-        new OnboardingSlide
-        {
-            Title = "اكتشفي بطاقات الفلاش كاردز",
-            Description = "مجموعات تعليمية مصممة بعناية مع ميس خلود النادي لتأسيس طفلك في الفونكس والقواعد والمفردات.",
-            ImageName = "onboarding_discover.png"
-        },
-        new OnboardingSlide
-        {
-            Title = "اختاري المناسب لعمر طفلك",
-            Description = "تصفحي حسب المرحلة الدراسية مع معاينة الكلمات، التقييمات، وتسجيلات المعلمة الصوتية.",
-            ImageName = "onboarding_choose.png"
-        },
-        new OnboardingSlide
-        {
-            Title = "تعلّم تفاعلي وطلب سهل",
-            Description = "استمعي للنطق الصحيح بالسرعة البطيئة للأطفال واطلبي الباقات بسهولة حتى باب البيت.",
-            ImageName = "onboarding_practice.png"
-        }
-    };
+    public ObservableCollection<OnboardingSlide> Slides { get; } = new();
 
     public bool IsLastSlide => CurrentPosition >= Slides.Count - 1;
-    public string NextButtonText => IsLastSlide ? "ابدئي التسوق الآن" : "التالي";
+    public string NextButtonText => Loc[IsLastSlide ? "OnboardingStart" : "OnboardingNext"];
 
     public OnboardingViewModel(INavigationService navigation, ILocalizationService loc) : base(loc)
     {
         _navigation = navigation;
-        Title = "مرحباً بكِ";
+        Title = Loc["StartOnboarding"];
+        RefreshSlides();
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["StartOnboarding"];
+            RefreshSlides();
+            OnPropertyChanged(nameof(NextButtonText));
+        };
+    }
+
+    private void RefreshSlides()
+    {
+        var position = CurrentPosition;
+        Slides.Clear();
+        Slides.Add(new OnboardingSlide
+        {
+            Title = Loc["OnboardingDiscoverTitle"],
+            Description = Loc["OnboardingDiscoverDescription"],
+            ImageName = "onboarding_discover.png"
+        });
+        Slides.Add(new OnboardingSlide
+        {
+            Title = Loc["OnboardingChooseTitle"],
+            Description = Loc["OnboardingChooseDescription"],
+            ImageName = "onboarding_choose.png"
+        });
+        Slides.Add(new OnboardingSlide
+        {
+            Title = Loc["OnboardingPracticeTitle"],
+            Description = Loc["OnboardingPracticeDescription"],
+            ImageName = "onboarding_practice.png"
+        });
+        CurrentPosition = Math.Min(position, Slides.Count - 1);
     }
 
     [RelayCommand]

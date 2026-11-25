@@ -58,9 +58,9 @@ public partial class BrandDialogPage : ContentPage
 
     private static string PickIconSource(string title)
     {
-        if (title.Contains("السلة")) return "home_cart.png";
-        if (title.Contains("تسجيل") || title.Contains("أهلاً")) return "auth_lock.png";
-        if (title.Contains("تم") || title.Contains("شكراً")) return "icon_shield.png";
+        if (title.Contains("السلة") || title.Contains("Cart", StringComparison.OrdinalIgnoreCase)) return "home_cart.png";
+        if (title.Contains("تسجيل") || title.Contains("أهلاً") || title.Contains("Sign", StringComparison.OrdinalIgnoreCase)) return "auth_lock.png";
+        if (title.Contains("تم") || title.Contains("شكراً") || title.Contains("Thank", StringComparison.OrdinalIgnoreCase)) return "icon_shield.png";
         return "icon_sparkles.png";
     }
 }

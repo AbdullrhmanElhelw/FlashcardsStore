@@ -18,12 +18,22 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasResult))]
+    [NotifyPropertyChangedFor(nameof(OrderLabel))]
+    [NotifyPropertyChangedFor(nameof(OrderTotalLabel))]
+    [NotifyPropertyChangedFor(nameof(CustomerLabel))]
+    [NotifyPropertyChangedFor(nameof(StatusLabel))]
+    [NotifyPropertyChangedFor(nameof(ProductCountLabel))]
     private OrderTracking? _trackingResult;
 
     [ObservableProperty]
     private string _proofNote = string.Empty;
 
     public bool HasResult => TrackingResult is not null;
+    public string OrderLabel => TrackingResult is null ? string.Empty : Loc.Format("OrderFormat", TrackingResult.OrderNumber);
+    public string OrderTotalLabel => TrackingResult is null ? string.Empty : Loc.Format("CurrencyAmount", TrackingResult.GrandTotal);
+    public string CustomerLabel => TrackingResult is null ? string.Empty : Loc.Format("CustomerFormat", TrackingResult.CustomerName);
+    public string StatusLabel => TrackingResult is null ? string.Empty : Loc.Format("StatusFormat", Loc.GetLocalized(TrackingResult.StatusDescriptionAr, TrackingResult.StatusDescription));
+    public string ProductCountLabel => TrackingResult is null ? string.Empty : Loc.Format("ProductCountFormat", TrackingResult.ItemCount);
 
     public OrderTrackViewModel(
         IMobileApiClient api,
@@ -31,7 +41,17 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
         ILocalizationService loc) : base(loc)
     {
         _api = api;
-        Title = "تتبع الطلب";
+        Title = Loc["TrackOrderTitle"];
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["TrackOrderTitle"];
+            OnPropertyChanged(nameof(OrderLabel));
+            OnPropertyChanged(nameof(OrderTotalLabel));
+            OnPropertyChanged(nameof(CustomerLabel));
+            OnPropertyChanged(nameof(StatusLabel));
+            OnPropertyChanged(nameof(ProductCountLabel));
+            UpdateProofNote();
+        };
         if (!string.IsNullOrWhiteSpace(session.CustomerPhone))
         {
             PhoneNumber = session.CustomerPhone;
@@ -47,7 +67,7 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
 
         if (string.IsNullOrWhiteSpace(OrderNumber) || string.IsNullOrWhiteSpace(PhoneNumber))
         {
-            ErrorMessage = "أدخل رقم الطلب ورقم الهاتف.";
+            ErrorMessage = Loc["ValidationOrderRequired"];
             return;
         }
 
@@ -56,11 +76,7 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
         {
             var result = await _api.TrackOrderAsync(OrderNumber.Trim(), PhoneNumber.Trim());
             TrackingResult = result;
-            ProofNote = result.RequiresPaymentProof
-                ? (result.HasUploadedProof
-                    ? "تم استلام إيصال الدفع وجارٍ التحقق منه من قبل الأكاديمية ✓"
-                    : "يرجى رفع إيصال الدفع من صفحة تعليمات الدفع لتأكيد الحجز.")
-                : "لا توجد مستندات دفع مطلوبة لهذا الطلب.";
+            UpdateProofNote();
         }
         catch (MobileApiException ex)
         {
@@ -70,5 +86,14 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
+
+    private void UpdateProofNote()
+    {
+        ProofNote = TrackingResult is null
+            ? string.Empty
+            : TrackingResult.RequiresPaymentProof
+                ? Loc[TrackingResult.HasUploadedProof ? "OrderPaymentReceived" : "OrderPaymentMissing"]
+                : Loc["OrderNoProofRequired"];
     }
 }

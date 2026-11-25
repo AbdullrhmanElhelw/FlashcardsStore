@@ -8,10 +8,13 @@ public partial class BrandedSplashPage : ContentPage
     private readonly INavigationService _navigation;
     private bool _hasStarted;
 
-    public BrandedSplashPage(INavigationService navigation)
+    public BrandedSplashPage(INavigationService navigation, ILocalizationService loc)
     {
         InitializeComponent();
         _navigation = navigation;
+        FlowDirection = loc.FlowDirection;
+        BrandTitle.Text = loc["BrandName"];
+        BrandSubtitle.Text = loc["BrandSubtitle"];
     }
 
     protected override async void OnAppearing()

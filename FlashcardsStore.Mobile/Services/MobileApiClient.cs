@@ -8,7 +8,7 @@ using FlashcardsStore.Mobile.Services.Abstractions;
 
 namespace FlashcardsStore.Mobile.Services;
 
-public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionService session) : IMobileApiClient
+public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionService session, ILocalizationService loc) : IMobileApiClient
 {
     public const string DefaultApiBaseUrl = "https://card-store.runasp.net/";
     private const string ApiPrefix = "api/v1/";
@@ -31,7 +31,7 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
             (address.Scheme != Uri.UriSchemeHttp && address.Scheme != Uri.UriSchemeHttps) ||
             !string.IsNullOrEmpty(address.Query) || !string.IsNullOrEmpty(address.Fragment))
         {
-            throw new ArgumentException("أدخل عنوان خادم صحيحاً يبدأ بـ http:// أو https://", nameof(value));
+            throw new ArgumentException(loc["ServerAddressError"], nameof(value));
         }
 
         var normalized = address.AbsoluteUri.EndsWith("/", StringComparison.Ordinal)
@@ -125,7 +125,7 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
             ".jpg" or ".jpeg" => "image/jpeg",
             ".png" => "image/png",
             ".webp" => "image/webp",
-            _ => throw new MobileApiException("الصيغ المسموحة للإيصال هي JPG أو PNG أو WEBP")
+            _ => throw new MobileApiException(loc["ReceiptTypesError"])
         };
 
         await using var stream = await file.OpenReadAsync();
@@ -149,9 +149,22 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
     public string GetImageUrl(string? imageUrl)
     {
         if (string.IsNullOrWhiteSpace(imageUrl)) return string.Empty;
-        return Uri.TryCreate(imageUrl, UriKind.Absolute, out var absolute)
-            ? absolute.AbsoluteUri
-            : new Uri(new Uri(BaseUrl, UriKind.Absolute), imageUrl.TrimStart('/')).AbsoluteUri;
+
+        var firstImage = imageUrl
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(firstImage)) return string.Empty;
+
+        if (Uri.TryCreate(firstImage, UriKind.Absolute, out var absolute) &&
+            (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps))
+        {
+            return absolute.AbsoluteUri;
+        }
+
+        var relativePath = firstImage.StartsWith("~/", StringComparison.Ordinal)
+            ? firstImage[2..]
+            : firstImage.TrimStart('/');
+        return new Uri(new Uri(BaseUrl, UriKind.Absolute), relativePath).AbsoluteUri;
     }
 
     private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
@@ -168,11 +181,11 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
             try
             {
                 var value = await response.Content.ReadFromJsonAsync<T>(JsonOptions, cancellationToken);
-                return value ?? throw new MobileApiException("استجاب الخادم ببيانات غير مكتملة");
+                return value ?? throw new MobileApiException(loc["ServerIncomplete"]);
             }
             catch (JsonException exception)
             {
-                throw new MobileApiException($"تعذر قراءة استجابة الخادم: {exception.Message}");
+                throw new MobileApiException(loc.Format("ServerReadError", exception.Message));
             }
         }
     }
@@ -188,11 +201,11 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
         }
         catch (HttpRequestException exception)
         {
-            throw new MobileApiException($"تعذر الاتصال بالخادم: {exception.Message}");
+            throw new MobileApiException(loc.Format("ServerConnectionError", exception.Message));
         }
     }
 
-    private static async Task EnsureSuccessAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    private async Task EnsureSuccessAsync(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         if (response.IsSuccessStatusCode) return;
 
@@ -202,9 +215,9 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
         {
             message = response.StatusCode switch
             {
-                HttpStatusCode.Unauthorized => "يرجى تسجيل الدخول للمتابعة",
-                HttpStatusCode.NotFound => "لم يتم العثور على البيانات المطلوبة",
-                _ => $"فشل الطلب ({(int)response.StatusCode})"
+                HttpStatusCode.Unauthorized => loc["ServerUnauthorized"],
+                HttpStatusCode.NotFound => loc["ServerNotFound"],
+                _ => loc.Format("ServerRequestFailed", (int)response.StatusCode)
             };
         }
 

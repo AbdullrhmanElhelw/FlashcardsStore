@@ -1,6 +1,7 @@
 using System.Collections;
 using FlashcardsStore.Mobile.Models.Ui;
 using FlashcardsStore.Mobile.Pages;
+using FlashcardsStore.Mobile.ViewModels;
 
 namespace FlashcardsStore.Mobile.Controls;
 
@@ -11,7 +12,7 @@ public partial class BrandDropdown : ContentView
 
     public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(
         nameof(ItemsSource), typeof(IEnumerable), typeof(BrandDropdown), null,
-        propertyChanged: (b, _, _) => ((BrandDropdown)b).RefreshDisplay());
+        propertyChanged: (b, _, _) => ((BrandDropdown)b).SyncItemFromIndex());
 
     public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(
         nameof(SelectedItem), typeof(object), typeof(BrandDropdown), null, BindingMode.TwoWay,
@@ -68,7 +69,8 @@ public partial class BrandDropdown : ContentView
         var nav = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
         if (nav is null) return;
 
-        var modal = new BrandPickerPage(Title, options);
+        var loc = (BindingContext as BaseViewModel)?.Loc;
+        var modal = new BrandPickerPage(Title, options, loc);
         await nav.PushModalAsync(modal, false);
         var chosen = await modal.WaitForSelectionAsync();
         if (chosen is not null)

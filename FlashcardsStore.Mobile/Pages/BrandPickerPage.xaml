@@ -5,7 +5,6 @@
              x:Class="FlashcardsStore.Mobile.Pages.BrandPickerPage"
              x:Name="ThisPickerPage"
              BackgroundColor="#8818061A"
-             FlowDirection="RightToLeft"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
 
@@ -74,8 +73,8 @@
                 </CollectionView>
 
                 <!-- Cancel -->
-                <Button Grid.Row="2"
-                        Text="إلغاء"
+                <Button x:Name="CancelButton"
+                        Grid.Row="2"
                         Clicked="OnCancelClicked"
                         Style="{StaticResource SecondaryCreamButtonStyle}"
                         MinimumHeightRequest="44" />

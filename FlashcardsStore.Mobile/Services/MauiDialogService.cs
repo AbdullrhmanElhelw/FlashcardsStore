@@ -3,24 +3,30 @@ using FlashcardsStore.Mobile.Services.Abstractions;
 
 namespace FlashcardsStore.Mobile.Services;
 
-public sealed class MauiDialogService : IDialogService
+public sealed class MauiDialogService(ILocalizationService loc) : IDialogService
 {
-    public async Task ShowAlertAsync(string title, string message, string cancel = "حسناً")
+    public async Task ShowAlertAsync(string title, string message, string? cancel = null)
     {
         var nav = GetModalNavigation();
         if (nav is null) return;
 
-        var dialog = new BrandDialogPage(title, message, cancel, null);
+        var dialog = new BrandDialogPage(title, message, cancel ?? loc["Okay"], null)
+        {
+            FlowDirection = loc.FlowDirection
+        };
         await nav.PushModalAsync(dialog, false);
         await dialog.WaitForResultAsync();
     }
 
-    public async Task<bool> ShowConfirmAsync(string title, string message, string accept = "نعم", string cancel = "لا")
+    public async Task<bool> ShowConfirmAsync(string title, string message, string? accept = null, string? cancel = null)
     {
         var nav = GetModalNavigation();
         if (nav is null) return false;
 
-        var dialog = new BrandDialogPage(title, message, accept, cancel);
+        var dialog = new BrandDialogPage(title, message, accept ?? loc["Yes"], cancel ?? loc["No"])
+        {
+            FlowDirection = loc.FlowDirection
+        };
         await nav.PushModalAsync(dialog, false);
         return await dialog.WaitForResultAsync();
     }
@@ -29,7 +35,7 @@ public sealed class MauiDialogService : IDialogService
     {
         if (GetActiveContentPage()?.Content is not Grid rootGrid)
         {
-            await ShowAlertAsync("أكاديمية خلود النادي", message, "حسناً");
+            await ShowAlertAsync(loc["BrandName"], message);
             return;
         }
 

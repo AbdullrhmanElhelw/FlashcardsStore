@@ -41,7 +41,12 @@ public sealed partial class LoginViewModel : BaseViewModel
         _session = session;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "حسابي";
+        Title = Loc["AccountTitle"];
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["AccountTitle"];
+            RefreshSessionState();
+        };
     }
 
     public void RefreshSessionState()
@@ -51,7 +56,7 @@ public sealed partial class LoginViewModel : BaseViewModel
         CustomerEmail = _session.CustomerEmail;
         CustomerPhone = _session.CustomerPhone;
         CustomerInitial = string.IsNullOrWhiteSpace(CustomerName)
-            ? "خ"
+            ? (Loc.IsRtl ? "خ" : "K")
             : CustomerName.Trim().Substring(0, 1);
     }
 
@@ -64,12 +69,12 @@ public sealed partial class LoginViewModel : BaseViewModel
         ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+            ErrorMessage = Loc["ValidationLoginRequired"];
             return;
         }
         if (!MailAddress.TryCreate(Email.Trim(), out _))
         {
-            ErrorMessage = "أدخلي بريداً إلكترونياً صحيحاً.";
+            ErrorMessage = Loc["ValidationEmail"];
             return;
         }
 
@@ -84,7 +89,7 @@ public sealed partial class LoginViewModel : BaseViewModel
             _session.Save(customer);
             RefreshSessionState();
             await _navigation.CompleteAuthFlowAsync();
-            await _dialogs.ShowToastAsync($"أهلاً بعودتك يا {customer.FullName}");
+            await _dialogs.ShowToastAsync(Loc.Format("WelcomeCustomer", customer.FullName));
         }
         catch (MobileApiException ex)
         {
@@ -101,11 +106,11 @@ public sealed partial class LoginViewModel : BaseViewModel
 
     [RelayCommand]
     private Task ForgotPasswordAsync()
-        => OpenWhatsAppAsync("مرحباً مس خلود، نسيت كلمة المرور الخاصة بحسابي في أكاديمية خلود النادي.");
+        => OpenWhatsAppAsync(Loc["LoginWhatsAppForgot"]);
 
     [RelayCommand]
     private Task ContactWhatsAppAsync()
-        => OpenWhatsAppAsync("مرحباً مس خلود، لدي استفسار بخصوص بطاقات الفلاش كاردز.");
+        => OpenWhatsAppAsync(Loc["LoginWhatsAppInquiry"]);
 
     [RelayCommand]
     private void OpenOrders() => _navigation.SwitchToOrdersTab();
@@ -122,14 +127,14 @@ public sealed partial class LoginViewModel : BaseViewModel
     [RelayCommand]
     private async Task LogoutAsync()
     {
-        if (!await _dialogs.ShowConfirmAsync("تسجيل الخروج", "هل تريدين تسجيل الخروج من حسابك؟"))
+        if (!await _dialogs.ShowConfirmAsync(Loc["LogoutConfirmTitle"], Loc["LogoutConfirmMessage"]))
             return;
 
         _session.Clear();
         Email = string.Empty;
         Password = string.Empty;
         RefreshSessionState();
-        await _dialogs.ShowToastAsync("تم تسجيل الخروج بنجاح");
+        await _dialogs.ShowToastAsync(Loc["LogoutSuccess"]);
     }
 
     private async Task OpenWhatsAppAsync(string message)
@@ -142,7 +147,7 @@ public sealed partial class LoginViewModel : BaseViewModel
         }
         catch (MobileApiException ex)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], ex.Message);
         }
     }
 }

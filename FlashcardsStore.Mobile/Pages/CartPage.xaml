@@ -48,15 +48,15 @@
                                         </Grid>
                                     </Border>
                                     <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                                        <Label Text="{Binding NameAr}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding DisplayName}" Style="{StaticResource SectionTitleStyle}" FontSize="15" MaxLines="2" LineBreakMode="TailTruncation" />
                                         <Label Style="{StaticResource MutedLabelStyle}" FontSize="13">
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Price, StringFormat='{0:0.##} ج.م'}" />
+                                                    <Span Text="{Binding PriceLabel}" />
                                                     <Span Text="  ×  " />
                                                     <Span Text="{Binding Quantity}" />
                                                     <Span Text="  =  " />
-                                                    <Span Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}" TextColor="{StaticResource BrandGoldDark}" FontAttributes="Bold" />
+                                                    <Span Text="{Binding SubtotalLabel}" TextColor="{StaticResource BrandGoldDark}" FontAttributes="Bold" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
@@ -83,7 +83,7 @@
                                                     WidthRequest="38"
                                                     HeightRequest="34"
                                                     Padding="0" />
-                                            <Button Text="حذف"
+                                            <Button Text="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.Loc[CartRemoveItem]}"
                                                     Command="{Binding Source={x:Reference ThisCartPage}, Path=BindingContext.RemoveItemCommand}"
                                                     CommandParameter="{Binding .}"
                                                     BackgroundColor="Transparent"
@@ -107,11 +107,11 @@
                             Shadow="{Shadow Brush='#18061A', Opacity='0.06', Radius='8', Offset='0,3'}">
                         <Grid ColumnDefinitions="*,Auto">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="الإجمالي قبل الشحن" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
-                                <Label Text="{Binding ItemCount, StringFormat='{0} قطعة مختارة'}" Style="{StaticResource MutedLabelStyle}" />
+                                <Label Text="{Binding Loc[CartSubtotal]}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" />
+                                <Label Text="{Binding ItemCountLabel}" Style="{StaticResource MutedLabelStyle}" />
                             </VerticalStackLayout>
                             <Label Grid.Column="1"
-                                   Text="{Binding Subtotal, StringFormat='{0:0.##} ج.م'}"
+                                   Text="{Binding SubtotalLabel}"
                                    FontFamily="Cairo"
                                    FontSize="20"
                                    FontAttributes="Bold"

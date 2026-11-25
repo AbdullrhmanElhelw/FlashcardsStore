@@ -1,4 +1,5 @@
 using FlashcardsStore.Mobile.Models.Ui;
+using FlashcardsStore.Mobile.Services.Abstractions;
 
 namespace FlashcardsStore.Mobile.Pages;
 
@@ -6,10 +7,12 @@ public partial class BrandPickerPage : ContentPage
 {
     private readonly TaskCompletionSource<PickerOptionItem?> _tcs = new();
 
-    public BrandPickerPage(string title, IReadOnlyList<PickerOptionItem> options)
+    public BrandPickerPage(string title, IReadOnlyList<PickerOptionItem> options, ILocalizationService? loc)
     {
         InitializeComponent();
-        TitleLabel.Text = string.IsNullOrWhiteSpace(title) ? "اختاري من القائمة" : title;
+        FlowDirection = loc?.FlowDirection ?? FlowDirection.RightToLeft;
+        CancelButton.Text = loc?["Cancel"] ?? "إلغاء";
+        TitleLabel.Text = string.IsNullOrWhiteSpace(title) ? loc?["SelectFromList"] ?? "اختاري من القائمة" : title;
         OptionsList.ItemsSource = options;
     }
 

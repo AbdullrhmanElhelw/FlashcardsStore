@@ -32,8 +32,8 @@
                         Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Label Text="♡" FontSize="40" HorizontalTextAlignment="Center" TextColor="{StaticResource BrandGold}" />
-                        <Label Text="لم تضيفي أي باقة للمفضلة بعد" Style="{StaticResource SectionTitleStyle}" FontSize="15" HorizontalTextAlignment="Center" />
-                        <Label Text="اضغطي على علامة القلب في أي باقة لحفظها هنا." Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Loc[WishlistEmpty]}" Style="{StaticResource SectionTitleStyle}" FontSize="15" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Loc[WishlistEmptyHint]}" Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </Border>
 

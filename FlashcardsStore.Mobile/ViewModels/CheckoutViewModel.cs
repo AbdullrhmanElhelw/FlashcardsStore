@@ -15,7 +15,17 @@ public sealed partial class CheckoutViewModel : BaseViewModel
     private readonly INavigationService _navigation;
     private readonly IDialogService _dialogs;
 
-    public IReadOnlyList<string> Governorates { get; } = new[]
+    private static readonly string[] GovernorateKeys =
+    {
+        "Governorate.Cairo", "Governorate.Giza", "Governorate.Alexandria", "Governorate.Qalyubia",
+        "Governorate.Sharqia", "Governorate.Dakahlia", "Governorate.Gharbia", "Governorate.Monufia",
+        "Governorate.Beheira", "Governorate.Damietta", "Governorate.KafrElSheikh", "Governorate.PortSaid",
+        "Governorate.Ismailia", "Governorate.Suez", "Governorate.Fayoum", "Governorate.BeniSuef",
+        "Governorate.Minya", "Governorate.Assiut", "Governorate.Sohag", "Governorate.Qena",
+        "Governorate.Luxor", "Governorate.Aswan", "Governorate.RedSea", "Governorate.Matrouh"
+    };
+
+    private static readonly string[] GovernorateApiValues =
     {
         "القاهرة", "الجيزة", "الإسكندرية", "القليوبية", "الشرقية", "الدقهلية",
         "الغربية", "المنوفية", "البحيرة", "دمياط", "كفر الشيخ", "بورسعيد",
@@ -23,18 +33,15 @@ public sealed partial class CheckoutViewModel : BaseViewModel
         "سوهاج", "قنا", "الأقصر", "أسوان", "البحر الأحمر", "مطروح"
     };
 
-    public IReadOnlyList<string> CustomerTypeOptions { get; } = new[] { "ولي أمر", "معلمة", "مدرسة" };
-    public IReadOnlyList<string> PaymentMethodOptions { get; } = new[]
-    {
-        "تحويل محفظة إلكترونية / InstaPay",
-        "التواصل عبر واتساب"
-    };
+    public IReadOnlyList<string> Governorates => GovernorateKeys.Select(Loc.Get).ToArray();
+    public IReadOnlyList<string> CustomerTypeOptions => new[] { Loc["ParentOption"], Loc["TeacherOption"], Loc["SchoolOption"] };
+    public IReadOnlyList<string> PaymentMethodOptions => new[] { Loc["WalletTransferOption"], Loc["WhatsAppPaymentOption"] };
 
     [ObservableProperty] private string _fullName = string.Empty;
     [ObservableProperty] private string _phoneNumber = string.Empty;
     [ObservableProperty] private string _whatsAppNumber = string.Empty;
     [ObservableProperty] private string _email = string.Empty;
-    [ObservableProperty] private string _selectedGovernorate = "القاهرة";
+    [ObservableProperty] private int _selectedGovernorateIndex;
     [ObservableProperty] private string _city = string.Empty;
     [ObservableProperty] private string _shippingAddress = string.Empty;
     [ObservableProperty] private string _notes = string.Empty;
@@ -57,16 +64,25 @@ public sealed partial class CheckoutViewModel : BaseViewModel
         _session = session;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "إتمام الشراء";
+        Title = Loc["CheckoutTitle"];
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["CheckoutTitle"];
+            OnPropertyChanged(nameof(Governorates));
+            OnPropertyChanged(nameof(CustomerTypeOptions));
+            OnPropertyChanged(nameof(PaymentMethodOptions));
+            _ = RefreshShippingQuoteAsync();
+        };
 
         FullName = session.CustomerName;
         PhoneNumber = session.CustomerPhone;
         Email = session.CustomerEmail;
     }
 
-    partial void OnSelectedGovernorateChanged(string value)
+    partial void OnSelectedGovernorateIndexChanged(int value)
     {
-        _ = RefreshShippingQuoteAsync();
+        if (value >= 0 && value < GovernorateApiValues.Length)
+            _ = RefreshShippingQuoteAsync();
     }
 
     [RelayCommand]
@@ -74,7 +90,7 @@ public sealed partial class CheckoutViewModel : BaseViewModel
     {
         if (_cart.Items.Count == 0)
         {
-            ErrorMessage = "السلة فارغة. أضيفي منتجاً قبل إتمام الشراء.";
+            ErrorMessage = Loc["ValidationCartEmpty"];
             TotalsSummary = string.Empty;
             return;
         }
@@ -82,14 +98,15 @@ public sealed partial class CheckoutViewModel : BaseViewModel
         ErrorMessage = string.Empty;
         try
         {
-            var quote = await _api.GetShippingQuoteAsync(SelectedGovernorate, _cart.Subtotal);
+            var governorate = GovernorateApiValues[Math.Clamp(SelectedGovernorateIndex, 0, GovernorateApiValues.Length - 1)];
+            var quote = await _api.GetShippingQuoteAsync(governorate, _cart.Subtotal);
             IsFreeShipping = quote.IsFreeShipping;
-            var shippingText = quote.IsFreeShipping ? "مجاني 🎉" : $"{quote.ShippingFee:0.##} ج.م";
-            TotalsSummary = $"المجموع: {quote.Subtotal:0.##} ج.م   ·   الشحن: {shippingText}\nالإجمالي النهائي: {quote.GrandTotal:0.##} ج.م";
+            var shippingText = quote.IsFreeShipping ? Loc["ShippingFree"] : Loc.Format("CurrencyAmount", quote.ShippingFee);
+            TotalsSummary = Loc.Format("ShippingSummary", quote.Subtotal, shippingText, quote.GrandTotal);
         }
         catch (MobileApiException ex)
         {
-            TotalsSummary = $"المجموع قبل الشحن: {_cart.Subtotal:0.##} ج.م";
+            TotalsSummary = Loc.Format("SubtotalBeforeShipping", _cart.Subtotal);
             ErrorMessage = ex.Message;
         }
     }
@@ -100,18 +117,18 @@ public sealed partial class CheckoutViewModel : BaseViewModel
         ErrorMessage = string.Empty;
         if (_cart.Items.Count == 0)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", "السلة فارغة");
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["EmptyCartAlert"]);
             return;
         }
         if (string.IsNullOrWhiteSpace(FullName) || string.IsNullOrWhiteSpace(PhoneNumber) ||
             string.IsNullOrWhiteSpace(City) || string.IsNullOrWhiteSpace(ShippingAddress))
         {
-            ErrorMessage = "أدخلي الاسم، الهاتف، المدينة، والعنوان بالتفصيل.";
+            ErrorMessage = Loc["ValidationCheckoutRequired"];
             return;
         }
         if (PhoneNumber.Count(char.IsDigit) < 10)
         {
-            ErrorMessage = "أدخلي رقم هاتف مصري صحيح.";
+            ErrorMessage = Loc["ValidationEgyptPhone"];
             return;
         }
 
@@ -134,7 +151,7 @@ public sealed partial class CheckoutViewModel : BaseViewModel
                 PhoneNumber = PhoneNumber.Trim(),
                 WhatsAppNumber = string.IsNullOrWhiteSpace(WhatsAppNumber) ? null : WhatsAppNumber.Trim(),
                 Email = string.IsNullOrWhiteSpace(Email) ? null : Email.Trim(),
-                Governorate = SelectedGovernorate,
+                Governorate = GovernorateApiValues[Math.Clamp(SelectedGovernorateIndex, 0, GovernorateApiValues.Length - 1)],
                 City = City.Trim(),
                 ShippingAddress = ShippingAddress.Trim(),
                 Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
@@ -151,7 +168,7 @@ public sealed partial class CheckoutViewModel : BaseViewModel
                 return;
             }
 
-            await _dialogs.ShowAlertAsync("تم تسجيل الطلب ✓", $"رقم الطلب: {order.OrderNumber}\nالإجمالي: {order.GrandTotal:0.##} ج.م");
+            await _dialogs.ShowAlertAsync(Loc["OrderPlacedSuccess"], Loc.Format("OrderTotalToast", order.OrderNumber, order.GrandTotal));
             if (!string.IsNullOrWhiteSpace(order.WhatsAppDirectLink))
             {
                 await Launcher.Default.OpenAsync(order.WhatsAppDirectLink);

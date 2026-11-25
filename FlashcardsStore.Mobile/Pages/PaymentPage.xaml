@@ -37,23 +37,23 @@
                         </LinearGradientBrush>
                     </Border.Background>
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="تم تسجيل طلبك بنجاح ✓" FontFamily="Cairo" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
-                        <Label Text="{Binding OrderNumber, StringFormat='رقم الطلب: {0}'}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="White" />
-                        <Label Text="{Binding GrandTotal, StringFormat='الإجمالي شامل الشحن: {0:0.##} ج.م'}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGold}" />
-                        <Label Text="حوّلي المبلغ إلى إحدى وسائل الدفع التالية ثم ارفعي صورة الإيصال." FontFamily="Cairo" FontSize="12" TextColor="#E6DDF0" />
+                        <Label Text="{Binding Loc[OrderPlacedSuccess]}" FontFamily="Cairo" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource BrandGoldLight}" />
+                        <Label Text="{Binding OrderNumberLabel}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="White" />
+                        <Label Text="{Binding TotalLabel}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGold}" />
+                        <Label Text="{Binding Loc[PaymentTransferInstructions]}" FontFamily="Cairo" FontSize="12" TextColor="#E6DDF0" />
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Payment Details -->
-                <Label Text="بيانات التحويل المتاحة" Style="{StaticResource SectionTitleStyle}" />
+                <Label Text="{Binding Loc[AvailableTransferDetails]}" Style="{StaticResource SectionTitleStyle}" />
 
                 <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                         <VerticalStackLayout Spacing="2">
-                            <Label Text="Vodafone Cash / المحافظ الذكية" Style="{StaticResource MutedLabelStyle}" />
+                            <Label Text="{Binding Loc[VodafoneCashLabel]}" Style="{StaticResource MutedLabelStyle}" />
                             <Label Text="{Binding VodafoneCashNumber}" Style="{StaticResource SectionTitleStyle}" FontSize="17" />
                         </VerticalStackLayout>
-                        <Button Grid.Column="1" Text="نسخ" Command="{Binding CopyVodafoneCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="{Binding Loc[CopyBtn]}" Command="{Binding CopyVodafoneCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
                     </Grid>
                 </Border>
 
@@ -62,17 +62,17 @@
                         <VerticalStackLayout Spacing="2">
                             <Label Text="InstaPay" Style="{StaticResource MutedLabelStyle}" />
                             <Label Text="{Binding InstaPayAddress}" Style="{StaticResource SectionTitleStyle}" FontSize="15" />
-                            <Label Text="{Binding InstaPayAccountName, StringFormat='اسم المستلم: {0}'}" Style="{StaticResource MutedLabelStyle}" IsVisible="{Binding InstaPayAccountName, Converter={StaticResource StringNotEmpty}}" />
+                            <Label Text="{Binding RecipientNameLabel}" Style="{StaticResource MutedLabelStyle}" IsVisible="{Binding InstaPayAccountName, Converter={StaticResource StringNotEmpty}}" />
                         </VerticalStackLayout>
-                        <Button Grid.Column="1" Text="نسخ" Command="{Binding CopyInstaPayCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="{Binding Loc[CopyBtn]}" Command="{Binding CopyInstaPayCommand}" Style="{StaticResource SecondaryCreamButtonStyle}" VerticalOptions="Center" />
                     </Grid>
                 </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding PaymentInstructionsAr, Converter={StaticResource StringNotEmpty}}">
+                <Border Style="{StaticResource CardBorderStyle}" IsVisible="{Binding HasPaymentInstructions}">
                     <Label Text="{Binding PaymentInstructionsAr}" Style="{StaticResource BodyLabelStyle}" FontSize="13" />
                 </Border>
 
-                <Button Text="التواصل عبر واتساب"
+                <Button Text="{Binding Loc[WhatsAppPaymentOption]}"
                         Command="{Binding OpenWhatsAppCommand}"
                         IsVisible="{Binding HasWhatsAppLink}"
                         Style="{StaticResource WhatsAppOutlineButtonStyle}" />
@@ -80,21 +80,21 @@
                 <!-- Upload Proof Card -->
                 <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="رفع إيصال التحويل" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                        <Label Text="{Binding Loc[UploadTransferReceipt]}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
 
-                        <Label Text="المحفظة أو البنك" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
-                        <controls:BrandDropdown Title="اختر المحفظة"
+                        <Label Text="{Binding Loc[WalletOrBank]}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <controls:BrandDropdown Title="{Binding Loc[SelectWallet]}"
                                                 ItemsSource="{Binding WalletOptions}"
                                                 SelectedItem="{Binding SelectedWallet}" />
 
-                        <Label Text="رقم الهاتف المحول منه" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Label Text="{Binding Loc[SenderPhone]}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
                         <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Entry Placeholder="رقم الهاتف المحول منه" Keyboard="Telephone" Text="{Binding SenderPhone}" Style="{StaticResource BrandEntryStyle}" />
+                            <Entry Placeholder="{Binding Loc[SenderPhone]}" Keyboard="Telephone" Text="{Binding SenderPhone}" Style="{StaticResource BrandEntryStyle}" />
                         </Border>
 
-                        <Label Text="رقم العملية (اختياري)" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
+                        <Label Text="{Binding Loc[TransactionReferenceOptional]}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" />
                         <Border Style="{StaticResource InputBoxBorderStyle}">
-                            <Entry Placeholder="رقم العملية" Text="{Binding TransactionReference}" Style="{StaticResource BrandEntryStyle}" />
+                            <Entry Placeholder="{Binding Loc[TransactionReference]}" Text="{Binding TransactionReference}" Style="{StaticResource BrandEntryStyle}" />
                         </Border>
 
                         <Border BackgroundColor="{StaticResource BrandGoldLight}" Stroke="{StaticResource BrandGold}" StrokeShape="RoundRectangle 12" HeightRequest="46">
@@ -103,7 +103,7 @@
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="8" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image Source="icon_camera.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
-                                <Label Text="اختيار صورة الإيصال" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
+                                <Label Text="{Binding Loc[ReceiptSelected]}" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" VerticalTextAlignment="Center" />
                             </HorizontalStackLayout>
                         </Border>
                         <Label Text="{Binding SelectedFileName}" Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
@@ -111,7 +111,7 @@
                         <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasError}" />
                         <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource BrandGold}" />
 
-                        <Button Text="إرسال الإيصال وتأكيد الحجز"
+                        <Button Text="{Binding Loc[SendReceipt]}"
                                 Command="{Binding UploadReceiptCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
                                 Style="{StaticResource PrimaryPurpleButtonStyle}" />

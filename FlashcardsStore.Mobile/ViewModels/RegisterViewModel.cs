@@ -43,7 +43,8 @@ public sealed partial class RegisterViewModel : BaseViewModel
         _session = session;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "إنشاء حساب جديد";
+        Title = Loc["RegisterHeader"];
+        loc.LanguageChanged += (_, _) => Title = Loc["RegisterHeader"];
     }
 
     [RelayCommand]
@@ -57,27 +58,27 @@ public sealed partial class RegisterViewModel : BaseViewModel
             string.IsNullOrWhiteSpace(PhoneNumber) || string.IsNullOrWhiteSpace(Password) ||
             string.IsNullOrWhiteSpace(ConfirmPassword))
         {
-            ErrorMessage = "يرجى استكمال جميع البيانات.";
+            ErrorMessage = Loc["ValidationRequired"];
             return;
         }
         if (!MailAddress.TryCreate(Email.Trim(), out _))
         {
-            ErrorMessage = "أدخلي بريداً إلكترونياً صحيحاً.";
+            ErrorMessage = Loc["ValidationEmail"];
             return;
         }
         if (PhoneNumber.Count(char.IsDigit) < 7)
         {
-            ErrorMessage = "أدخلي رقم هاتف صحيحاً.";
+            ErrorMessage = Loc["ValidationPhone"];
             return;
         }
         if (Password.Length < 8)
         {
-            ErrorMessage = "يجب ألا تقل كلمة المرور عن 8 أحرف.";
+            ErrorMessage = Loc["ValidationPasswordLength"];
             return;
         }
         if (Password != ConfirmPassword)
         {
-            ErrorMessage = "كلمتا المرور غير متطابقتين.";
+            ErrorMessage = Loc["ValidationPasswordMatch"];
             return;
         }
 
@@ -94,7 +95,7 @@ public sealed partial class RegisterViewModel : BaseViewModel
             });
             _session.Save(customer);
             await _navigation.CompleteAuthFlowAsync();
-            await _dialogs.ShowToastAsync("تم إنشاء الحساب بنجاح، أهلاً بكِ");
+            await _dialogs.ShowToastAsync(Loc["RegisterSuccess"]);
         }
         catch (MobileApiException ex)
         {

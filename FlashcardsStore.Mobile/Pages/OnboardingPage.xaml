@@ -5,6 +5,8 @@
              xmlns:ui="clr-namespace:FlashcardsStore.Mobile.Models.Ui"
              x:Class="FlashcardsStore.Mobile.Pages.OnboardingPage"
              x:DataType="vm:OnboardingViewModel"
+             FlowDirection="{Binding Loc.FlowDirection}"
+             Title="{Binding Title}"
              NavigationPage.HasNavigationBar="False">
 
     <Grid>
@@ -23,7 +25,7 @@
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
                 <Image Source="logo_gold.png" Aspect="AspectFit" HeightRequest="54" WidthRequest="140" HorizontalOptions="Center" Grid.ColumnSpan="2" />
                 <Label Grid.Column="1"
-                       Text="تخطي"
+                       Text="{Binding Loc[SkipBtn]}"
                        FontFamily="Cairo"
                        FontSize="14"
                        FontAttributes="Bold"
@@ -85,7 +87,7 @@
                                IndicatorSize="10"
                                HorizontalOptions="Center" />
 
-                <Button Text="{Binding NextButtonText, StringFormat='—   {0}   —'}"
+                <Button Text="{Binding NextButtonText}"
                         Command="{Binding NextOrFinishCommand}"
                         BackgroundColor="#4B1633"
                         TextColor="White"

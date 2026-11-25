@@ -35,9 +35,10 @@ public sealed partial class WishlistViewModel : BaseViewModel
         _cart = cart;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "المفضلة";
+        Title = Loc["WishlistTitle"];
         loc.LanguageChanged += (_, _) =>
         {
+            Title = Loc["WishlistTitle"];
             foreach (var item in Items) item.IsRtl = loc.IsRtl;
         };
     }
@@ -107,11 +108,11 @@ public sealed partial class WishlistViewModel : BaseViewModel
         try
         {
             _cart.Add(item.Source);
-            await _dialogs.ShowToastAsync($"تمت إضافة «{item.NameAr}» إلى السلة");
+            await _dialogs.ShowToastAsync(Loc.Format("AddToCartToast", item.DisplayName));
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", ex.Message);
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["CartProductUnavailable"]);
         }
     }
 }

@@ -26,14 +26,20 @@ public sealed partial class PaymentViewModel : BaseViewModel
     [ObservableProperty] private string _vodafoneCashNumber = string.Empty;
     [ObservableProperty] private string _instaPayAddress = string.Empty;
     [ObservableProperty] private string _instaPayAccountName = string.Empty;
-    [ObservableProperty] private string _paymentInstructionsAr = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPaymentInstructions))]
+    private string _paymentInstructionsAr = string.Empty;
     [ObservableProperty] private string _whatsAppDirectLink = string.Empty;
     [ObservableProperty] private string _selectedWallet = "Vodafone Cash";
     [ObservableProperty] private string _senderPhone = string.Empty;
     [ObservableProperty] private string _transactionReference = string.Empty;
-    [ObservableProperty] private string _selectedFileName = "لم يتم اختيار صورة إيصال";
 
     public bool HasWhatsAppLink => !string.IsNullOrWhiteSpace(WhatsAppDirectLink);
+    public bool HasPaymentInstructions => Loc.IsRtl && !string.IsNullOrWhiteSpace(PaymentInstructionsAr);
+    public string SelectedFileName => _selectedFile?.FileName ?? Loc["ReceiptNotSelected"];
+    public string OrderNumberLabel => Loc.Format("OrderNumberFormat", OrderNumber);
+    public string TotalLabel => Loc.Format("OrderTotalFormat", GrandTotal);
+    public string RecipientNameLabel => Loc.Format("RecipientNameFormat", InstaPayAccountName);
 
     public PaymentViewModel(
         IMobileApiClient api,
@@ -44,7 +50,16 @@ public sealed partial class PaymentViewModel : BaseViewModel
         _api = api;
         _navigation = navigation;
         _dialogs = dialogs;
-        Title = "تعليمات الدفع";
+        Title = Loc["PaymentTitle"];
+        loc.LanguageChanged += (_, _) =>
+        {
+            Title = Loc["PaymentTitle"];
+            OnPropertyChanged(nameof(HasPaymentInstructions));
+            OnPropertyChanged(nameof(SelectedFileName));
+            OnPropertyChanged(nameof(OrderNumberLabel));
+            OnPropertyChanged(nameof(TotalLabel));
+            OnPropertyChanged(nameof(RecipientNameLabel));
+        };
     }
 
     public void Initialize(OrderDetail order, string phone)
@@ -55,6 +70,8 @@ public sealed partial class PaymentViewModel : BaseViewModel
         GrandTotal = order.GrandTotal;
         WhatsAppDirectLink = order.WhatsAppDirectLink ?? string.Empty;
         OnPropertyChanged(nameof(HasWhatsAppLink));
+        OnPropertyChanged(nameof(OrderNumberLabel));
+        OnPropertyChanged(nameof(TotalLabel));
     }
 
     [RelayCommand]
@@ -68,6 +85,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
             InstaPayAddress = config.InstaPayAddress;
             InstaPayAccountName = config.InstaPayAccountName;
             PaymentInstructionsAr = config.PaymentInstructionsAr ?? string.Empty;
+            OnPropertyChanged(nameof(RecipientNameLabel));
         }
         catch (MobileApiException ex)
         {
@@ -80,7 +98,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(VodafoneCashNumber)) return;
         await Clipboard.Default.SetTextAsync(VodafoneCashNumber);
-        await _dialogs.ShowToastAsync($"تم نسخ رقم فودافون كاش: {VodafoneCashNumber}");
+        await _dialogs.ShowToastAsync(Loc.Format("CopyVodafoneFormat", VodafoneCashNumber));
     }
 
     [RelayCommand]
@@ -88,7 +106,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
     {
         if (string.IsNullOrWhiteSpace(InstaPayAddress)) return;
         await Clipboard.Default.SetTextAsync(InstaPayAddress);
-        await _dialogs.ShowToastAsync($"تم نسخ عنوان InstaPay: {InstaPayAddress}");
+        await _dialogs.ShowToastAsync(Loc.Format("CopyInstaPayFormat", InstaPayAddress));
     }
 
     [RelayCommand]
@@ -107,10 +125,10 @@ public sealed partial class PaymentViewModel : BaseViewModel
         {
             _selectedFile = await FilePicker.Default.PickAsync(new PickOptions
             {
-                PickerTitle = "اختر صورة إيصال التحويل",
+                PickerTitle = Loc["PickTransferReceipt"],
                 FileTypes = FilePickerFileType.Images
             });
-            SelectedFileName = _selectedFile?.FileName ?? "لم يتم اختيار صورة إيصال";
+            OnPropertyChanged(nameof(SelectedFileName));
         }
         catch (OperationCanceledException) { }
     }
@@ -121,7 +139,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
         if (_order is null) return;
         if (_selectedFile is null)
         {
-            await _dialogs.ShowAlertAsync("تنبيه", "اختر صورة الإيصال أولاً");
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["ReceiptRequired"]);
             return;
         }
 
@@ -137,7 +155,7 @@ public sealed partial class PaymentViewModel : BaseViewModel
                 string.IsNullOrWhiteSpace(SenderPhone) ? null : SenderPhone.Trim(),
                 string.IsNullOrWhiteSpace(TransactionReference) ? null : TransactionReference.Trim());
 
-            await _dialogs.ShowAlertAsync("تم الإرسال ✓", "تم رفع إيصال التحويل بنجاح وجارٍ التحقق منه من قبل الأكاديمية.");
+            await _dialogs.ShowAlertAsync(Loc["PaymentSuccess"], Loc["ReceiptUploaded"]);
             await _navigation.PopToRootAsync();
         }
         catch (MobileApiException ex)
