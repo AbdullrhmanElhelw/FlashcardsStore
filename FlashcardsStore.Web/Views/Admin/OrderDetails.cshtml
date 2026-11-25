@@ -410,80 +410,75 @@
     </div>
 
     <!-- ================================================================= -->
-    <!-- Printable Invoice & Delivery Packing Slip (Displayed on Print)   -->
+    <!-- Printable Invoice & Delivery Packing Slip (Essential Info Only)  -->
     <!-- ================================================================= -->
-    <div class="print-only-slip p-8 bg-white text-slate-900 border-2 border-slate-900 rounded-3xl" dir="rtl">
-        <!-- Academy Print Header -->
-        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-6 mb-6">
-            <div class="flex items-center gap-4">
-                <img src="~/images/brand/logo.png" alt="Logo" class="h-16 w-16 object-contain" />
+    @{
+        var printStatusAr = Model.Status switch
+        {
+            OrderStatus.Draft => "مسودة طلب",
+            OrderStatus.WhatsAppPending => "بانتظار تأكيد واتساب",
+            OrderStatus.PendingVerification => "بانتظار مراجعة الإيصال",
+            OrderStatus.Approved => "معتمد",
+            OrderStatus.Shipped => "تم الشحن",
+            OrderStatus.Delivered => "تم التسليم",
+            OrderStatus.Rejected => "مرفوض",
+            OrderStatus.Cancelled => "ملغي",
+            _ => Model.Status.ToString()
+        };
+    }
+    <div class="print-only-slip p-6 bg-white text-slate-900 border border-slate-300 rounded-2xl max-w-3xl mx-auto" dir="rtl">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-4 mb-5 gap-4">
+            <div class="flex items-center gap-3">
+                <img src="~/images/brand/logo.png" alt="Logo" class="h-12 w-12 object-contain rounded-lg bg-[#190611] p-1" />
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900">أكاديمية خلود النادي للغة الإنجليزية</h1>
-                    <p class="text-xs font-bold text-slate-600 mt-1">بوليصة شحن وفاتورة استلام طلب الفلاش كاردز التعليمية</p>
-                    <p class="text-[11px] text-slate-500 font-mono">خدمة العملاء والتواصل: 01099887766</p>
+                    <h1 class="text-lg font-black text-slate-900">أكاديمية خلود النادي</h1>
+                    <p class="text-xs font-bold text-slate-500">بوليصة شحن وفاتورة طلب</p>
                 </div>
             </div>
-            @{
-                var printStatusAr = Model.Status switch
-                {
-                    OrderStatus.Draft => "مسودة طلب",
-                    OrderStatus.WhatsAppPending => "في انتظار تأكيد واتساب",
-                    OrderStatus.PendingVerification => "بانتظار مراجعة الإيصال",
-                    OrderStatus.Approved => "تم التأكيد والاعتماد",
-                    OrderStatus.Shipped => "تم الشحن مع المندوب",
-                    OrderStatus.Delivered => "تم التسليم بنجاح",
-                    OrderStatus.Rejected => "مرفوض",
-                    OrderStatus.Cancelled => "ملغي",
-                    _ => Model.Status.ToString()
-                };
-            }
-            <div class="text-left font-mono shrink-0">
-                <div class="text-xs text-slate-500">رقم الطلب:</div>
-                <div class="text-xl font-black text-slate-900 whitespace-nowrap">@Model.OrderNumber</div>
-                <div class="text-xs text-slate-600 mt-1 whitespace-nowrap">التاريخ: @Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt")</div>
-                <div class="text-xs font-bold mt-1 text-slate-800 whitespace-nowrap">الحالة: @printStatusAr</div>
+            <div class="text-left text-xs space-y-0.5 shrink-0">
+                <div class="font-mono font-black text-base text-slate-900 whitespace-nowrap">@Model.OrderNumber</div>
+                <div class="text-slate-600 whitespace-nowrap">@Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt")</div>
+                <div class="font-bold text-slate-800 whitespace-nowrap">الحالة: @printStatusAr</div>
             </div>
         </div>
 
-        <!-- Customer & Delivery Info Grid -->
-        <div class="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-300 text-xs mb-6">
+        <!-- Essential Recipient Info -->
+        <div class="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs mb-5">
             <div>
-                <span class="text-slate-500 font-bold block">اسم العميل / المستلم:</span>
-                <span class="text-base font-black text-slate-900 block mt-0.5">@Model.CustomerName</span>
-                <span class="text-xs text-slate-600">(@Model.CustomerType)</span>
+                <span class="text-slate-500 font-bold">المستلم:</span>
+                <span class="font-black text-slate-900 mr-1">@Model.CustomerName</span>
             </div>
-            <div>
-                <span class="text-slate-500 font-bold block">رقم الهاتف للتواصل:</span>
-                <span class="text-sm font-black font-mono text-slate-900 block mt-0.5" dir="ltr">@Model.CustomerPhone</span>
+            <div class="text-left">
+                <span class="text-slate-500 font-bold">الهاتف:</span>
+                <span class="font-mono font-black text-slate-900 mr-1" dir="ltr">@Model.CustomerPhone</span>
                 @if (!string.IsNullOrEmpty(Model.CustomerWhatsApp) && Model.CustomerWhatsApp != Model.CustomerPhone)
                 {
-                    <span class="text-xs font-mono text-slate-600 block" dir="ltr">واتساب: @Model.CustomerWhatsApp</span>
+                    <span class="font-mono text-slate-600 block" dir="ltr">@Model.CustomerWhatsApp</span>
                 }
             </div>
-            <div class="col-span-2 border-t border-slate-200 pt-3">
-                <span class="text-slate-500 font-bold block">عنوان التسليم بمصر:</span>
-                <span class="text-sm font-bold text-slate-900 block mt-0.5">
-                    محافظة @Model.Governorate — مدينة / مركز @Model.City — @Model.ShippingAddress
-                </span>
+            <div class="col-span-2 border-t border-slate-200 pt-2">
+                <span class="text-slate-500 font-bold">العنوان:</span>
+                <span class="font-bold text-slate-900 mr-1">@Model.Governorate — @Model.City — @Model.ShippingAddress</span>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.CustomerNotes))
             {
                 <div class="col-span-2 border-t border-slate-200 pt-2">
-                    <span class="text-slate-500 font-bold block">ملاحظات العميل للشحن:</span>
-                    <span class="text-xs text-slate-800 block mt-0.5">@Model.CustomerNotes</span>
+                    <span class="text-slate-500 font-bold">ملاحظات:</span>
+                    <span class="text-slate-800 mr-1">@Model.CustomerNotes</span>
                 </div>
             }
         </div>
 
-        <!-- Itemized Products Table -->
-        <table class="w-full text-right border-collapse border border-slate-300 text-xs mb-6">
+        <!-- Items Table -->
+        <table class="w-full text-right border-collapse border border-slate-300 text-xs mb-5">
             <thead>
                 <tr class="bg-slate-100 text-slate-900 border-b border-slate-300">
-                    <th class="p-2.5 border-l border-slate-300">م</th>
-                    <th class="p-2.5 border-l border-slate-300">اسم الباقة التعليمية</th>
-                    <th class="p-2.5 border-l border-slate-300 text-center">الكمية</th>
-                    <th class="p-2.5 border-l border-slate-300 text-left">سعر الوحدة</th>
-                    <th class="p-2.5 text-left">الإجمالي</th>
+                    <th class="p-2 border-l border-slate-300 w-10 text-center">م</th>
+                    <th class="p-2 border-l border-slate-300">الباقة</th>
+                    <th class="p-2 border-l border-slate-300 w-16 text-center">الكمية</th>
+                    <th class="p-2 border-l border-slate-300 w-24 text-left">السعر</th>
+                    <th class="p-2 w-24 text-left">الإجمالي</th>
                 </tr>
             </thead>
             <tbody>
@@ -491,73 +486,59 @@
                 @foreach (var item in Model.Items)
                 {
                     <tr class="border-b border-slate-200">
-                        <td class="p-2.5 border-l border-slate-200 font-mono">@itemIdx</td>
-                        <td class="p-2.5 border-l border-slate-200">
-                            <span class="font-bold text-slate-900 block">@item.ProductNameAr</span>
-                            <span class="text-[11px] text-slate-500 font-mono block">@item.ProductName</span>
-                        </td>
-                        <td class="p-2.5 border-l border-slate-200 text-center font-bold font-mono">@item.Quantity</td>
-                        <td class="p-2.5 border-l border-slate-200 text-left font-mono">@item.UnitPrice.ToString("F0") ج.م</td>
-                        <td class="p-2.5 text-left font-black font-mono">@item.SubTotal.ToString("F0") ج.م</td>
+                        <td class="p-2 border-l border-slate-200 font-mono text-center">@itemIdx</td>
+                        <td class="p-2 border-l border-slate-200 font-bold text-slate-900">@item.ProductNameAr</td>
+                        <td class="p-2 border-l border-slate-200 text-center font-bold font-mono">@item.Quantity</td>
+                        <td class="p-2 border-l border-slate-200 text-left font-mono whitespace-nowrap">@item.UnitPrice.ToString("N0") ج.م</td>
+                        <td class="p-2 text-left font-black font-mono whitespace-nowrap">@item.SubTotal.ToString("N0") ج.م</td>
                     </tr>
                     itemIdx++;
                 }
             </tbody>
         </table>
 
-        <!-- Totals & Payment Breakdown -->
-        <div class="flex justify-between items-start gap-8 mb-6">
-            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-600 flex-grow">
-                <span class="font-bold text-slate-900 block mb-1">طريقة السداد:</span>
+        <!-- Summary & Payment -->
+        <div class="flex justify-between items-start gap-6 mb-5">
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs flex-grow">
+                <span class="font-bold text-slate-900">طريقة السداد: </span>
                 @if (Model.PaymentMethod == PaymentMethod.WalletTransfer)
                 {
-                    <span class="font-bold text-slate-800">تحويل محفظة إلكترونية (فودافون كاش / إنستاباي)</span>
+                    <span class="text-slate-800">تحويل محفظة / إنستاباي</span>
                     @if (Model.Status == OrderStatus.Approved || Model.Status == OrderStatus.Shipped || Model.Status == OrderStatus.Delivered)
                     {
-                        <span class="block text-[11px] text-emerald-700 mt-0.5">✓ تم التحقق من إيصال السداد واعتماد الطلب</span>
-                    }
-                    else if (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.Rejected)
-                    {
-                        <span class="block text-[11px] text-rose-700 mt-0.5">✕ الطلب غير معتمد (@printStatusAr)</span>
+                        <span class="block text-[11px] font-bold text-emerald-700 mt-1">✓ مدفوع ومعتمد</span>
                     }
                     else
                     {
-                        <span class="block text-[11px] text-amber-700 mt-0.5">⏳ في انتظار مراجعة واعتماد التحويل</span>
+                        <span class="block text-[11px] font-bold text-slate-600 mt-1">الحالة: @printStatusAr</span>
                     }
                 }
                 else
                 {
-                    <span class="font-bold text-slate-800">تنسيق مباشر عبر واتساب</span>
+                    <span class="text-slate-800">واتساب مباشر</span>
                 }
             </div>
 
-            <div class="w-64 space-y-1.5 text-xs text-right">
+            <div class="w-56 space-y-1 text-xs shrink-0">
                 <div class="flex justify-between text-slate-600">
-                    <span>قيمة البطاقات:</span>
-                    <span class="font-mono font-bold text-slate-900">@Model.TotalAmount.ToString("F2") ج.م</span>
+                    <span>البطاقات:</span>
+                    <span class="font-mono font-bold text-slate-900">@Model.TotalAmount.ToString("N0") ج.م</span>
                 </div>
                 <div class="flex justify-between text-slate-600">
-                    <span>مصاريف الشحن:</span>
-                    <span class="font-mono font-bold text-slate-900">@Model.ShippingFee.ToString("F2") ج.م</span>
+                    <span>الشحن:</span>
+                    <span class="font-mono font-bold text-slate-900">@Model.ShippingFee.ToString("N0") ج.م</span>
                 </div>
-                <div class="flex justify-between text-sm font-black text-slate-900 border-t-2 border-slate-900 pt-2">
-                    <span>المبلغ المطلوب تسليمه:</span>
-                    <span class="font-mono text-base">@Model.GrandTotal.ToString("F2") ج.م</span>
+                <div class="flex justify-between text-sm font-black text-slate-900 border-t-2 border-slate-900 pt-1.5 mt-1">
+                    <span>الإجمالي:</span>
+                    <span class="font-mono">@Model.GrandTotal.ToString("N0") ج.م</span>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Signatures and Instructions -->
-        <div class="border-t border-slate-300 pt-4 flex justify-between items-end text-[11px] text-slate-500">
-            <div>
-                <span>توقيع مسؤول التجهيز والتغليف: __________________</span>
-            </div>
-            <div>
-                <span>توقيع مندوب شركة الشحن: __________________</span>
-            </div>
-            <div>
-                <span>توقيع واستلام العميل: __________________</span>
-            </div>
+        <!-- Minimal Footer -->
+        <div class="border-t border-slate-200 pt-3 flex justify-between items-center text-[11px] text-slate-500">
+            <span>خدمة العملاء: 01099887766</span>
+            <span>توقيع المستلم: ______________________</span>
         </div>
     </div>
 
