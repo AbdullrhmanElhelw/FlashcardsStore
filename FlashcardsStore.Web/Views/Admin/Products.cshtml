@@ -122,7 +122,53 @@
 
     <!-- Products Table -->
     <div class="admin-table-container">
-        <div class="overflow-x-auto">
+        <!-- Mobile Cards -->
+        <div class="md:hidden divide-y divide-slate-100">
+            @if (!Model.Any())
+            {
+                <div class="py-12 text-center text-slate-400 font-bold text-sm">لا توجد باقات فلاش كاردز مضافة في هذا القسم حالياً.</div>
+            }
+            else
+            {
+                @foreach (var product in Model)
+                {
+                    <div class="p-4 space-y-3 bg-white">
+                        <div class="flex items-start gap-3">
+                            <div class="w-16 h-14 rounded-xl bg-amber-50 border border-amber-200 overflow-hidden shrink-0 flex items-center justify-center p-1">
+                                <img src="@product.ImageUrl" alt="@product.Name" class="w-full h-full object-contain" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-black text-slate-900 text-sm truncate">@product.NameAr</div>
+                                <div class="text-xs text-slate-400 font-mono truncate">@product.Name</div>
+                                <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-[#8D6711] border border-amber-200">@product.CategoryNameAr</span>
+                                    <span class="text-xs font-black text-slate-900">@product.Price.ToString("F0") ج.م</span>
+                                    <span class="text-[11px] text-slate-500">المخزون: @product.AvailableStockQuantity</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                            <button type="button" hx-post="/Admin/ToggleProductStatus?id=@product.Id" hx-swap="outerHTML" class="cursor-pointer">
+                                <partial name="~/Views/Admin/_ProductStatusBadge.cshtml" model="product.IsActive" />
+                            </button>
+                            <div class="flex items-center gap-2">
+                                <a asp-controller="AdminProducts" asp-action="EditProduct" asp-route-id="@product.Id"
+                                   class="px-3 py-1.5 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 text-xs font-bold">تعديل</a>
+                                <form asp-controller="AdminProducts" asp-action="DeleteProduct" asp-route-id="@product.Id" method="post"
+                                      onsubmit="return confirm('هل أنت متأكد من حذف باقة «@product.NameAr»؟');" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold">حذف</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full admin-table text-right">
                 <thead>
                     <tr>

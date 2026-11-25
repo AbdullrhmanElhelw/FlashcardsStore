@@ -70,7 +70,44 @@
 
     <!-- Categories Table -->
     <div class="admin-table-container">
-        <div class="overflow-x-auto">
+        <!-- Mobile Cards -->
+        <div class="md:hidden divide-y divide-slate-100">
+            @if (!Model.Any())
+            {
+                <div class="py-12 text-center text-slate-400 font-bold text-sm">لا توجد أقسام مسجلة حالياً.</div>
+            }
+            else
+            {
+                @foreach (var cat in Model)
+                {
+                    <div class="p-4 space-y-2.5 bg-white">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <div class="font-black text-slate-900 text-sm">@cat.NameAr</div>
+                                <div class="text-xs text-slate-400 font-mono">@cat.Name • /@cat.Slug</div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">ترتيب @cat.DisplayOrder</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <a asp-controller="AdminProducts" asp-action="Products" asp-route-categoryId="@cat.Id"
+                               class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800">@cat.ProductCount باقة</a>
+                            <div class="flex items-center gap-2">
+                                <a asp-controller="AdminCategories" asp-action="EditCategory" asp-route-id="@cat.Id"
+                                   class="px-3 py-1.5 rounded-xl bg-amber-50 text-[#8D6711] border border-amber-200 text-xs font-bold">تعديل</a>
+                                <form asp-controller="AdminCategories" asp-action="DeleteCategory" asp-route-id="@cat.Id" method="post"
+                                      onsubmit="return confirm('هل أنت متأكد من حذف قسم «@cat.NameAr»؟');" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold">حذف</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full admin-table text-right">
             <thead>
                 <tr>
