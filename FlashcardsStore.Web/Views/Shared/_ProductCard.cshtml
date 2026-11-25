@@ -87,11 +87,6 @@
                                 @primaryTitle
                             </a>
                         </h3>
-
-                        <!-- Secondary Title -->
-                        <p class="text-[10px] sm:text-[11px] font-semibold text-slate-400 font-mono truncate">
-                            @secondaryTitle
-                        </p>
                     </div>
 
                     <!-- Price & Actions Bar -->
@@ -185,8 +180,8 @@
                             <button type="button" 
                                     onclick="event.stopPropagation(); window.playAudioNote(this, '@Model.AudioUrl')"
                                     class="audio-quick-btn absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-400 transition-all flex items-center gap-1 text-[9px] font-black cursor-pointer backdrop-blur-xs"
-                                    title="استمع لصوت ميس خلود">
-                                <span>🎙️ بصوت المعلمة</span>
+                                    title="@Loc.Get("ListenTeacherVoice")">
+                                <span>@Loc.Get("TeacherVoiceButton")</span>
                                 <span class="soundwave-container hidden">
                                     <span class="soundwave-bar"></span>
                                     <span class="soundwave-bar"></span>
@@ -200,11 +195,11 @@
                             <button type="button" 
                                     onclick="event.stopPropagation(); window.playQuickCardPronunciation(this, '@wordsToSay')"
                                     class="audio-quick-btn absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-[#D4AF37]/25 hover:bg-[#D4AF37]/45 text-[#D4AF37] border border-[#D4AF37]/40 transition-all flex items-center gap-1 text-[9px] font-black cursor-pointer backdrop-blur-xs"
-                                    title="استمع لنطق الكلمات">
+                                    title="@Loc.Get("ListenPronounceWords")">
                                 <svg class="w-2.5 h-2.5 text-[#D4AF37] speaker-icon pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                                 </svg>
-                                <span class="audio-btn-label">نطق الكلمات</span>
+                                <span class="audio-btn-label">@Loc.Get("PronounceWordsButton")</span>
                                 <span class="soundwave-container hidden">
                                     <span class="soundwave-bar"></span>
                                     <span class="soundwave-bar"></span>

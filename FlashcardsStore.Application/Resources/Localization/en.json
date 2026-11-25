@@ -371,5 +371,9 @@
     "OrderStatusDelivered":  "Delivered",
     "OrderStatusRejected":  "Rejected (Invalid Transfer)",
     "OrderStatusCancelled":  "Cancelled",
-    "OrderStatusUnknown":  "Unknown"
+    "OrderStatusUnknown":  "Unknown",
+    "TeacherVoiceButton":  "🎙️ Teacher Voice",
+    "ListenTeacherVoice":  "Listen to Miss Kholoud",
+    "PronounceWordsButton":  "Pronounce",
+    "ListenPronounceWords":  "Listen to word pronunciation"
 }

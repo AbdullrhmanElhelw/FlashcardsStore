@@ -371,5 +371,9 @@
     "OrderStatusDelivered":  "تم التسليم بنجاح",
     "OrderStatusRejected":  "مرفوض (تحويل غير صحيح)",
     "OrderStatusCancelled":  "ملغي",
-    "OrderStatusUnknown":  "غير محدد"
+    "OrderStatusUnknown":  "غير محدد",
+    "TeacherVoiceButton":  "🎙️ بصوت المعلمة",
+    "ListenTeacherVoice":  "استمع لصوت ميس خلود",
+    "PronounceWordsButton":  "نطق الكلمات",
+    "ListenPronounceWords":  "استمع لنطق الكلمات"
 }
