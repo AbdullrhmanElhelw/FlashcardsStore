@@ -4,8 +4,8 @@
 @{
     ViewData["Title"] = Loc.Get("BrandSubtitle") + " - " + Loc.Get("BrandName");
     var categories = ViewBag.Categories as IReadOnlyList<CategoryDto> ?? new List<CategoryDto>();
-    var featured = ViewBag.FeaturedProducts as IReadOnlyList<ProductCardViewModel> ?? Model;
-    var heroProduct = featured?.FirstOrDefault() ?? Model?.FirstOrDefault();
+    var featured = ViewBag.FeaturedProducts as IReadOnlyList<ProductCardViewModel> ?? Model ?? Array.Empty<ProductCardViewModel>();
+    var heroProduct = featured.FirstOrDefault();
     var isRtl = Loc.IsRtl;
     var nextArrow = isRtl ? "←" : "→";
     var homeWhatsAppUrl = SettingsService.GetWhatsAppLink(isRtl ? "مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز" : "Hello Miss Kholoud, I would like to inquire about flashcards");
