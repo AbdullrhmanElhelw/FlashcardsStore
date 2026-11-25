@@ -160,7 +160,7 @@ public class LocalizationService : ILocalizationService
         // Footer
         { "FooterDescription", ("منصة متخصصة في بطاقات الفلاش كاردز التعليمية الفاخرة لتأسيس اللغة الإنجليزية للأطفال وطلاب المدارس والحضانات، بإشراف المعلمة خلود النادي.", "Specialized platform for premium educational English flashcards for children, school, and nursery students, under the supervision of teacher Kholoud Elnady.") },
         { "CertifiedLanguages", ("تأسيس لغات معتمد", "Certified Language Foundation") },
-        { "CurriculumAligned", ("Curriculum Aligned", "Curriculum Aligned") },
+        { "CurriculumAligned", ("متوافق مع المناهج الدراسية", "Curriculum Aligned") },
         { "CategoriesTitle", ("أقسام البطاقات", "Card Categories") },
         { "QuickLinksTitle", ("روابط سريعة", "Quick Links") },
         { "ContactTitle", ("طلب مباشر ودعم الأكاديمية", "Direct Orders & Support") },
@@ -174,8 +174,8 @@ public class LocalizationService : ILocalizationService
         { "CurrentLanguageName", ("العربية", "English") },
 
         // Home Section 1 - Card preview
-        { "HeroSoundPreviewTitle", ("Short Vowel Sound", "Short Vowel Sound") },
-        { "HeroPhonicsMastery", ("PHONICS MASTERY", "PHONICS MASTERY") },
+        { "HeroSoundPreviewTitle", ("نطق أصوات الحروف القصيرة", "Short Vowel Sound") },
+        { "HeroPhonicsMastery", ("إتقان الصوتيات والفونكس", "PHONICS MASTERY") },
         { "HeroCardPill", ("52 كارت • كوشيه 350 جم", "52 Cards • 350gsm Coated") },
         { "HeroCardLamination", ("مغلف بسلوفان حراري ضد الماء", "Waterproof Thermal Laminated") },
 
@@ -243,7 +243,7 @@ public class LocalizationService : ILocalizationService
         { "AudienceSchoolsDesc", ("نوفر باقات وكميات خاصة لمدارس اللغات والحضانات مع عروض حصرية للطلبات المجمعة وتوافق تام مع الخطط الدراسية والمناهج المعتمدة من وزارة التربية والتعليم.", "Special bulk packages for language schools and nurseries, with exclusive institutional pricing and 100% curriculum alignment.") },
 
         // Home Section 7 - FAQs
-        { "FaqEyebrow", ("FREQUENTLY ASKED QUESTIONS", "FREQUENTLY ASKED QUESTIONS") },
+        { "FaqEyebrow", ("الأسئلة الشائعة", "FREQUENTLY ASKED QUESTIONS") },
         { "FaqTitle", ("الأسئلة الأكثر شيوعاً", "Frequently Asked Questions") },
         { "FaqSubtitle", ("إجابات واضحة على كل ما يهمك معرفته حول بطاقات الأكاديمية والشحن والدفع", "Clear answers to everything you need to know about our cards, shipping, and payment") },
         { "FaqQ1", ("ما هي خامات البطاقات وهل هي قابلة للغسيل والمسح؟", "What materials are used, and are the cards washable?") },
