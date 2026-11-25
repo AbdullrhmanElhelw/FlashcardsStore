@@ -57,8 +57,8 @@ public static class DbInitializer
             await context.SaveChangesAsync();
         }
 
-        // Seed Products
-        if (!await context.Products.AnyAsync())
+        // Demo Products seeding disabled for production (add real products from Admin Panel)
+        if (false && !await context.Products.AnyAsync())
         {
             var phonics = await context.Categories.FirstAsync(c => c.Slug == "phonics");
             var grammar = await context.Categories.FirstAsync(c => c.Slug == "grammar");
@@ -381,8 +381,8 @@ public static class DbInitializer
             // Table may already exist
         }
 
-        // Seed Reviews
-        if (await context.Products.AnyAsync() && !await context.Reviews.AnyAsync())
+        // Demo Reviews seeding disabled for production
+        if (false && await context.Products.AnyAsync() && !await context.Reviews.AnyAsync())
         {
             var firstProduct = await context.Products.FirstOrDefaultAsync(p => p.Slug == "short-vowels-pack");
             var secondProduct = await context.Products.FirstOrDefaultAsync(p => p.Slug == "blends-and-digraphs-pack");
