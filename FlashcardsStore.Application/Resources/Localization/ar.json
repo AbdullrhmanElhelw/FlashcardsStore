@@ -375,5 +375,10 @@
     "TeacherVoiceButton":  "🎙️ بصوت المعلمة",
     "ListenTeacherVoice":  "استمع لصوت ميس خلود",
     "PronounceWordsButton":  "نطق الكلمات",
-    "ListenPronounceWords":  "استمع لنطق الكلمات"
+    "ListenPronounceWords":  "استمع لنطق الكلمات",
+    "ToastOutOfStock":  "عفواً، الكمية المطلوبة غير متوفرة في المخزن",
+    "ToastAddedToCart":  "تمت إضافة {0} إلى السلة",
+    "ToastRemovedFromCart":  "تم حذف المنتج من السلة",
+    "ToastSelectProofFile":  "يرجى اختيار ملف الإيصال أو لقطة الشاشة",
+    "ToastProofUploaded":  "تم رفع إيصال التحويل بنجاح! تم حجز طلبك وجارٍ التحقق من قبل المعلمة."
 }

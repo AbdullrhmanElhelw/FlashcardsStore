@@ -10,11 +10,13 @@ public class CartController : Controller
 {
     private readonly CartSessionManager _cartManager;
     private readonly IProductService _productService;
+    private readonly ILocalizationService _loc;
 
-    public CartController(CartSessionManager cartManager, IProductService productService)
+    public CartController(CartSessionManager cartManager, IProductService productService, ILocalizationService loc)
     {
         _cartManager = cartManager;
         _productService = productService;
+        _loc = loc;
     }
 
     [HttpGet]
@@ -30,7 +32,7 @@ public class CartController : Controller
         var product = await _productService.GetByIdAsync(productId, cancellationToken);
         if (product == null || product.AvailableStockQuantity < quantity)
         {
-            Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString("عفواً، الكمية المطلوبة غير متوفرة في المخزن"));
+            Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString(_loc.Get("ToastOutOfStock")));
             Response.Headers.Append("HX-Toast-Type", "error");
             var currentModel = _cartManager.GetCartViewModel();
             return PartialView("_CartDrawer", currentModel);
@@ -50,8 +52,9 @@ public class CartController : Controller
         var model = _cartManager.GetCartViewModel();
 
         var triggerData = JsonSerializer.Serialize(new { count = model.TotalItems, openDrawer = true });
+        var displayName = _loc.GetLocalized(product.NameAr, product.Name);
         Response.Headers.Append("HX-Trigger", $"{{ \"cartUpdated\": {triggerData} }}");
-        Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString($"تمت إضافة {product.NameAr} إلى السلة"));
+        Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString(_loc.Get("ToastAddedToCart", displayName)));
 
         return PartialView("_CartDrawer", model);
     }
@@ -76,7 +79,7 @@ public class CartController : Controller
 
         var triggerData = JsonSerializer.Serialize(new { count = model.TotalItems, openDrawer = false });
         Response.Headers.Append("HX-Trigger", $"{{ \"cartUpdated\": {triggerData} }}");
-        Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString("تم حذف المنتج من السلة"));
+        Response.Headers.Append("HX-Toast-Message", Uri.EscapeDataString(_loc.Get("ToastRemovedFromCart")));
 
         return PartialView("_CartDrawer", model);
     }

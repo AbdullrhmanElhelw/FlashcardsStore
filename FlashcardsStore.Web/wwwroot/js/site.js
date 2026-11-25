@@ -44,6 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.body.addEventListener('htmx:responseError', (event) => {
-        window.showToast('حدث خطأ أثناء تنفيذ العملية، يرجى المحاولة مرة أخرى.', 'error');
+        const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+        window.showToast(
+            isRtl ? 'حدث خطأ أثناء تنفيذ العملية، يرجى المحاولة مرة أخرى.' : 'An error occurred while processing your request. Please try again.',
+            'error'
+        );
     });
 });

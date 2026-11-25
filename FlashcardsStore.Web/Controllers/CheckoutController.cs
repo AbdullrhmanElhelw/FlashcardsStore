@@ -15,19 +15,22 @@ public class CheckoutController : Controller
     private readonly CartSessionManager _cartManager;
     private readonly IValidator<CheckoutDto> _checkoutValidator;
     private readonly IValidator<PaymentProofUploadDto> _proofValidator;
+    private readonly ILocalizationService _loc;
 
     public CheckoutController(
         IOrderService orderService,
         IPaymentProofService paymentProofService,
         CartSessionManager cartManager,
         IValidator<CheckoutDto> checkoutValidator,
-        IValidator<PaymentProofUploadDto> proofValidator)
+        IValidator<PaymentProofUploadDto> proofValidator,
+        ILocalizationService loc)
     {
         _orderService = orderService;
         _paymentProofService = paymentProofService;
         _cartManager = cartManager;
         _checkoutValidator = checkoutValidator;
         _proofValidator = proofValidator;
+        _loc = loc;
     }
 
     [HttpGet]
@@ -117,7 +120,7 @@ public class CheckoutController : Controller
 
         if (proofFile == null || proofFile.Length == 0)
         {
-            TempData["ErrorMessage"] = "يرجى اختيار ملف الإيصال أو لقطة الشاشة";
+            TempData["ErrorMessage"] = _loc.Get("ToastSelectProofFile");
             return RedirectToAction("PaymentInstructions", new { orderNumber = order.OrderNumber });
         }
 
@@ -147,7 +150,7 @@ public class CheckoutController : Controller
             return RedirectToAction("PaymentInstructions", new { orderNumber = order.OrderNumber });
         }
 
-        TempData["SuccessMessage"] = "تم رفع إيصال التحويل بنجاح! تم حجز طلبك وجارٍ التحقق من قبل المعلمة.";
+        TempData["SuccessMessage"] = _loc.Get("ToastProofUploaded");
         return RedirectToAction("Confirmation", new { orderNumber = order.OrderNumber });
     }
 

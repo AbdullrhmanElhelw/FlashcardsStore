@@ -375,5 +375,10 @@
     "TeacherVoiceButton":  "🎙️ Teacher Voice",
     "ListenTeacherVoice":  "Listen to Miss Kholoud",
     "PronounceWordsButton":  "Pronounce",
-    "ListenPronounceWords":  "Listen to word pronunciation"
+    "ListenPronounceWords":  "Listen to word pronunciation",
+    "ToastOutOfStock":  "Sorry, the requested quantity is out of stock",
+    "ToastAddedToCart":  "{0} added to cart",
+    "ToastRemovedFromCart":  "Item removed from cart",
+    "ToastSelectProofFile":  "Please select a receipt or screenshot file",
+    "ToastProofUploaded":  "Payment receipt uploaded successfully! Your order is reserved and under review."
 }

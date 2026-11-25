@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!orderNo || !phone) {
                 e.preventDefault();
-                window.showToast?.('يرجى إدخال رقم الطلب ورقم الهاتف المسجل', 'error');
+                const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                window.showToast?.(
+                    isRtl ? 'يرجى إدخال رقم الطلب ورقم الهاتف المسجل' : 'Please enter your order number and registered phone number',
+                    'error'
+                );
                 return false;
             }
         });
