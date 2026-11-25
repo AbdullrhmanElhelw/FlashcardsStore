@@ -113,13 +113,12 @@
                 }
                 else
                 {
-                    <span class="text-xs font-bold text-slate-500">التحكم السريع في حالة الشحن والتسليم:</span>
+                    <span class="text-xs font-bold text-slate-500">حالة الشحن والتسليم:</span>
                 }
             </div>
 
             <!-- Transition to Shipped, Delivered, or Cancelled -->
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-bold text-slate-600">تحديث الموقف:</span>
                 <button type="button"
                         hx-post="/Admin/UpdateStatus?id=@Model.Id&newStatus=Shipped"
                         hx-target="#order-status-badge-container"
@@ -152,7 +151,7 @@
                     </button>
                 }
             </div>
-
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start screen-only-details">
