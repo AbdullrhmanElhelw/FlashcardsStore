@@ -341,7 +341,7 @@
 
 /* Order Packing Slip Print Rules */
 @media print {
-  aside, header, footer, nav, .no-print, #receipt-modal, button, form, .admin-action-bar {
+  aside, header, footer, nav, .no-print, #receipt-modal, #toast-container, .toast, button, form, .admin-action-bar {
     display: none !important;
   }
   body {

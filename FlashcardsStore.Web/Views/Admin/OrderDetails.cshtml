@@ -423,11 +423,25 @@
                     <p class="text-[11px] text-slate-500 font-mono">خدمة العملاء والتواصل: 01099887766</p>
                 </div>
             </div>
-            <div class="text-left font-mono">
+            @{
+                var printStatusAr = Model.Status switch
+                {
+                    OrderStatus.Draft => "مسودة طلب",
+                    OrderStatus.WhatsAppPending => "في انتظار تأكيد واتساب",
+                    OrderStatus.PendingVerification => "بانتظار مراجعة الإيصال",
+                    OrderStatus.Approved => "تم التأكيد والاعتماد",
+                    OrderStatus.Shipped => "تم الشحن مع المندوب",
+                    OrderStatus.Delivered => "تم التسليم بنجاح",
+                    OrderStatus.Rejected => "مرفوض",
+                    OrderStatus.Cancelled => "ملغي",
+                    _ => Model.Status.ToString()
+                };
+            }
+            <div class="text-left font-mono shrink-0">
                 <div class="text-xs text-slate-500">رقم الطلب:</div>
-                <div class="text-xl font-black text-slate-900">@Model.OrderNumber</div>
-                <div class="text-xs text-slate-600 mt-1">التاريخ: @Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt")</div>
-                <div class="text-xs font-bold mt-1 text-slate-800">الحالة: @Model.Status</div>
+                <div class="text-xl font-black text-slate-900 whitespace-nowrap">@Model.OrderNumber</div>
+                <div class="text-xs text-slate-600 mt-1 whitespace-nowrap">التاريخ: @Model.OrderDate.ToString("yyyy/MM/dd - hh:mm tt")</div>
+                <div class="text-xs font-bold mt-1 text-slate-800 whitespace-nowrap">الحالة: @printStatusAr</div>
             </div>
         </div>
 
@@ -498,7 +512,18 @@
                 @if (Model.PaymentMethod == PaymentMethod.WalletTransfer)
                 {
                     <span class="font-bold text-slate-800">تحويل محفظة إلكترونية (فودافون كاش / إنستاباي)</span>
-                    <span class="block text-[11px] text-emerald-700 mt-0.5">✓ تم التحقق من إيصال السداد واعتماد الطلب</span>
+                    @if (Model.Status == OrderStatus.Approved || Model.Status == OrderStatus.Shipped || Model.Status == OrderStatus.Delivered)
+                    {
+                        <span class="block text-[11px] text-emerald-700 mt-0.5">✓ تم التحقق من إيصال السداد واعتماد الطلب</span>
+                    }
+                    else if (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.Rejected)
+                    {
+                        <span class="block text-[11px] text-rose-700 mt-0.5">✕ الطلب غير معتمد (@printStatusAr)</span>
+                    }
+                    else
+                    {
+                        <span class="block text-[11px] text-amber-700 mt-0.5">⏳ في انتظار مراجعة واعتماد التحويل</span>
+                    }
                 }
                 else
                 {
