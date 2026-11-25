@@ -4,15 +4,15 @@
 @{
     var (text, cssClass) = Model switch
     {
-        OrderStatus.Draft => (Loc.GetLocalized("مسودة طلب", "Draft Order"), "status-draft"),
-        OrderStatus.WhatsAppPending => (Loc.GetLocalized("في انتظار تأكيد واتساب", "Awaiting WhatsApp Confirmation"), "status-whatsapppending"),
-        OrderStatus.PendingVerification => (Loc.GetLocalized("في انتظار مراجعة التحويل (محجوز)", "Pending Transfer Verification"), "status-pendingverification"),
-        OrderStatus.Approved => (Loc.GetLocalized("تم التأكيد والاعتماد", "Approved & Confirmed"), "status-approved"),
-        OrderStatus.Shipped => (Loc.GetLocalized("تم الشحن مع المندوب", "Shipped with Courier"), "status-shipped"),
-        OrderStatus.Delivered => (Loc.GetLocalized("تم التسليم بنجاح", "Delivered"), "status-delivered"),
-        OrderStatus.Rejected => (Loc.GetLocalized("مرفوض (تحويل غير صحيح)", "Rejected (Invalid Transfer)"), "status-rejected"),
-        OrderStatus.Cancelled => (Loc.GetLocalized("ملغي", "Cancelled"), "status-cancelled"),
-        _ => (Loc.GetLocalized("غير محدد", "Unknown"), "status-draft")
+        OrderStatus.Draft => (Loc.Get("OrderStatusDraft"), "status-draft"),
+        OrderStatus.WhatsAppPending => (Loc.Get("OrderStatusWhatsAppPending"), "status-whatsapppending"),
+        OrderStatus.PendingVerification => (Loc.Get("OrderStatusPendingVerification"), "status-pendingverification"),
+        OrderStatus.Approved => (Loc.Get("OrderStatusApproved"), "status-approved"),
+        OrderStatus.Shipped => (Loc.Get("OrderStatusShipped"), "status-shipped"),
+        OrderStatus.Delivered => (Loc.Get("OrderStatusDelivered"), "status-delivered"),
+        OrderStatus.Rejected => (Loc.Get("OrderStatusRejected"), "status-rejected"),
+        OrderStatus.Cancelled => (Loc.Get("OrderStatusCancelled"), "status-cancelled"),
+        _ => (Loc.Get("OrderStatusUnknown"), "status-draft")
     };
 }
 
