@@ -23,12 +23,14 @@
                 <span>/</span>
                 <span class="font-mono text-[#290A2E] font-bold">@Model.OrderNumber</span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
-                <span>طلب: <span class="font-mono">@Model.OrderNumber</span></span>
-                <span id="order-status-badge-container">
+            <div class="flex flex-wrap items-center gap-3 mt-1">
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900">
+                    طلب: <span class="font-mono">@Model.OrderNumber</span>
+                </h1>
+                <span id="order-status-badge-container" class="inline-flex items-center text-xs">
                     <partial name="_OrderStatusBadge" model="Model.Status" />
                 </span>
-            </h1>
+            </div>
         </div>
 
         <div class="flex items-center gap-2.5 flex-wrap">
@@ -80,20 +82,18 @@
     }
 
     <!-- Admin Action Bar -->
-    <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md mb-8 no-print admin-action-bar">
-        <h3 class="text-xs font-black text-slate-400 mb-3 uppercase tracking-wider">الإجراءات والتحكم في حالة الطلب:</h3>
-
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs mb-6 no-print admin-action-bar">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             
             <!-- Approve & Reject Actions -->
-            <div class="flex items-center gap-3">
-                @if (Model.Status != OrderStatus.Approved && Model.Status != OrderStatus.Delivered && Model.Status != OrderStatus.Shipped)
+            <div class="flex flex-wrap items-center gap-2.5">
+                @if (Model.Status == OrderStatus.PendingVerification || Model.Status == OrderStatus.WhatsAppPending)
                 {
                     <button type="button"
                             hx-post="/Admin/Approve?id=@Model.Id"
                             hx-target="#order-status-badge-container"
                             onclick="return confirmOrderAction('اعتماد وتثبيت خصم المخزون لـ', '@Model.OrderNumber')"
-                            class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md flex items-center gap-2 transition-colors">
+                            class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-xs inline-flex items-center gap-1.5 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
@@ -104,12 +104,16 @@
                             hx-post="/Admin/Reject?id=@Model.Id&reason=تحويل_غير_مكتمل"
                             hx-target="#order-status-badge-container"
                             onclick="return confirmOrderAction('رفض وإلغاء حجز المخزون لـ', '@Model.OrderNumber')"
-                            class="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-sm inline-flex items-center gap-1.5 transition-colors">
+                            class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs inline-flex items-center gap-1.5 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         <span>رفض التحويل</span>
                     </button>
+                }
+                else
+                {
+                    <span class="text-xs font-bold text-slate-500">التحكم السريع في حالة الشحن والتسليم:</span>
                 }
             </div>
 
@@ -249,72 +253,9 @@
                 </div>
             </div>
 
-            <!-- Admin Internal Notes & Follow-up Card -->
-            <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4 no-print">
-                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-[#B88E23] flex items-center justify-center">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                            </svg>
-                        </div>
-                        <span>سجل الملاحظات الإدارية والمتابعة</span>
-                    </div>
-                    <span class="text-xs font-semibold text-slate-400">خاص بالمشرفين</span>
-                </h3>
-
-                <!-- Notes History Log -->
-                @if (!string.IsNullOrWhiteSpace(Model.AdminNotes))
-                {
-                    <div class="space-y-2 max-h-48 overflow-y-auto p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
-                        @foreach (var line in Model.AdminNotes.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            <div class="p-2.5 rounded-xl bg-white border border-slate-200/70 text-slate-700 leading-relaxed font-medium">
-                                @line
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="text-xs text-slate-400 italic p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                        لا توجد ملاحظات إدارية مدونة لهذا الطلب بعد.
-                    </div>
-                }
-
-                <!-- Add New Note Form -->
-                <form asp-controller="AdminOrders" asp-action="AddOrderNote" method="post" class="space-y-3 pt-2">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">إضافة ملاحظة جديدة أو تحديث موقف:</label>
-                        <textarea name="notes" rows="2" required placeholder="اكتب ملاحظاتك (مثلاً: تم تأكيد العنوان هاتفياً / خرج مع مندوب الشحن)..." class="admin-form-textarea text-xs"></textarea>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-slate-600 whitespace-nowrap">تغيير الحالة إلى:</label>
-                            <select name="newStatus" class="admin-form-select text-xs py-1.5 font-bold">
-                                <option value="">(الحالة الحالية)</option>
-                                <option value="Approved">تم التأكيد والاعتماد</option>
-                                <option value="Shipped">تم التسليم لشركة الشحن</option>
-                                <option value="Delivered">تم التسليم بنجاح</option>
-                                <option value="Rejected">مرفوض</option>
-                                <option value="Cancelled">ملغي</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="admin-btn-primary px-4 py-2 text-xs font-bold whitespace-nowrap">
-                            <span>حفظ الملاحظة وتحديث الطلب ✓</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
         </div>
 
-        <!-- Payment Proof & Verification Column -->
+        <!-- Payment Proof, Notes & Verification Column -->
         <div class="lg:col-span-5 space-y-6">
 
             <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
@@ -390,6 +331,66 @@
                         </p>
                     </div>
                 }
+            </div>
+
+            <!-- Admin Internal Notes & Follow-up Card -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4 no-print">
+                <h3 class="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-[#B88E23] flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                        </div>
+                        <span>سجل الملاحظات الإدارية والمتابعة</span>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-400">خاص بالمشرفين</span>
+                </h3>
+
+                <!-- Notes History Log -->
+                @if (!string.IsNullOrWhiteSpace(Model.AdminNotes))
+                {
+                    <div class="space-y-2 max-h-44 overflow-y-auto p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+                        @foreach (var line in Model.AdminNotes.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200/70 text-slate-700 leading-relaxed font-medium">
+                                @line
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-xs text-slate-400 italic p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                        لا توجد ملاحظات إدارية مدونة لهذا الطلب بعد.
+                    </div>
+                }
+
+                <!-- Add New Note Form -->
+                <form asp-controller="AdminOrders" asp-action="AddOrderNote" method="post" class="space-y-3 pt-1">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">إضافة ملاحظة جديدة أو تحديث موقف:</label>
+                        <textarea name="notes" rows="2" required placeholder="اكتب ملاحظاتك (مثلاً: تم تأكيد العنوان هاتفياً / خرج مع مندوب الشحن)..." class="admin-form-textarea text-xs"></textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                        <select name="newStatus" class="admin-form-select text-xs py-2 font-bold">
+                            <option value="">تغيير الحالة (الحالية)</option>
+                            <option value="Approved">تم التأكيد والاعتماد</option>
+                            <option value="Shipped">تم التسليم لشركة الشحن</option>
+                            <option value="Delivered">تم التسليم بنجاح</option>
+                            <option value="Rejected">مرفوض</option>
+                            <option value="Cancelled">ملغي</option>
+                        </select>
+
+                        <button type="submit" class="admin-btn-primary px-4 py-2 text-xs font-bold whitespace-nowrap">
+                            <span>حفظ الملاحظة ✓</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Egyptian Stock Reservation Info -->
@@ -540,7 +541,3 @@
 
 <!-- Modal Partial Included -->
 <partial name="~/Views/Admin/_ReceiptModal.cshtml" />
-
-@section Scripts {
-    <script src="~/js/admin.js" asp-append-version="true"></script>
-}
