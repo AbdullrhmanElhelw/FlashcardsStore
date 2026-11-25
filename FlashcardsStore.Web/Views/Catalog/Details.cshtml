@@ -31,10 +31,10 @@
         if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
         if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable lamination";
         if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Model.CardCount} Double-sided full color cards";
+        if (pt.Contains("مثال") || pt.Contains("جملة") || pt.Contains("تمارين") || pt.Contains("جمل")) return "Example sentence for each word";
         if (pt.Contains("كلمة") || pt.Contains("كلمات")) return $"{Model.CardCount} Illustrated words";
         if (pt.Contains("تقسيم") || pt.Contains("أصوات") || pt.Contains("الأصوات")) return "Sound-group markers";
         if (pt.Contains("رسمة") || pt.Contains("رسوم") || pt.Contains("صور")) return "Illustration on every card";
-        if (pt.Contains("تمارين") || pt.Contains("جمل")) return "Speed reading sentence drills";
         if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
         if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
         return pt;
@@ -166,18 +166,24 @@
 
             <!-- Badges -->
             <div class="flex flex-wrap items-center gap-2.5">
-                <span class="px-3.5 py-1 rounded-full bg-[#290A2E] text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold">
+                <span class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#290A2E] text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold leading-none whitespace-nowrap">
                     @categoryDisplay
                 </span>
-                <span class="audience-tag bg-white border border-[#D4AF37]/25 px-3 py-1 rounded-full text-xs font-bold">
-                    <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>@audienceDisplay</span>
-                </span>
-                <span class="text-xs font-bold text-[#6B5D6E] bg-white border border-[#E6DFD5] px-3 py-1 rounded-full">
-                    @Loc.Get("DetailsLevelLabel", gradeDisplay)
-                </span>
+                @if (!string.IsNullOrWhiteSpace(audienceDisplay))
+                {
+                    <span class="inline-flex items-center gap-1.5 bg-white border border-[#D4AF37]/30 text-[#18061A] px-3 py-1.5 rounded-full text-xs font-bold leading-none whitespace-nowrap">
+                        <svg class="w-3.5 h-3.5 text-[#D4AF37] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>@audienceDisplay</span>
+                    </span>
+                }
+                @if (!string.IsNullOrWhiteSpace(gradeDisplay))
+                {
+                    <span class="inline-flex items-center text-xs font-bold text-[#6B5D6E] bg-white border border-[#E6DFD5] px-3 py-1.5 rounded-full leading-none whitespace-nowrap">
+                        @Loc.Get("DetailsLevelLabel", gradeDisplay)
+                    </span>
+                }
             </div>
 
             <!-- Titles & Star Rating Bar -->

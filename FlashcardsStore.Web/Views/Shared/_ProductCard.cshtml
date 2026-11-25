@@ -21,10 +21,10 @@
         if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
         if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable";
         if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Model.CardCount} Double-sided cards";
+        if (pt.Contains("مثال") || pt.Contains("جملة") || pt.Contains("تمارين") || pt.Contains("جمل")) return "Example sentence for each word";
         if (pt.Contains("كلمة") || pt.Contains("كلمات")) return $"{Model.CardCount} Illustrated words";
         if (pt.Contains("تقسيم") || pt.Contains("أصوات") || pt.Contains("الأصوات")) return "Sound-group markers";
         if (pt.Contains("رسمة") || pt.Contains("رسوم") || pt.Contains("صور")) return "Illustration on every card";
-        if (pt.Contains("تمارين") || pt.Contains("جمل")) return "Sentence reading drills";
         if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
         if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
         return pt;
