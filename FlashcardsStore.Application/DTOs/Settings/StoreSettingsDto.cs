@@ -16,12 +16,12 @@ public class StoreSettingsDto
     public string StoreNameEn { get; set; } = "Kholoud Elnady English Academy";
 
     [Required(ErrorMessage = "رقم الواتساب مطلوب")]
-    [Phone(ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+    [RegularExpression(@"^\+?[0-9\s\-]{8,20}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
     [Display(Name = "رقم الواتساب")]
     public string WhatsAppNumber { get; set; } = "01099887766";
 
     [Required(ErrorMessage = "رقم خدمة العملاء مطلوب")]
-    [Phone(ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
+    [RegularExpression(@"^\+?[0-9\s\-]{8,20}$", ErrorMessage = "صيغة رقم الهاتف غير صحيحة")]
     [Display(Name = "رقم هاتف الدعم / خدمة العملاء")]
     public string ContactPhone { get; set; } = "01099887766";
 
