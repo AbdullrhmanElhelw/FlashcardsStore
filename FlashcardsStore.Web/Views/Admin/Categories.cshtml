@@ -47,9 +47,31 @@
         </div>
     }
 
+    <!-- Search Bar -->
+    <div class="mb-6 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs">
+        @{
+            var searchTerm = ViewBag.SearchTerm as string;
+        }
+        <form asp-controller="Admin" asp-action="Categories" method="get" class="flex flex-col sm:flex-row items-center gap-3">
+            <input type="text"
+                   name="search"
+                   value="@searchTerm"
+                   placeholder="ابحث باسم القسم بالعربية أو الإنجليزية أو الرابط..."
+                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:border-[#D4AF37] bg-slate-50/60" />
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#b89427] text-[#18061A] font-black text-xs transition shrink-0">بحث</button>
+                @if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    <a asp-controller="Admin" asp-action="Categories" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition shrink-0">مسح</a>
+                }
+            </div>
+        </form>
+    </div>
+
     <!-- Categories Table -->
     <div class="admin-table-container">
-        <table class="w-full admin-table text-right">
+        <div class="overflow-x-auto">
+            <table class="w-full admin-table text-right">
             <thead>
                 <tr>
                     <th>ترتيب العرض</th>
@@ -128,7 +150,9 @@
                     </tr>
                 }
             </tbody>
-        </table>
+            </table>
+        </div>
+        <partial name="_AdminPagination" />
     </div>
 
 </div>

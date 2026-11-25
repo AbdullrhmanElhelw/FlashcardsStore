@@ -2,9 +2,12 @@
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "إدارة تقييمات وآراء العملاء";
-    var totalReviews = Model.Count;
-    var approvedCount = Model.Count(r => r.IsApproved);
-    var avgScore = totalReviews > 0 ? Model.Average(r => r.Rating).ToString("F1") : "5.0";
+    int totalReviews = ViewBag.TotalReviewsCount ?? Model.Count;
+    int approvedCount = ViewBag.ApprovedReviewsCount ?? Model.Count(r => r.IsApproved);
+    int pendingCount = ViewBag.PendingReviewsCount ?? Model.Count(r => !r.IsApproved);
+    string avgScore = ViewBag.AverageScore as string ?? (totalReviews > 0 ? Model.Average(r => r.Rating).ToString("F1") : "5.0");
+    string selectedStatus = ViewBag.SelectedStatus as string ?? "all";
+    string? searchTerm = ViewBag.SearchTerm as string;
 }
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -68,6 +71,38 @@
                 </svg>
             </div>
         </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+            <a asp-action="Reviews" asp-route-status="all" asp-route-search="@searchTerm"
+               class="px-3.5 py-2 rounded-xl text-xs font-bold transition @(selectedStatus == "all" ? "bg-[#290A2E] text-[#F6ECC9]" : "bg-slate-100 text-slate-600 hover:bg-slate-200")">
+                الكل (@totalReviews)
+            </a>
+            <a asp-action="Reviews" asp-route-status="approved" asp-route-search="@searchTerm"
+               class="px-3.5 py-2 rounded-xl text-xs font-bold transition @(selectedStatus == "approved" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")">
+                المعتمدة (@approvedCount)
+            </a>
+            <a asp-action="Reviews" asp-route-status="pending" asp-route-search="@searchTerm"
+               class="px-3.5 py-2 rounded-xl text-xs font-bold transition @(selectedStatus == "pending" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")">
+                بانتظار الاعتماد (@pendingCount)
+            </a>
+        </div>
+
+        <form asp-action="Reviews" method="get" class="flex items-center gap-2 w-full lg:w-auto">
+            <input type="hidden" name="status" value="@selectedStatus" />
+            <input type="text"
+                   name="search"
+                   value="@searchTerm"
+                   placeholder="ابحث باسم العميل أو الباقة أو نص التقييم..."
+                   class="w-full lg:w-72 px-3.5 py-2 text-xs font-medium bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#D4AF37]" />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#b89427] text-[#18061A] font-black text-xs transition shrink-0">بحث</button>
+            @if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                <a asp-action="Reviews" asp-route-status="@selectedStatus" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition shrink-0">مسح</a>
+            }
+        </form>
     </div>
 
     <!-- Table of Reviews -->
@@ -171,6 +206,7 @@
                 <p class="text-xs text-slate-400">ستظهر هنا أي تقييمات يشاركها أولياء الأمور والمعلمون من صفحات المنتجات.</p>
             </div>
         }
+        <partial name="_AdminPagination" />
     </div>
 
 </div>

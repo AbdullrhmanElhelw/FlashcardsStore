@@ -1,0 +1,97 @@
+@* Reusable Admin Pagination + Per-Page Selector (HTMX SPA compatible) *@
+@{
+    var paged = ViewBag.PagedInfo as dynamic;
+    int pageIndex = paged?.PageIndex ?? 1;
+    int totalPages = paged?.TotalPages ?? 1;
+    int totalCount = paged?.TotalCount ?? 0;
+    int pageSize = paged?.PageSize ?? 15;
+    string baseUrl = ViewBag.PaginationBaseUrl as string ?? "?";
+    string sep = baseUrl.Contains("?") ? (baseUrl.EndsWith("?") || baseUrl.EndsWith("&") ? "" : "&") : "?";
+    string GetPageUrl(int p, int ps) => $"{baseUrl}{sep}page={p}&pageSize={ps}";
+    int startItem = totalCount == 0 ? 0 : ((pageIndex - 1) * pageSize) + 1;
+    int endItem = Math.Min(pageIndex * pageSize, totalCount);
+    int[] sizeOptions = new[] { 10, 15, 20, 50 };
+}
+
+@if (totalCount > 0)
+{
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-5 py-4 bg-slate-50/70 border-t border-slate-200">
+        <!-- Count + Per-Page Selector -->
+        <div class="flex flex-wrap items-center gap-3 text-xs font-bold text-slate-600">
+            <span>عرض <strong class="text-slate-900">@startItem - @endItem</strong> من <strong class="text-slate-900">@totalCount</strong></span>
+
+            <div class="flex items-center gap-1.5">
+                <label for="admin-page-size" class="text-slate-500">لكل صفحة:</label>
+                <select id="admin-page-size"
+                        onchange="var url = this.value; if (window.htmx) { htmx.ajax('GET', url, { target: '#admin-spa-content', select: '#admin-spa-content', swap: 'innerHTML show:window:top' }); history.pushState({}, '', url); } else { window.location.href = url; }"
+                        class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-800 text-xs font-bold focus:outline-none focus:border-[#D4AF37]">
+                    @foreach (var opt in sizeOptions)
+                    {
+                        <option value="@GetPageUrl(1, opt)" selected="@(pageSize == opt ? "selected" : null)">@opt</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Page Buttons -->
+        @if (totalPages > 1)
+        {
+            <nav class="flex items-center gap-1" dir="ltr" aria-label="Admin Pagination">
+                @if (pageIndex > 1)
+                {
+                    <a href="@GetPageUrl(pageIndex - 1, pageSize)"
+                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-amber-50 hover:border-amber-300 transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+                }
+
+                @{
+                    int startPage = Math.Max(1, pageIndex - 2);
+                    int endPage = Math.Min(totalPages, pageIndex + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <a href="@GetPageUrl(1, pageSize)" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">1</a>
+                    if (startPage > 2)
+                    {
+                        <span class="px-1 text-slate-400 text-xs">…</span>
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    if (i == pageIndex)
+                    {
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#290A2E] text-[#F6ECC9] text-xs font-black border border-[#D4AF37]">@i</span>
+                    }
+                    else
+                    {
+                        <a href="@GetPageUrl(i, pageSize)" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-amber-50 hover:text-[#8D6711]">@i</a>
+                    }
+                }
+
+                @if (endPage < totalPages)
+                {
+                    if (endPage < totalPages - 1)
+                    {
+                        <span class="px-1 text-slate-400 text-xs">…</span>
+                    }
+                    <a href="@GetPageUrl(totalPages, pageSize)" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50">@totalPages</a>
+                }
+
+                @if (pageIndex < totalPages)
+                {
+                    <a href="@GetPageUrl(pageIndex + 1, pageSize)"
+                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-amber-50 hover:border-amber-300 transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                }
+            </nav>
+        }
+    </div>
+}

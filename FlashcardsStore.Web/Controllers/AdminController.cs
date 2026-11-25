@@ -158,26 +158,44 @@ public class AdminController : Controller
     }
 
     [HttpGet]
+    public IActionResult Index() => RedirectToAction(nameof(Dashboard));
+
+    [HttpGet]
     public async Task<IActionResult> Dashboard(CancellationToken cancellationToken)
     {
         var metrics = await _orderService.GetAdminDashboardMetricsAsync(cancellationToken);
         return View(metrics);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Orders(OrderStatus? status, string? search, int page = 1, CancellationToken cancellationToken = default)
+    private static FlashcardsStore.Application.Common.PagedResult<T> BuildPagedResult<T>(
+        IReadOnlyCollection<T> allItems,
+        int page,
+        int pageSize,
+        out List<T> pagedItems)
     {
+        var safeSize = Math.Clamp(pageSize, 5, 100);
+        var safePage = Math.Max(1, page);
+        pagedItems = allItems.Skip((safePage - 1) * safeSize).Take(safeSize).ToList();
+        return new FlashcardsStore.Application.Common.PagedResult<T>
+        {
+            Items = pagedItems,
+            TotalCount = allItems.Count,
+            PageIndex = safePage,
+            PageSize = safeSize
+        };
+    }
 
-        const int pageSize = 15;
-        IReadOnlyList<FlashcardsStore.Application.DTOs.Orders.OrderSummaryDto> orders;
-        if (status.HasValue)
-        {
-            orders = await _orderService.GetOrdersByStatusAsync(status.Value, cancellationToken);
-        }
-        else
-        {
-            orders = await _orderService.GetRecentOrdersAsync(500, cancellationToken);
-        }
+    [HttpGet]
+    public async Task<IActionResult> Orders(
+        OrderStatus? status,
+        string? search,
+        int page = 1,
+        int pageSize = 15,
+        CancellationToken cancellationToken = default)
+    {
+        IReadOnlyList<FlashcardsStore.Application.DTOs.Orders.OrderSummaryDto> orders = status.HasValue
+            ? await _orderService.GetOrdersByStatusAsync(status.Value, cancellationToken)
+            : await _orderService.GetRecentOrdersAsync(500, cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -190,21 +208,11 @@ public class AdminController : Controller
             ).ToList();
         }
 
-        var totalCount = orders.Count;
-        var safePageIndex = Math.Max(1, page);
-        var pagedOrders = orders.Skip((safePageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-        var pagedResult = new FlashcardsStore.Application.Common.PagedResult<FlashcardsStore.Application.DTOs.Orders.OrderSummaryDto>
-        {
-            Items = pagedOrders,
-            TotalCount = totalCount,
-            PageIndex = safePageIndex,
-            PageSize = pageSize
-        };
+        var pagedResult = BuildPagedResult(orders, page, pageSize, out var pagedOrders);
 
         ViewBag.CurrentStatus = status;
         ViewBag.SearchTerm = search;
-        ViewBag.PaginationBaseUrl = $"/Admin/Orders?status={status}&search={Uri.EscapeDataString(search ?? "")}&";
+        ViewBag.PaginationBaseUrl = $"/Admin/Orders?status={status}&search={Uri.EscapeDataString(search ?? "")}";
         ViewBag.PagedInfo = pagedResult;
 
         return View(pagedOrders);
@@ -302,17 +310,28 @@ public class AdminController : Controller
     // ==========================================
 
     [HttpGet]
-    public async Task<IActionResult> Products(int? categoryId, string? search, int page = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Products(
+        int? categoryId,
+        string? status,
+        string? search,
+        int page = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-
-        const int pageSize = 10;
         var allProducts = await _productService.GetAllProductsAsync(cancellationToken);
         var query = allProducts.AsEnumerable();
 
         if (categoryId.HasValue && categoryId.Value > 0)
-        {
             query = query.Where(p => p.CategoryId == categoryId.Value);
-        }
+
+        var normalizedStatus = string.IsNullOrWhiteSpace(status) ? "all" : status.Trim().ToLowerInvariant();
+        query = normalizedStatus switch
+        {
+            "active" => query.Where(p => p.IsActive),
+            "inactive" => query.Where(p => !p.IsActive),
+            "lowstock" => query.Where(p => p.StockQuantity < 5),
+            _ => query
+        };
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -325,23 +344,15 @@ public class AdminController : Controller
             );
         }
 
-        var totalCount = query.Count();
-        var safePageIndex = Math.Max(1, page);
-        var pagedProducts = query.Skip((safePageIndex - 1) * pageSize).Take(pageSize).ToList();
-
-        var pagedResult = new FlashcardsStore.Application.Common.PagedResult<FlashcardsStore.Application.DTOs.Products.ProductDto>
-        {
-            Items = pagedProducts,
-            TotalCount = totalCount,
-            PageIndex = safePageIndex,
-            PageSize = pageSize
-        };
+        var filtered = query.ToList();
+        var pagedResult = BuildPagedResult(filtered, page, pageSize, out var pagedProducts);
 
         var categories = await _categoryService.GetAllCategoriesAsync(cancellationToken);
         ViewBag.Categories = categories;
         ViewBag.SelectedCategoryId = categoryId;
+        ViewBag.SelectedStatus = normalizedStatus;
         ViewBag.SearchTerm = search;
-        ViewBag.PaginationBaseUrl = $"/Admin/Products?categoryId={categoryId}&search={Uri.EscapeDataString(search ?? "")}&";
+        ViewBag.PaginationBaseUrl = $"/Admin/Products?categoryId={categoryId}&status={normalizedStatus}&search={Uri.EscapeDataString(search ?? "")}";
         ViewBag.PagedInfo = pagedResult;
 
         return View(pagedProducts);
@@ -594,11 +605,30 @@ public class AdminController : Controller
     // ==========================================
 
     [HttpGet]
-    public async Task<IActionResult> Categories(CancellationToken cancellationToken)
+    public async Task<IActionResult> Categories(
+        string? search,
+        int page = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
+        var categories = (await _categoryService.GetAllCategoriesAsync(cancellationToken)).AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            categories = categories.Where(c =>
+                (!string.IsNullOrEmpty(c.NameAr) && c.NameAr.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(c.Name) && c.Name.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(c.Slug) && c.Slug.Contains(term, StringComparison.OrdinalIgnoreCase)));
+        }
 
-        var categories = await _categoryService.GetAllCategoriesAsync(cancellationToken);
-        return View(categories);
+        var filtered = categories.ToList();
+        var pagedResult = BuildPagedResult(filtered, page, pageSize, out var pagedCategories);
+
+        ViewBag.SearchTerm = search;
+        ViewBag.PaginationBaseUrl = $"/Admin/Categories?search={Uri.EscapeDataString(search ?? "")}";
+        ViewBag.PagedInfo = pagedResult;
+
+        return View(pagedCategories);
     }
 
     [HttpGet]
@@ -692,11 +722,42 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Reviews()
+    public async Task<IActionResult> Reviews(
+        string? status = "all",
+        string? search = null,
+        int page = 1,
+        int pageSize = 10)
     {
+        var allReviews = await _reviewService.GetAllReviewsAsync();
+        ViewBag.TotalReviewsCount = allReviews.Count;
+        ViewBag.ApprovedReviewsCount = allReviews.Count(r => r.IsApproved);
+        ViewBag.PendingReviewsCount = allReviews.Count(r => !r.IsApproved);
+        ViewBag.AverageScore = allReviews.Count > 0 ? allReviews.Average(r => r.Rating).ToString("F1") : "5.0";
 
-        var reviews = await _reviewService.GetAllReviewsAsync();
-        return View(reviews);
+        var normalizedStatus = string.IsNullOrWhiteSpace(status) ? "all" : status.Trim().ToLowerInvariant();
+        var query = allReviews.AsEnumerable();
+
+        if (normalizedStatus == "approved") query = query.Where(r => r.IsApproved);
+        else if (normalizedStatus == "pending") query = query.Where(r => !r.IsApproved);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            query = query.Where(r =>
+                (!string.IsNullOrEmpty(r.CustomerName) && r.CustomerName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(r.ProductName) && r.ProductName.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(r.Comment) && r.Comment.Contains(term, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        var filtered = query.ToList();
+        var pagedResult = BuildPagedResult(filtered, page, pageSize, out var pagedReviews);
+
+        ViewBag.SelectedStatus = normalizedStatus;
+        ViewBag.SearchTerm = search;
+        ViewBag.PaginationBaseUrl = $"/Admin/Reviews?status={normalizedStatus}&search={Uri.EscapeDataString(search ?? "")}";
+        ViewBag.PagedInfo = pagedResult;
+
+        return View(pagedReviews);
     }
 
     [HttpPost]
@@ -768,9 +829,17 @@ public class AdminController : Controller
     public async Task<IActionResult> Customers(
         string? search,
         string? filter = "all",
+        int page = 1,
+        int pageSize = 15,
         CancellationToken cancellationToken = default)
     {
         var summary = await _customerRepository.GetAdminCustomersSummaryAsync(search, filter, cancellationToken);
+        var pagedResult = BuildPagedResult(summary.Customers, page, pageSize, out var pagedCustomers);
+        summary.Customers = pagedCustomers;
+
+        ViewBag.PaginationBaseUrl = $"/Admin/Customers?filter={summary.FilterType}&search={Uri.EscapeDataString(search ?? "")}";
+        ViewBag.PagedInfo = pagedResult;
+
         return View(summary);
     }
 }

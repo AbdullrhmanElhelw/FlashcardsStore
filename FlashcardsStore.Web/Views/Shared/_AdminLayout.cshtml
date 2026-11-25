@@ -26,166 +26,228 @@
     <!-- Alpine.js CDN -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
 
-    <!-- HTMX CDN -->
+    <!-- HTMX CDN (SPA Navigation & Partial Updates) -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 
     <!-- Admin Modular Styles -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
+    <style>
+        #admin-spa-loader {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #D4AF37, #F6ECC9, #B88E23);
+            z-index: 9999;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.25s ease, opacity 0.2s ease;
+            opacity: 0;
+        }
+        #admin-spa-loader.htmx-request {
+            transform: scaleX(0.85);
+            opacity: 1;
+        }
+        .sidebar-link.is-active {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.06));
+            color: #F6ECC9;
+            border-color: rgba(212, 175, 55, 0.45);
+        }
+        .sidebar-link.is-active svg {
+            color: #D4AF37;
+        }
+    </style>
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 font-sans antialiased" x-data="{ mobileNavOpen: false }">
+<body class="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans antialiased" x-data="{ sidebarOpen: false }">
+
+    <!-- Top SPA Progress Bar -->
+    <div id="admin-spa-loader" aria-hidden="true"></div>
 
     <!-- Global Anti-Forgery Token for HTMX & AJAX -->
     <form id="global-admin-antiforgery-form" style="display:none;" aria-hidden="true">
         @Html.AntiForgeryToken()
     </form>
 
-    <!-- Enterprise Top Admin Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-white border-b border-slate-200/90 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-18 gap-4">
+    <!-- Mobile Backdrop -->
+    <div x-show="sidebarOpen"
+         x-transition.opacity
+         @@click="sidebarOpen = false"
+         x-cloak
+         class="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs lg:hidden"></div>
 
-                <!-- Academy Brand & Admin CMS Badge -->
-                <div class="flex items-center gap-4 flex-shrink-0">
-                    <a asp-controller="Admin" asp-action="Dashboard" class="flex items-center gap-3 group">
-                        <img src="~/images/brand/logo.png" 
-                             alt="Kholoud Elnady Academy" 
-                             class="h-10 w-10 object-contain rounded-xl border border-amber-300/80 shadow-xs" />
-                        <div class="text-right">
-                            <span class="block text-base font-black text-slate-900 leading-tight">
-                                أكاديمية خلود النادي
-                            </span>
-                            <span class="inline-flex items-center gap-1 text-[10px] font-black text-[#8D6711] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                                لوحة الإدارة والمحتوى • CMS
-                            </span>
-                        </div>
-                    </a>
+    <!-- Fixed Responsive Sidebar (RTL Right) -->
+    <aside :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
+           class="fixed inset-y-0 right-0 z-50 w-68 bg-gradient-to-b from-[#18061A] via-[#220926] to-[#140516] text-slate-200 flex flex-col border-l border-[#D4AF37]/20 shadow-2xl transition-transform duration-200 ease-out">
+
+        <!-- Brand Header -->
+        <div class="flex items-center justify-between px-5 py-5 border-b border-white/10">
+            <a asp-controller="Admin" asp-action="Dashboard"
+               hx-boost="true" hx-target="#admin-spa-content" hx-select="#admin-spa-content" hx-swap="innerHTML show:window:top"
+               class="flex items-center gap-3">
+                <img src="~/images/brand/logo.png"
+                     alt="Kholoud Elnady Academy"
+                     class="h-11 w-11 object-contain rounded-xl border border-[#D4AF37]/60 bg-[#190611] shadow-sm" />
+                <div>
+                    <span class="block text-sm font-black text-white leading-tight">أكاديمية خلود النادي</span>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-0.5 rounded-md border border-[#D4AF37]/30 mt-1">
+                        لوحة الإدارة • SPA
+                    </span>
                 </div>
+            </a>
+            <button type="button" @@click="sidebarOpen = false" class="lg:hidden p-1.5 rounded-lg text-slate-300 hover:bg-white/10">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
 
-                <!-- Desktop Admin Navigation Links -->
-                <nav class="hidden md:flex items-center gap-1 text-xs lg:text-sm font-bold">
-                    <a asp-controller="Admin" asp-action="Dashboard" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isDashboard ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isDashboard ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                        <span>المؤشرات</span>
-                    </a>
+        <!-- SPA Sidebar Navigation -->
+        <nav id="admin-sidebar-nav"
+             hx-boost="true"
+             hx-target="#admin-spa-content"
+             hx-select="#admin-spa-content"
+             hx-swap="innerHTML show:window:top"
+             hx-indicator="#admin-spa-loader"
+             class="flex-1 overflow-y-auto px-3.5 py-5 space-y-1.5 text-sm font-bold">
 
-                    <a asp-controller="Admin" asp-action="Orders" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isOrders ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isOrders ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
-                        <span>الطلبات</span>
-                        @if (pendingOrdersCount > 0)
-                        {
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-white leading-none">@pendingOrdersCount</span>
-                        }
-                    </a>
+            <a asp-controller="Admin" asp-action="Dashboard" data-nav-group="dashboard"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isDashboard ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span>لوحة المؤشرات</span>
+            </a>
 
-                    <a asp-controller="Admin" asp-action="Products" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isProducts ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isProducts ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        <span>الكروت</span>
-                    </a>
+            <a asp-controller="Admin" asp-action="Orders" data-nav-group="orders"
+               class="sidebar-link flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isOrders ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span>إدارة الطلبات</span>
+                </span>
+                @if (pendingOrdersCount > 0)
+                {
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-slate-950 leading-none">@pendingOrdersCount</span>
+                }
+            </a>
 
-                    <a asp-controller="Admin" asp-action="Categories" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isCategories ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isCategories ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
-                        <span>الأقسام</span>
-                    </a>
+            <a asp-controller="Admin" asp-action="Products" data-nav-group="products"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isProducts ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <span>كروت الفلاش كاردز</span>
+            </a>
 
-                    <a asp-controller="Admin" asp-action="Customers" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isCustomers ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isCustomers ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>العملاء</span>
-                    </a>
+            <a asp-controller="Admin" asp-action="Categories" data-nav-group="categories"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isCategories ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                <span>أقسام الكروت</span>
+            </a>
 
-                    <a asp-controller="Admin" asp-action="Reviews" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isReviews ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isReviews ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                        <span>التقييمات</span>
-                    </a>
+            <a asp-controller="Admin" asp-action="Customers" data-nav-group="customers"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isCustomers ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>العملاء والموبايل</span>
+            </a>
 
-                    <a asp-controller="Admin" asp-action="Settings" 
-                       class="px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 @(isSettings ? "bg-amber-50 text-[#8D6711] border border-amber-200/90 shadow-xs" : "text-slate-600 hover:text-slate-950 hover:bg-slate-100")">
-                        <svg class="w-4 h-4 @(isSettings ? "text-[#8D6711]" : "text-[#B88E23]")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>الإعدادات</span>
-                    </a>
-                </nav>
+            <a asp-controller="Admin" asp-action="Reviews" data-nav-group="reviews"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isReviews ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+                <span>التقييمات والمراجعات</span>
+            </a>
 
-                <!-- Admin Action Buttons (User badge, Storefront preview & Logout) -->
-                <div class="flex items-center gap-2.5">
-                    <!-- Admin User Badge -->
-                    <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200/80">
-                        <div class="w-6 h-6 rounded-full bg-[#290A2E] text-[#D4AF37] flex items-center justify-center text-[11px] font-black">
-                            @adminUser.Substring(0, Math.Min(1, adminUser.Length)).ToUpper()
-                        </div>
-                        <span class="font-mono">@adminUser</span>
-                    </div>
+            <a asp-controller="Admin" asp-action="Settings" data-nav-group="settings"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isSettings ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>إعدادات المتجر</span>
+            </a>
+        </nav>
 
-                    <a asp-controller="Catalog" asp-action="Index" target="_blank" 
-                       class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        <span>معاينة المتجر</span>
-                    </a>
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-white/10 space-y-2.5">
+            <div class="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+                <div class="w-8 h-8 rounded-full bg-[#D4AF37] text-[#18061A] flex items-center justify-center text-xs font-black shrink-0">
+                    @adminUser.Substring(0, Math.Min(1, adminUser.Length)).ToUpper()
+                </div>
+                <div class="min-w-0">
+                    <span class="block text-xs font-black text-white truncate">@adminUser</span>
+                    <span class="block text-[10px] text-slate-400">مدير النظام</span>
+                </div>
+            </div>
 
-                    <form asp-controller="Admin" asp-action="Logout" method="post" class="inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" 
-                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            <span>خروج</span>
-                        </button>
-                    </form>
+            <div class="grid grid-cols-2 gap-2">
+                <a asp-controller="Catalog" asp-action="Index" target="_blank"
+                   class="flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-100 text-xs font-bold transition">
+                    <span>المتجر ↗</span>
+                </a>
+                <form asp-controller="Admin" asp-action="Logout" method="post" hx-boost="false">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="w-full flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 text-xs font-bold transition">
+                        <span>خروج</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
 
-                    <!-- Mobile Menu Button -->
-                    <button type="button" @@click="mobileNavOpen = !mobileNavOpen" class="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    <!-- Main Content Area (Offset by Sidebar on Desktop) -->
+    <div class="lg:pr-68 min-h-screen flex flex-col">
+
+        <!-- Slim Responsive Top Bar -->
+        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                            @@click="sidebarOpen = true"
+                            class="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+                            aria-label="فتح القائمة">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                    <span class="text-sm sm:text-base font-black text-slate-800 truncate">@ViewData["Title"]</span>
                 </div>
 
+                <div class="flex items-center gap-2">
+                    <a asp-controller="Admin" asp-action="CreateProduct"
+                       hx-boost="true" hx-target="#admin-spa-content" hx-select="#admin-spa-content" hx-swap="innerHTML show:window:top" hx-indicator="#admin-spa-loader"
+                       class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#b89427] text-[#18061A] text-xs font-black transition shadow-xs">
+                        <span>+ باقة جديدة</span>
+                    </a>
+                </div>
             </div>
+        </header>
 
-            <!-- Mobile Navigation Dropdown -->
-            <div x-show="mobileNavOpen" @@click.away="mobileNavOpen = false" x-cloak class="md:hidden border-t border-slate-200 py-3 space-y-1">
-                <a asp-controller="Admin" asp-action="Dashboard" class="block px-3 py-2 rounded-lg text-sm font-bold @(isDashboard ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">لوحة المؤشرات</a>
-                <a asp-controller="Admin" asp-action="Orders" class="block px-3 py-2 rounded-lg text-sm font-bold @(isOrders ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">إدارة الطلبات</a>
-                <a asp-controller="Admin" asp-action="Products" class="block px-3 py-2 rounded-lg text-sm font-bold @(isProducts ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">كروت الفلاش كاردز</a>
-                <a asp-controller="Admin" asp-action="Categories" class="block px-3 py-2 rounded-lg text-sm font-bold @(isCategories ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">أقسام الكروت</a>
-                <a asp-controller="Admin" asp-action="Customers" class="block px-3 py-2 rounded-lg text-sm font-bold @(isCustomers ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">العملاء وحسابات الموبايل</a>
-                <a asp-controller="Admin" asp-action="Reviews" class="block px-3 py-2 rounded-lg text-sm font-bold @(isReviews ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">التقييمات والمراجعات</a>
-                <a asp-controller="Admin" asp-action="Settings" class="block px-3 py-2 rounded-lg text-sm font-bold @(isSettings ? "bg-amber-50 text-[#8D6711]" : "text-slate-700 hover:bg-slate-100")">إعدادات المتجر</a>
-                <a asp-controller="Catalog" asp-action="Index" target="_blank" class="block px-3 py-2 rounded-lg text-sm font-bold text-amber-700 hover:bg-amber-50">معاينة المتجر ↗</a>
-            </div>
+        <!-- SPA Swap Container -->
+        <main id="admin-spa-content"
+              role="main"
+              hx-boost="true"
+              hx-target="#admin-spa-content"
+              hx-select="#admin-spa-content"
+              hx-swap="innerHTML show:window:top"
+              hx-indicator="#admin-spa-loader"
+              class="flex-grow">
+            @RenderBody()
+        </main>
 
-        </div>
-    </header>
-
-    <!-- Main Admin Container -->
-    <main role="main" class="flex-grow">
-        @RenderBody()
-    </main>
+    </div>
 
     <!-- Toast Notification Container -->
     <partial name="_Toast" />
@@ -194,6 +256,34 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
     <script src="~/js/admin-voice-recorder.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener('htmx:afterSettle', function () {
+            // Update active sidebar link based on current URL
+            var path = window.location.pathname.toLowerCase();
+            var group = 'dashboard';
+            if (path.includes('/admin/orders') || path.includes('/admin/orderdetails')) group = 'orders';
+            else if (path.includes('/admin/products') || path.includes('/admin/createproduct') || path.includes('/admin/editproduct')) group = 'products';
+            else if (path.includes('/admin/categories') || path.includes('/admin/createcategory') || path.includes('/admin/editcategory')) group = 'categories';
+            else if (path.includes('/admin/customers')) group = 'customers';
+            else if (path.includes('/admin/reviews')) group = 'reviews';
+            else if (path.includes('/admin/settings')) group = 'settings';
+
+            document.querySelectorAll('#admin-sidebar-nav .sidebar-link').forEach(function (el) {
+                if (el.dataset.navGroup === group) {
+                    el.classList.add('is-active');
+                    el.classList.remove('text-slate-300');
+                } else {
+                    el.classList.remove('is-active');
+                    el.classList.add('text-slate-300');
+                }
+            });
+
+            // Close mobile sidebar drawer if open
+            var bodyData = document.body._x_dataStack && document.body._x_dataStack[0];
+            if (bodyData) bodyData.sidebarOpen = false;
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
