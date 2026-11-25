@@ -9,6 +9,7 @@ public interface ICustomerSessionService
     string CustomerName { get; }
     string CustomerEmail { get; }
     string CustomerPhone { get; }
+    string Token { get; }
     void Save(CustomerProfile profile);
     void Clear();
 }

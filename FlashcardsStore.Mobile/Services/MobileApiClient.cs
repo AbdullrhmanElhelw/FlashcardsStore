@@ -8,7 +8,7 @@ using FlashcardsStore.Mobile.Services.Abstractions;
 
 namespace FlashcardsStore.Mobile.Services;
 
-public sealed class MobileApiClient(HttpClient httpClient) : IMobileApiClient
+public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionService session) : IMobileApiClient
 {
     public const string DefaultApiBaseUrl = "https://card-store.runasp.net/";
     private const string ApiPrefix = "api/v1/";
@@ -179,6 +179,9 @@ public sealed class MobileApiClient(HttpClient httpClient) : IMobileApiClient
 
     private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        if (!string.IsNullOrWhiteSpace(session.Token))
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
+
         try
         {
             return await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
@@ -197,9 +200,12 @@ public sealed class MobileApiClient(HttpClient httpClient) : IMobileApiClient
         var message = TryReadError(body);
         if (string.IsNullOrWhiteSpace(message))
         {
-            message = response.StatusCode == HttpStatusCode.NotFound
-                ? "لم يتم العثور على البيانات المطلوبة"
-                : $"فشل الطلب ({(int)response.StatusCode})";
+            message = response.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized => "يرجى تسجيل الدخول للمتابعة",
+                HttpStatusCode.NotFound => "لم يتم العثور على البيانات المطلوبة",
+                _ => $"فشل الطلب ({(int)response.StatusCode})"
+            };
         }
 
         throw new MobileApiException(message);

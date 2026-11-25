@@ -9,12 +9,14 @@ public sealed class CustomerSessionService : ICustomerSessionService
     private const string NameKey = "customer_name";
     private const string EmailKey = "customer_email";
     private const string PhoneKey = "customer_phone";
+    private const string TokenKey = "customer_jwt_token";
 
-    public bool IsSignedIn => CustomerId > 0 && !string.IsNullOrWhiteSpace(CustomerName);
+    public bool IsSignedIn => CustomerId > 0 && !string.IsNullOrWhiteSpace(CustomerName) && !string.IsNullOrWhiteSpace(Token);
     public int CustomerId => Preferences.Default.Get(IdKey, 0);
     public string CustomerName => Preferences.Default.Get(NameKey, string.Empty);
     public string CustomerEmail => Preferences.Default.Get(EmailKey, string.Empty);
     public string CustomerPhone => Preferences.Default.Get(PhoneKey, string.Empty);
+    public string Token => Preferences.Default.Get(TokenKey, string.Empty);
 
     public void Save(CustomerProfile profile)
     {
@@ -22,6 +24,7 @@ public sealed class CustomerSessionService : ICustomerSessionService
         Preferences.Default.Set(NameKey, profile.FullName);
         Preferences.Default.Set(EmailKey, profile.Email);
         Preferences.Default.Set(PhoneKey, profile.PhoneNumber);
+        Preferences.Default.Set(TokenKey, profile.Token);
     }
 
     public void Clear()
@@ -30,5 +33,6 @@ public sealed class CustomerSessionService : ICustomerSessionService
         Preferences.Default.Remove(NameKey);
         Preferences.Default.Remove(EmailKey);
         Preferences.Default.Remove(PhoneKey);
+        Preferences.Default.Remove(TokenKey);
     }
 }

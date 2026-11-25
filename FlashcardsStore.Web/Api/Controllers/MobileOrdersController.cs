@@ -5,6 +5,8 @@ using FlashcardsStore.Application.DTOs.PaymentProof;
 using FlashcardsStore.Application.Interfaces.Services;
 using FlashcardsStore.Web.Api.Common;
 using FlashcardsStore.Web.Api.Contracts.Orders;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlashcardsStore.Web.Api.Controllers;
@@ -35,6 +37,7 @@ public sealed class MobileOrdersController : MobileApiControllerBase
         _proofValidator = proofValidator;
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("orders")]
     public async Task<IActionResult> CreateOrder([FromBody] MobileCreateOrderRequest request, CancellationToken ct)
     {
@@ -81,6 +84,7 @@ public sealed class MobileOrdersController : MobileApiControllerBase
             : Ok(tracking);
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("orders/{orderNumber}/payment-proof")]
     [RequestSizeLimit(MaxProofBytes + 1024 * 64)]
     public async Task<IActionResult> UploadProof(

@@ -4,4 +4,6 @@ public sealed record MobileCustomerProfile(
     int Id,
     string FullName,
     string Email,
-    string PhoneNumber);
+    string PhoneNumber,
+    string Token,
+    DateTime ExpiresAtUtc);

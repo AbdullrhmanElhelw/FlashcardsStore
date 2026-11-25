@@ -1,10 +1,15 @@
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using FlashcardsStore.Application;
 using FlashcardsStore.Infrastructure;
 using FlashcardsStore.Infrastructure.Persistence;
 using FlashcardsStore.Infrastructure.Persistence.Seed;
+using FlashcardsStore.Web.Api.Common;
+using FlashcardsStore.Web.Api.Services;
 using FlashcardsStore.Web.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +32,12 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = ".FlashcardsStore.Session";
 });
 
-// Configure Enterprise Cookie Authentication for Admin Area
+// Configure JWT Options & Token Service for Mobile API
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
+builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
+var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
+
+// Configure Enterprise Cookie Authentication (Admin) + JWT Bearer Authentication (Mobile API)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -40,6 +50,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidAudience = jwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+            ClockSkew = TimeSpan.FromMinutes(2)
+        };
     });
 
 builder.Services.AddAuthorization();

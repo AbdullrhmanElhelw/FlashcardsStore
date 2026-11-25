@@ -2,6 +2,8 @@ using FlashcardsStore.Application.DTOs.Reviews;
 using FlashcardsStore.Application.Interfaces.Services;
 using FlashcardsStore.Web.Api.Common;
 using FlashcardsStore.Web.Api.Contracts.Reviews;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlashcardsStore.Web.Api.Controllers;
@@ -24,6 +26,7 @@ public sealed class MobileReviewsController : MobileApiControllerBase
         return Ok(new MobileProductReviewsResponse(reviews, summary));
     }
 
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("products/{productId:int}/reviews")]
     public async Task<IActionResult> AddReview(int productId, [FromBody] CreateReviewDto request)
     {
