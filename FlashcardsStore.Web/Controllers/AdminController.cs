@@ -26,6 +26,7 @@ public class AdminController : Controller
     private readonly IReviewService _reviewService;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IStoreSettingsService _storeSettingsService;
+    private readonly ICustomerRepository _customerRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public AdminController(
@@ -38,6 +39,7 @@ public class AdminController : Controller
         IReviewService reviewService,
         IPasswordHasher passwordHasher,
         IStoreSettingsService storeSettingsService,
+        ICustomerRepository customerRepository,
         IUnitOfWork unitOfWork)
     {
         _orderService = orderService;
@@ -49,6 +51,7 @@ public class AdminController : Controller
         _reviewService = reviewService;
         _passwordHasher = passwordHasher;
         _storeSettingsService = storeSettingsService;
+        _customerRepository = customerRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -759,5 +762,15 @@ public class AdminController : Controller
 
         TempData["SuccessMessage"] = "تم حفظ وتحديث إعدادات المتجر وبيانات التواصل والدفع بنجاح! ✓";
         return RedirectToAction(nameof(Settings));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Customers(
+        string? search,
+        string? filter = "all",
+        CancellationToken cancellationToken = default)
+    {
+        var summary = await _customerRepository.GetAdminCustomersSummaryAsync(search, filter, cancellationToken);
+        return View(summary);
     }
 }
