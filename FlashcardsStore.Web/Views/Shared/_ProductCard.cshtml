@@ -12,14 +12,7 @@
     var categoryDisplay = Loc.GetLocalized(Model.CategoryNameAr, Model.CategoryName);
     var currency = Loc.Get("Currency");
 
-    var audienceDisplay = Model.TargetAudience;
-    if (!isRtl && !string.IsNullOrEmpty(audienceDisplay))
-    {
-        audienceDisplay = audienceDisplay
-            .Replace("(الأطفال من سن 4 إلى 7 سنوات)", "(Ages 4 to 7)")
-            .Replace("(سن 6 إلى 10 سنوات)", "(Ages 6 to 10)")
-            .Replace("(سن 7 إلى 13 سنة)", "(Ages 7 to 13)");
-    }
+    var audienceDisplay = Loc.TranslateTargetAudience(Model.TargetAudience);
 
     Func<string, string> translatePoint = pt => {
         if (isRtl) return pt;

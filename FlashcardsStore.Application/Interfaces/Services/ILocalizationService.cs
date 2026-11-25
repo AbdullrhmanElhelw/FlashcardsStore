@@ -13,4 +13,6 @@ public interface ILocalizationService
     string Get(string key);
     string Get(string key, params object[] args);
     string GetLocalized(string arText, string enText);
+    string TranslateTargetAudience(string? raw);
+    string TranslateGradeLevel(string? raw);
 }

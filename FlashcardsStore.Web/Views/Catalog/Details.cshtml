@@ -21,14 +21,8 @@
     var reviewSummary = ViewBag.ReviewSummary as FlashcardsStore.Application.DTOs.Reviews.ProductReviewSummaryDto 
         ?? new FlashcardsStore.Application.DTOs.Reviews.ProductReviewSummaryDto { ProductId = Model.Id, AverageRating = 5.0, TotalReviews = reviews.Count };
 
-    var audienceDisplay = Model.TargetAudience;
-    if (!isRtl && !string.IsNullOrEmpty(audienceDisplay))
-    {
-        audienceDisplay = audienceDisplay
-            .Replace("(الأطفال من سن 4 إلى 7 سنوات)", "(Ages 4 to 7)")
-            .Replace("(سن 6 إلى 10 سنوات)", "(Ages 6 to 10)")
-            .Replace("(سن 7 إلى 13 سنة)", "(Ages 7 to 13)");
-    }
+    var audienceDisplay = Loc.TranslateTargetAudience(Model.TargetAudience);
+    var gradeDisplay = Loc.TranslateGradeLevel(Model.GradeLevel);
 
     Func<string, string> translatePoint = pt => {
         if (isRtl) return pt;
@@ -173,7 +167,7 @@
             <!-- Badges -->
             <div class="flex flex-wrap items-center gap-2.5">
                 <span class="px-3.5 py-1 rounded-full bg-[#290A2E] text-[#D4AF37] border border-[#D4AF37]/30 text-xs font-bold">
-                    @categoryDisplay (@categorySub)
+                    @categoryDisplay
                 </span>
                 <span class="audience-tag bg-white border border-[#D4AF37]/25 px-3 py-1 rounded-full text-xs font-bold">
                     <svg class="w-3.5 h-3.5 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -182,7 +176,7 @@
                     <span>@audienceDisplay</span>
                 </span>
                 <span class="text-xs font-bold text-[#6B5D6E] bg-white border border-[#E6DFD5] px-3 py-1 rounded-full">
-                    @Loc.Get("DetailsLevelLabel", Model.GradeLevel)
+                    @Loc.Get("DetailsLevelLabel", gradeDisplay)
                 </span>
             </div>
 
