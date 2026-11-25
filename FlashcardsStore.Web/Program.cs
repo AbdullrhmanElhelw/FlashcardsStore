@@ -50,6 +50,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
+        options.Events.OnRedirectToLogin = ctx =>
+        {
+            if (ctx.Request.Headers["HX-Request"] == "true")
+            {
+                ctx.Response.Headers.Append("HX-Redirect", ctx.RedirectUri);
+                ctx.Response.StatusCode = StatusCodes.Status200OK;
+                return Task.CompletedTask;
+            }
+            ctx.Response.Redirect(ctx.RedirectUri);
+            return Task.CompletedTask;
+        };
     })
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {

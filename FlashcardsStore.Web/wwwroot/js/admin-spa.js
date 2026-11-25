@@ -40,6 +40,20 @@
         }
     }
 
+    document.addEventListener('htmx:beforeSwap', function (e) {
+        var target = e.detail && e.detail.target;
+        if (!target || target.id !== 'admin-spa-content') return;
+
+        var xhr = e.detail.xhr;
+        var responseUrl = (xhr && xhr.responseURL ? xhr.responseURL : '').toLowerCase();
+        var serverHtml = e.detail.serverResponse || '';
+
+        if (responseUrl.includes('/admin/login') || serverHtml.indexOf('id="admin-spa-content"') === -1) {
+            e.detail.shouldSwap = false;
+            window.location.href = (xhr && xhr.responseURL) ? xhr.responseURL : '/Admin/Login';
+        }
+    });
+
     document.addEventListener('htmx:afterSettle', syncAdminShellAfterSwap);
 
     document.addEventListener('change', function (e) {
