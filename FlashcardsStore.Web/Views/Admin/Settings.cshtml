@@ -70,7 +70,7 @@
     </div>
 
     <!-- Main Settings Form -->
-    <form asp-controller="AdminSettings" asp-action="Settings" method="post" class="space-y-8">
+    <form asp-controller="AdminSettings" asp-action="Settings" method="post" hx-boost="false" class="space-y-8">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
 
