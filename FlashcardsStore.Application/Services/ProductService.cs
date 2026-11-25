@@ -160,6 +160,8 @@ public class ProductService : IProductService
             AudioUrl = dto.AudioUrl,
             BackPreviewText = dto.BackPreviewText,
             BackKeyPoints = dto.BackKeyPoints,
+            BackKeyPointsEn = dto.BackKeyPointsEn,
+            SampleWords = dto.SampleWords,
             CategoryId = dto.CategoryId,
             IsActive = dto.IsActive,
             IsFeatured = dto.IsFeatured
@@ -202,6 +204,8 @@ public class ProductService : IProductService
         product.AudioUrl = dto.AudioUrl;
         product.BackPreviewText = dto.BackPreviewText;
         product.BackKeyPoints = dto.BackKeyPoints;
+        product.BackKeyPointsEn = dto.BackKeyPointsEn;
+        product.SampleWords = dto.SampleWords;
         product.CategoryId = dto.CategoryId;
         product.IsActive = dto.IsActive;
         product.IsFeatured = dto.IsFeatured;
@@ -258,9 +262,10 @@ public class ProductService : IProductService
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
+        BackKeyPointsEn = p.BackKeyPointsEn,
         CategoryName = p.Category?.Name ?? string.Empty,
         CategoryNameAr = p.Category?.NameAr ?? string.Empty,
-        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name, p.SampleWords)
     };
 
     private static ProductDto MapToDto(Product p) => new()
@@ -282,6 +287,8 @@ public class ProductService : IProductService
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
+        BackKeyPointsEn = p.BackKeyPointsEn,
+        SampleWords = p.SampleWords,
         CategoryId = p.CategoryId,
         CategoryName = p.Category?.Name ?? string.Empty,
         CategoryNameAr = p.Category?.NameAr ?? string.Empty,
@@ -307,9 +314,11 @@ public class ProductService : IProductService
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
         BackKeyPoints = p.BackKeyPoints,
+        BackKeyPointsEn = p.BackKeyPointsEn,
+        SampleWordsText = p.SampleWords,
         CategoryId = p.CategoryId,
         CategoryName = p.Category?.Name ?? string.Empty,
         CategoryNameAr = p.Category?.NameAr ?? string.Empty,
-        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name)
+        SampleWords = PronunciationWordExtractor.GetWordsForProduct(p.Slug, p.Name, p.BackPreviewText, p.Category?.Name, p.SampleWords)
     };
 }

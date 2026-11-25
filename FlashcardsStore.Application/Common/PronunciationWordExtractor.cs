@@ -91,8 +91,24 @@ public static class PronunciationWordExtractor
         }
     };
 
-    public static IReadOnlyList<PronunciationItem> GetWordsForProduct(string? slug, string? name, string? backPreviewText, string? categoryName = null)
+    public static IReadOnlyList<PronunciationItem> GetWordsForProduct(
+        string? slug,
+        string? name,
+        string? backPreviewText,
+        string? categoryName = null,
+        string? customSampleWords = null)
     {
+        // 1. Admin-configured custom sample words take highest priority
+        if (!string.IsNullOrWhiteSpace(customSampleWords))
+        {
+            var customList = ParseCustomSampleWords(customSampleWords);
+            if (customList.Count > 0)
+            {
+                return customList;
+            }
+        }
+
+        // 2. Curated pack lookup by slug
         if (!string.IsNullOrWhiteSpace(slug) && CuratedPackWords.TryGetValue(slug.Trim(), out var curated) && curated.Count > 0)
         {
             return curated;
@@ -144,22 +160,36 @@ public static class PronunciationWordExtractor
             }
         }
 
-        // Fallback words
-        if (result.Count == 0)
+        return result.Take(12).ToList();
+    }
+
+    private static List<PronunciationItem> ParseCustomSampleWords(string raw)
+    {
+        var items = new List<PronunciationItem>();
+        var entries = raw.Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var entry in entries)
         {
-            var fallbackWords = new[] { "Cat", "Sun", "Bed", "Ship", "Book" };
-            foreach (var w in fallbackWords)
+            var parts = entry.Split('|', 2, StringSplitOptions.TrimEntries);
+            var word = parts[0].Trim();
+            if (string.IsNullOrWhiteSpace(word)) continue;
+            if (items.Any(x => x.Word.Equals(word, StringComparison.OrdinalIgnoreCase))) continue;
+
+            var sentence = parts.Length > 1 && !string.IsNullOrWhiteSpace(parts[1])
+                ? parts[1].Trim()
+                : $"Practice saying: '{word}'";
+
+            items.Add(new PronunciationItem
             {
-                result.Add(new PronunciationItem
-                {
-                    Word = w,
-                    Phonetic = "Sample Card",
-                    IconEmoji = "🌟",
-                    ExampleSentence = $"Practice pronunciation of {w}."
-                });
-            }
+                Word = word,
+                Phonetic = "Card Word",
+                IconEmoji = "🔊",
+                ExampleSentence = sentence
+            });
+
+            if (items.Count >= 12) break;
         }
 
-        return result.Take(6).ToList();
+        return items;
     }
 }

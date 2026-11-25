@@ -425,6 +425,10 @@ namespace FlashcardsStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BackKeyPointsEn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BackPreviewText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -486,6 +490,10 @@ namespace FlashcardsStore.Infrastructure.Migrations
 
                     b.Property<int>("ReservedStockQuantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("SampleWords")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Slug")
                         .IsRequired()

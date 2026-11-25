@@ -20,6 +20,8 @@ public class Product : BaseEntity
     public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
+    public string BackKeyPointsEn { get; set; } = string.Empty;
+    public string SampleWords { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
     public bool IsActive { get; set; } = true;

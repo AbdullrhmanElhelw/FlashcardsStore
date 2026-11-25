@@ -31,11 +31,18 @@
         if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
         if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable lamination";
         if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Model.CardCount} Double-sided full color cards";
+        if (pt.Contains("كلمة") || pt.Contains("كلمات")) return $"{Model.CardCount} Illustrated words";
+        if (pt.Contains("تقسيم") || pt.Contains("أصوات") || pt.Contains("الأصوات")) return "Sound-group markers";
+        if (pt.Contains("رسمة") || pt.Contains("رسوم") || pt.Contains("صور")) return "Illustration on every card";
         if (pt.Contains("تمارين") || pt.Contains("جمل")) return "Speed reading sentence drills";
         if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
         if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
         return pt;
     };
+
+    var rawKeyPoints = (!isRtl && !string.IsNullOrWhiteSpace(Model.BackKeyPointsEn))
+        ? Model.BackKeyPointsEn
+        : Model.BackKeyPoints;
 
     ViewData["Title"] = primaryName + " - " + Loc.Get("BrandName");
     var whatsAppMsg = isRtl 
@@ -236,13 +243,14 @@
                 <div class="pt-2">
                     <h4 class="text-xs font-black text-[#8C7B8E] mb-2.5">@Loc.Get("DetailsSpecsTitle")</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        @foreach (var point in Model.BackKeyPoints.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                        @foreach (var point in (rawKeyPoints ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                         {
+                            var displayPoint = (!isRtl && !string.IsNullOrWhiteSpace(Model.BackKeyPointsEn)) ? point : translatePoint(point);
                             <div class="flex items-center gap-2 text-xs font-bold text-[#18061A] bg-[#FAF8F5] p-3 rounded-xl border border-[#D4AF37]/20">
                                 <svg class="w-4 h-4 text-[#D4AF37] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>@translatePoint(point)</span>
+                                <span>@displayPoint</span>
                             </div>
                         }
                     </div>

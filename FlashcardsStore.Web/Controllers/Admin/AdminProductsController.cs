@@ -152,6 +152,8 @@ public sealed class AdminProductsController : AdminControllerBase
             AudioUrl = product.AudioUrl,
             BackPreviewText = product.BackPreviewText,
             BackKeyPoints = product.BackKeyPoints,
+            BackKeyPointsEn = product.BackKeyPointsEn,
+            SampleWords = product.SampleWords,
             CategoryId = product.CategoryId,
             IsActive = product.IsActive,
             IsFeatured = product.IsFeatured
@@ -248,6 +250,8 @@ public sealed class AdminProductsController : AdminControllerBase
             AudioUrl = product.AudioUrl,
             BackPreviewText = product.BackPreviewText,
             BackKeyPoints = product.BackKeyPoints,
+            BackKeyPointsEn = product.BackKeyPointsEn,
+            SampleWords = product.SampleWords,
             CategoryId = product.CategoryId,
             IsActive = !product.IsActive,
             IsFeatured = product.IsFeatured

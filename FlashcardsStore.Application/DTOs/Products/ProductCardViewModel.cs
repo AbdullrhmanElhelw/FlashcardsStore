@@ -15,6 +15,7 @@ public class ProductCardViewModel
     public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
+    public string BackKeyPointsEn { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
     public string CategoryNameAr { get; set; } = string.Empty;
     public bool InStock => AvailableStockQuantity > 0;

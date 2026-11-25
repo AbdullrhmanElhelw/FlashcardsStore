@@ -18,6 +18,8 @@ public class ProductDetailDto
     public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
+    public string BackKeyPointsEn { get; set; } = string.Empty;
+    public string SampleWordsText { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public string CategoryNameAr { get; set; } = string.Empty;

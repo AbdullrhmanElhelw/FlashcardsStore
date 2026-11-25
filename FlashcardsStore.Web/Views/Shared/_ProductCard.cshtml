@@ -21,11 +21,18 @@
         if (pt.Contains("باركود") || pt.Contains("نطق") || pt.Contains("QR")) return "Audio pronunciation QR code";
         if (pt.Contains("ماء") || pt.Contains("تنظيف")) return "Waterproof & wipeable";
         if (pt.Contains("وجهين") || pt.Contains("بطاقة")) return $"{Model.CardCount} Double-sided cards";
+        if (pt.Contains("كلمة") || pt.Contains("كلمات")) return $"{Model.CardCount} Illustrated words";
+        if (pt.Contains("تقسيم") || pt.Contains("أصوات") || pt.Contains("الأصوات")) return "Sound-group markers";
+        if (pt.Contains("رسمة") || pt.Contains("رسوم") || pt.Contains("صور")) return "Illustration on every card";
         if (pt.Contains("تمارين") || pt.Contains("جمل")) return "Sentence reading drills";
         if (pt.Contains("مجموعتين") || pt.Contains("ألوان")) return "Color-coded flashcard groups";
         if (pt.Contains("ألعاب") || pt.Contains("أنشطة")) return "Interactive games & activities";
         return pt;
     };
+
+    var rawKeyPoints = (!isRtl && !string.IsNullOrWhiteSpace(Model.BackKeyPointsEn))
+        ? Model.BackKeyPointsEn
+        : Model.BackKeyPoints;
 }
 
 <div class="flip-card-scene">
@@ -211,13 +218,14 @@
 
                     <!-- Key Features Points -->
                     <div class="space-y-1 my-1">
-                        @foreach (var point in (Model.BackKeyPoints ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(3))
+                        @foreach (var point in (rawKeyPoints ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(3))
                         {
+                            var displayPoint = (!isRtl && !string.IsNullOrWhiteSpace(Model.BackKeyPointsEn)) ? point : translatePoint(point);
                             <div class="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#FBF6E5]/90 truncate">
                                 <svg class="w-3 h-3 text-[#D4AF37] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="truncate">@translatePoint(point)</span>
+                                <span class="truncate">@displayPoint</span>
                             </div>
                         }
                     </div>
