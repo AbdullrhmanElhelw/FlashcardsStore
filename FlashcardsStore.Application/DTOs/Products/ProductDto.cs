@@ -16,6 +16,9 @@ public class ProductDto
     public int ReservedStockQuantity { get; set; }
     public int AvailableStockQuantity { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
+    public string PrimaryImageUrl => (ImageUrl ?? string.Empty)
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
     public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
     public string BackKeyPoints { get; set; } = string.Empty;
