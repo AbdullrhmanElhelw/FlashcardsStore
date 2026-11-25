@@ -380,5 +380,7 @@
     "ToastAddedToCart":  "تمت إضافة {0} إلى السلة",
     "ToastRemovedFromCart":  "تم حذف المنتج من السلة",
     "ToastSelectProofFile":  "يرجى اختيار ملف الإيصال أو لقطة الشاشة",
-    "ToastProofUploaded":  "تم رفع إيصال التحويل بنجاح! تم حجز طلبك وجارٍ التحقق من قبل المعلمة."
+    "ToastProofUploaded":  "تم رفع إيصال التحويل بنجاح! تم حجز طلبك وجارٍ التحقق من قبل المعلمة.",
+    "DownloadAndroidApp":  "تحميل تطبيق الأندرويد (APK)",
+    "DownloadAppShort":  "تطبيق الأندرويد"
 }

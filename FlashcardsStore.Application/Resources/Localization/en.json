@@ -380,5 +380,7 @@
     "ToastAddedToCart":  "{0} added to cart",
     "ToastRemovedFromCart":  "Item removed from cart",
     "ToastSelectProofFile":  "Please select a receipt or screenshot file",
-    "ToastProofUploaded":  "Payment receipt uploaded successfully! Your order is reserved and under review."
+    "ToastProofUploaded":  "Payment receipt uploaded successfully! Your order is reserved and under review.",
+    "DownloadAndroidApp":  "Download Android App (APK)",
+    "DownloadAppShort":  "Android App"
 }
