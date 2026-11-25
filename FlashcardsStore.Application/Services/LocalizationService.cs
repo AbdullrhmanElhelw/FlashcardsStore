@@ -191,7 +191,7 @@ public class LocalizationService : ILocalizationService
         { "PillarSensoryAudioDesc", ("بطاقة ملموسة بالأيدي، رسومات جذابة بالأعين، وباركود صوتي ذكي (QR Code) على كل باقة يمكن مسحه بالموبايل للاستماع إلى النطق الصحيح بأصوات متحدثين أصليين (Native Speakers).", "Tactile physical cards, vibrant visuals, and smart QR codes for instant mobile scanning to hear crystal-clear native speaker audio pronunciation.") },
 
         // Home Section 3 - Quality & Specifications
-        { "SpecsEyebrow", ("PREMIUM PHYSICAL SPECIFICATIONS", "PREMIUM PHYSICAL SPECIFICATIONS") },
+        { "SpecsEyebrow", ("مواصفات خامات وتصنيع فائقة الجودة", "PREMIUM PHYSICAL SPECIFICATIONS") },
         { "SpecsTitle", ("مواصفات وتصنيع صُمم ليدوم بين أيدي أطفالك", "Built to Last in Little Hands") },
         { "SpecsSubtitle", ("نعلم أن الأطفال يتعاملون مع البطاقات بحماس وشغف، لذلك لم نتنازل عن أعلى معايير الطباعة والمتانة في مصر.", "We know kids explore with excitement, so we never compromised on print quality, thickness, and child-safe durability.") },
         { "SpecPaperTitle", ("كوشيه مقوى 350 جم", "350gsm Heavyweight Cardstock") },
