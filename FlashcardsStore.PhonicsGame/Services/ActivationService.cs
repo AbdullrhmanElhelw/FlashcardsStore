@@ -1,10 +1,11 @@
 using System.Net.Http.Json;
 using FlashcardsStore.PhonicsGame.Models;
+using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
 /// <summary>Handles online activation codes and local offline activation persistence.</summary>
-public sealed class ActivationService
+public sealed class ActivationService : IActivationService
 {
     private const string KeyActivated = "phonics_is_activated";
     private const string KeyCode = "phonics_activation_code";
@@ -33,16 +34,6 @@ public sealed class ActivationService
         return id;
     }
 
-    private sealed record ApiResponse(
-        bool IsActivated,
-        string? Code,
-        string? BundleName,
-        int MaxDevices,
-        int UsedDevices,
-        int RemainingDevices,
-        string? MessageAr,
-        string? MessageEn);
-
     public async Task<ActivationResult> ActivateAsync(string rawCode, CancellationToken ct = default)
     {
         var code = (rawCode ?? string.Empty).Trim().ToUpperInvariant();
@@ -59,7 +50,7 @@ public sealed class ActivationService
             };
 
             using var response = await _http.PostAsJsonAsync("api/phonics/activate", payload, ct);
-            var body = await response.Content.ReadFromJsonAsync<ApiResponse>(cancellationToken: ct);
+            var body = await response.Content.ReadFromJsonAsync<PhonicsActivateApiResponse>(cancellationToken: ct);
 
             if (response.IsSuccessStatusCode && body is { IsActivated: true })
             {

@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>ألعاب فونكس - خلود النادي</title>
     <base href="/" />
+    <script src="lib/tailwind/tailwind.min.js"></script>
     <link rel="stylesheet" href="css/tokens.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/game.css" />
+    <link rel="stylesheet" href="css/components/topbar.css" />
+    <link rel="stylesheet" href="css/components/modal.css" />
+    <link rel="stylesheet" href="css/pages/splash.css" />
+    <link rel="stylesheet" href="css/pages/onboarding.css" />
+    <link rel="stylesheet" href="css/pages/home.css" />
+    <link rel="stylesheet" href="css/pages/arena.css" />
 </head>
 <body>
     <div id="app">
@@ -21,6 +26,9 @@
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
-    <script src="js/game.js"></script>
+    <script src="lib/confetti/confetti.browser.min.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/drag.js"></script>
 </body>
 </html>

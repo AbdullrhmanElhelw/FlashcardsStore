@@ -1,7 +1,9 @@
+using FlashcardsStore.PhonicsGame.Services.Abstractions;
+
 namespace FlashcardsStore.PhonicsGame.Services;
 
 /// <summary>Offline-first English Text-to-Speech helper for phonics letters and words.</summary>
-public sealed class SpeechService
+public sealed class SpeechService : ISpeechService
 {
     private CancellationTokenSource? _cts;
     private Locale? _englishLocale;
@@ -47,8 +49,5 @@ public sealed class SpeechService
     }
 
     public Task SpeakLetterAsync(char letter)
-    {
-        // Pronounce letter clearly
-        return SpeakAsync(letter.ToString().ToLowerInvariant(), pitch: 1.15f);
-    }
+        => SpeakAsync(letter.ToString().ToLowerInvariant(), pitch: 1.15f);
 }

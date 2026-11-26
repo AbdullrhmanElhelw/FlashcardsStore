@@ -7,9 +7,3 @@ public enum AppScreen
     Home,
     Playing
 }
-
-public enum GameMode
-{
-    WordBuilder,
-    SoundMatch
-}

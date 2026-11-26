@@ -1,0 +1,243 @@
+.shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 32px;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.hero-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF8EB 100%);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 22px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(43, 7, 28, 0.06);
+}
+
+.hero-greeting {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--plum);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 8px;
+}
+
+.hero-chip {
+    background: #fff;
+    border: 1.5px solid #F1E5C9;
+    border-radius: 14px;
+    padding: 6px 10px;
+    text-align: center;
+    min-width: 64px;
+}
+
+.hero-chip-val {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--plum);
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.hero-chip-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.mode-tab {
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 12px 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #E2E8F0;
+    transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.12s ease;
+}
+
+.mode-tab:active {
+    transform: translateY(3px);
+}
+
+.mode-tab.active {
+    border-color: var(--plum);
+    background: linear-gradient(180deg, #FFFDF8 0%, #FEF3C7 100%);
+    box-shadow: 0 5px 0 var(--plum);
+}
+
+.mode-tab-icon {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 5px;
+    color: var(--plum);
+}
+
+.mode-tab-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--plum);
+}
+
+.mode-tab-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.stages-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.stage-card {
+    border-radius: 24px;
+    padding: 16px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14), inset 0 -4px 0 rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.14s ease;
+}
+
+.stage-card::after {
+    content: "";
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    top: -35px;
+    left: -25px;
+    pointer-events: none;
+}
+
+.stage-card:active {
+    transform: scale(0.98);
+}
+
+.stage-card.locked {
+    filter: saturate(0.78);
+    opacity: 0.94;
+}
+
+.stage-icon-bubble {
+    width: 62px;
+    height: 62px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    flex-shrink: 0;
+}
+
+.stage-icon-bubble svg {
+    width: 100%;
+    height: 100%;
+}
+
+.stage-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.stage-title {
+    font-size: 15.5px;
+    font-weight: 900;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.stage-en-pill {
+    display: inline-block;
+    direction: ltr;
+    background: rgba(0, 0, 0, 0.18);
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.stage-sub {
+    font-size: 11.5px;
+    opacity: 0.95;
+    font-weight: 600;
+}
+
+.stage-progress-bar {
+    margin-top: 8px;
+    height: 7px;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.stage-progress-fill {
+    height: 100%;
+    background: #FDE047;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.stage-action-badge {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--plum);
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stage-card.locked .stage-action-badge {
+    background: rgba(15, 23, 42, 0.32);
+    color: #fff;
+    box-shadow: none;
+}

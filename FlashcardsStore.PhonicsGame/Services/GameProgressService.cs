@@ -1,7 +1,9 @@
+using FlashcardsStore.PhonicsGame.Services.Abstractions;
+
 namespace FlashcardsStore.PhonicsGame.Services;
 
 /// <summary>Persists child stars, streak, and completed words locally.</summary>
-public sealed class GameProgressService
+public sealed class GameProgressService : IGameProgressService
 {
     private const string KeyStars = "phonics_total_stars";
     private const string KeyBestStreak = "phonics_best_streak";

@@ -1,5 +1,4 @@
-using FlashcardsStore.PhonicsGame.Services;
-using FlashcardsStore.PhonicsGame.ViewModels;
+using FlashcardsStore.PhonicsGame.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FlashcardsStore.PhonicsGame;
@@ -23,17 +22,7 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        builder.Services.AddSingleton(new HttpClient
-        {
-            BaseAddress = new Uri("https://card-store.runasp.net/"),
-            Timeout = TimeSpan.FromSeconds(20)
-        });
-
-        builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
-        builder.Services.AddSingleton<SpeechService>();
-        builder.Services.AddSingleton<ActivationService>();
-        builder.Services.AddSingleton<GameProgressService>();
-        builder.Services.AddSingleton<PhonicsGameViewModel>();
+        builder.Services.AddPhonicsGameServices();
 
         return builder.Build();
     }

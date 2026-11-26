@@ -1,6 +1,6 @@
 using FlashcardsStore.PhonicsGame.Data;
 using FlashcardsStore.PhonicsGame.Models;
-using FlashcardsStore.PhonicsGame.Services;
+using FlashcardsStore.PhonicsGame.Services.Abstractions;
 using Microsoft.JSInterop;
 
 namespace FlashcardsStore.PhonicsGame.ViewModels;
@@ -10,9 +10,9 @@ public sealed class PhonicsGameViewModel : IDisposable
 {
     private const string KeyOnboardingDone = "phonics_onboarding_done";
     private readonly Random _rng = new();
-    private readonly SpeechService _speech;
-    private readonly ActivationService _activation;
-    private readonly GameProgressService _progress;
+    private readonly ISpeechService _speech;
+    private readonly IActivationService _activation;
+    private readonly IGameProgressService _progress;
     private readonly ILocalizationService _loc;
     private IJSRuntime? _js;
     private DotNetObjectReference<PhonicsGameViewModel>? _dotNetRef;
@@ -20,9 +20,9 @@ public sealed class PhonicsGameViewModel : IDisposable
     public event Action? StateChanged;
 
     public PhonicsGameViewModel(
-        SpeechService speech,
-        ActivationService activation,
-        GameProgressService progress,
+        ISpeechService speech,
+        IActivationService activation,
+        IGameProgressService progress,
         ILocalizationService loc)
     {
         _speech = speech;

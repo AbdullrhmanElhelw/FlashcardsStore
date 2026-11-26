@@ -1,20 +1,15 @@
+using System.Reflection;
+using System.Text.Json;
+using FlashcardsStore.PhonicsGame.Services.Abstractions;
+
 namespace FlashcardsStore.PhonicsGame.Services;
 
-public interface ILocalizationService
-{
-    string CurrentLang { get; }
-    bool IsArabic { get; }
-    string Direction { get; }
-    event Action? Changed;
-    string T(string key);
-    void ToggleLanguage();
-    void SetLanguage(string lang);
-}
-
-/// <summary>Bilingual AR/EN localization service persisted across app launches.</summary>
+/// <summary>Loads AR/EN translations from embedded JSON resources and persists language preference.</summary>
 public sealed class LocalizationService : ILocalizationService
 {
     private const string KeyLang = "phonics_lang";
+    private readonly Dictionary<string, string> _ar;
+    private readonly Dictionary<string, string> _en;
     private string _currentLang;
 
     public event Action? Changed;
@@ -22,6 +17,8 @@ public sealed class LocalizationService : ILocalizationService
     public LocalizationService()
     {
         _currentLang = Preferences.Default.Get(KeyLang, "ar");
+        _ar = LoadJson("ar.json");
+        _en = LoadJson("en.json");
     }
 
     public string CurrentLang => _currentLang;
@@ -41,58 +38,24 @@ public sealed class LocalizationService : ILocalizationService
 
     public string T(string key)
     {
-        if (Strings.TryGetValue(key, out var pair))
-            return IsArabic ? pair.Ar : pair.En;
-        return key;
+        var map = IsArabic ? _ar : _en;
+        return map.TryGetValue(key, out var val) ? val : key;
     }
 
-    private static readonly Dictionary<string, (string Ar, string En)> Strings = new()
+    private static Dictionary<string, string> LoadJson(string fileName)
     {
-        ["AppTitle"] = ("ألعاب الفونكس", "Phonics Games"),
-        ["AcademyName"] = ("أكاديمية خلود النادي", "Kholoud Elnady Academy"),
-        ["SplashSubtitle"] = ("تعلم القراءة والنطق باللعب", "Learn Reading & Phonics Through Play"),
-        ["SplashLoading"] = ("جاري تجهيز الألعاب...", "Preparing your games..."),
+        var asm = Assembly.GetExecutingAssembly();
+        var resourceName = asm.GetManifestResourceNames()
+            .FirstOrDefault(n => n.EndsWith($".{fileName}", StringComparison.OrdinalIgnoreCase));
 
-        ["Skip"] = ("تخطي", "Skip"),
-        ["Next"] = ("التالي", "Next"),
-        ["StartPlaying"] = ("ابدأ اللعب الآن", "Start Playing"),
-        ["Onb1Title"] = ("ركّب الكلمات باللمس والسحب", "Build Words with Drag & Drop"),
-        ["Onb1Desc"] = ("اسحب الحروف إلى أماكنها الصحيحة وتعلّم نطق كل حرف وصوته بسهولة.", "Drag letters into their slots and hear every letter sound clearly."),
-        ["Onb2Title"] = ("طابق الصوت بالصورة", "Match Sound to Picture"),
-        ["Onb2Desc"] = ("استمع لنطق الكلمة بالسرعة العادية أو البطيئة واختر الصورة الصحيحة.", "Listen at normal or slow speed and tap the matching picture."),
-        ["Onb3Title"] = ("اجمع النجوم وافتح المراحل", "Collect Stars & Unlock Stages"),
-        ["Onb3Desc"] = ("المرحلتان الأولى والثانية مجاناً، وافتح باقي المراحل بكود الباقة.", "First 2 stages are free; unlock all stages with your bundle code."),
+        if (resourceName is null)
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        ["ActivateCode"] = ("تفعيل", "Activate"),
-        ["ActivatedBadge"] = ("مفعّل", "Unlocked"),
-        ["HeroGreeting"] = ("أهلاً يا بطل!", "Hello, Champion!"),
-        ["HeroSub"] = ("اختر طريقة اللعب وابدأ التحدي", "Pick a game mode and start the challenge"),
-        ["WordsMastered"] = ("كلمة", "Words"),
-        ["BestStreak"] = ("أعلى سلسلة", "Best Streak"),
+        using var stream = asm.GetManifestResourceStream(resourceName);
+        if (stream is null)
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        ["ModeBuilderTitle"] = ("تركيب الكلمة", "Word Builder"),
-        ["ModeBuilderSub"] = ("اسحب الحروف وركّبها", "Drag & drop letters"),
-        ["ModeMatchTitle"] = ("طابق الصوت", "Sound Match"),
-        ["ModeMatchSub"] = ("اسمع واختر الصورة", "Listen & pick picture"),
-
-        ["PlayBtn"] = ("العب", "Play"),
-        ["LockedBtn"] = ("مقفول", "Locked"),
-        ["BackToStages"] = ("المراحل", "Stages"),
-        ["ListenWord"] = ("اسمع الكلمة", "Listen"),
-        ["SlowSpeak"] = ("نطق بطيء", "Slow"),
-        ["MatchPrompt"] = ("استمع للكلمة واختر الصورة الصحيحة", "Listen and choose the right picture"),
-        ["GreatJob"] = ("ممتاز!", "Great Job!"),
-        ["OneStarEarned"] = ("+1 نجمة ذهبية", "+1 Gold Star"),
-        ["NextWord"] = ("التالي", "Next"),
-        ["StageCompleteTitle"] = ("أحسنت يا بطل!", "Well Done, Champion!"),
-        ["StageCompleteDesc"] = ("أتممت المرحلة بنجاح وجمعت نجوماً جديدة.", "You completed this stage and earned new stars."),
-        ["ReturnHome"] = ("العودة للمراحل", "Back to Stages"),
-
-        ["ModalTitle"] = ("تفعيل جميع المراحل", "Unlock All Stages"),
-        ["ModalDesc"] = ("أدخل كود التفعيل المرفق مع باقة الفلاش كاردز أو الاشتراك لفتح المراحل من 3 إلى 6.", "Enter the activation code from your flashcard bundle or subscription to unlock stages 3 to 6."),
-        ["ModalBtn"] = ("تفعيل الكود الآن", "Activate Code"),
-        ["ModalVerifying"] = ("جاري التحقق...", "Verifying..."),
-        ["ModalWhatsApp"] = ("اطلب كود تفعيل عبر واتساب", "Get Activation Code on WhatsApp"),
-        ["Close"] = ("إغلاق", "Close")
-    };
+        return JsonSerializer.Deserialize<Dictionary<string, string>>(stream)
+            ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    }
 }
