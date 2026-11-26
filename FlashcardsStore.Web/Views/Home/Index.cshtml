@@ -5,7 +5,16 @@
     ViewData["Title"] = Loc.Get("BrandSubtitle") + " - " + Loc.Get("BrandName");
     var categories = ViewBag.Categories as IReadOnlyList<CategoryDto> ?? new List<CategoryDto>();
     var featured = ViewBag.FeaturedProducts as IReadOnlyList<ProductCardViewModel> ?? Model ?? Array.Empty<ProductCardViewModel>();
-    var heroProduct = featured.FirstOrDefault();
+    var heroSlides = featured
+        .SelectMany(p =>
+        {
+            var imgs = (p.ImageUrl ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .DefaultIfEmpty("/images/cards/card-phonics-1.svg");
+            return imgs.Take(2).Select(img => (Product: p, Image: img));
+        })
+        .Take(8)
+        .ToList();
     var isRtl = Loc.IsRtl;
     var nextArrow = isRtl ? "←" : "→";
     var homeWhatsAppUrl = SettingsService.GetWhatsAppLink(isRtl ? "مرحباً مس خلود، أود الاستفسار عن بطاقات الفلاش كاردز" : "Hello Miss Kholoud, I would like to inquire about flashcards");
@@ -103,69 +112,115 @@
                     <div class="relative">
                         <div class="absolute -top-3 -left-3 w-full h-full rounded-[28px] bg-amber-100/60 border border-amber-300/40 transform -rotate-3 transition-transform"></div>
                         
-                        <div class="relative bg-white rounded-[28px] p-5 sm:p-6 border-2 border-amber-200/90 shadow-2xl shadow-slate-900/10 space-y-4 text-start">
-                            @if (heroProduct != null)
+                        <div class="relative bg-white rounded-[28px] p-5 sm:p-6 border-2 border-amber-200/90 shadow-2xl shadow-slate-900/10 space-y-4 text-start"
+                             @if (heroSlides.Count > 0)
+                             {
+                                 @:x-data="{ active: 0, total: @heroSlides.Count, timer: null, start() { this.stop(); if (this.total > 1) this.timer = setInterval(() => this.active = (this.active + 1) % this.total, 4000); }, stop() { if (this.timer) { clearInterval(this.timer); this.timer = null; } }, prev() { this.active = (this.active - 1 + this.total) % this.total; }, next() { this.active = (this.active + 1) % this.total; } }"
+                                 @:x-init="start()"
+                                 @:@@mouseenter="stop()"
+                                 @:@@mouseleave="start()"
+                             }>
+                            @if (heroSlides.Count > 0)
                             {
-                                var heroImg = (heroProduct.ImageUrl ?? "")
-                                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                                    .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
-                                var heroName = Loc.GetLocalized(heroProduct.NameAr, heroProduct.Name);
-                                var heroCat = Loc.GetLocalized(heroProduct.CategoryNameAr, heroProduct.CategoryName);
-                                var heroAudience = Loc.TranslateTargetAudience(heroProduct.TargetAudience);
+                                @for (var idx = 0; idx < heroSlides.Count; idx++)
+                                {
+                                    var slide = heroSlides[idx];
+                                    var sProd = slide.Product;
+                                    var sImg = slide.Image;
+                                    var sName = Loc.GetLocalized(sProd.NameAr, sProd.Name);
+                                    var sCat = Loc.GetLocalized(sProd.CategoryNameAr, sProd.CategoryName);
+                                    var sAudience = Loc.TranslateTargetAudience(sProd.TargetAudience);
 
-                                <!-- Card Header -->
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
-                                    <div class="flex items-center gap-2 min-w-0">
-                                        <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                                        <span class="text-xs font-black text-slate-900 tracking-wide truncate">@heroCat</span>
+                                    <div x-show="active === @idx"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 scale-[0.98]"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         style="@(idx == 0 ? "" : "display:none;")"
+                                         class="space-y-4">
+
+                                        <!-- Card Header -->
+                                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                                <span class="text-xs font-black text-slate-900 tracking-wide truncate">@sCat</span>
+                                            </div>
+                                            <span class="px-2.5 py-1 rounded-full bg-amber-50 text-[#8D6711] font-black text-[11px] border border-amber-200 shrink-0">
+                                                @Loc.Get("CardsCountLabel", sProd.CardCount)
+                                            </span>
+                                        </div>
+
+                                        <!-- Product Image + Carousel Arrows -->
+                                        <div class="relative bg-gradient-to-br from-[#FAF8F5] to-[#F3ECE0] rounded-2xl p-4 border border-amber-200/60 overflow-hidden group">
+                                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@sProd.Slug" class="block">
+                                                <img src="@sImg" alt="@sName"
+                                                     class="w-full h-52 sm:h-56 object-contain mx-auto transition-transform duration-500 group-hover:scale-105" />
+                                            </a>
+
+                                            @if (heroSlides.Count > 1)
+                                            {
+                                                <button type="button" @@click="prev()"
+                                                        class="absolute top-1/2 -translate-y-1/2 @(isRtl ? "right-2" : "left-2") w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 shadow-md border border-amber-200 flex items-center justify-center font-black text-sm cursor-pointer transition">
+                                                    @(isRtl ? "›" : "‹")
+                                                </button>
+                                                <button type="button" @@click="next()"
+                                                        class="absolute top-1/2 -translate-y-1/2 @(isRtl ? "left-2" : "right-2") w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 shadow-md border border-amber-200 flex items-center justify-center font-black text-sm cursor-pointer transition">
+                                                    @(isRtl ? "‹" : "›")
+                                                </button>
+                                            }
+                                        </div>
+
+                                        <!-- Product Title, Audience & Price -->
+                                        <div class="space-y-1.5">
+                                            <div class="flex items-center justify-between gap-2 text-[11px] font-bold text-slate-500">
+                                                <span class="truncate">@sAudience</span>
+                                                <span class="text-[#8D6711] font-black text-base shrink-0">
+                                                    @sProd.Price.ToString("F0") <small class="text-xs">@Loc.Get("Currency")</small>
+                                                </span>
+                                            </div>
+                                            <h3 class="text-base sm:text-lg font-black text-slate-900 leading-snug line-clamp-2">
+                                                <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@sProd.Slug" class="hover:text-[#8D6711] transition-colors">
+                                                    @sName
+                                                </a>
+                                            </h3>
+                                        </div>
+
+                                        <!-- Quick Actions -->
+                                        <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5">
+                                            @if (sProd.InStock)
+                                            {
+                                                <button type="button"
+                                                        hx-post="/Cart/AddToCart?productId=@sProd.Id&quantity=1"
+                                                        hx-target="#cart-drawer-container"
+                                                        hx-swap="innerHTML"
+                                                        class="btn-gold-primary flex-1 py-2.5 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                                                    <svg class="w-4 h-4 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                                    </svg>
+                                                    <span>@Loc.Get("AddToCart")</span>
+                                                </button>
+                                            }
+                                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@sProd.Slug"
+                                               class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition text-center">
+                                                @Loc.Get("Details")
+                                            </a>
+                                        </div>
                                     </div>
-                                    <span class="px-2.5 py-1 rounded-full bg-amber-50 text-[#8D6711] font-black text-[11px] border border-amber-200 shrink-0">
-                                        @Loc.Get("CardsCountLabel", heroProduct.CardCount)
-                                    </span>
-                                </div>
+                                }
 
-                                <!-- Real Featured Product Artwork -->
-                                <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@heroProduct.Slug"
-                                   class="block bg-gradient-to-br from-[#FAF8F5] to-[#F3ECE0] rounded-2xl p-4 border border-amber-200/60 overflow-hidden group">
-                                    <img src="@heroImg" alt="@heroName"
-                                         class="w-full h-52 sm:h-56 object-contain mx-auto transition-transform duration-500 group-hover:scale-105" />
-                                </a>
-
-                                <!-- Real Product Title, Audience & Price -->
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between gap-2 text-[11px] font-bold text-slate-500">
-                                        <span class="truncate">@heroAudience</span>
-                                        <span class="text-[#8D6711] font-black text-base shrink-0">
-                                            @heroProduct.Price.ToString("F0") <small class="text-xs">@Loc.Get("Currency")</small>
-                                        </span>
+                                @if (heroSlides.Count > 1)
+                                {
+                                    <!-- Carousel Dot Indicators -->
+                                    <div class="flex items-center justify-center gap-1.5 pt-1">
+                                        @for (var d = 0; d < heroSlides.Count; d++)
+                                        {
+                                            <button type="button"
+                                                    @@click="active = @d"
+                                                    :class="active === @d ? 'w-6 bg-[#D4AF37]' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                                    class="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                                                    aria-label="Slide @(d + 1)"></button>
+                                        }
                                     </div>
-                                    <h3 class="text-base sm:text-lg font-black text-slate-900 leading-snug line-clamp-2">
-                                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@heroProduct.Slug" class="hover:text-[#8D6711] transition-colors">
-                                            @heroName
-                                        </a>
-                                    </h3>
-                                </div>
-
-                                <!-- Quick Actions -->
-                                <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5">
-                                    @if (heroProduct.InStock)
-                                    {
-                                        <button type="button"
-                                                hx-post="/Cart/AddToCart?productId=@heroProduct.Id&quantity=1"
-                                                hx-target="#cart-drawer-container"
-                                                hx-swap="innerHTML"
-                                                class="btn-gold-primary flex-1 py-2.5 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow-sm">
-                                            <svg class="w-4 h-4 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                            </svg>
-                                            <span>@Loc.Get("AddToCart")</span>
-                                        </button>
-                                    }
-                                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@heroProduct.Slug"
-                                       class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition text-center">
-                                        @Loc.Get("Details")
-                                    </a>
-                                </div>
+                                }
                             }
                             else
                             {
