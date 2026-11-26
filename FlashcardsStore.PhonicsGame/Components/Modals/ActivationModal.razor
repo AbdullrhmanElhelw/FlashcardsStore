@@ -1,0 +1,40 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+@if (Vm.ShowActivationModal)
+{
+    <div class="modal-backdrop" @onclick="Vm.CloseActivationModal">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="modal-icon-circle">
+                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Key)</span>
+            </div>
+            <h3 style="margin: 6px 0; color: var(--plum);">@Loc.T("ModalTitle")</h3>
+            <p style="font-size: 13px; color: var(--muted); margin: 0 0 8px;">@Loc.T("ModalDesc")</p>
+
+            <input class="code-input"
+                   placeholder="KHO-XXXX-XXXX"
+                   @bind="Vm.ActivationCodeInput"
+                   @bind:event="oninput" />
+
+            @if (!string.IsNullOrWhiteSpace(Vm.ActivationFeedback))
+            {
+                <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; color: @(Vm.ActivationSuccess ? "#059669" : "#E11D48");">
+                    @Vm.ActivationFeedback
+                </div>
+            }
+
+            <button class="btn-primary" disabled="@Vm.IsActivating" @onclick="Vm.SubmitActivationAsync">
+                @(Vm.IsActivating ? Loc.T("ModalVerifying") : Loc.T("ModalBtn"))
+            </button>
+
+            <a class="btn-whatsapp"
+               href="https://wa.me/201099887766?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%AD%D8%B5%D9%88%D9%84%20%D8%B9%D9%84%D9%89%20%D9%83%D9%88%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A3%D9%84%D8%B9%D8%A7%D8%A8%20%D8%A7%D9%84%D9%81%D9%88%D9%86%D9%83%D8%B3"
+               target="_blank">
+                <span class="icon-svg" style="width:18px;height:18px;">@((MarkupString)UiIcons.Chat)</span>
+                <span>@Loc.T("ModalWhatsApp")</span>
+            </a>
+
+            <button class="btn-close-link" @onclick="Vm.CloseActivationModal">@Loc.T("Close")</button>
+        </div>
+    </div>
+}

@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using FlashcardsStore.PhonicsGame.Models;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
@@ -32,8 +33,6 @@ public sealed class ActivationService
         return id;
     }
 
-    public sealed record ActivationResult(bool Success, string MessageAr, string? BundleName = null);
-
     private sealed record ApiResponse(
         bool IsActivated,
         string? Code,
@@ -48,7 +47,7 @@ public sealed class ActivationService
     {
         var code = (rawCode ?? string.Empty).Trim().ToUpperInvariant();
         if (string.IsNullOrWhiteSpace(code))
-            return new ActivationResult(false, "من فضلك أدخل كود التفعيل أولاً.");
+            return new ActivationResult(false, "من فضلك أدخل كود التفعيل أولاً.", "Please enter an activation code.");
 
         try
         {
@@ -66,30 +65,30 @@ public sealed class ActivationService
             {
                 Preferences.Default.Set(KeyActivated, true);
                 Preferences.Default.Set(KeyCode, body.Code ?? code);
-                Preferences.Default.Set(KeyBundle, body.BundleName ?? "النسخة الكاملة");
-                return new ActivationResult(true, body.MessageAr ?? "تم التفعيل بنجاح! 🎉", body.BundleName);
+                Preferences.Default.Set(KeyBundle, body.BundleName ?? "Full Version");
+                return new ActivationResult(
+                    true,
+                    body.MessageAr ?? "تم تفعيل جميع المراحل بنجاح.",
+                    body.MessageEn ?? "All stages unlocked successfully.",
+                    body.BundleName);
             }
 
-            return new ActivationResult(false, body?.MessageAr ?? "تعذر تفعيل الكود. تأكد من كتابته بشكل صحيح.");
+            return new ActivationResult(
+                false,
+                body?.MessageAr ?? "تعذر تفعيل الكود. تأكد من كتابته بشكل صحيح.",
+                body?.MessageEn ?? "Could not activate code. Please verify and try again.");
         }
         catch (HttpRequestException)
         {
-            return new ActivationResult(false, "تأكد من اتصالك بالإنترنت لتفعيل الكود لأول مرة.");
+            return new ActivationResult(false, "تأكد من اتصالك بالإنترنت لتفعيل الكود لأول مرة.", "Please check your internet connection.");
         }
         catch (TaskCanceledException)
         {
-            return new ActivationResult(false, "انتهت مهلة الاتصال بالسيرفر، حاول مرة أخرى.");
+            return new ActivationResult(false, "انتهت مهلة الاتصال بالسيرفر، حاول مرة أخرى.", "Connection timed out. Please try again.");
         }
         catch
         {
-            return new ActivationResult(false, "حدث خطأ غير متوقع أثناء التفعيل.");
+            return new ActivationResult(false, "حدث خطأ غير متوقع أثناء التفعيل.", "An unexpected error occurred.");
         }
-    }
-
-    public void DeactivateLocal()
-    {
-        Preferences.Default.Remove(KeyActivated);
-        Preferences.Default.Remove(KeyCode);
-        Preferences.Default.Remove(KeyBundle);
     }
 }

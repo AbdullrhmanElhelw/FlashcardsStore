@@ -1,165 +1,3 @@
-:root {
-    --plum: #2B071C;
-    --plum-light: #561239;
-    --gold: #D4AF37;
-    --gold-soft: #FEF3C7;
-    --cream: #FFF9F2;
-    --card: #FFFFFF;
-    --text: #1E1B4B;
-    --muted: #64748B;
-    --ok: #10B981;
-    --err: #F43F5E;
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--cream);
-    background-image: radial-gradient(rgba(212, 175, 55, 0.14) 1.5px, transparent 1.5px);
-    background-size: 22px 22px;
-    color: var(--text);
-    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
-    overflow-x: hidden;
-}
-
-.boot-splash {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(160deg, var(--plum) 0%, var(--plum-light) 100%);
-    color: #fff;
-    gap: 12px;
-}
-
-.boot-emoji {
-    font-size: 68px;
-    animation: bounce 1.2s infinite;
-}
-
-.boot-text {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--gold);
-}
-
-.shell {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 32px;
-}
-
-/* Top App Bar */
-.topbar {
-    background: linear-gradient(135deg, #240517 0%, var(--plum-light) 100%);
-    color: #fff;
-    padding: 42px 16px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    border-bottom: 3px solid rgba(212, 175, 55, 0.45);
-    border-bottom-left-radius: 26px;
-    border-bottom-right-radius: 26px;
-    box-shadow: 0 10px 26px rgba(43, 7, 28, 0.28);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-}
-
-.brand-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.brand-logo-badge {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1.5px solid rgba(212, 175, 55, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-}
-
-.brand-title {
-    font-size: 16px;
-    font-weight: 900;
-    line-height: 1.2;
-}
-
-.brand-sub {
-    font-size: 11px;
-    color: #FDE68A;
-    font-weight: 700;
-}
-
-.pill-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.stat-pill {
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: #fff;
-}
-
-.btn-activate-pill {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
-    color: #fff;
-    border: none;
-    padding: 7px 13px;
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #B45309;
-}
-
-.btn-activate-pill:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #B45309;
-}
-
-.btn-activated-badge {
-    background: rgba(16, 185, 129, 0.22);
-    border: 1px solid #34D399;
-    color: #A7F3D0;
-    padding: 6px 11px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-}
-
 /* Hero Progress Card */
 .hero-card {
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF8EB 100%);
@@ -178,6 +16,9 @@ html, body {
     font-size: 15px;
     font-weight: 900;
     color: var(--plum);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .hero-sub {
@@ -197,14 +38,18 @@ html, body {
     border-radius: 14px;
     padding: 6px 10px;
     text-align: center;
-    min-width: 62px;
+    min-width: 64px;
 }
 
 .hero-chip-val {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 900;
     color: var(--plum);
-    line-height: 1.1;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 .hero-chip-lbl {
@@ -243,9 +88,10 @@ html, body {
 }
 
 .mode-tab-icon {
-    font-size: 28px;
-    display: block;
-    margin-bottom: 3px;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 5px;
+    color: var(--plum);
 }
 
 .mode-tab-title {
@@ -299,21 +145,26 @@ html, body {
 }
 
 .stage-card.locked {
-    filter: saturate(0.75);
+    filter: saturate(0.78);
     opacity: 0.94;
 }
 
 .stage-icon-bubble {
-    width: 60px;
-    height: 60px;
+    width: 62px;
+    height: 62px;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.24);
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
+    padding: 7px;
     flex-shrink: 0;
+}
+
+.stage-icon-bubble svg {
+    width: 100%;
+    height: 100%;
 }
 
 .stage-info {
@@ -363,12 +214,15 @@ html, body {
 .stage-action-badge {
     background: rgba(255, 255, 255, 0.95);
     color: var(--plum);
-    padding: 8px 13px;
+    padding: 8px 12px;
     border-radius: 15px;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 900;
     white-space: nowrap;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .stage-card.locked .stage-action-badge {
@@ -390,12 +244,15 @@ html, body {
     background: #fff;
     border: 2px solid #E2E8F0;
     border-radius: 14px;
-    padding: 8px 14px;
+    padding: 8px 12px;
     font-weight: 800;
     font-size: 13px;
     color: var(--plum);
     cursor: pointer;
     box-shadow: 0 3px 0 #E2E8F0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .progress-dots {
@@ -432,20 +289,25 @@ html, body {
 }
 
 .picture-circle {
-    width: 128px;
-    height: 128px;
+    width: 132px;
+    height: 132px;
     margin: 0 auto 12px;
     border-radius: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 74px;
+    padding: 14px;
     box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.07), 0 8px 18px rgba(0, 0, 0, 0.06);
     animation: floatSoft 3s ease-in-out infinite;
 }
 
+.picture-circle svg {
+    width: 100%;
+    height: 100%;
+}
+
 .arabic-hint {
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 900;
     color: var(--plum);
     margin-bottom: 12px;
@@ -462,7 +324,7 @@ html, body {
     color: #fff;
     border: none;
     border-radius: 999px;
-    padding: 10px 20px;
+    padding: 10px 18px;
     font-size: 14px;
     font-weight: 800;
     cursor: pointer;
@@ -599,7 +461,7 @@ html, body {
     background: #fff;
     border: 2.5px solid #E2E8F0;
     border-radius: 24px;
-    padding: 18px 12px;
+    padding: 16px 12px;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 7px 0 #CBD5E1;
@@ -622,10 +484,15 @@ html, body {
     animation: shake 0.4s ease;
 }
 
-.match-emoji {
-    font-size: 58px;
-    display: block;
-    margin-bottom: 6px;
+.match-art {
+    width: 82px;
+    height: 82px;
+    margin: 0 auto 8px;
+}
+
+.match-art svg {
+    width: 100%;
+    height: 100%;
 }
 
 .match-ar {
@@ -660,109 +527,15 @@ html, body {
     cursor: pointer;
     white-space: nowrap;
     box-shadow: 0 4px 0 #CA8A04;
-}
-
-/* Confetti */
-.confetti-layer {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 9998;
-}
-
-.confetti-piece {
-    position: absolute;
-    top: -16px;
-    width: 10px;
-    height: 14px;
-    border-radius: 3px;
-    animation: confettiFall 1.25s ease-out forwards;
-}
-
-/* Modal */
-.modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.68);
-    backdrop-filter: blur(4px);
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 18px;
-    z-index: 100;
-}
-
-.modal-card {
-    background: #fff;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 28px;
-    padding: 24px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-    text-align: center;
-    border: 2px solid rgba(212, 175, 55, 0.45);
-}
-
-.code-input {
-    width: 100%;
-    direction: ltr;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 2px solid #CBD5E1;
-    margin: 12px 0;
-    text-transform: uppercase;
-}
-
-.btn-primary {
-    width: 100%;
-    background: linear-gradient(135deg, var(--plum), var(--plum-light));
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    padding: 13px;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #1B0411;
-}
-
-.btn-whatsapp {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    background: #ECFDF5;
-    color: #047857;
-    border: 2px solid #A7F3D0;
-    border-radius: 14px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 800;
-    text-decoration: none;
-}
-
-.btn-close-link {
-    margin-top: 12px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-weight: 700;
-    cursor: pointer;
+    gap: 5px;
 }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-8px); }
     75% { transform: translateX(8px); }
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
 }
 
 @keyframes floatSoft {

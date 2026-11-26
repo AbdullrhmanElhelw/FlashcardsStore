@@ -1,0 +1,77 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<div class="hero-card">
+    <div>
+        <div class="hero-greeting">
+            <span>@Loc.T("HeroGreeting")</span>
+            <span class="icon-svg" style="width:18px;height:18px;color:#F59E0B;">@((MarkupString)UiIcons.Sparkles)</span>
+        </div>
+        <div class="hero-sub">@Loc.T("HeroSub")</div>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.CompletedWords.Count/60</div>
+            <div class="hero-chip-lbl">@Loc.T("WordsMastered")</div>
+        </div>
+        <div class="hero-chip">
+            <div class="hero-chip-val">
+                <span class="icon-svg" style="width:14px;height:14px;color:#EA580C;">@((MarkupString)UiIcons.Flame)</span>
+                <span>@Vm.BestStreak</span>
+            </div>
+            <div class="hero-chip-lbl">@Loc.T("BestStreak")</div>
+        </div>
+    </div>
+</div>
+
+<div class="mode-tabs">
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.WordBuilder ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.WordBuilder)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</div>
+        <div class="mode-tab-title">@Loc.T("ModeBuilderTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeBuilderSub")</div>
+    </div>
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.SoundMatch ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.SoundMatch)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Headphones)</div>
+        <div class="mode-tab-title">@Loc.T("ModeMatchTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeMatchSub")</div>
+    </div>
+</div>
+
+<div class="stages-grid">
+    @foreach (var stage in PhonicsCurriculum.Stages)
+    {
+        var unlocked = stage.IsFree || Vm.IsActivated;
+        var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
+        var pct = stage.Words.Count > 0 ? (int)Math.Round(completedCount * 100.0 / stage.Words.Count) : 0;
+
+        <div class="stage-card @(unlocked ? "" : "locked")"
+             style="background: linear-gradient(135deg, @stage.GradientStart, @stage.GradientEnd);"
+             @onclick="() => Vm.StartStageAsync(stage)">
+            <div class="stage-icon-bubble">
+                @((MarkupString)WordArtwork.GetSvg(stage.BadgeKey, stage.GradientEnd))
+            </div>
+            <div class="stage-info">
+                <div class="stage-title">@(Loc.IsArabic ? stage.TitleAr : stage.TitleEn)</div>
+                <div class="stage-en-pill">@stage.TitleEn</div>
+                <div class="stage-sub">@(Loc.IsArabic ? stage.SubtitleAr : stage.SubtitleEn)</div>
+                <div class="stage-progress-bar">
+                    <div class="stage-progress-fill" style="width: @pct%"></div>
+                </div>
+            </div>
+            <div class="stage-action-badge">
+                @if (unlocked)
+                {
+                    <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Play)</span>
+                    <span>@Loc.T("PlayBtn") (@completedCount/@stage.Words.Count)</span>
+                }
+                else
+                {
+                    <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Lock)</span>
+                    <span>@Loc.T("LockedBtn")</span>
+                }
+            </div>
+        </div>
+    }
+</div>

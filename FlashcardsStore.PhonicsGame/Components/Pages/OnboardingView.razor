@@ -1,0 +1,65 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<div class="onb-screen">
+    <div class="onb-top">
+        <div class="onb-brand-mini">
+            <img src="images/logo_gold.png" alt="Logo" />
+            <span>@Loc.T("AcademyName")</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="btn-lang-pill" style="color:var(--plum);border-color:#CBD5E1;background:#fff;" @onclick="Vm.ToggleLanguageAsync">
+                <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Globe)</span>
+                <span>@(Loc.IsArabic ? "EN" : "AR")</span>
+            </button>
+            <button class="onb-skip" @onclick="Vm.CompleteOnboarding">@Loc.T("Skip")</button>
+        </div>
+    </div>
+
+    <div class="onb-body">
+        <div class="onb-art-card">
+            <span class="icon-svg" style="width:100%;height:100%;">
+                @((MarkupString)SlideIcon)
+            </span>
+        </div>
+        <h2 class="onb-title">@Loc.T(SlideTitleKey)</h2>
+        <p class="onb-desc">@Loc.T(SlideDescKey)</p>
+    </div>
+
+    <div class="onb-footer">
+        <div class="onb-dots">
+            @for (var i = 0; i < 3; i++)
+            {
+                var idx = i;
+                <span class="onb-dot @(Vm.OnboardingSlide == idx ? "active" : "")"
+                      @onclick="() => Vm.SetOnboardingSlide(idx)"></span>
+            }
+        </div>
+        <button class="btn-primary" @onclick="Vm.NextOnboardingSlide">
+            @(Vm.OnboardingSlide == 2 ? Loc.T("StartPlaying") : Loc.T("Next"))
+        </button>
+    </div>
+</div>
+
+@code {
+    private string SlideIcon => Vm.OnboardingSlide switch
+    {
+        0 => UiIcons.Puzzle,
+        1 => UiIcons.Headphones,
+        _ => UiIcons.Trophy
+    };
+
+    private string SlideTitleKey => Vm.OnboardingSlide switch
+    {
+        0 => "Onb1Title",
+        1 => "Onb2Title",
+        _ => "Onb3Title"
+    };
+
+    private string SlideDescKey => Vm.OnboardingSlide switch
+    {
+        0 => "Onb1Desc",
+        1 => "Onb2Desc",
+        _ => "Onb3Desc"
+    };
+}

@@ -1,0 +1,38 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<header class="topbar">
+    <div class="brand-wrap">
+        <div class="brand-logo-badge">
+            <img src="images/logo_gold.png" alt="Logo" />
+        </div>
+        <div>
+            <div class="brand-title">@Loc.T("AppTitle")</div>
+            <div class="brand-sub">@Loc.T("AcademyName")</div>
+        </div>
+    </div>
+    <div class="pill-row">
+        <button class="btn-lang-pill" @onclick="Vm.ToggleLanguageAsync" title="Language">
+            <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Globe)</span>
+            <span>@(Loc.IsArabic ? "EN" : "AR")</span>
+        </button>
+        <div class="stat-pill">
+            <span class="icon-svg" style="width:15px;height:15px;color:#FDE047;">@((MarkupString)UiIcons.Star)</span>
+            <span>@Vm.TotalStars</span>
+        </div>
+        @if (Vm.IsActivated)
+        {
+            <span class="btn-activated-badge">
+                <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.CheckCircle)</span>
+                <span>@Loc.T("ActivatedBadge")</span>
+            </span>
+        }
+        else
+        {
+            <button class="btn-activate-pill" @onclick="Vm.OpenActivationModal">
+                <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Key)</span>
+                <span>@Loc.T("ActivateCode")</span>
+            </button>
+        }
+    </div>
+</header>

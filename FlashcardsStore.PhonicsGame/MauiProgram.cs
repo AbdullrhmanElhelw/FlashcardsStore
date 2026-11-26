@@ -1,4 +1,5 @@
 using FlashcardsStore.PhonicsGame.Services;
+using FlashcardsStore.PhonicsGame.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace FlashcardsStore.PhonicsGame;
@@ -28,9 +29,11 @@ public static class MauiProgram
             Timeout = TimeSpan.FromSeconds(20)
         });
 
+        builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
         builder.Services.AddSingleton<SpeechService>();
         builder.Services.AddSingleton<ActivationService>();
         builder.Services.AddSingleton<GameProgressService>();
+        builder.Services.AddSingleton<PhonicsGameViewModel>();
 
         return builder.Build();
     }
