@@ -105,6 +105,57 @@
     box-shadow: 0 4px 0 #5B21B6;
 }
 
+.btn-speak.hint {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    box-shadow: 0 4px 0 #B45309;
+}
+
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.memory-card {
+    height: 118px;
+    border-radius: 22px;
+    border: 2.5px solid rgba(212, 175, 55, 0.45);
+    background: linear-gradient(145deg, #2B071C, #561239);
+    color: #FDE047;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #1B0411;
+    transition: transform 0.15s ease;
+    padding: 12px;
+}
+
+.memory-card:active {
+    transform: translateY(3px);
+}
+
+.memory-card.flipped {
+    background: #fff;
+    color: var(--plum);
+    border-color: var(--plum);
+    box-shadow: 0 6px 0 #CBD5E1;
+}
+
+.memory-card.matched {
+    background: #ECFDF5;
+    border-color: var(--ok);
+    box-shadow: 0 6px 0 #34D399;
+}
+
+.memory-word-text {
+    font-size: 26px;
+    font-weight: 900;
+    direction: ltr;
+    color: var(--plum);
+}
+
 .btn-speak:active {
     transform: translateY(2px);
 }

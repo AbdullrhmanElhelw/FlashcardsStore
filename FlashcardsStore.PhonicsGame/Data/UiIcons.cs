@@ -115,4 +115,33 @@ public static class UiIcons
             <path d="M8 5.5v13l10.5-6.5L8 5.5z"/>
         </svg>
         """;
+
+    public const string Lightbulb = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.7.5 1.2 1.3 1.4 2.1h4.2c.2-.8.7-1.6 1.4-2.1A6 6 0 0 0 12 3z" fill="currentColor" fill-opacity="0.16"/>
+        </svg>
+        """;
+
+    public const string GridCards = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="8" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/>
+            <rect x="13" y="3" width="8" height="8" rx="2"/>
+            <rect x="3" y="13" width="8" height="8" rx="2"/>
+            <rect x="13" y="13" width="8" height="8" rx="2" fill="currentColor" fill-opacity="0.15"/>
+        </svg>
+        """;
+
+    public const string BookOpen = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 5.5A2.5 2.5 0 0 1 4.5 3H12v17H4.5A2.5 2.5 0 0 0 2 22V5.5z" fill="currentColor" fill-opacity="0.12"/>
+            <path d="M22 5.5A2.5 2.5 0 0 0 19.5 3H12v17h7.5A2.5 2.5 0 0 1 22 22V5.5z"/>
+        </svg>
+        """;
+
+    public const string Award = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="9" r="6" fill="currentColor" fill-opacity="0.18"/>
+            <path d="M8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7"/>
+        </svg>
+        """;
 }

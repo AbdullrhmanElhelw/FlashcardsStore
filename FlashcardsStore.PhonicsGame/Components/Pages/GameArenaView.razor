@@ -54,6 +54,10 @@ else if (Vm.ActiveStage is not null)
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
                     <span>@Loc.T("SlowSpeak")</span>
                 </button>
+                <button class="btn-speak hint" @onclick="Vm.UseHintAsync">
+                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
+                    <span>@Loc.T("HintBtn")</span>
+                </button>
             </div>
         </div>
 
@@ -94,7 +98,7 @@ else if (Vm.ActiveStage is not null)
             }
         </div>
     }
-    else
+    else if (Vm.SelectedMode == GameMode.SoundMatch)
     {
         <div class="picture-stage">
             <div class="icon-svg" style="width:58px;height:58px;margin:0 auto 10px;color:var(--plum);">
@@ -109,6 +113,10 @@ else if (Vm.ActiveStage is not null)
                 <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
                     <span>@Loc.T("SlowSpeak")</span>
+                </button>
+                <button class="btn-speak hint" @onclick="Vm.UseHintAsync">
+                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
+                    <span>@Loc.T("HintBtn")</span>
                 </button>
             </div>
         </div>
@@ -128,6 +136,38 @@ else if (Vm.ActiveStage is not null)
                     @if (isRight)
                     {
                         <div style="margin-top: 4px; font-weight: 900; color: #059669; direction: ltr;">@opt.Word.ToUpperInvariant()</div>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="picture-stage" style="padding:14px 16px;margin-bottom:10px;">
+            <div class="arabic-hint" style="font-size:16px;margin:0;">@Loc.T("MemoryMatchPrompt")</div>
+        </div>
+
+        <div class="memory-grid">
+            @foreach (var card in Vm.MemoryCards)
+            {
+                var cls = "memory-card"
+                    + (card.IsFlipped || card.IsMatched ? " flipped" : "")
+                    + (card.IsMatched ? " matched" : "");
+
+                <div class="@cls" @onclick="() => Vm.FlipMemoryCardAsync(card)">
+                    @if (!card.IsFlipped && !card.IsMatched)
+                    {
+                        <span class="icon-svg" style="width:36px;height:36px;">@((MarkupString)UiIcons.Sparkles)</span>
+                    }
+                    else if (card.IsPictureCard)
+                    {
+                        <div class="match-art" style="width:78px;height:78px;margin:0;">
+                            @((MarkupString)WordArtwork.GetSvg(card.ArtworkKey, card.AccentColor))
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="memory-word-text">@card.WordKey.ToUpperInvariant()</div>
                     }
                 </div>
             }

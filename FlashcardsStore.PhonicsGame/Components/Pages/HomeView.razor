@@ -24,6 +24,33 @@
     </div>
 </div>
 
+<!-- Achievements Strip -->
+<div class="achievements-strip">
+    @foreach (var badge in Vm.GetAchievements())
+    {
+        <div class="ach-pill @(badge.Unlocked ? "unlocked" : "")">
+            <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Award)</span>
+            <span>@(Loc.IsArabic ? badge.TitleAr : badge.TitleEn)</span>
+        </div>
+    }
+</div>
+
+<!-- A-Z Phonics Soundboard Banner -->
+<div class="soundboard-cta" @onclick="Vm.OpenSoundboard">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <div class="icon-svg" style="width:38px;height:38px;padding:7px;border-radius:12px;background:rgba(255,255,255,0.14);color:#FDE047;">
+            @((MarkupString)UiIcons.BookOpen)
+        </div>
+        <div>
+            <div style="font-size:14.5px;font-weight:900;">@Loc.T("SoundboardTitle")</div>
+            <div style="font-size:11.5px;color:#FDE68A;">@Loc.T("SoundboardSub")</div>
+        </div>
+    </div>
+    <span class="icon-svg" style="width:20px;height:20px;color:#FDE047;">
+        @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronLeft : UiIcons.ChevronRight))
+    </span>
+</div>
+
 <div class="mode-tabs">
     <div class="mode-tab @(Vm.SelectedMode == GameMode.WordBuilder ? "active" : "")"
          @onclick="() => Vm.SetMode(GameMode.WordBuilder)">
@@ -36,6 +63,12 @@
         <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Headphones)</div>
         <div class="mode-tab-title">@Loc.T("ModeMatchTitle")</div>
         <div class="mode-tab-sub">@Loc.T("ModeMatchSub")</div>
+    </div>
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.MemoryMatch ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.MemoryMatch)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.GridCards)</div>
+        <div class="mode-tab-title">@Loc.T("ModeMemoryTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeMemorySub")</div>
     </div>
 </div>
 

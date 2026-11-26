@@ -3,5 +3,6 @@ namespace FlashcardsStore.PhonicsGame.Models;
 public enum GameMode
 {
     WordBuilder,
-    SoundMatch
+    SoundMatch,
+    MemoryMatch
 }

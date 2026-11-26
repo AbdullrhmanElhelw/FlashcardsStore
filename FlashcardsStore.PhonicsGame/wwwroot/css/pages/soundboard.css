@@ -1,0 +1,92 @@
+.sb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.sb-banner {
+    background: linear-gradient(135deg, #2B071C, #561239);
+    color: #fff;
+    border-radius: 22px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    border: 2px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 10px 24px rgba(43, 7, 28, 0.16);
+}
+
+.sb-banner-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #FDE68A;
+    margin-bottom: 3px;
+}
+
+.sb-banner-sub {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.sb-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.sb-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.sb-grid {
+    direction: ltr;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.sb-card {
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    border-radius: 18px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #CBD5E1;
+    transition: transform 0.12s ease, border-color 0.15s ease;
+}
+
+.sb-card:active {
+    transform: translateY(3px);
+}
+
+.sb-card.vowel {
+    background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
+    border-color: #F59E0B;
+    box-shadow: 0 5px 0 #D97706;
+}
+
+.sb-card.active {
+    transform: scale(1.05);
+    border-color: var(--plum);
+    box-shadow: 0 6px 0 var(--plum);
+}
+
+.sb-letter {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--plum);
+    line-height: 1.1;
+}
+
+.sb-word {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-top: 2px;
+}

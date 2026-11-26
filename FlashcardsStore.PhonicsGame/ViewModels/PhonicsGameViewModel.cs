@@ -52,6 +52,12 @@ public sealed class PhonicsGameViewModel : IDisposable
     public List<PhonicsWord> MatchOptions { get; private set; } = [];
     public string? WrongMatchWord { get; private set; }
 
+    public List<MemoryCardItem> MemoryCards { get; private set; } = [];
+    private MemoryCardItem? _firstFlippedCard;
+    private bool _memoryBusy;
+
+    public char? ActiveSoundboardLetter { get; private set; }
+
     public bool ShowActivationModal { get; private set; }
     public string ActivationCodeInput { get; set; } = string.Empty;
     public string ActivationFeedback { get; private set; } = string.Empty;
@@ -147,6 +153,29 @@ public sealed class PhonicsGameViewModel : IDisposable
         Notify();
     }
 
+    public void OpenSoundboard()
+    {
+        ActiveSoundboardLetter = null;
+        CurrentScreen = AppScreen.Soundboard;
+        Notify();
+    }
+
+    public async Task SpeakAlphabetLetterAsync(PhonicsLetterItem item)
+    {
+        ActiveSoundboardLetter = item.Letter;
+        Notify();
+        await SafeJsAsync("phonicsAudio.pop");
+        await _speech.SpeakAsync($"{item.Letter}, {item.ExampleWord}", pitch: 1.1f);
+    }
+
+    public IReadOnlyList<AchievementItem> GetAchievements() =>
+    [
+        new("first_word", "أول كلمة", "First Word", CompletedWords.Count >= 1),
+        new("ten_stars", "10 نجوم", "10 Stars", TotalStars >= 10),
+        new("streak_five", "سلسلة 5", "5 Streak", BestStreak >= 5),
+        new("twenty_words", "20 كلمة", "20 Words", CompletedWords.Count >= 20)
+    ];
+
     private async Task SetupCurrentWordAsync()
     {
         WordSolved = false;
@@ -173,7 +202,7 @@ public sealed class PhonicsGameViewModel : IDisposable
                 .Select(c => new LetterTileItem { Letter = char.ToUpperInvariant(c), Used = false })
                 .ToList();
         }
-        else
+        else if (SelectedMode == GameMode.SoundMatch)
         {
             var pool = PhonicsCurriculum.Stages
                 .SelectMany(s => s.Words)
@@ -185,9 +214,134 @@ public sealed class PhonicsGameViewModel : IDisposable
             pool.Add(CurrentWord);
             MatchOptions = pool.OrderBy(_ => _rng.Next()).ToList();
         }
+        else
+        {
+            SetupMemoryDeck();
+            Notify();
+            return;
+        }
 
         Notify();
         await SpeakCurrentWordAsync();
+    }
+
+    private void SetupMemoryDeck()
+    {
+        _firstFlippedCard = null;
+        _memoryBusy = false;
+
+        var chosen = ActiveStage!.Words
+            .OrderBy(_ => _rng.Next())
+            .Take(4)
+            .ToList();
+
+        var raw = new List<MemoryCardItem>(8);
+        foreach (var w in chosen)
+        {
+            raw.Add(new MemoryCardItem
+            {
+                WordKey = w.Word,
+                IsPictureCard = true,
+                ArtworkKey = w.ArtworkKey,
+                AccentColor = w.AccentColor,
+                BgColor = w.BgColor
+            });
+            raw.Add(new MemoryCardItem
+            {
+                WordKey = w.Word,
+                IsPictureCard = false,
+                ArtworkKey = w.ArtworkKey,
+                AccentColor = w.AccentColor,
+                BgColor = w.BgColor
+            });
+        }
+
+        MemoryCards = raw
+            .OrderBy(_ => _rng.Next())
+            .Select((c, i) => new MemoryCardItem
+            {
+                Index = i,
+                WordKey = c.WordKey,
+                IsPictureCard = c.IsPictureCard,
+                ArtworkKey = c.ArtworkKey,
+                AccentColor = c.AccentColor,
+                BgColor = c.BgColor
+            })
+            .ToList();
+    }
+
+    public async Task FlipMemoryCardAsync(MemoryCardItem card)
+    {
+        if (_memoryBusy || card.IsFlipped || card.IsMatched)
+            return;
+
+        card.IsFlipped = true;
+        await SafeJsAsync("phonicsAudio.pop");
+        _ = _speech.SpeakAsync(card.WordKey, pitch: 1.08f);
+        Notify();
+
+        if (_firstFlippedCard is null)
+        {
+            _firstFlippedCard = card;
+            return;
+        }
+
+        _memoryBusy = true;
+        var first = _firstFlippedCard;
+        _firstFlippedCard = null;
+
+        if (string.Equals(first.WordKey, card.WordKey, StringComparison.OrdinalIgnoreCase))
+        {
+            first.IsMatched = true;
+            card.IsMatched = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(card.WordKey, 1, Streak);
+            CompletedWords = _progress.GetCompletedWords();
+
+            await SafeJsAsync("phonicsAudio.success");
+            _memoryBusy = false;
+            Notify();
+
+            if (MemoryCards.All(c => c.IsMatched))
+            {
+                await SafeJsAsync("phonicsAudio.confetti");
+                await Task.Delay(500);
+                StageFinished = true;
+                Notify();
+            }
+        }
+        else
+        {
+            Streak = 0;
+            await SafeJsAsync("phonicsAudio.wrong");
+            await Task.Delay(650);
+            first.IsFlipped = false;
+            card.IsFlipped = false;
+            _memoryBusy = false;
+            Notify();
+        }
+    }
+
+    public async Task UseHintAsync()
+    {
+        if (WordSolved || SelectedMode != GameMode.WordBuilder)
+            return;
+
+        var target = CurrentWord.Word.ToUpperInvariant();
+        for (var slotIdx = 0; slotIdx < target.Length; slotIdx++)
+        {
+            var currentTileIdx = Slots[slotIdx];
+            if (currentTileIdx >= 0 && Tiles[currentTileIdx].Letter == target[slotIdx])
+                continue;
+
+            var neededTileIdx = Tiles.FindIndex(t => !t.Used && t.Letter == target[slotIdx]);
+            if (neededTileIdx >= 0)
+            {
+                await PlaceTileInSlotAsync(neededTileIdx, slotIdx);
+                return;
+            }
+        }
     }
 
     public Task StartTileDragAsync(int tileIdx, double clientX, double clientY)

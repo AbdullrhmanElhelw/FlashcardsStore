@@ -1,0 +1,41 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<div class="sb-header">
+    <button class="btn-back" @onclick="Vm.ExitStage">
+        <span class="icon-svg" style="width:15px;height:15px;">
+            @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
+        </span>
+        <span>@Loc.T("BackToStages")</span>
+    </button>
+    <div style="font-size:13px;font-weight:800;color:var(--plum);">@Loc.T("SoundboardTitle")</div>
+</div>
+
+<div class="sb-banner">
+    <div class="sb-banner-title">@Loc.T("SoundboardTitle")</div>
+    <div class="sb-banner-sub">@Loc.T("SoundboardHint")</div>
+    <div class="sb-legend">
+        <span style="display:inline-flex;align-items:center;gap:5px;">
+            <span class="sb-legend-dot" style="background:#F59E0B;"></span>
+            <span>@Loc.T("VowelsLegend")</span>
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:5px;">
+            <span class="sb-legend-dot" style="background:#CBD5E1;"></span>
+            <span>@Loc.T("ConsonantsLegend")</span>
+        </span>
+    </div>
+</div>
+
+<div class="sb-grid">
+    @foreach (var item in AlphabetSoundboardData.Letters)
+    {
+        var cls = "sb-card"
+            + (item.IsVowel ? " vowel" : "")
+            + (Vm.ActiveSoundboardLetter == item.Letter ? " active" : "");
+
+        <div class="@cls" @onclick="() => Vm.SpeakAlphabetLetterAsync(item)">
+            <div class="sb-letter">@item.Letter@char.ToLowerInvariant(item.Letter)</div>
+            <div class="sb-word">@(Loc.IsArabic ? item.ArabicWord : item.ExampleWord)</div>
+        </div>
+    }
+</div>

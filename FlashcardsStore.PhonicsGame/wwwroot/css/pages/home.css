@@ -73,9 +73,52 @@
 
 .mode-tabs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin-bottom: 16px;
+}
+
+.soundboard-cta {
+    background: linear-gradient(135deg, #2B071C 0%, #561239 100%);
+    color: #fff;
+    border-radius: 20px;
+    padding: 13px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    margin-bottom: 18px;
+    cursor: pointer;
+    border: 1.5px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 8px 18px rgba(43, 7, 28, 0.16);
+}
+
+.achievements-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+}
+
+.ach-pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    color: var(--muted);
+}
+
+.ach-pill.unlocked {
+    background: #FEF3C7;
+    border-color: #F59E0B;
+    color: #92400E;
 }
 
 .mode-tab {
