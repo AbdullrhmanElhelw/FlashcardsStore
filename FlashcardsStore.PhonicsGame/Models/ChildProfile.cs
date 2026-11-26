@@ -1,3 +1,3 @@
 namespace FlashcardsStore.PhonicsGame.Models;
 
-public sealed record ChildProfile(string Name, string AvatarKey);
+public sealed record ChildProfile(string Name, string AvatarKey, int DailyGoalMinutes = 10);

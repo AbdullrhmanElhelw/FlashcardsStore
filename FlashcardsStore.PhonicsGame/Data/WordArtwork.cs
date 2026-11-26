@@ -250,6 +250,56 @@ public static class WordArtwork
                 <path d="M38 34H24V46C24 54 30 58 38 58M82 34H96V46C96 54 90 58 82 58" stroke="#A16207" stroke-width="3.5" stroke-linecap="round"/>
                 <path d="M60 76V92M42 92H78" stroke="#A16207" stroke-width="5" stroke-linecap="round"/>
             </svg>
+            """,
+        ["flag"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="20" x2="30" y2="100" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+                <path d="M32 24H94L82 42L94 60H32V24Z" fill="#0EA5E9" stroke="#0369A1" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+            """,
+        ["star"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M60 16L73 43L102 47L81 68L86 97L60 83L34 97L39 68L18 47L47 43L60 16Z" fill="#FACC15" stroke="#CA8A04" stroke-width="3.5" stroke-linejoin="round"/>
+            </svg>
+            """,
+        ["crab"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="60" cy="68" rx="30" ry="22" fill="#EF4444" stroke="#991B1B" stroke-width="3"/>
+                <circle cx="48" cy="46" r="5" fill="#1E1B4B"/>
+                <circle cx="72" cy="46" r="5" fill="#1E1B4B"/>
+                <path d="M30 56C18 46 20 30 32 32C28 40 30 46 36 50" fill="#EF4444" stroke="#991B1B" stroke-width="3"/>
+                <path d="M90 56C102 46 100 30 88 32C92 40 90 46 84 50" fill="#EF4444" stroke="#991B1B" stroke-width="3"/>
+            </svg>
+            """,
+        ["drum"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="24" y="42" width="72" height="44" rx="10" fill="#8B5CF6" stroke="#4C1D95" stroke-width="3"/>
+                <ellipse cx="60" cy="42" rx="36" ry="11" fill="#FEF3C7" stroke="#4C1D95" stroke-width="3"/>
+                <path d="M36 52L48 80L60 52L72 80L84 52" stroke="#FDE047" stroke-width="3.5" stroke-linejoin="round"/>
+            </svg>
+            """,
+        ["tree"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="52" y="68" width="16" height="32" rx="4" fill="#92400E"/>
+                <circle cx="60" cy="48" r="28" fill="#16A34A" stroke="#14532D" stroke-width="3"/>
+                <circle cx="42" cy="56" r="18" fill="#22C55E"/>
+                <circle cx="78" cy="56" r="18" fill="#22C55E"/>
+            </svg>
+            """,
+        ["ship"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="60,20 60,64 90,64" fill="#FDE047" stroke="#CA8A04" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="56,28 56,64 30,64" fill="#FFFFFF" stroke="#475569" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M22 68H98L86 90H34L22 68Z" fill="#2563EB" stroke="#1E3A8A" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+            """,
+        ["fish"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="84,60 104,42 104,78" fill="#06B6D4" stroke="#155E75" stroke-width="3" stroke-linejoin="round"/>
+                <ellipse cx="56" cy="60" rx="32" ry="22" fill="#38BDF8" stroke="#0369A1" stroke-width="3"/>
+                <circle cx="40" cy="54" r="4" fill="#1E1B4B"/>
+                <path d="M54 46Q62 60 54 74" stroke="#BAE6FD" stroke-width="3" stroke-linecap="round"/>
+            </svg>
             """
     };
 }

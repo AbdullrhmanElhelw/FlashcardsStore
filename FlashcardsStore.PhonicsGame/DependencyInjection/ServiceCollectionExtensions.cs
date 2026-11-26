@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
             Timeout = TimeSpan.FromSeconds(20)
         });
 
+        services.AddSingleton<ICurriculumRepository, JsonCurriculumRepository>();
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<ISpeechService, SpeechService>();
         services.AddSingleton<ISpeechRecognitionService, SpeechRecognitionService>();

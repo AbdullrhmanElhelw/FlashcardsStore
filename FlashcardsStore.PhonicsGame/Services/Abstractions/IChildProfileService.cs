@@ -5,5 +5,5 @@ namespace FlashcardsStore.PhonicsGame.Services.Abstractions;
 public interface IChildProfileService
 {
     ChildProfile GetProfile();
-    void SaveProfile(string name, string avatarKey);
+    void SaveProfile(string name, string avatarKey, int dailyGoalMinutes = 10);
 }

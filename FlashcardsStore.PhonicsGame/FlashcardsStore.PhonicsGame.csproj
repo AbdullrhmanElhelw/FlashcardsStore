@@ -29,6 +29,7 @@
 		<MauiSplashScreen Include="Resources\Splash\splash_logo.png" Color="#260B18" BaseSize="250,250" />
 		<MauiFont Include="Resources\Fonts\*" />
 		<EmbeddedResource Include="Resources\Localization\*.json" />
+		<EmbeddedResource Include="Resources\Content\*.json" />
 	</ItemGroup>
 
 	<ItemGroup>

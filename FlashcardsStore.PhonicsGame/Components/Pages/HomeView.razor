@@ -22,15 +22,15 @@
     </div>
     <div class="hero-stats">
         <div class="hero-chip">
-            <div class="hero-chip-val">@Vm.CompletedWords.Count/60</div>
+            <div class="hero-chip-val">@Vm.CompletedWords.Count/@Vm.TotalWordsCount</div>
             <div class="hero-chip-lbl">@Loc.T("WordsMastered")</div>
         </div>
         <div class="hero-chip">
             <div class="hero-chip-val">
                 <span class="icon-svg" style="width:14px;height:14px;color:#EA580C;">@((MarkupString)UiIcons.Flame)</span>
-                <span>@Vm.BestStreak</span>
+                <span>@Vm.TotalXp</span>
             </div>
-            <div class="hero-chip-lbl">@Loc.T("BestStreak")</div>
+            <div class="hero-chip-lbl">@Loc.T("XpLabel")</div>
         </div>
     </div>
 </div>
@@ -105,9 +105,10 @@
     <span style="font-size:11px;font-weight:700;color:var(--muted);">@Loc.T("StoriesSectionSub")</span>
 </div>
 <div class="stories-strip">
-    @foreach (var story in PhonicsStoriesData.Stories)
+    @foreach (var story in Vm.Stories)
     {
         var storyUnlocked = story.IsFree || Vm.IsActivated;
+        var storyDone = Vm.IsStoryCompleted(story.Id);
         <div class="story-card-mini @(storyUnlocked ? "" : "locked")" @onclick="() => Vm.StartStoryAsync(story)">
             <div class="story-mini-art">
                 @((MarkupString)WordArtwork.GetSvg(story.CoverArtworkKey, story.AccentColor))
@@ -124,6 +125,12 @@
                     @((MarkupString)UiIcons.Lock)
                 </div>
             }
+            else if (storyDone)
+            {
+                <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;padding:3px;">
+                    @((MarkupString)UiIcons.CheckCircle)
+                </div>
+            }
         </div>
     }
 </div>
@@ -137,9 +144,9 @@
     @{
         var firstActiveFound = false;
     }
-    @for (var i = 0; i < PhonicsCurriculum.Stages.Count; i++)
+    @for (var i = 0; i < Vm.Stages.Count; i++)
     {
-        var stage = PhonicsCurriculum.Stages[i];
+        var stage = Vm.Stages[i];
         var unlocked = stage.IsFree || Vm.IsActivated;
         var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
         var isDone = completedCount >= stage.Words.Count;

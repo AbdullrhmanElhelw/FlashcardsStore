@@ -10,6 +10,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 {
     private const string KeyOnboardingDone = "phonics_onboarding_done";
     private readonly Random _rng = new();
+    private readonly ICurriculumRepository _curriculum;
     private readonly ISpeechService _speech;
     private readonly ISpeechRecognitionService _speechRec;
     private readonly IChildProfileService _profileService;
@@ -22,6 +23,7 @@ public sealed class PhonicsGameViewModel : IDisposable
     public event Action? StateChanged;
 
     public PhonicsGameViewModel(
+        ICurriculumRepository curriculum,
         ISpeechService speech,
         ISpeechRecognitionService speechRec,
         IChildProfileService profileService,
@@ -29,6 +31,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         IGameProgressService progress,
         ILocalizationService loc)
     {
+        _curriculum = curriculum;
         _speech = speech;
         _speechRec = speechRec;
         _profileService = profileService;
@@ -38,7 +41,18 @@ public sealed class PhonicsGameViewModel : IDisposable
         _loc.Changed += Notify;
         CompletedWords = _progress.GetCompletedWords();
         Profile = _profileService.GetProfile();
+        ProfileNameInput = Profile.Name;
+        ProfileAvatarInput = Profile.AvatarKey;
+        OnboardingGoalMinutes = Profile.DailyGoalMinutes;
     }
+
+    public IReadOnlyList<PhonicsStage> Stages => _curriculum.GetStages();
+    public IReadOnlyList<PhonicsStory> Stories => _curriculum.GetStories();
+    public int TotalWordsCount => _curriculum.TotalWordsCount;
+    public int TotalXp => _progress.TotalXp;
+    public int DailyStreakDays => _progress.DailyStreakDays;
+    public int OnboardingGoalMinutes { get; set; } = 10;
+    public bool IsStoryCompleted(int storyId) => _progress.IsStoryCompleted(storyId);
 
     public AppScreen CurrentScreen { get; private set; } = AppScreen.Splash;
     public int OnboardingSlide { get; private set; }
@@ -128,7 +142,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public void NextOnboardingSlide()
     {
-        if (OnboardingSlide < 2)
+        if (OnboardingSlide < 3)
         {
             OnboardingSlide++;
             Notify();
@@ -141,12 +155,14 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public void SetOnboardingSlide(int index)
     {
-        OnboardingSlide = Math.Clamp(index, 0, 2);
+        OnboardingSlide = Math.Clamp(index, 0, 3);
         Notify();
     }
 
     public void CompleteOnboarding()
     {
+        _profileService.SaveProfile(ProfileNameInput, ProfileAvatarInput, OnboardingGoalMinutes);
+        Profile = _profileService.GetProfile();
         Preferences.Default.Set(KeyOnboardingDone, true);
         CurrentScreen = AppScreen.Home;
         Notify();
@@ -172,7 +188,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public async Task StartDailyChallengeAsync()
     {
-        var eligibleWords = PhonicsCurriculum.Stages
+        var eligibleWords = Stages
             .Where(s => s.IsFree || _activation.IsActivated)
             .SelectMany(s => s.Words)
             .ToList();
@@ -279,7 +295,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         {
             StoryQuizSolved = true;
             StoryQuizWrongOption = null;
-            _progress.RecordWordCompleted(ActiveStory.QuizCorrectWord, 3, Streak + 1);
+            _progress.RecordStoryCompleted(ActiveStory.Id, 3);
             CompletedWords = _progress.GetCompletedWords();
             await SafeJsAsync("phonicsAudio.success");
             await SafeJsAsync("phonicsAudio.confetti");
@@ -350,7 +366,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         }
         else if (SelectedMode == GameMode.SoundMatch)
         {
-            var pool = PhonicsCurriculum.Stages
+            var pool = Stages
                 .SelectMany(s => s.Words)
                 .Where(w => !string.Equals(w.Word, CurrentWord.Word, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(_ => _rng.Next())

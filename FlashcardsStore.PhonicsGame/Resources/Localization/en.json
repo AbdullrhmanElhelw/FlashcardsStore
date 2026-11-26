@@ -78,5 +78,15 @@
   "StoryNextBtn": "Next Scene",
   "StoryQuizBtn": "Story Quiz",
   "StoryQuizTitle": "Quick Story Quiz",
-  "StoryCompleteBadge": "Awesome! +3 Gold Stars"
+  "StoryCompleteBadge": "Awesome! +3 Gold Stars",
+  "OnbStep2Title": "Create Your Hero Profile",
+  "OnbStep2Desc": "Enter your name and pick an avatar for your certificates",
+  "OnbStep3Title": "Pick a Daily Goal",
+  "OnbStep3Desc": "A few minutes every day builds strong reading habits",
+  "OnbStep4Title": "You Are Ready to Play!",
+  "OnbStep4Desc": "8 stages, 80 words, 5 animated stories, and A-Z soundboard await",
+  "Goal5Label": "5 min / day — Relaxed",
+  "Goal10Label": "10 min / day — Regular",
+  "Goal15Label": "15 min / day — Champion",
+  "XpLabel": "XP"
 }

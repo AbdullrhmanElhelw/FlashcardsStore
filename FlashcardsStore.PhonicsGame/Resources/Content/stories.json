@@ -1,0 +1,104 @@
+{
+  "stories": [
+    {
+      "id": 1,
+      "titleAr": "القط سام والقبعة",
+      "titleEn": "Sam the Cat & the Hat",
+      "subtitleAr": "قصة مصورة لصوت Short A — مجانية",
+      "subtitleEn": "Animated Short A Story — Free",
+      "coverArtworkKey": "cat",
+      "accentColor": "#F97316",
+      "isFree": true,
+      "scenes": [
+        { "sentenceEn": "Sam is a big fat cat.", "sentenceAr": "سام قط كبير ولطيف.", "focusWord": "cat", "artworkKey": "cat", "bgColor": "#FFF1F2", "accentColor": "#F97316", "animationClass": "anim-bounce" },
+        { "sentenceEn": "Sam sits on a soft mat.", "sentenceAr": "يجلس سام على سجادة ناعمة.", "focusWord": "mat", "artworkKey": "mat", "bgColor": "#ECFDF5", "accentColor": "#10B981", "animationClass": "anim-float" },
+        { "sentenceEn": "Sam has a tall blue hat.", "sentenceAr": "يمتلك سام قبعة طويلة جميلة.", "focusWord": "hat", "artworkKey": "hat", "bgColor": "#EEF2FF", "accentColor": "#4F46E5", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "Sam rides in a fast van!", "sentenceAr": "يركب سام في شاحنة سريعة!", "focusWord": "van", "artworkKey": "van", "bgColor": "#EFF6FF", "accentColor": "#2563EB", "animationClass": "anim-slide" }
+      ],
+      "quizQuestionAr": "على ماذا جلس سام؟",
+      "quizQuestionEn": "Where did Sam sit?",
+      "quizCorrectWord": "mat",
+      "quizOptions": ["mat", "pan", "fan"]
+    },
+    {
+      "id": 2,
+      "titleAr": "الخنزير بيب والقلم",
+      "titleEn": "Pip the Pig & the Pen",
+      "subtitleAr": "قصة مصورة لصوت Short E & I",
+      "subtitleEn": "Animated Short E & I Story",
+      "coverArtworkKey": "pig",
+      "accentColor": "#10B981",
+      "isFree": false,
+      "scenes": [
+        { "sentenceEn": "Pip is a happy pink pig.", "sentenceAr": "بيب خنزير صغير سعيد.", "focusWord": "pig", "artworkKey": "pig", "bgColor": "#FDF2F8", "accentColor": "#DB2777", "animationClass": "anim-bounce" },
+        { "sentenceEn": "Pip has a red pen.", "sentenceAr": "بيب لديه قلم أحمر.", "focusWord": "pen", "artworkKey": "pen", "bgColor": "#F5F3FF", "accentColor": "#7C3AED", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "Pip sees a little hen.", "sentenceAr": "يرى بيب دجاجة صغيرة.", "focusWord": "hen", "artworkKey": "hen", "bgColor": "#FFFBEB", "accentColor": "#D97706", "animationClass": "anim-float" },
+        { "sentenceEn": "Pip naps on his warm bed.", "sentenceAr": "ينام بيب على سريره الدافئ.", "focusWord": "bed", "artworkKey": "bed", "bgColor": "#F0F9FF", "accentColor": "#0284C7", "animationClass": "anim-float" }
+      ],
+      "quizQuestionAr": "ماذا كان لدى بيب؟",
+      "quizQuestionEn": "What did Pip have?",
+      "quizCorrectWord": "pen",
+      "quizOptions": ["pen", "net", "bin"]
+    },
+    {
+      "id": 3,
+      "titleAr": "الكلب بوب والشمس",
+      "titleEn": "Bob the Dog & the Sun",
+      "subtitleAr": "قصة مصورة لصوت Short O & U",
+      "subtitleEn": "Animated Short O & U Story",
+      "coverArtworkKey": "dog",
+      "accentColor": "#8B5CF6",
+      "isFree": false,
+      "scenes": [
+        { "sentenceEn": "Bob is a playful dog.", "sentenceAr": "بوب كلب مرح يحب اللعب.", "focusWord": "dog", "artworkKey": "dog", "bgColor": "#FFFBEB", "accentColor": "#D97706", "animationClass": "anim-bounce" },
+        { "sentenceEn": "The bright sun is up!", "sentenceAr": "الشمس المشرقة تسطع في السماء!", "focusWord": "sun", "artworkKey": "sun", "bgColor": "#FEFCE8", "accentColor": "#CA8A04", "animationClass": "anim-spin-slow" },
+        { "sentenceEn": "Bob sees a tiny red bug.", "sentenceAr": "يرى بوب حشرة حمراء صغيرة.", "focusWord": "bug", "artworkKey": "bug", "bgColor": "#FEF2F2", "accentColor": "#DC2626", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "Bob drinks from a cool mug.", "sentenceAr": "يشرب بوب من كوب جميل.", "focusWord": "mug", "artworkKey": "mug", "bgColor": "#EFF6FF", "accentColor": "#0284C7", "animationClass": "anim-float" }
+      ],
+      "quizQuestionAr": "ماذا رأى بوب تحت الشمس؟",
+      "quizQuestionEn": "What did Bob see in the sun?",
+      "quizCorrectWord": "bug",
+      "quizOptions": ["bug", "box", "pot"]
+    },
+    {
+      "id": 4,
+      "titleAr": "النجمة والسلطعون",
+      "titleEn": "The Star & the Crab",
+      "subtitleAr": "قصة دمج السواكن (Blends)",
+      "subtitleEn": "Animated Consonant Blends Story",
+      "coverArtworkKey": "star",
+      "accentColor": "#0EA5E9",
+      "isFree": false,
+      "scenes": [
+        { "sentenceEn": "Look at the bright gold star.", "sentenceAr": "انظر إلى النجمة الذهبية اللامعة.", "focusWord": "star", "artworkKey": "star", "bgColor": "#FEFCE8", "accentColor": "#CA8A04", "animationClass": "anim-spin-slow" },
+        { "sentenceEn": "A little red crab walks by.", "sentenceAr": "يمشي سلطعون أحمر صغير.", "focusWord": "crab", "artworkKey": "crab", "bgColor": "#FEF2F2", "accentColor": "#DC2626", "animationClass": "anim-slide" },
+        { "sentenceEn": "He plays a happy drum!", "sentenceAr": "يعزف على طبلة مبهجة!", "focusWord": "drum", "artworkKey": "drum", "bgColor": "#F5F3FF", "accentColor": "#7C3AED", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "They dance by the green tree.", "sentenceAr": "يرقصون بجانب الشجرة الخضراء.", "focusWord": "tree", "artworkKey": "tree", "bgColor": "#ECFDF5", "accentColor": "#16A34A", "animationClass": "anim-bounce" }
+      ],
+      "quizQuestionAr": "على ماذا عزف السلطعون؟",
+      "quizQuestionEn": "What did the crab play?",
+      "quizCorrectWord": "drum",
+      "quizOptions": ["drum", "flag", "stop"]
+    },
+    {
+      "id": 5,
+      "titleAr": "السفينة الكبيرة والسمكة",
+      "titleEn": "The Big Ship & the Fish",
+      "subtitleAr": "قصة الحروف المركبة (Digraphs)",
+      "subtitleEn": "Animated Digraphs Story",
+      "coverArtworkKey": "ship",
+      "accentColor": "#EC4899",
+      "isFree": false,
+      "scenes": [
+        { "sentenceEn": "A big blue ship sails away.", "sentenceAr": "تبحر سفينة زرقاء كبيرة.", "focusWord": "ship", "artworkKey": "ship", "bgColor": "#EFF6FF", "accentColor": "#2563EB", "animationClass": "anim-slide" },
+        { "sentenceEn": "A shiny fish jumps up!", "sentenceAr": "تقفز سمكة لامعة للأعلى!", "focusWord": "fish", "artworkKey": "fish", "bgColor": "#ECFEFF", "accentColor": "#0891B2", "animationClass": "anim-bounce" },
+        { "sentenceEn": "The captain waves a blue flag.", "sentenceAr": "يلوّح القبطان بعلم أزرق.", "focusWord": "flag", "artworkKey": "flag", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "What a fun trip on the sea!", "sentenceAr": "يا لها من رحلة بحرية ممتعة!", "focusWord": "ship", "artworkKey": "ship", "bgColor": "#FDF2F8", "accentColor": "#DB2777", "animationClass": "anim-float" }
+      ],
+      "quizQuestionAr": "ما الذي قفز من الماء؟",
+      "quizQuestionEn": "What jumped out of the water?",
+      "quizCorrectWord": "fish",
+      "quizOptions": ["fish", "shop", "chip"]
+    }
+  ]
+}

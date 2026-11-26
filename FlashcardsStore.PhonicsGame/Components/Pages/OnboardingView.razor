@@ -17,18 +17,67 @@
     </div>
 
     <div class="onb-body">
-        <div class="onb-art-card">
-            <span class="icon-svg" style="width:100%;height:100%;">
-                @((MarkupString)SlideIcon)
-            </span>
-        </div>
-        <h2 class="onb-title">@Loc.T(SlideTitleKey)</h2>
-        <p class="onb-desc">@Loc.T(SlideDescKey)</p>
+        @if (Vm.OnboardingSlide == 0)
+        {
+            <div class="onb-art-card">
+                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Puzzle)</span>
+            </div>
+            <h2 class="onb-title">@Loc.T("Onb1Title")</h2>
+            <p class="onb-desc">@Loc.T("Onb1Desc")</p>
+        }
+        else if (Vm.OnboardingSlide == 1)
+        {
+            <h2 class="onb-title">@Loc.T("OnbStep2Title")</h2>
+            <p class="onb-desc" style="margin-bottom:14px;">@Loc.T("OnbStep2Desc")</p>
+
+            <input class="profile-name-input"
+                   maxlength="24"
+                   placeholder="@Loc.T("ProfileNamePlaceholder")"
+                   @bind="Vm.ProfileNameInput"
+                   @bind:event="oninput" />
+
+            <div class="avatar-grid" style="margin-bottom:0;">
+                @foreach (var av in AvatarArtwork.Avatars)
+                {
+                    var selected = Vm.ProfileAvatarInput == av.Key;
+                    <div class="avatar-opt @(selected ? "selected" : "")"
+                         @onclick="() => Vm.ProfileAvatarInput = av.Key">
+                        <div class="avatar-opt-svg">@((MarkupString)AvatarArtwork.GetSvg(av.Key))</div>
+                        <div class="avatar-opt-lbl">@(Loc.IsArabic ? av.LabelAr : av.LabelEn)</div>
+                    </div>
+                }
+            </div>
+        }
+        else if (Vm.OnboardingSlide == 2)
+        {
+            <h2 class="onb-title">@Loc.T("OnbStep3Title")</h2>
+            <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbStep3Desc")</p>
+
+            <div class="onb-goal-list">
+                @foreach (var goal in new[] { (5, "Goal5Label"), (10, "Goal10Label"), (15, "Goal15Label") })
+                {
+                    var selected = Vm.OnboardingGoalMinutes == goal.Item1;
+                    <div class="onb-goal-item @(selected ? "selected" : "")"
+                         @onclick="() => Vm.OnboardingGoalMinutes = goal.Item1">
+                        <span class="icon-svg" style="width:20px;height:20px;color:#F59E0B;">@((MarkupString)UiIcons.Flame)</span>
+                        <span>@Loc.T(goal.Item2)</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="onb-art-card">
+                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Trophy)</span>
+            </div>
+            <h2 class="onb-title">@Loc.T("OnbStep4Title")</h2>
+            <p class="onb-desc">@Loc.T("OnbStep4Desc")</p>
+        }
     </div>
 
     <div class="onb-footer">
         <div class="onb-dots">
-            @for (var i = 0; i < 3; i++)
+            @for (var i = 0; i < 4; i++)
             {
                 var idx = i;
                 <span class="onb-dot @(Vm.OnboardingSlide == idx ? "active" : "")"
@@ -36,30 +85,7 @@
             }
         </div>
         <button class="btn-primary" @onclick="Vm.NextOnboardingSlide">
-            @(Vm.OnboardingSlide == 2 ? Loc.T("StartPlaying") : Loc.T("Next"))
+            @(Vm.OnboardingSlide == 3 ? Loc.T("StartPlaying") : Loc.T("Next"))
         </button>
     </div>
 </div>
-
-@code {
-    private string SlideIcon => Vm.OnboardingSlide switch
-    {
-        0 => UiIcons.Puzzle,
-        1 => UiIcons.Headphones,
-        _ => UiIcons.Trophy
-    };
-
-    private string SlideTitleKey => Vm.OnboardingSlide switch
-    {
-        0 => "Onb1Title",
-        1 => "Onb2Title",
-        _ => "Onb3Title"
-    };
-
-    private string SlideDescKey => Vm.OnboardingSlide switch
-    {
-        0 => "Onb1Desc",
-        1 => "Onb2Desc",
-        _ => "Onb3Desc"
-    };
-}
