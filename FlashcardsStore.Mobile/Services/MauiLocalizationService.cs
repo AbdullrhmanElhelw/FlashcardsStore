@@ -145,6 +145,8 @@ public sealed class MauiLocalizationService : ILocalizationService
         ["NoProductsFound"] = ("لا توجد باقات تطابق البحث", "No matching packs found"),
         ["ShowAllPacks"] = ("عرض كل الباقات", "Show All Packs"),
         ["TapToZoom"] = ("اضغط للتكبير", "Tap to zoom"),
+        ["MyOrdersTitle"] = ("طلباتي السابقة", "My Previous Orders"),
+        ["TapOrderToTrack"] = ("اضغط على أي طلب لعرض حالته فوراً", "Tap any order to track it immediately"),
         ["KeyPointsTitle"] = ("المواصفات والنقاط المميزة:", "Technical Specifications & Key Points:"),
         ["AudioStudioTitle"] = ("أستوديو النطق الصوتي التفاعلي", "Interactive Pronunciation Studio"),
         ["AudioStudioSubtitle"] = ("اضغطي على أي كلمة للنطق الصحيح", "Tap any word to hear pronunciation"),

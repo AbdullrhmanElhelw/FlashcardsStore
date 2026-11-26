@@ -59,6 +59,18 @@ public class OrderRepository : Repository<Order>, IOrderRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Order>> GetOrdersByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(o => o.Customer)
+            .Include(o => o.PaymentProof)
+            .Include(o => o.Items)
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.OrderDate)
+            .Take(30)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<Order>> GetExpiredPendingVerificationOrdersAsync(DateTime cutoffUtc, CancellationToken cancellationToken = default)
     {
         return await _dbSet

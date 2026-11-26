@@ -10,6 +10,7 @@ public interface IOrderRepository : IRepository<Order>
     Task<Order?> GetWithDetailsByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Order>> GetOrdersByStatusAsync(OrderStatus status, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Order>> GetRecentOrdersAsync(int count = 20, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Order>> GetOrdersByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Order>> GetExpiredPendingVerificationOrdersAsync(DateTime cutoffUtc, CancellationToken cancellationToken = default);
     Task<int> CountByStatusAsync(OrderStatus status, CancellationToken cancellationToken = default);
 }

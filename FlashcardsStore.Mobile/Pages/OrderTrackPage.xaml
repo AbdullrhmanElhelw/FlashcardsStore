@@ -2,8 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:FlashcardsStore.Mobile.ViewModels"
+             xmlns:api="clr-namespace:FlashcardsStore.Mobile.Models.Api"
              xmlns:controls="clr-namespace:FlashcardsStore.Mobile.Controls"
              x:Class="FlashcardsStore.Mobile.Pages.OrderTrackPage"
+             x:Name="ThisOrderTrackPage"
              x:DataType="vm:OrderTrackViewModel"
              FlowDirection="{Binding Loc.FlowDirection}"
              Title="{Binding Title}"
@@ -16,6 +18,37 @@
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,12,16,24" Spacing="14">
+
+                <!-- Authenticated Customer's Previous Orders -->
+                <Border Style="{StaticResource CardBorderStyle}"
+                        IsVisible="{Binding HasMyOrders}"
+                        Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding Loc[MyOrdersTitle]}" Style="{StaticResource SectionTitleStyle}" FontSize="16" />
+                        <Label Text="{Binding Loc[TapOrderToTrack]}" Style="{StaticResource MutedLabelStyle}" FontSize="12" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding MyOrders}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="api:MyOrderSummary">
+                                    <Border BackgroundColor="{StaticResource BrandPaper}"
+                                            Stroke="{StaticResource CardBorder}"
+                                            StrokeShape="RoundRectangle 12"
+                                            Padding="12,10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ThisOrderTrackPage}, Path=BindingContext.SelectMyOrderCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="3">
+                                            <Label Text="{Binding OrderNumber}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandInk}" />
+                                            <Label Grid.Column="1" Text="{Binding GrandTotal, StringFormat='{0:0} EGP'}" FontFamily="Cairo" FontSize="13" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            <Label Grid.Row="1" Text="{Binding StatusDescriptionAr}" Style="{StaticResource MutedLabelStyle}" FontSize="12" />
+                                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding OrderDate, StringFormat='{0:dd/MM/yyyy}'}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
                 <Border Style="{StaticResource CardBorderStyle}" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                     <VerticalStackLayout Spacing="10">

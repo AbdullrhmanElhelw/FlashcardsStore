@@ -14,6 +14,7 @@ public interface IOrderService
     Task<OrderTrackingDto?> TrackOrderAsync(string orderNumber, string phoneNumber, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OrderSummaryDto>> GetOrdersByStatusAsync(OrderStatus status, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OrderSummaryDto>> GetRecentOrdersAsync(int count = 20, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<OrderSummaryDto>> GetCustomerOrdersAsync(int customerId, CancellationToken cancellationToken = default);
     Task<Result<bool>> ApproveOrderAsync(int orderId, string adminUsername, CancellationToken cancellationToken = default);
     Task<Result<bool>> RejectOrderAsync(int orderId, string adminUsername, string? reason, CancellationToken cancellationToken = default);
     Task<Result<bool>> UpdateOrderStatusAsync(int orderId, OrderStatus newStatus, string adminUsername, string? notes, CancellationToken cancellationToken = default);

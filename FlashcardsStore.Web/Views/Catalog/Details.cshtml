@@ -49,6 +49,34 @@
         ? $"مرحباً مس خلود، أود الاستفسار وطلب باقة الفلاش كاردز: {Model.NameAr} ({Model.Name}) بسعر {Model.Price:F0} ج.م من أكاديمية خلود النادي"
         : $"Hello Miss Kholoud, I would like to inquire about and order the flashcards pack: {Model.Name} ({Model.NameAr}) for {Model.Price:F0} EGP from Kholoud Elnady English Academy";
     var directWhatsAppUrl = SettingsService.GetWhatsAppLink(whatsAppMsg);
+
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var ogFirstImg = (Model.ImageUrl ?? "")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
+    var ogImageUrl = ogFirstImg.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+        ? ogFirstImg
+        : $"{baseUrl}{(ogFirstImg.StartsWith("/") ? ogFirstImg : "/" + ogFirstImg)}";
+    var ogUrl = $"{baseUrl}{Context.Request.Path}{Context.Request.QueryString}";
+    var ogDesc = string.IsNullOrWhiteSpace(mainDesc)
+        ? primaryName
+        : (mainDesc.Length > 160 ? mainDesc[..157] + "..." : mainDesc);
+}
+
+@section Head {
+    <meta name="description" content="@ogDesc" />
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content="@Loc.Get("BrandName")" />
+    <meta property="og:title" content="@primaryName — @Model.Price.ToString("F0") @Loc.Get("Currency")" />
+    <meta property="og:description" content="@ogDesc" />
+    <meta property="og:image" content="@ogImageUrl" />
+    <meta property="og:url" content="@ogUrl" />
+    <meta property="product:price:amount" content="@Model.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)" />
+    <meta property="product:price:currency" content="EGP" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@primaryName — @Model.Price.ToString("F0") @Loc.Get("Currency")" />
+    <meta name="twitter:description" content="@ogDesc" />
+    <meta name="twitter:image" content="@ogImageUrl" />
 }
 
 @section Styles {

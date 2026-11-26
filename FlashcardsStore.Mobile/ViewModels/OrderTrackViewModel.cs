@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FlashcardsStore.Mobile.Models.Api;
@@ -9,6 +10,7 @@ namespace FlashcardsStore.Mobile.ViewModels;
 public sealed partial class OrderTrackViewModel : BaseViewModel
 {
     private readonly IMobileApiClient _api;
+    private readonly ICustomerSessionService _session;
 
     [ObservableProperty]
     private string _orderNumber = string.Empty;
@@ -28,6 +30,9 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
     [ObservableProperty]
     private string _proofNote = string.Empty;
 
+    public ObservableCollection<MyOrderSummary> MyOrders { get; } = new();
+    public bool HasMyOrders => MyOrders.Count > 0;
+
     public bool HasResult => TrackingResult is not null;
     public string OrderLabel => TrackingResult is null ? string.Empty : Loc.Format("OrderFormat", TrackingResult.OrderNumber);
     public string OrderTotalLabel => TrackingResult is null ? string.Empty : Loc.Format("CurrencyAmount", TrackingResult.GrandTotal);
@@ -41,6 +46,7 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
         ILocalizationService loc) : base(loc)
     {
         _api = api;
+        _session = session;
         Title = Loc["TrackOrderTitle"];
         loc.LanguageChanged += (_, _) =>
         {
@@ -56,6 +62,42 @@ public sealed partial class OrderTrackViewModel : BaseViewModel
         {
             PhoneNumber = session.CustomerPhone;
         }
+    }
+
+    [RelayCommand]
+    public async Task LoadMyOrdersAsync()
+    {
+        if (!_session.IsSignedIn || string.IsNullOrWhiteSpace(_session.Token))
+        {
+            MyOrders.Clear();
+            OnPropertyChanged(nameof(HasMyOrders));
+            return;
+        }
+
+        try
+        {
+            var orders = await _api.GetMyOrdersAsync();
+            MyOrders.Clear();
+            foreach (var o in orders)
+            {
+                MyOrders.Add(o);
+            }
+            OnPropertyChanged(nameof(HasMyOrders));
+        }
+        catch
+        {
+            // Keep manual order tracking working even if history fetch fails
+        }
+    }
+
+    [RelayCommand]
+    private async Task SelectMyOrderAsync(MyOrderSummary? order)
+    {
+        if (order is null) return;
+        OrderNumber = order.OrderNumber;
+        if (!string.IsNullOrWhiteSpace(order.CustomerPhone))
+            PhoneNumber = order.CustomerPhone;
+        await SearchOrderAsync();
     }
 
     [RelayCommand]

@@ -209,6 +209,12 @@ public class OrderService : IOrderService
         return orders.Select(MapToSummaryDto).ToList();
     }
 
+    public async Task<IReadOnlyList<OrderSummaryDto>> GetCustomerOrdersAsync(int customerId, CancellationToken cancellationToken = default)
+    {
+        var orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId, cancellationToken);
+        return orders.Select(MapToSummaryDto).ToList();
+    }
+
     public async Task<Result<bool>> ApproveOrderAsync(int orderId, string adminUsername, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepository.GetWithDetailsByIdAsync(orderId, cancellationToken);

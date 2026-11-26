@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Kholoud Elnady English Academy | @(CultureHelper.IsRtl ? "بطاقات الفلاش كاردز التعليمية" : "Interactive Educational Flashcards")</title>
     <link rel="icon" type="image/png" href="~/images/brand/logo.png" />
+    @await RenderSectionAsync("Head", required: false)
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>

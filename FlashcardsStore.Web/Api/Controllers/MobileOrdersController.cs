@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FluentValidation;
 using FlashcardsStore.Application.DTOs.Cart;
 using FlashcardsStore.Application.DTOs.Orders;
@@ -159,6 +160,47 @@ public sealed class MobileOrdersController : MobileApiControllerBase
         }
 
         return lines;
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpGet("orders/my")]
+    public async Task<IActionResult> GetMyOrders(CancellationToken ct)
+    {
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(idClaim, out var customerId) || customerId <= 0)
+            return Unauthorized();
+
+        var orders = await _orders.GetCustomerOrdersAsync(customerId, ct);
+        var result = orders.Select(o =>
+        {
+            var (descAr, descEn) = o.Status switch
+            {
+                Domain.Enums.OrderStatus.Draft => ("مسودة طلب", "Draft Order"),
+                Domain.Enums.OrderStatus.WhatsAppPending => ("في انتظار تأكيد واتساب", "Awaiting WhatsApp Confirmation"),
+                Domain.Enums.OrderStatus.PendingVerification => ("في انتظار مراجعة التحويل", "Pending Payment Verification"),
+                Domain.Enums.OrderStatus.Approved => ("تم التأكيد والاعتماد", "Approved & Confirmed"),
+                Domain.Enums.OrderStatus.Shipped => ("تم الشحن مع المندوب", "Shipped with Courier"),
+                Domain.Enums.OrderStatus.Delivered => ("تم التسليم بنجاح", "Delivered"),
+                Domain.Enums.OrderStatus.Rejected => ("مرفوض", "Rejected"),
+                Domain.Enums.OrderStatus.Cancelled => ("ملغي", "Cancelled"),
+                _ => ("غير محدد", "Unknown")
+            };
+
+            return new
+            {
+                o.OrderNumber,
+                o.CustomerPhone,
+                o.GrandTotal,
+                o.OrderDate,
+                o.TotalItems,
+                o.HasPaymentProof,
+                Status = o.Status.ToString(),
+                StatusDescription = descEn,
+                StatusDescriptionAr = descAr
+            };
+        });
+
+        return Ok(result);
     }
 
     private static string? ValidateProofFile(IFormFile? proofFile)

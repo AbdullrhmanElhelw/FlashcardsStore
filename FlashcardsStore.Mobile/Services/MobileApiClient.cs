@@ -110,6 +110,9 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
     public Task<OrderTracking> TrackOrderAsync(string orderNumber, string phone, CancellationToken cancellationToken = default)
         => GetAsync<OrderTracking>($"orders/track?orderNumber={Uri.EscapeDataString(orderNumber)}&phone={Uri.EscapeDataString(phone)}", cancellationToken);
 
+    public Task<IReadOnlyList<MyOrderSummary>> GetMyOrdersAsync(CancellationToken cancellationToken = default)
+        => GetAsync<IReadOnlyList<MyOrderSummary>>("orders/my", cancellationToken);
+
     public async Task UploadPaymentProofAsync(
         string orderNumber,
         string phone,

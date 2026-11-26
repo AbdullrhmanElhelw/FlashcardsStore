@@ -27,6 +27,7 @@ public interface IMobileApiClient
     Task<ShippingQuote> GetShippingQuoteAsync(string governorate, decimal subtotal, CancellationToken cancellationToken = default);
     Task<OrderDetail> CreateOrderAsync(CreateOrderRequest request, CancellationToken cancellationToken = default);
     Task<OrderTracking> TrackOrderAsync(string orderNumber, string phone, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<MyOrderSummary>> GetMyOrdersAsync(CancellationToken cancellationToken = default);
     Task UploadPaymentProofAsync(
         string orderNumber,
         string phone,
