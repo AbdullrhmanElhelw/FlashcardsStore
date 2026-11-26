@@ -1,0 +1,197 @@
+@model List<FlashcardsStore.Domain.Entities.PhonicsActivationCode>
+@{
+    ViewData["Title"] = "أكواد لعبة الفونكس";
+    Layout = "_AdminLayout";
+    var search = ViewBag.SearchTerm as string ?? "";
+    var statusFilter = ViewBag.StatusFilter as string ?? "all";
+    var totalCodes = (int)(ViewBag.TotalCodes ?? 0);
+    var activeCodes = (int)(ViewBag.ActiveCodes ?? 0);
+    var totalDevices = (int)(ViewBag.TotalDevices ?? 0);
+    var pagedInfo = ViewBag.PagedInfo as FlashcardsStore.Application.Common.PagedResult<FlashcardsStore.Domain.Entities.PhonicsActivationCode>;
+    var paginationBaseUrl = ViewBag.PaginationBaseUrl as string ?? "/Admin/PhonicsCodes";
+}
+
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">أكواد تفعيل لعبة الفونكس (CVC & Sight Words)</h1>
+            <p class="text-sm text-slate-500 mt-1">توليد وإدارة أكواد التفعيل التي تُباع مع الباقات أو كاشتراك رمزي لفتح جميع مراحل التطبيق.</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-semibold text-slate-500">إجمالي الأكواد</div>
+            <div class="text-3xl font-extrabold text-slate-900 mt-1">@totalCodes</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-semibold text-emerald-600">أكواد نشطة</div>
+            <div class="text-3xl font-extrabold text-emerald-700 mt-1">@activeCodes</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-semibold text-indigo-600">أجهزة مفعّلة</div>
+            <div class="text-3xl font-extrabold text-indigo-700 mt-1">@totalDevices</div>
+        </div>
+    </div>
+
+    <!-- Generate Codes Form -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">توليد أكواد تفعيل جديدة</h2>
+        <form asp-controller="AdminPhonics" asp-action="Generate" method="post" hx-boost="false" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            @Html.AntiForgeryToken()
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">عدد الأكواد (1-50)</label>
+                <input type="number" name="count" value="5" min="1" max="50" required
+                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">اسم الباقة / الاشتراك</label>
+                <input type="text" name="bundleName" value="باقة تأسيس الفونكس" maxlength="150"
+                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">الحد الأقصى للأجهزة</label>
+                <input type="number" name="maxDevices" value="2" min="1" max="10" required
+                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">صلاحية (أيام - اختياري)</label>
+                <input type="number" name="expiresInDays" placeholder="دائم إذا تُرك فارغاً" min="1"
+                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            </div>
+            <div>
+                <button type="submit"
+                        class="w-full bg-[#3A0A26] hover:bg-[#521036] text-white font-bold py-2.5 px-4 rounded-xl transition cursor-pointer">
+                    + توليد الأكواد
+                </button>
+            </div>
+            <div class="md:col-span-5">
+                <input type="text" name="notes" placeholder="ملاحظات إضافية (اختياري، مثلاً: دفعة مطبعة نوفمبر أو عميل محدد)" maxlength="500"
+                       class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            </div>
+        </form>
+    </div>
+
+    <!-- Filter & Search -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <form method="get" asp-controller="AdminPhonics" asp-action="PhonicsCodes" class="flex flex-col sm:flex-row gap-3">
+            <input type="text" name="search" value="@search" placeholder="ابحث بالكود أو اسم الباقة أو الملاحظات..."
+                   class="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm" />
+            <select name="status" class="rounded-xl border border-slate-300 px-4 py-2 text-sm">
+                <option value="all" selected="@(statusFilter == "all")">كل الحالات</option>
+                <option value="active" selected="@(statusFilter == "active")">نشط فقط</option>
+                <option value="inactive" selected="@(statusFilter == "inactive")">موقوف فقط</option>
+            </select>
+            <button type="submit" class="bg-slate-800 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-900 cursor-pointer">
+                بحث
+            </button>
+        </form>
+    </div>
+
+    <!-- Codes Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-right">
+                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                    <tr>
+                        <th class="py-3.5 px-4">الكود</th>
+                        <th class="py-3.5 px-4">الباقة</th>
+                        <th class="py-3.5 px-4">الأجهزة المستخدمة</th>
+                        <th class="py-3.5 px-4">الحالة</th>
+                        <th class="py-3.5 px-4">الانتهاء</th>
+                        <th class="py-3.5 px-4">ملاحظات</th>
+                        <th class="py-3.5 px-4 text-left">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="py-10 text-center text-slate-400">لا توجد أكواد تفعيل حالياً. استخدم النموذج بالأعلى لتوليد أكواد جديدة.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            var isExpired = item.ExpiresAtUtc.HasValue && item.ExpiresAtUtc.Value <= DateTime.UtcNow;
+                            <tr class="hover:bg-slate-50/70">
+                                <td class="py-3 px-4 font-mono font-bold text-slate-900 whitespace-nowrap" dir="ltr">
+                                    <span class="bg-amber-50 border border-amber-200 text-amber-900 px-2.5 py-1 rounded-lg">@item.Code</span>
+                                    <button type="button" onclick="navigator.clipboard.writeText('@item.Code'); this.textContent='تم النسخ ✓'; setTimeout(() => this.textContent='نسخ', 1500);"
+                                            class="mr-2 text-xs font-sans text-indigo-600 hover:underline cursor-pointer">نسخ</button>
+                                </td>
+                                <td class="py-3 px-4 text-slate-700">@(item.BundleName ?? "-")</td>
+                                <td class="py-3 px-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold @(item.Devices.Count >= item.MaxDevices ? "bg-rose-100 text-rose-700" : "bg-indigo-50 text-indigo-700")">
+                                        @item.Devices.Count / @item.MaxDevices
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    @if (!item.IsActive)
+                                    {
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700">موقوف</span>
+                                    }
+                                    else if (isExpired)
+                                    {
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700">منتهي</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">نشط</span>
+                                    }
+                                </td>
+                                <td class="py-3 px-4 text-xs text-slate-500">
+                                    @(item.ExpiresAtUtc.HasValue ? item.ExpiresAtUtc.Value.ToString("yyyy-MM-dd") : "دائم")
+                                </td>
+                                <td class="py-3 px-4 text-xs text-slate-500 max-w-xs truncate">@(item.Notes ?? "-")</td>
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <form asp-controller="AdminPhonics" asp-action="Toggle" asp-route-id="@item.Id" method="post" hx-boost="false">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-slate-200 hover:bg-slate-100 cursor-pointer">
+                                                @(item.IsActive ? "إيقاف" : "تفعيل")
+                                            </button>
+                                        </form>
+                                        @if (item.Devices.Count > 0)
+                                        {
+                                            <form asp-controller="AdminPhonics" asp-action="ResetDevices" asp-route-id="@item.Id" method="post" hx-boost="false"
+                                                  onsubmit="return confirm('تصفير الأجهزة المرتبطة بهذا الكود؟');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-amber-200 text-amber-700 hover:bg-amber-50 cursor-pointer">
+                                                    تصفير الأجهزة
+                                                </button>
+                                            </form>
+                                        }
+                                        <form asp-controller="AdminPhonics" asp-action="Delete" asp-route-id="@item.Id" method="post" hx-boost="false"
+                                              onsubmit="return confirm('حذف الكود نهائياً؟');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-rose-200 text-rose-700 hover:bg-rose-50 cursor-pointer">
+                                                حذف
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (pagedInfo is not null && pagedInfo.TotalPages > 1)
+    {
+        <div class="flex justify-center gap-2">
+            @for (var p = 1; p <= pagedInfo.TotalPages; p++)
+            {
+                <a href="@($"{paginationBaseUrl}&page={p}")"
+                   class="px-3.5 py-1.5 rounded-lg text-sm font-bold @(p == pagedInfo.PageIndex ? "bg-[#3A0A26] text-white" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50")">
+                    @p
+                </a>
+            }
+        </div>
+    }
+</div>

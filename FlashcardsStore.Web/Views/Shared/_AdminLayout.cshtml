@@ -7,6 +7,7 @@
     var isCategories = currentAction == "Categories" || currentAction == "CreateCategory" || currentAction == "EditCategory";
     var isCustomers = currentAction == "Customers";
     var isReviews = currentAction == "Reviews";
+    var isPhonics = currentAction == "PhonicsCodes";
     var isSettings = currentAction == "Settings";
     var adminUser = User.Identity?.Name ?? Context.Session.GetString("AdminLoggedInUser") ?? "المشرف";
     var dashboardSummary = await AdminOrderService.GetAdminDashboardMetricsAsync();
@@ -140,6 +141,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
                 <span>التقييمات والمراجعات</span>
+            </a>
+
+            <a asp-controller="AdminPhonics" asp-action="PhonicsCodes" data-nav-group="phonics"
+               class="sidebar-link flex items-center gap-3 px-3.5 py-2.5 rounded-xl border border-transparent transition-all @(isPhonics ? "is-active" : "text-slate-300 hover:bg-white/5 hover:text-white")">
+                <svg class="w-5 h-5 shrink-0 text-[#D4AF37]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                <span>أكواد لعبة الفونكس</span>
             </a>
 
             <a asp-controller="AdminSettings" asp-action="Settings" data-nav-group="settings"

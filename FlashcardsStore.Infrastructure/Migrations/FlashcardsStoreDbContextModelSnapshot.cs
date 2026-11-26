@@ -409,6 +409,118 @@ namespace FlashcardsStore.Infrastructure.Migrations
                     b.ToTable("PaymentProof", (string)null);
                 });
 
+            modelBuilder.Entity("FlashcardsStore.Domain.Entities.PhonicsActivationCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BundleName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxDevices")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2);
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("PhonicsActivationCode", (string)null);
+                });
+
+            modelBuilder.Entity("FlashcardsStore.Domain.Entities.PhonicsDeviceActivation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("DeviceName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastVerifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PhonicsActivationCodeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhonicsActivationCodeId", "DeviceId")
+                        .IsUnique();
+
+                    b.ToTable("PhonicsDeviceActivation", (string)null);
+                });
+
             modelBuilder.Entity("FlashcardsStore.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -743,6 +855,17 @@ namespace FlashcardsStore.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("FlashcardsStore.Domain.Entities.PhonicsDeviceActivation", b =>
+                {
+                    b.HasOne("FlashcardsStore.Domain.Entities.PhonicsActivationCode", "ActivationCode")
+                        .WithMany("Devices")
+                        .HasForeignKey("PhonicsActivationCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActivationCode");
+                });
+
             modelBuilder.Entity("FlashcardsStore.Domain.Entities.Product", b =>
                 {
                     b.HasOne("FlashcardsStore.Domain.Entities.Category", "Category")
@@ -780,6 +903,11 @@ namespace FlashcardsStore.Infrastructure.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("PaymentProof");
+                });
+
+            modelBuilder.Entity("FlashcardsStore.Domain.Entities.PhonicsActivationCode", b =>
+                {
+                    b.Navigation("Devices");
                 });
 #pragma warning restore 612, 618
         }

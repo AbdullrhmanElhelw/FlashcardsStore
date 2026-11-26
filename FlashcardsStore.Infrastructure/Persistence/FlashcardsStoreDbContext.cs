@@ -19,6 +19,8 @@ public class FlashcardsStoreDbContext : DbContext
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
+    public DbSet<PhonicsActivationCode> PhonicsActivationCodes => Set<PhonicsActivationCode>();
+    public DbSet<PhonicsDeviceActivation> PhonicsDeviceActivations => Set<PhonicsDeviceActivation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,6 +39,8 @@ public class FlashcardsStoreDbContext : DbContext
         modelBuilder.Entity<AdminUser>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<Review>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<StoreSettings>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PhonicsActivationCode>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PhonicsDeviceActivation>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
