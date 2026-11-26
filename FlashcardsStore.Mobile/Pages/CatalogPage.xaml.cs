@@ -17,9 +17,4 @@ public partial class CatalogPage : ContentPage
         base.OnAppearing();
         await _viewModel.InitializeCommand.ExecuteAsync(null);
     }
-
-    private void OnSearchToggleClicked(object? sender, EventArgs e)
-    {
-        SearchEntry.Focus();
-    }
 }
