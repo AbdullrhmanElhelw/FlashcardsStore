@@ -27,6 +27,46 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1E1220] selection:bg-[#D4AF37] selection:text-[#18061A] overflow-x-hidden w-full max-w-full" x-data="{ mobileMenuOpen: false }">
 
+    <!-- Branded Entrance Splash Screen (Shown once per browser session) -->
+    <div id="fc-brand-splash"
+         class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-br from-[#18061A] via-[#290A2E] to-[#120314] text-center px-6 transition-opacity duration-500"
+         style="display:none;">
+        <div class="relative flex flex-col items-center space-y-4">
+            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#18061A] border-2 border-[#D4AF37] p-2 shadow-2xl shadow-[#D4AF37]/25 animate-pulse">
+                <img src="~/images/brand/logo.png" alt="Kholoud Elnady Academy" class="w-full h-full object-contain rounded-2xl" />
+            </div>
+            <div class="space-y-1">
+                <p class="text-xl sm:text-2xl font-black text-[#FBF6E5] tracking-tight">
+                    @(CultureHelper.IsRtl ? "أكاديمية خلود النادي" : "Kholoud Elnady Academy")
+                </p>
+                <p class="text-xs sm:text-sm font-bold text-[#D4AF37] tracking-widest uppercase">
+                    @(CultureHelper.IsRtl ? "بطاقات تعليمية تفاعلية" : "Interactive Educational Flashcards")
+                </p>
+            </div>
+            <div class="w-28 h-1 rounded-full bg-white/15 overflow-hidden mt-2">
+                <div class="h-full bg-gradient-to-r from-[#D4AF37] to-[#F6ECC9] animate-[pulse_1s_ease-in-out_infinite] w-2/3 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var splash = document.getElementById('fc-brand-splash');
+            if (!splash) return;
+            try {
+                if (sessionStorage.getItem('fc_splash_shown') === '1') {
+                    splash.remove();
+                    return;
+                }
+                sessionStorage.setItem('fc_splash_shown', '1');
+            } catch (e) { }
+            splash.style.display = 'flex';
+            setTimeout(function () {
+                splash.style.opacity = '0';
+                setTimeout(function () { splash.remove(); }, 500);
+            }, 850);
+        })();
+    </script>
+
     <!-- Global Anti-Forgery Token for HTMX & AJAX -->
     <form id="global-antiforgery-form" style="display:none;" aria-hidden="true">
         @Html.AntiForgeryToken()

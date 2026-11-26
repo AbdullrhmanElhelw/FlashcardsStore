@@ -216,6 +216,75 @@
 
 
 <!-- ==========================================================================
+     5. Featured Packs Preview (معاينة باقات مختارة مع زر الذهاب لصفحة المتجر)
+     ========================================================================== -->
+<section class="py-16 bg-[#FAF8F5] border-b border-amber-200/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 text-start">
+            <div>
+                <span class="text-xs font-black text-[#8D6711] uppercase tracking-wider">FEATURED PACKS SELECTION</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                    @Loc.Get("FeaturedSectionTitle")
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                    @Loc.Get("FeaturedSectionSubtitle")
+                </p>
+            </div>
+
+            <!-- Link to full store catalog -->
+            <a asp-controller="Catalog" asp-action="Index" class="btn-gold-primary px-6 py-3 rounded-xl text-xs sm:text-sm font-black shadow-md flex items-center gap-2 whitespace-nowrap self-start md:self-auto">
+                <span>@Loc.Get("ViewAllStorePacks")</span>
+                <svg class="w-4 h-4 @(isRtl ? "" : "rotate-180")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+        </div>
+
+        <!-- Quick Category Browse Pills -->
+        @if (categories.Any())
+        {
+            <div class="flex flex-wrap items-center gap-2">
+                @foreach (var cat in categories)
+                {
+                    <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@cat.Id"
+                       class="px-4 py-2 rounded-xl bg-white border border-amber-200/80 hover:border-[#D4AF37] hover:bg-amber-50 text-xs sm:text-sm font-bold text-slate-800 shadow-2xs transition">
+                        @Loc.GetLocalized(cat.NameAr, cat.Name)
+                    </a>
+                }
+            </div>
+        }
+
+        <!-- Featured Product Cards Grid (Compact: 2 on mobile, 4 on desktop) -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            @foreach (var card in featured.Take(8))
+            {
+                <partial name="_ProductCard" model="card" />
+            }
+        </div>
+
+        <!-- Callout Banner to Shopping Page -->
+        <div class="bg-gradient-to-r from-[#18061A] via-[#2D0A35] to-[#18061A] rounded-2xl p-6 sm:p-8 text-white text-center sm:text-start flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl border border-amber-300/30">
+            <div class="space-y-1.5 max-w-xl">
+                <h3 class="text-lg sm:text-xl font-black text-[#FBF6E5]">@Loc.Get("CalloutTitle")</h3>
+                <p class="text-xs sm:text-sm text-slate-300 font-medium">
+                    @Loc.Get("CalloutSubtitle")
+                </p>
+            </div>
+
+            <a asp-controller="Catalog" asp-action="Index" class="btn-gold-primary px-8 py-3.5 rounded-xl font-black text-sm shadow-lg whitespace-nowrap">
+                <span>@Loc.Get("CalloutCta")</span>
+                <span>@nextArrow</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+
+
+<!-- ==========================================================================
      2. The Methodology & Philosophy: Why Flashcards? (فكرة المتجر وبنعمل إيه)
      ========================================================================== -->
 <section class="py-16 bg-white border-b border-slate-200/80">
@@ -440,59 +509,6 @@
                 </div>
             </div>
 
-        </div>
-
-    </div>
-</section>
-
-
-<!-- ==========================================================================
-     5. Featured Packs Preview (معاينة باقات مختارة مع زر الذهاب لصفحة المتجر)
-     ========================================================================== -->
-<section class="py-16 bg-[#FAF8F5] border-b border-amber-200/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 text-start">
-            <div>
-                <span class="text-xs font-black text-[#8D6711] uppercase tracking-wider">FEATURED PACKS SELECTION</span>
-                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                    @Loc.Get("FeaturedSectionTitle")
-                </h2>
-                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-                    @Loc.Get("FeaturedSectionSubtitle")
-                </p>
-            </div>
-
-            <!-- Link to full store catalog -->
-            <a asp-controller="Catalog" asp-action="Index" class="btn-gold-primary px-6 py-3 rounded-xl text-xs sm:text-sm font-black shadow-md flex items-center gap-2 whitespace-nowrap self-start md:self-auto">
-                <span>@Loc.Get("ViewAllStorePacks")</span>
-                <svg class="w-4 h-4 @(isRtl ? "" : "rotate-180")" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-                </svg>
-            </a>
-        </div>
-
-        <!-- Featured Product Cards Grid (Compact: 2 on mobile, 4 on desktop) -->
-        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            @foreach (var card in featured.Take(4))
-            {
-                <partial name="_ProductCard" model="card" />
-            }
-        </div>
-
-        <!-- Callout Banner to Shopping Page -->
-        <div class="bg-gradient-to-r from-[#18061A] via-[#2D0A35] to-[#18061A] rounded-2xl p-6 sm:p-8 text-white text-center sm:text-start flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl border border-amber-300/30">
-            <div class="space-y-1.5 max-w-xl">
-                <h3 class="text-lg sm:text-xl font-black text-[#FBF6E5]">@Loc.Get("CalloutTitle")</h3>
-                <p class="text-xs sm:text-sm text-slate-300 font-medium">
-                    @Loc.Get("CalloutSubtitle")
-                </p>
-            </div>
-
-            <a asp-controller="Catalog" asp-action="Index" class="btn-gold-primary px-8 py-3.5 rounded-xl font-black text-sm shadow-lg whitespace-nowrap">
-                <span>@Loc.Get("CalloutCta")</span>
-                <span>@nextArrow</span>
-            </a>
         </div>
 
     </div>
