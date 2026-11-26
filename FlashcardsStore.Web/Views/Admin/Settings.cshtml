@@ -74,6 +74,11 @@
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
 
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold"></div>
+        }
+
         <!-- Tab 1: Contact Information -->
         <div x-show="activeTab === 'contact'" x-transition class="space-y-6">
             <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">

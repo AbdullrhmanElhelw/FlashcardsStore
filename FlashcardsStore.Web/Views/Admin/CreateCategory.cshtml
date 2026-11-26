@@ -25,10 +25,13 @@
     </div>
 
     <!-- Form -->
-    <form asp-controller="AdminCategories" asp-action="CreateCategory" method="post" class="space-y-6">
+    <form asp-controller="AdminCategories" asp-action="CreateCategory" method="post" hx-boost="false" class="space-y-6">
         @Html.AntiForgeryToken()
 
-        <div asp-validation-summary="ModelOnly" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold"></div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-bold"></div>
+        }
 
         <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
             <div>
