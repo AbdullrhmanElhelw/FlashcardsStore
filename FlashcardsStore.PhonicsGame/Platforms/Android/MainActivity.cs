@@ -1,5 +1,7 @@
 using Android.App;
 using Android.Content.PM;
+using Android.OS;
+using AndroidX.Core.View;
 
 namespace FlashcardsStore.PhonicsGame;
 
@@ -11,4 +13,12 @@ namespace FlashcardsStore.PhonicsGame;
                            ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
+    protected override void OnCreate(Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+        if (Window is not null)
+        {
+            WindowCompat.SetDecorFitsSystemWindows(Window, true);
+        }
+    }
 }

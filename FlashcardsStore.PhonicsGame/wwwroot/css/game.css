@@ -60,7 +60,7 @@ html, body {
 .topbar {
     background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
     color: #fff;
-    padding: 14px 16px;
+    padding: 40px 16px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
