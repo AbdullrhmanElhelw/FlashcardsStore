@@ -17,6 +17,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<ISpeechService, SpeechService>();
+        services.AddSingleton<ISpeechRecognitionService, SpeechRecognitionService>();
+        services.AddSingleton<IChildProfileService, ChildProfileService>();
         services.AddSingleton<IActivationService, ActivationService>();
         services.AddSingleton<IGameProgressService, GameProgressService>();
         services.AddSingleton<PhonicsGameViewModel>();

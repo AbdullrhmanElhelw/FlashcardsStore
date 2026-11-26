@@ -1,0 +1,36 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+@if (Vm.ShowProfileModal)
+{
+    <div class="modal-backdrop" @onclick="Vm.CloseProfileModal">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <h3 style="margin: 0 0 12px; color: var(--plum);">@Loc.T("ProfileTitle")</h3>
+
+            <div class="profile-field-label">@Loc.T("ProfileNameLabel")</div>
+            <input class="profile-name-input"
+                   maxlength="24"
+                   placeholder="@Loc.T("ProfileNamePlaceholder")"
+                   @bind="Vm.ProfileNameInput"
+                   @bind:event="oninput" />
+
+            <div class="profile-field-label">@Loc.T("ProfileAvatarLabel")</div>
+            <div class="avatar-grid">
+                @foreach (var av in AvatarArtwork.Avatars)
+                {
+                    var selected = Vm.ProfileAvatarInput == av.Key;
+                    <div class="avatar-opt @(selected ? "selected" : "")"
+                         @onclick="() => Vm.ProfileAvatarInput = av.Key">
+                        <div class="avatar-opt-svg">
+                            @((MarkupString)AvatarArtwork.GetSvg(av.Key))
+                        </div>
+                        <div class="avatar-opt-lbl">@(Loc.IsArabic ? av.LabelAr : av.LabelEn)</div>
+                    </div>
+                }
+            </div>
+
+            <button class="btn-primary" @onclick="Vm.SaveProfile">@Loc.T("SaveProfile")</button>
+            <button class="btn-close-link" @onclick="Vm.CloseProfileModal">@Loc.T("Close")</button>
+        </div>
+    </div>
+}

@@ -2,15 +2,19 @@ using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
-/// <summary>Persists child stars, streak, and completed words locally.</summary>
+/// <summary>Persists child stars, streak, daily challenge status, and completed words locally.</summary>
 public sealed class GameProgressService : IGameProgressService
 {
     private const string KeyStars = "phonics_total_stars";
     private const string KeyBestStreak = "phonics_best_streak";
     private const string KeyCompletedWords = "phonics_completed_words";
+    private const string KeyDailyDate = "phonics_daily_date";
 
     public int TotalStars => Preferences.Default.Get(KeyStars, 0);
     public int BestStreak => Preferences.Default.Get(KeyBestStreak, 0);
+
+    public bool IsDailyChallengeCompletedToday
+        => Preferences.Default.Get(KeyDailyDate, string.Empty) == DateTime.Today.ToString("yyyy-MM-dd");
 
     public HashSet<string> GetCompletedWords()
     {
@@ -32,5 +36,10 @@ public sealed class GameProgressService : IGameProgressService
         var set = GetCompletedWords();
         if (set.Add(word))
             Preferences.Default.Set(KeyCompletedWords, string.Join(',', set));
+    }
+
+    public void MarkDailyChallengeCompleted()
+    {
+        Preferences.Default.Set(KeyDailyDate, DateTime.Today.ToString("yyyy-MM-dd"));
     }
 }

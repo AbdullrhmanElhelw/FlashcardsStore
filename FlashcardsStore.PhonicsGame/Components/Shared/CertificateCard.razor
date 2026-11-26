@@ -1,0 +1,43 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+@{
+    var heroName = string.IsNullOrWhiteSpace(Vm.Profile.Name)
+        ? Loc.T("DefaultHeroName")
+        : Vm.Profile.Name;
+    var stageName = Vm.ActiveStage is null
+        ? Loc.T("AppTitle")
+        : (Loc.IsArabic ? Vm.ActiveStage.TitleAr : Vm.ActiveStage.TitleEn);
+}
+
+<div class="cert-card">
+    <div class="cert-seal">
+        <img src="images/logo_gold.png" alt="Academy Logo" />
+    </div>
+    <div class="cert-academy">@Loc.T("AcademyName")</div>
+    <h2 class="cert-title">@Loc.T("CertTitle")</h2>
+    <div class="cert-sub">@Loc.T("CertPresentedTo")</div>
+
+    <div class="cert-hero-row">
+        <div class="cert-avatar">
+            @((MarkupString)AvatarArtwork.GetSvg(Vm.Profile.AvatarKey))
+        </div>
+        <div class="cert-hero-name">@heroName</div>
+    </div>
+
+    <div class="cert-sub">@Loc.T("CertForCompleting")</div>
+    <div class="cert-stage-name">@stageName</div>
+
+    <div class="cert-stars-pill">
+        <span class="icon-svg" style="width:18px;height:18px;color:#F59E0B;">@((MarkupString)UiIcons.Star)</span>
+        <span>@Loc.T("CertStarsEarned"): +@Vm.StageStars</span>
+    </div>
+
+    <div class="cert-actions">
+        <button class="btn-share-cert" @onclick="Vm.ShareCertificateAsync">
+            <span class="icon-svg" style="width:17px;height:17px;">@((MarkupString)UiIcons.Share)</span>
+            <span>@Loc.T("ShareCertBtn")</span>
+        </button>
+        <button class="btn-primary" @onclick="Vm.ExitStage">@Loc.T("ReturnHome")</button>
+    </div>
+</div>

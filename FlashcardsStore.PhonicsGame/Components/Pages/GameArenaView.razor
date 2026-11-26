@@ -3,16 +3,7 @@
 
 @if (Vm.StageFinished)
 {
-    <div class="picture-stage" style="padding: 34px 20px;">
-        <div class="icon-svg" style="width:82px;height:82px;margin:0 auto 12px;color:#F59E0B;">
-            @((MarkupString)UiIcons.Trophy)
-        </div>
-        <h2 style="margin: 0 0 8px; color: var(--plum);">@Loc.T("StageCompleteTitle")</h2>
-        <p style="color: var(--muted); margin: 0 0 22px; font-size:14px;">
-            @Loc.T("StageCompleteDesc") (+@Vm.StageStars)
-        </p>
-        <button class="btn-primary" @onclick="Vm.ExitStage">@Loc.T("ReturnHome")</button>
-    </div>
+    <CertificateCard />
 }
 else if (Vm.ActiveStage is not null)
 {
@@ -45,7 +36,7 @@ else if (Vm.ActiveStage is not null)
             <div class="arabic-hint">
                 @(Loc.IsArabic ? Vm.CurrentWord.ArabicMeaning : Vm.CurrentWord.Word.ToUpperInvariant())
             </div>
-            <div class="audio-controls">
+            <div class="audio-controls" style="flex-wrap:wrap;">
                 <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
                     <span>@Loc.T("ListenWord")</span>
@@ -58,7 +49,17 @@ else if (Vm.ActiveStage is not null)
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
                     <span>@Loc.T("HintBtn")</span>
                 </button>
+                <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
+                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
+                    <span>@Loc.T("SayItBtn")</span>
+                </button>
             </div>
+            @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
+            {
+                <div style="margin-top:10px;font-size:12.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
+                    @Vm.SpeechFeedback
+                </div>
+            }
         </div>
 
         <div class="slots-row">
@@ -105,7 +106,7 @@ else if (Vm.ActiveStage is not null)
                 @((MarkupString)UiIcons.Headphones)
             </div>
             <div class="arabic-hint">@Loc.T("MatchPrompt")</div>
-            <div class="audio-controls">
+            <div class="audio-controls" style="flex-wrap:wrap;">
                 <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
                     <span>@Loc.T("ListenWord")</span>
@@ -118,7 +119,17 @@ else if (Vm.ActiveStage is not null)
                     <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
                     <span>@Loc.T("HintBtn")</span>
                 </button>
+                <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
+                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
+                    <span>@Loc.T("SayItBtn")</span>
+                </button>
             </div>
+            @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
+            {
+                <div style="margin-top:10px;font-size:12.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
+                    @Vm.SpeechFeedback
+                </div>
+            }
         </div>
 
         <div class="match-grid">

@@ -1,13 +1,24 @@
 @inject PhonicsGameViewModel Vm
 @inject ILocalizationService Loc
 
+@{
+    var displayName = string.IsNullOrWhiteSpace(Vm.Profile.Name)
+        ? Loc.T("DefaultHeroName")
+        : Vm.Profile.Name;
+}
+
 <div class="hero-card">
-    <div>
-        <div class="hero-greeting">
-            <span>@Loc.T("HeroGreeting")</span>
-            <span class="icon-svg" style="width:18px;height:18px;color:#F59E0B;">@((MarkupString)UiIcons.Sparkles)</span>
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" @onclick="Vm.OpenProfileModal">
+        <div class="hero-avatar-btn">
+            @((MarkupString)AvatarArtwork.GetSvg(Vm.Profile.AvatarKey))
         </div>
-        <div class="hero-sub">@Loc.T("HeroSub")</div>
+        <div>
+            <div class="hero-greeting">
+                <span>@(Loc.IsArabic ? $"أهلاً {displayName}!" : $"Hello, {displayName}!")</span>
+                <span class="icon-svg" style="width:15px;height:15px;color:#F59E0B;">@((MarkupString)UiIcons.Sparkles)</span>
+            </div>
+            <div class="hero-sub">@Loc.T("HeroSub")</div>
+        </div>
     </div>
     <div class="hero-stats">
         <div class="hero-chip">
@@ -21,6 +32,22 @@
             </div>
             <div class="hero-chip-lbl">@Loc.T("BestStreak")</div>
         </div>
+    </div>
+</div>
+
+<!-- Daily Challenge Card -->
+<div class="daily-card @(Vm.IsDailyChallengeDoneToday ? "done" : "")" @onclick="Vm.StartDailyChallengeAsync">
+    <div style="display:flex;align-items:center;gap:11px;">
+        <div class="daily-icon">
+            <span class="icon-svg" style="width:22px;height:22px;">@((MarkupString)UiIcons.Calendar)</span>
+        </div>
+        <div>
+            <div class="daily-title">@Loc.T("DailyTitle")</div>
+            <div class="daily-sub">@Loc.T("DailySub")</div>
+        </div>
+    </div>
+    <div class="daily-badge">
+        @(Vm.IsDailyChallengeDoneToday ? Loc.T("DailyDone") : Loc.T("DailyStart"))
     </div>
 </div>
 

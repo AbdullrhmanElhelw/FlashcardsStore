@@ -4,6 +4,8 @@ public interface IGameProgressService
 {
     int TotalStars { get; }
     int BestStreak { get; }
+    bool IsDailyChallengeCompletedToday { get; }
     HashSet<string> GetCompletedWords();
     void RecordWordCompleted(string word, int starsEarned, int currentStreak);
+    void MarkDailyChallengeCompleted();
 }

@@ -11,6 +11,8 @@ public sealed class PhonicsGameViewModel : IDisposable
     private const string KeyOnboardingDone = "phonics_onboarding_done";
     private readonly Random _rng = new();
     private readonly ISpeechService _speech;
+    private readonly ISpeechRecognitionService _speechRec;
+    private readonly IChildProfileService _profileService;
     private readonly IActivationService _activation;
     private readonly IGameProgressService _progress;
     private readonly ILocalizationService _loc;
@@ -21,16 +23,21 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public PhonicsGameViewModel(
         ISpeechService speech,
+        ISpeechRecognitionService speechRec,
+        IChildProfileService profileService,
         IActivationService activation,
         IGameProgressService progress,
         ILocalizationService loc)
     {
         _speech = speech;
+        _speechRec = speechRec;
+        _profileService = profileService;
         _activation = activation;
         _progress = progress;
         _loc = loc;
         _loc.Changed += Notify;
         CompletedWords = _progress.GetCompletedWords();
+        Profile = _profileService.GetProfile();
     }
 
     public AppScreen CurrentScreen { get; private set; } = AppScreen.Splash;
@@ -57,6 +64,18 @@ public sealed class PhonicsGameViewModel : IDisposable
     private bool _memoryBusy;
 
     public char? ActiveSoundboardLetter { get; private set; }
+
+    public ChildProfile Profile { get; private set; }
+    public bool ShowProfileModal { get; private set; }
+    public string ProfileNameInput { get; set; } = string.Empty;
+    public string ProfileAvatarInput { get; set; } = "lion";
+
+    public bool IsDailyChallengeMode { get; private set; }
+    public bool IsDailyChallengeDoneToday => _progress.IsDailyChallengeCompletedToday;
+
+    public string SpeechFeedback { get; private set; } = string.Empty;
+    public bool SpeechSuccess { get; private set; }
+    public bool IsListeningSpeech { get; private set; }
 
     public bool ShowActivationModal { get; private set; }
     public string ActivationCodeInput { get; set; } = string.Empty;
@@ -135,7 +154,40 @@ public sealed class PhonicsGameViewModel : IDisposable
             return;
         }
 
+        IsDailyChallengeMode = false;
         ActiveStage = stage;
+        WordIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        CurrentScreen = AppScreen.Playing;
+        await SetupCurrentWordAsync();
+    }
+
+    public async Task StartDailyChallengeAsync()
+    {
+        var eligibleWords = PhonicsCurriculum.Stages
+            .Where(s => s.IsFree || _activation.IsActivated)
+            .SelectMany(s => s.Words)
+            .ToList();
+
+        var seed = DateTime.Today.DayOfYear + DateTime.Today.Year * 1000;
+        var dailyRng = new Random(seed);
+        var dailyWords = eligibleWords.OrderBy(_ => dailyRng.Next()).Take(5).ToList();
+
+        IsDailyChallengeMode = true;
+        SelectedMode = GameMode.WordBuilder;
+        ActiveStage = new PhonicsStage(
+            Id: 99,
+            TitleAr: "التحدي اليومي (x2)",
+            TitleEn: "Daily Challenge (2x)",
+            SubtitleAr: "5 كلمات يومية",
+            SubtitleEn: "5 Daily Words",
+            BadgeKey: "star_badge",
+            GradientStart: "#F59E0B",
+            GradientEnd: "#D97706",
+            IsFree: true,
+            Words: dailyWords);
         WordIndex = 0;
         StageStars = 0;
         Streak = 0;
@@ -181,6 +233,8 @@ public sealed class PhonicsGameViewModel : IDisposable
         WordSolved = false;
         BuilderWrongFlash = false;
         WrongMatchWord = null;
+        SpeechFeedback = string.Empty;
+        SpeechSuccess = false;
 
         var word = CurrentWord.Word.ToLowerInvariant();
 
@@ -449,10 +503,11 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     private async Task MarkWordSolvedAsync()
     {
+        var starsToAward = IsDailyChallengeMode ? 2 : 1;
         WordSolved = true;
         Streak++;
-        StageStars++;
-        _progress.RecordWordCompleted(CurrentWord.Word, 1, Streak);
+        StageStars += starsToAward;
+        _progress.RecordWordCompleted(CurrentWord.Word, starsToAward, Streak);
         CompletedWords = _progress.GetCompletedWords();
 
         await SafeJsAsync("phonicsAudio.success");
@@ -471,10 +526,96 @@ public sealed class PhonicsGameViewModel : IDisposable
         }
         else
         {
+            if (IsDailyChallengeMode)
+                _progress.MarkDailyChallengeCompleted();
+
             StageFinished = true;
             await SafeJsAsync("phonicsAudio.success");
             await SafeJsAsync("phonicsAudio.confetti");
             Notify();
+        }
+    }
+
+    public async Task CheckPronunciationAsync()
+    {
+        if (IsListeningSpeech || ActiveStage is null) return;
+        IsListeningSpeech = true;
+        SpeechFeedback = string.Empty;
+        Notify();
+
+        var result = await _speechRec.ListenAndCheckWordAsync(
+            CurrentWord.Word,
+            $"Say: {CurrentWord.Word}");
+
+        IsListeningSpeech = false;
+        if (!result.IsSupported)
+        {
+            SpeechSuccess = false;
+            SpeechFeedback = _loc.T("SpeechNotAvailable");
+        }
+        else if (result.IsMatch)
+        {
+            SpeechSuccess = true;
+            SpeechFeedback = _loc.T("SpeechMatchOk");
+            _progress.RecordWordCompleted(CurrentWord.Word, 1, Streak + 1);
+            await SafeJsAsync("phonicsAudio.success");
+            await SafeJsAsync("phonicsAudio.confetti");
+        }
+        else
+        {
+            SpeechSuccess = false;
+            SpeechFeedback = _loc.T("SpeechMatchRetry");
+            await SafeJsAsync("phonicsAudio.wrong");
+        }
+        Notify();
+    }
+
+    public void OpenProfileModal()
+    {
+        ProfileNameInput = Profile.Name;
+        ProfileAvatarInput = Profile.AvatarKey;
+        ShowProfileModal = true;
+        Notify();
+    }
+
+    public void CloseProfileModal()
+    {
+        ShowProfileModal = false;
+        Notify();
+    }
+
+    public void SaveProfile()
+    {
+        _profileService.SaveProfile(ProfileNameInput, ProfileAvatarInput);
+        Profile = _profileService.GetProfile();
+        ShowProfileModal = false;
+        Notify();
+    }
+
+    public async Task ShareCertificateAsync()
+    {
+        var heroName = string.IsNullOrWhiteSpace(Profile.Name)
+            ? _loc.T("DefaultHeroName")
+            : Profile.Name;
+        var stageTitle = ActiveStage is null
+            ? _loc.T("AppTitle")
+            : (_loc.IsArabic ? ActiveStage.TitleAr : ActiveStage.TitleEn);
+
+        var text = _loc.IsArabic
+            ? $"{_loc.T("AcademyName")} - {_loc.T("CertTitle")}: أتم البطل {heroName} {stageTitle} وجمع {StageStars} نجمة!"
+            : $"{_loc.T("AcademyName")} - {_loc.T("CertTitle")}: {heroName} completed {stageTitle} and earned {StageStars} stars!";
+
+        try
+        {
+            await Share.Default.RequestAsync(new ShareTextRequest
+            {
+                Title = _loc.T("CertTitle"),
+                Text = text
+            });
+        }
+        catch
+        {
+            // Ignore share cancel
         }
     }
 

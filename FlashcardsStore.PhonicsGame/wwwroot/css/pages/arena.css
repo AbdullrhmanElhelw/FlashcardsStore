@@ -110,6 +110,11 @@
     box-shadow: 0 4px 0 #B45309;
 }
 
+.btn-speak.mic {
+    background: linear-gradient(135deg, #EC4899, #DB2777);
+    box-shadow: 0 4px 0 #9D174D;
+}
+
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
