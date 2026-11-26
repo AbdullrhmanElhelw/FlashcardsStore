@@ -59,46 +59,191 @@
     </div>
 </section>
 
-<!-- Catalog Section -->
-<section id="catalog-section" class="pt-4 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- Catalog Section (Amazon-style Sidebar + Grid) -->
+<section id="catalog-section" x-data="{ mobileFiltersOpen: false }" class="pt-6 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Filter Toolbar -->
-    <div class="mb-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+    <!-- Hidden Inputs for HTMX Filters -->
+    <input type="hidden" id="filter-category-id" name="categoryId" value="@currentCatId" />
+    <input type="hidden" id="filter-grade-level" name="gradeLevel" value="@currentGrade" />
+    <input type="hidden" id="filter-sort-by" name="sortBy" value="@currentSort" />
 
-        <!-- Hidden Inputs for HTMX Filters -->
-        <input type="hidden" id="filter-category-id" name="categoryId" value="@currentCatId" />
-        <input type="hidden" id="filter-grade-level" name="gradeLevel" value="@currentGrade" />
-        <input type="hidden" id="filter-sort-by" name="sortBy" value="@currentSort" />
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- Top Row: Search + Sort + Result Count -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5 border-b border-slate-100">
-            <!-- Title + Count -->
-            <div class="flex items-center gap-2.5 shrink-0">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shrink-0"></span>
-                <h2 class="text-base sm:text-lg font-black text-slate-900 leading-none">@Loc.Get("CatalogTitle")</h2>
-                <span id="catalog-total-count" class="text-xs font-bold text-[#8D6711] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
-                    @Loc.Get("PacksCount", Model.TotalCount)
+        <!-- =====================================================================
+             AMAZON-STYLE SIDEBAR FILTERS (Sticky on Desktop, Collapsible on Mobile)
+             ===================================================================== -->
+        <aside class="lg:col-span-3 lg:sticky lg:top-24 space-y-4">
+
+            <!-- Mobile Filter Toggle Button -->
+            <button type="button"
+                    @@click="mobileFiltersOpen = !mobileFiltersOpen"
+                    class="lg:hidden w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-white border border-slate-200 shadow-xs text-sm font-black text-slate-900 cursor-pointer">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    <span>@Loc.GetLocalized("البحث والفلاتر", "Search & Filters")</span>
                 </span>
-            </div>
+                <svg class="w-4 h-4 text-slate-500 transition-transform" :class="{ 'rotate-180': mobileFiltersOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
 
-            <div class="flex items-center gap-2 @(Loc.IsRtl ? "sm:mr-auto" : "sm:ml-auto") w-full sm:w-auto">
+            <!-- Sidebar Card -->
+            <div x-show="mobileFiltersOpen"
+                 class="lg:!block bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-5 space-y-5">
+
                 <!-- Live Search -->
-                <div class="relative flex-1 sm:w-72">
-                    <span class="absolute @(Loc.IsRtl ? "right-3" : "left-3") top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <div>
+                    <label for="filter-search-input" class="block text-xs font-black text-slate-500 uppercase tracking-wide mb-2">
+                        @Loc.GetLocalized("البحث", "Search")
+                    </label>
+                    <div class="relative">
+                        <span class="absolute @(Loc.IsRtl ? "right-3" : "left-3") top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </span>
+                        <input type="text"
+                               id="filter-search-input"
+                               name="searchTerm"
+                               value="@currentSearch"
+                               placeholder="@Loc.Get("SearchPlaceholder")"
+                               hx-get="/Catalog/Filter"
+                               hx-trigger="keyup changed delay:350ms, search"
+                               hx-target="#catalog-grid"
+                               hx-include="#filter-category-id, #filter-grade-level, #filter-sort-by"
+                               class="w-full @(Loc.IsRtl ? "pr-9 pl-3" : "pl-9 pr-3") py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-medium placeholder:text-slate-400 bg-slate-50" />
+                    </div>
+                </div>
+
+                <!-- Skill Category Filters (Vertical Amazon List) -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-1.5 mb-2.5">
+                        <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                         </svg>
+                        <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("SkillCategory")</span>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button type="button"
+                                data-cat-all="true"
+                                hx-get="/Catalog/Filter"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-category-id').value = '0'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="category-filter-pill w-full justify-between @(currentCatId == 0 ? "active" : "")">
+                            <span>@Loc.Get("AllSkills")</span>
+                        </button>
+                        @foreach (var cat in categories)
+                        {
+                            var displayName = Loc.GetLocalized(cat.NameAr, cat.Name);
+                            <button type="button"
+                                    hx-get="/Catalog/Filter?categoryId=@cat.Id"
+                                    hx-target="#catalog-grid"
+                                    hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
+                                    @@click="document.getElementById('filter-category-id').value = '@cat.Id'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                    class="category-filter-pill w-full justify-between @(currentCatId == cat.Id ? "active" : "")">
+                                <span>@displayName</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Grade Level Filters (Vertical Amazon List) -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-1.5 mb-2.5">
+                        <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        </svg>
+                        <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("GradeLevel")</span>
+                    </div>
+                    <div class="space-y-1.5">
+                        <button type="button"
+                                data-grade-all="true"
+                                hx-get="/Catalog/Filter"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-grade-level').value = ''; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="grade-filter-pill w-full justify-start @(string.IsNullOrEmpty(currentGrade) ? "active" : "")">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                            </svg>
+                            <span>@Loc.Get("AllGrades")</span>
+                        </button>
+                        <button type="button"
+                                hx-get="/Catalog/Filter?gradeLevel=kg"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-grade-level').value = 'kg'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="grade-filter-pill w-full justify-start @(currentGrade == "kg" ? "active" : "")">
+                            <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>@Loc.Get("GradeKg")</span>
+                        </button>
+                        <button type="button"
+                                hx-get="/Catalog/Filter?gradeLevel=primary-1-3"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-grade-level').value = 'primary-1-3'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="grade-filter-pill w-full justify-start @(currentGrade == "primary-1-3" ? "active" : "")">
+                            <svg class="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <span>@Loc.Get("GradePrimary13")</span>
+                        </button>
+                        <button type="button"
+                                hx-get="/Catalog/Filter?gradeLevel=primary-4-6"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-grade-level').value = 'primary-4-6'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="grade-filter-pill w-full justify-start @(currentGrade == "primary-4-6" ? "active" : "")">
+                            <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <span>@Loc.Get("GradePrimary46")</span>
+                        </button>
+                        <button type="button"
+                                hx-get="/Catalog/Filter?gradeLevel=prep"
+                                hx-target="#catalog-grid"
+                                hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
+                                @@click="document.getElementById('filter-grade-level').value = 'prep'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
+                                class="grade-filter-pill w-full justify-start @(currentGrade == "prep" ? "active" : "")">
+                            <svg class="w-3.5 h-3.5 text-purple-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                            <span>@Loc.Get("GradePrep")</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reset All Filters -->
+                <div class="pt-4 border-t border-slate-100">
+                    <button type="button"
+                            hx-get="/Catalog/Filter"
+                            hx-target="#catalog-grid"
+                            onclick="resetCatalogFilters()"
+                            class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+                        @Loc.GetLocalized("إعادة ضبط الفلاتر", "Reset Filters")
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =====================================================================
+             MAIN CONTENT: TOP SORT BAR + PRODUCT GRID
+             ===================================================================== -->
+        <div class="lg:col-span-9 space-y-5">
+
+            <!-- Top Bar: Title, Result Count & Sort -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs px-4 sm:px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37] shrink-0"></span>
+                    <h2 class="text-base sm:text-lg font-black text-slate-900 leading-none">@Loc.Get("CatalogTitle")</h2>
+                    <span id="catalog-total-count" class="text-xs font-bold text-[#8D6711] bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                        @Loc.Get("PacksCount", Model.TotalCount)
                     </span>
-                    <input type="text"
-                           id="filter-search-input"
-                           name="searchTerm"
-                           value="@currentSearch"
-                           placeholder="@Loc.Get("SearchPlaceholder")"
-                           hx-get="/Catalog/Filter"
-                           hx-trigger="keyup changed delay:350ms, search"
-                           hx-target="#catalog-grid"
-                           hx-include="#filter-category-id, #filter-grade-level, #filter-sort-by"
-                           class="w-full @(Loc.IsRtl ? "pr-9 pl-3" : "pl-9 pr-3") py-2.5 text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-medium placeholder:text-slate-400 bg-slate-50" />
                 </div>
 
                 <!-- Sort By -->
@@ -110,7 +255,7 @@
                             hx-target="#catalog-grid"
                             hx-include="#filter-category-id, #filter-grade-level, #filter-search-input"
                             onchange="document.getElementById('filter-sort-by').value = this.value"
-                            class="appearance-none @(Loc.IsRtl ? "pr-8 pl-3" : "pl-8 pr-3") py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-bold text-slate-700 bg-white cursor-pointer">
+                            class="appearance-none @(Loc.IsRtl ? "pr-8 pl-3" : "pl-8 pr-3") py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/25 outline-none transition font-bold text-slate-700 bg-white cursor-pointer">
                         @{
                             var sortOptions = new[] {
                                 ("", Loc.Get("SortNewest")),
@@ -138,148 +283,62 @@
                     </span>
                 </div>
             </div>
-        </div>
 
-        <!-- Grade Level Filters -->
-        <div class="px-4 sm:px-5 py-3 border-b border-slate-100">
-            <div class="flex items-center gap-1.5 mb-2.5">
-                <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
-                <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("GradeLevel")</span>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button"
-                        hx-get="/Catalog/Filter"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-grade-level').value = ''; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="grade-filter-pill @(string.IsNullOrEmpty(currentGrade) ? "active" : "")">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-                    </svg>
-                    <span>@Loc.Get("AllGrades")</span>
-                </button>
-                <button type="button"
-                        hx-get="/Catalog/Filter?gradeLevel=kg"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-grade-level').value = 'kg'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="grade-filter-pill @(currentGrade == "kg" ? "active" : "")">
-                    <svg class="w-3.5 h-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>@Loc.Get("GradeKg")</span>
-                </button>
-                <button type="button"
-                        hx-get="/Catalog/Filter?gradeLevel=primary-1-3"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-grade-level').value = 'primary-1-3'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="grade-filter-pill @(currentGrade == "primary-1-3" ? "active" : "")">
-                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <span>@Loc.Get("GradePrimary13")</span>
-                </button>
-                <button type="button"
-                        hx-get="/Catalog/Filter?gradeLevel=primary-4-6"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-grade-level').value = 'primary-4-6'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="grade-filter-pill @(currentGrade == "primary-4-6" ? "active" : "")">
-                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <span>@Loc.Get("GradePrimary46")</span>
-                </button>
-                <button type="button"
-                        hx-get="/Catalog/Filter?gradeLevel=prep"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-category-id, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-grade-level').value = 'prep'; document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="grade-filter-pill @(currentGrade == "prep" ? "active" : "")">
-                    <svg class="w-3.5 h-3.5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                    <span>@Loc.Get("GradePrep")</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Skill Category Filters -->
-        <div class="px-4 sm:px-5 py-3">
-            <div class="flex items-center gap-1.5 mb-2.5">
-                <svg class="w-3.5 h-3.5 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-                <span class="text-xs font-black text-slate-500 uppercase tracking-wide">@Loc.Get("SkillCategory")</span>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <button type="button"
-                        hx-get="/Catalog/Filter"
-                        hx-target="#catalog-grid"
-                        hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
-                        @@click="document.getElementById('filter-category-id').value = '0'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                        class="category-filter-pill @(currentCatId == 0 ? "active" : "")">
-                    <span>@Loc.Get("AllSkills")</span>
-                </button>
-                @foreach (var cat in categories)
-                {
-                    var displayName = Loc.GetLocalized(cat.NameAr, cat.Name);
-
-                    <button type="button"
-                            hx-get="/Catalog/Filter?categoryId=@cat.Id"
-                            hx-target="#catalog-grid"
-                            hx-include="#filter-grade-level, #filter-search-input, #filter-sort-by"
-                            @@click="document.getElementById('filter-category-id').value = '@cat.Id'; document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active')); $el.classList.add('active')"
-                            class="category-filter-pill @(currentCatId == cat.Id ? "active" : "")">
-                        <span>@displayName</span>
-                    </button>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Skeleton Loading Template (shown while HTMX fetches) -->
-    <template id="catalog-skeleton">
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
-            @for (int s = 0; s < 8; s++)
-            {
-                <div class="animate-pulse rounded-2xl overflow-hidden border border-slate-100 bg-white p-2">
-                    <div class="h-32 sm:h-36 bg-slate-100 rounded-xl"></div>
-                    <div class="p-2 space-y-2">
-                        <div class="h-2.5 bg-slate-100 rounded-full w-1/3"></div>
-                        <div class="h-4 bg-slate-200 rounded-full w-3/4"></div>
-                        <div class="h-2.5 bg-slate-100 rounded-full w-full"></div>
-                        <div class="h-8 bg-slate-100 rounded-lg mt-2"></div>
-                    </div>
+            <!-- Skeleton Loading Template (shown while HTMX fetches) -->
+            <template id="catalog-skeleton">
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+                    @for (int s = 0; s < 6; s++)
+                    {
+                        <div class="animate-pulse rounded-2xl overflow-hidden border border-slate-100 bg-white p-2">
+                            <div class="h-32 sm:h-36 bg-slate-100 rounded-xl"></div>
+                            <div class="p-2 space-y-2">
+                                <div class="h-2.5 bg-slate-100 rounded-full w-1/3"></div>
+                                <div class="h-4 bg-slate-200 rounded-full w-3/4"></div>
+                                <div class="h-2.5 bg-slate-100 rounded-full w-full"></div>
+                                <div class="h-8 bg-slate-100 rounded-lg mt-2"></div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            }
+            </template>
+
+            <!-- Product Grid (2 cards per row on mobile, 3 next to sidebar on desktop) -->
+            <div id="catalog-grid"
+                 class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 transition-opacity duration-200"
+                 hx-on::before-request="this.style.opacity='0.3'"
+                 hx-on::after-settle="this.style.opacity='1'; document.getElementById('catalog-section')?.scrollIntoView({behavior:'smooth', block:'start'})">
+                <partial name="_ProductGrid" model="Model" />
+            </div>
+
+            <!-- Pagination Container -->
+            <div id="catalog-pagination-container">
+                @{
+                    ViewBag.PaginationBaseUrl = pageBase;
+                    ViewBag.PagedInfo = Model;
+                }
+                <partial name="_Pagination" />
+            </div>
+
         </div>
-    </template>
-
-    <!-- Product Grid (Compact Amazon-style: 2 cards per row on mobile, 4 on desktop) -->
-    <div id="catalog-grid"
-         class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 transition-opacity duration-200"
-         hx-on::before-request="this.style.opacity='0.3'"
-         hx-on::after-settle="this.style.opacity='1'; document.getElementById('catalog-section')?.scrollIntoView({behavior:'smooth', block:'start'})">
-        <partial name="_ProductGrid" model="Model" />
-    </div>
-
-    <!-- Pagination Container -->
-    <div id="catalog-pagination-container">
-        @{
-            ViewBag.PaginationBaseUrl = pageBase;
-            ViewBag.PagedInfo = Model;
-        }
-        <partial name="_Pagination" />
     </div>
 
 </section>
 
 @section Scripts {
 <script>
+    function resetCatalogFilters() {
+        document.getElementById('filter-category-id').value = '0';
+        document.getElementById('filter-grade-level').value = '';
+        document.getElementById('filter-sort-by').value = '';
+        var sortSelect = document.getElementById('filter-sort-select');
+        if (sortSelect) sortSelect.value = '';
+        var searchInput = document.getElementById('filter-search-input');
+        if (searchInput) searchInput.value = '';
+        document.querySelectorAll('.category-filter-pill').forEach(el => el.classList.remove('active'));
+        document.querySelector('[data-cat-all="true"]')?.classList.add('active');
+        document.querySelectorAll('.grade-filter-pill').forEach(el => el.classList.remove('active'));
+        document.querySelector('[data-grade-all="true"]')?.classList.add('active');
+    }
     // Sync sort hidden input whenever select changes (ensures grade/cat filters include correct sort)
     document.addEventListener('DOMContentLoaded', function () {
         var sortSelect = document.getElementById('filter-sort-select');
