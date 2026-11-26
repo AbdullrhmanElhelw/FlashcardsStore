@@ -24,7 +24,20 @@ public sealed partial class CartViewModel : BaseViewModel
     [ObservableProperty]
     private int _itemCount;
 
+    private decimal _freeShippingThreshold;
+    private bool _configLoaded;
+
     public bool IsEmpty => !HasItems;
+    public bool HasFreeShippingBar => HasItems && _freeShippingThreshold > 0;
+    public bool IsFreeShippingUnlocked => _freeShippingThreshold > 0 && Subtotal >= _freeShippingThreshold;
+    public double FreeShippingProgress => _freeShippingThreshold <= 0
+        ? 0
+        : Math.Min(1.0, (double)(Subtotal / _freeShippingThreshold));
+    public string FreeShippingMessage => _freeShippingThreshold <= 0
+        ? string.Empty
+        : IsFreeShippingUnlocked
+            ? Loc["FreeShippingUnlocked"]
+            : Loc.Format("FreeShippingRemaining", Math.Max(0, _freeShippingThreshold - Subtotal));
     public string ItemCountLabel => Loc.Format("CartItemsCount", ItemCount);
     public string SubtotalLabel => Loc.Format("CurrencyAmount", Subtotal);
     public ObservableCollection<CartEntry> Items { get; } = new();
@@ -76,6 +89,30 @@ public sealed partial class CartViewModel : BaseViewModel
         ItemCount = _cart.ItemCount;
         OnPropertyChanged(nameof(ItemCountLabel));
         OnPropertyChanged(nameof(SubtotalLabel));
+        OnPropertyChanged(nameof(HasFreeShippingBar));
+        OnPropertyChanged(nameof(IsFreeShippingUnlocked));
+        OnPropertyChanged(nameof(FreeShippingProgress));
+        OnPropertyChanged(nameof(FreeShippingMessage));
+        if (!_configLoaded) _ = EnsureConfigLoadedAsync();
+    }
+
+    private async Task EnsureConfigLoadedAsync()
+    {
+        if (_configLoaded) return;
+        try
+        {
+            var cfg = await _api.GetConfigAsync();
+            _freeShippingThreshold = cfg.FreeShippingThreshold;
+            _configLoaded = true;
+            OnPropertyChanged(nameof(HasFreeShippingBar));
+            OnPropertyChanged(nameof(IsFreeShippingUnlocked));
+            OnPropertyChanged(nameof(FreeShippingProgress));
+            OnPropertyChanged(nameof(FreeShippingMessage));
+        }
+        catch
+        {
+            // Optional enhancement; ignore transient config errors in cart
+        }
     }
 
     [RelayCommand]

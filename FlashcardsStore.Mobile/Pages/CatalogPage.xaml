@@ -434,6 +434,19 @@
                         <Label Text="{Binding ResultSummary}" Style="{StaticResource MutedLabelStyle}" TextColor="{StaticResource BrandGoldDark}" />
 
                         <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout Spacing="10" Padding="16,28" HorizontalOptions="Center">
+                                    <Label Text="{Binding Loc[NoProductsFound]}"
+                                           Style="{StaticResource BodyLabelStyle}"
+                                           FontAttributes="Bold"
+                                           HorizontalTextAlignment="Center" />
+                                    <Button Text="{Binding Loc[ShowAllPacks]}"
+                                            Command="{Binding ClearFiltersCommand}"
+                                            Style="{StaticResource PrimaryGoldButtonStyle}"
+                                            HorizontalOptions="Center"
+                                            Padding="20,10" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
                             <CollectionView.ItemsLayout>
                                 <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10" />
                             </CollectionView.ItemsLayout>

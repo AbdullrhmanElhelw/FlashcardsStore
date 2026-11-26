@@ -43,7 +43,12 @@
                                                   Loop="False">
                                         <CarouselView.ItemTemplate>
                                             <DataTemplate x:DataType="x:String">
-                                                <Image Source="{Binding .}" Aspect="AspectFit" />
+                                                <Image Source="{Binding .}" Aspect="AspectFit">
+                                                    <Image.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Source={x:Reference ThisDetailPage}, Path=BindingContext.OpenImagePreviewCommand}"
+                                                                              CommandParameter="{Binding .}" />
+                                                    </Image.GestureRecognizers>
+                                                </Image>
                                             </DataTemplate>
                                         </CarouselView.ItemTemplate>
                                     </CarouselView>
@@ -100,6 +105,25 @@
                                 Text="{Binding FavoriteButtonText}"
                                 Command="{Binding ToggleFavoriteCommand}"
                                 Style="{StaticResource SecondaryCreamButtonStyle}" />
+                    </Grid>
+
+                    <!-- Secondary Actions: WhatsApp Direct Order + Share -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Button Text="{Binding Loc[WhatsAppOrderBtn]}"
+                                Command="{Binding OrderViaWhatsAppCommand}"
+                                BackgroundColor="#059669"
+                                TextColor="White"
+                                FontFamily="Cairo"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                CornerRadius="14"
+                                MinimumHeightRequest="44" />
+                        <Button Grid.Column="1"
+                                Text="{Binding Loc[SharePackBtn]}"
+                                Command="{Binding ShareProductCommand}"
+                                Style="{StaticResource SecondaryCreamButtonStyle}"
+                                MinimumHeightRequest="44"
+                                Padding="16,0" />
                     </Grid>
 
                     <!-- Teacher Exclusive Voice Note -->
@@ -200,5 +224,28 @@
 
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Fullscreen Image Preview Overlay -->
+        <Grid Grid.RowSpan="2"
+              IsVisible="{Binding IsImagePreviewOpen}"
+              BackgroundColor="#E6000000"
+              Padding="16">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseImagePreviewCommand}" />
+            </Grid.GestureRecognizers>
+            <Image Source="{Binding PreviewImageUrl}" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Button Text="✕"
+                    Command="{Binding CloseImagePreviewCommand}"
+                    BackgroundColor="{StaticResource SurfaceWhite}"
+                    TextColor="{StaticResource BrandInk}"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="21"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="0,12,0,0" />
+        </Grid>
     </Grid>
 </ContentPage>

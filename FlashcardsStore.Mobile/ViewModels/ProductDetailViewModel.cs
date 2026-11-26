@@ -56,6 +56,8 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
     [ObservableProperty] private string _reviewerRole = string.Empty;
     [ObservableProperty] private string _reviewComment = string.Empty;
     [ObservableProperty] private int _selectedRatingIndex;
+    [ObservableProperty] private bool _isImagePreviewOpen;
+    [ObservableProperty] private string _previewImageUrl = string.Empty;
 
     public IReadOnlyList<string> RatingOptions => new[]
     {
@@ -223,6 +225,55 @@ public sealed partial class ProductDetailViewModel : BaseViewModel
             await _speech.SpeakAsync(item.Word, IsKidSlowMode);
             await Task.Delay(500);
         }
+    }
+
+    [RelayCommand]
+    private void OpenImagePreview(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl)) return;
+        PreviewImageUrl = imageUrl;
+        IsImagePreviewOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseImagePreview() => IsImagePreviewOpen = false;
+
+    [RelayCommand]
+    private async Task OrderViaWhatsAppAsync()
+    {
+        if (Product is null) return;
+        try
+        {
+            var cfg = await _api.GetConfigAsync();
+            var phone = new string((cfg.WhatsAppNumberInternational ?? string.Empty).Where(char.IsDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                await _dialogs.ShowAlertAsync(Loc["AlertTitle"], Loc["ErrorTitle"]);
+                return;
+            }
+            var msg = Loc.IsRtl
+                ? $"مرحباً مس خلود، أود الاستفسار وطلب باقة: {Product.NameAr} بسعر {Product.Price:0} ج.م"
+                : $"Hello Miss Kholoud, I would like to order: {Product.Name} ({Product.Price:0} EGP)";
+            var uri = $"https://wa.me/{phone}?text={Uri.EscapeDataString(msg)}";
+            await Launcher.Default.OpenAsync(uri);
+        }
+        catch (Exception ex)
+        {
+            await _dialogs.ShowAlertAsync(Loc["AlertTitle"], ex.Message);
+        }
+    }
+
+    [RelayCommand]
+    private async Task ShareProductAsync()
+    {
+        if (Product is null) return;
+        var shareUrl = $"https://card-store.runasp.net/Catalog/Details?slug={Uri.EscapeDataString(Product.Slug)}";
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Title = DisplayTitle,
+            Text = $"{DisplayTitle} - {PriceLabel}",
+            Uri = shareUrl
+        });
     }
 
     [RelayCommand]

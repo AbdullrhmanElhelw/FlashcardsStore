@@ -101,6 +101,24 @@
 
                 <!-- Summary & Actions -->
                 <VerticalStackLayout Spacing="10" IsVisible="{Binding HasItems}">
+                    <!-- Smart Free Shipping Bar -->
+                    <Border Style="{StaticResource CardBorderStyle}"
+                            IsVisible="{Binding HasFreeShippingBar}"
+                            BackgroundColor="{StaticResource SurfaceWhite}"
+                            Stroke="#E2CE9F"
+                            Padding="12,10">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding FreeShippingMessage}"
+                                   FontFamily="Cairo"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource BrandInk}" />
+                            <ProgressBar Progress="{Binding FreeShippingProgress}"
+                                         ProgressColor="{StaticResource BrandGold}"
+                                         HeightRequest="6" />
+                        </VerticalStackLayout>
+                    </Border>
+
                     <Border Style="{StaticResource CardBorderStyle}"
                             BackgroundColor="{StaticResource BrandGoldSoft}"
                             Stroke="{StaticResource BrandGold}"
