@@ -278,13 +278,13 @@
                                HorizontalTextAlignment="Center" />
                     </Border>
 
-                    <!-- Luxury Brand Hero Banner -->
+                    <!-- Compact Brand Hero Banner -->
                     <Border Margin="16,0"
-                            Padding="16,14"
+                            Padding="14,10"
                             Stroke="{StaticResource BrandGold}"
-                            StrokeThickness="1.2"
-                            StrokeShape="RoundRectangle 20"
-                            Shadow="{Shadow Brush='#18061A', Opacity='0.14', Radius='12', Offset='0,5'}">
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16"
+                            Shadow="{Shadow Brush='#18061A', Opacity='0.12', Radius='8', Offset='0,3'}">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                 <GradientStop Color="#190611" Offset="0.0" />
@@ -292,42 +292,30 @@
                                 <GradientStop Color="#190611" Offset="1.0" />
                             </LinearGradientBrush>
                         </Border.Background>
-                        <Grid ColumnDefinitions="*,78" ColumnSpacing="10">
-                            <VerticalStackLayout Spacing="5" VerticalOptions="Center">
-                                <Border BackgroundColor="#2A0B1E"
-                                        Stroke="{StaticResource BrandGold}"
-                                        StrokeThickness="1"
-                                        StrokeShape="RoundRectangle 10"
-                                        Padding="9,3"
-                                        HorizontalOptions="Start">
-                                    <HorizontalStackLayout Spacing="5">
-                                        <Image Source="icon_sparkles.png" WidthRequest="12" HeightRequest="12" VerticalOptions="Center" />
-                                        <Label Text="{Binding Loc[HeroBadge]}"
-                                               FontFamily="Cairo"
-                                               FontSize="10"
-                                               FontAttributes="Bold"
-                                               TextColor="{StaticResource BrandGoldLight}"
-                                               VerticalTextAlignment="Center" />
-                                    </HorizontalStackLayout>
-                                </Border>
+                        <Grid ColumnDefinitions="*,54" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="3" VerticalOptions="Center">
                                 <Label Text="{Binding Loc[HeroTitle]}"
                                        FontFamily="Cairo"
-                                       FontSize="16"
+                                       FontSize="15"
                                        FontAttributes="Bold"
                                        TextColor="{StaticResource BrandGoldLight}" />
                                 <Label Text="{Binding Loc[HeroSubtitle]}"
                                        FontFamily="Cairo"
-                                       FontSize="12"
+                                       FontSize="11"
+                                       MaxLines="2"
+                                       LineBreakMode="TailTruncation"
                                        TextColor="#E6DDF0" />
                             </VerticalStackLayout>
                             <Image Grid.Column="1"
                                    Source="logo_gold.png"
                                    Aspect="AspectFit"
-                                   HeightRequest="72"
-                                   WidthRequest="76"
+                                   HeightRequest="50"
+                                   WidthRequest="50"
                                    VerticalOptions="Center" />
                         </Grid>
                     </Border>
+
+                    
 
                     <!-- Trust Highlights Strip -->
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" Margin="16,0">
@@ -482,30 +470,7 @@
                         </CollectionView>
                     </VerticalStackLayout>
 
-                    <!-- Browse Promo Banner -->
-                    <Border Margin="16,4" Padding="16,14" Stroke="#E2CE9F" StrokeThickness="1" StrokeShape="RoundRectangle 16">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#F5E7C7" Offset="0.0" />
-                                <GradientStop Color="#E9CC8D" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnBrowseBannerTapped" />
-                        </Border.GestureRecognizers>
-                        <Grid ColumnDefinitions="44,*,40" ColumnSpacing="10">
-                            <Border BackgroundColor="{StaticResource BrandGold}" Stroke="Transparent" StrokeShape="RoundRectangle 22" WidthRequest="44" HeightRequest="44">
-                                <Label Text="←" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
-                            </Border>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Loc[BrowseBannerText]}"
-                                   Style="{StaticResource BodyLabelStyle}"
-                                   FontAttributes="Bold"
-                                   HorizontalTextAlignment="Center"
-                                   VerticalTextAlignment="Center" />
-                            <Image Grid.Column="2" Source="home_sight_words.png" WidthRequest="28" HeightRequest="28" HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Grid>
-                    </Border>
+                    
 
                     <!-- Full Catalog Section -->
                     <VerticalStackLayout x:Name="ProductsSection" Spacing="10" Padding="16,4">
@@ -564,11 +529,15 @@
                                                             VerticalOptions="Start" />
                                                 </Grid>
                                             </Border>
-                                            <Label Text="{Binding DisplayCategory}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                            <Label Text="{Binding DisplayName}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="42" />
-                                            <Label Text="{Binding DisplayCardCount}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
-                                            <Label Text="{Binding DisplayPrice}" FontFamily="Cairo" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
-                                            <Label Text="{Binding DisplayStockText}" Style="{StaticResource MutedLabelStyle}" FontSize="11" />
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                                                <Label Text="{Binding DisplayCategory}" Style="{StaticResource MutedLabelStyle}" FontSize="10" LineBreakMode="TailTruncation" />
+                                                <Label Grid.Column="1" Text="{Binding DisplayCardCount}" FontFamily="Cairo" FontSize="10" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" />
+                                            </Grid>
+                                            <Label Text="{Binding DisplayName}" Style="{StaticResource BodyLabelStyle}" FontSize="13" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" HeightRequest="40" />
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                                                <Label Text="{Binding DisplayPrice}" FontFamily="Cairo" FontSize="14" FontAttributes="Bold" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                                                <Label Grid.Column="1" Text="{Binding DisplayStockText}" Style="{StaticResource MutedLabelStyle}" FontSize="10" VerticalTextAlignment="Center" />
+                                            </Grid>
                                             <Button Text="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.Loc[AddToCart]}"
                                                     Command="{Binding Source={x:Reference ThisCatalogPage}, Path=BindingContext.AddToCartCommand}"
                                                     CommandParameter="{Binding .}"

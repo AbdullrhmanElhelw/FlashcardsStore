@@ -22,9 +22,4 @@ public partial class CatalogPage : ContentPage
     {
         SearchEntry.Focus();
     }
-
-    private async void OnBrowseBannerTapped(object? sender, TappedEventArgs e)
-    {
-        await HomeScroll.ScrollToAsync(ProductsSection, ScrollToPosition.Start, true);
-    }
 }
