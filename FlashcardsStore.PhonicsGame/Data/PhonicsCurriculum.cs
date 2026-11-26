@@ -25,7 +25,7 @@ public static class PhonicsCurriculum
     [
         new PhonicsStage(
             Id: 1,
-            TitleAr: "المرحلة 1: صوت الفتحة القصيرة (Short A)",
+            TitleAr: "المرحلة 1: الفتحة القصيرة",
             TitleEn: "Short A (-at / -an / -ap)",
             SubtitleAr: "كلمات ثلاثية سهلة — مجانية",
             BadgeIcon: "🐱",
@@ -48,7 +48,7 @@ public static class PhonicsCurriculum
 
         new PhonicsStage(
             Id: 2,
-            TitleAr: "المرحلة 2: أصوات Short E & I",
+            TitleAr: "المرحلة 2: الكسرة والفتح",
             TitleEn: "Short E & I (-ed / -en / -ig / -in)",
             SubtitleAr: "تأسيس النطق والتمييز — مجانية",
             BadgeIcon: "🐷",
@@ -71,7 +71,7 @@ public static class PhonicsCurriculum
 
         new PhonicsStage(
             Id: 3,
-            TitleAr: "المرحلة 3: صوت Short O",
+            TitleAr: "المرحلة 3: الضمة القصيرة",
             TitleEn: "Short O (-ot / -og / -op)",
             SubtitleAr: "كلمات ممتعة مع الصور والأصوات",
             BadgeIcon: "🐶",
@@ -94,7 +94,7 @@ public static class PhonicsCurriculum
 
         new PhonicsStage(
             Id: 4,
-            TitleAr: "المرحلة 4: صوت Short U",
+            TitleAr: "المرحلة 4: الصوت القصير U",
             TitleEn: "Short U (-ug / -un / -ub)",
             SubtitleAr: "إتقان الحروف المتحركة الخمسة",
             BadgeIcon: "☀️",

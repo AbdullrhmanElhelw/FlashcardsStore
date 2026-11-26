@@ -18,7 +18,13 @@ public class MainActivity : MauiAppCompatActivity
         base.OnCreate(savedInstanceState);
         if (Window is not null)
         {
-            WindowCompat.SetDecorFitsSystemWindows(Window, true);
+            WindowCompat.SetDecorFitsSystemWindows(Window, false);
+            var controller = WindowCompat.GetInsetsController(Window, Window.DecorView);
+            if (controller is not null)
+            {
+                // Keep status bar clock & icons crisp white over the dark plum header
+                controller.AppearanceLightStatusBars = false;
+            }
         }
     }
 }

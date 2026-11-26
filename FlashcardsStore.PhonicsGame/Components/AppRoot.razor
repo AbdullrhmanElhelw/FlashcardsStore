@@ -7,9 +7,12 @@
 <div class="shell">
     <!-- Top Bar -->
     <header class="topbar">
-        <div>
-            <div class="brand-title">ألعاب الفونكس 🎈</div>
-            <div class="brand-sub">أكاديمية خلود النادي</div>
+        <div class="brand-wrap">
+            <div class="brand-logo-badge">🎈</div>
+            <div>
+                <div class="brand-title">ألعاب الفونكس</div>
+                <div class="brand-sub">أكاديمية خلود النادي</div>
+            </div>
         </div>
         <div class="pill-row">
             <div class="stat-pill">⭐ @Progress.TotalStars</div>
@@ -27,6 +30,24 @@
     <main class="container">
         @if (_activeStage is null)
         {
+            <!-- Hero Progress Card -->
+            <div class="hero-card">
+                <div>
+                    <div class="hero-greeting">أهلاً يا بطل! 🌟</div>
+                    <div class="hero-sub">اختار طريقة اللعب وابدأ التحدي</div>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-chip">
+                        <div class="hero-chip-val">@_completedWords.Count/60</div>
+                        <div class="hero-chip-lbl">كلمة</div>
+                    </div>
+                    <div class="hero-chip">
+                        <div class="hero-chip-val">🔥 @Progress.BestStreak</div>
+                        <div class="hero-chip-lbl">أعلى سلسلة</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Mode Selector -->
             <div class="mode-tabs">
                 <div class="mode-tab @(_selectedMode == GameMode.WordBuilder ? "active" : "")"
@@ -57,7 +78,8 @@
                         <div class="stage-icon-bubble">@stage.BadgeIcon</div>
                         <div class="stage-info">
                             <div class="stage-title">@stage.TitleAr</div>
-                            <div class="stage-sub">@stage.TitleEn • @stage.SubtitleAr</div>
+                            <div class="stage-en-pill">@stage.TitleEn</div>
+                            <div class="stage-sub">@stage.SubtitleAr</div>
                             <div class="stage-progress-bar">
                                 <div class="stage-progress-fill" style="width: @pct%"></div>
                             </div>
@@ -470,6 +492,7 @@
         _completedWords = Progress.GetCompletedWords();
 
         await JS.InvokeVoidAsync("phonicsAudio.success");
+        await JS.InvokeVoidAsync("phonicsAudio.confetti");
         await Speech.SpeakAsync($"Great job! {_currentWord.Word}", pitch: 1.15f);
     }
 

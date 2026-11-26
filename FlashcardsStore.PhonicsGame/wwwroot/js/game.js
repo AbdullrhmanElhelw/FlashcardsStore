@@ -39,6 +39,22 @@ window.phonicsAudio = (() => {
         wrong() {
             tone(240, 0.14, 'sawtooth', 0, 0.1);
             tone(190, 0.2, 'sawtooth', 0.12, 0.1);
+        },
+        confetti() {
+            const colors = ['#F59E0B', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6', '#FDE047'];
+            const container = document.createElement('div');
+            container.className = 'confetti-layer';
+            document.body.appendChild(container);
+            for (let i = 0; i < 28; i++) {
+                const p = document.createElement('span');
+                p.className = 'confetti-piece';
+                p.style.left = (10 + Math.random() * 80) + 'vw';
+                p.style.backgroundColor = colors[i % colors.length];
+                p.style.animationDelay = (Math.random() * 0.25) + 's';
+                p.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(p);
+            }
+            setTimeout(() => container.remove(), 1400);
         }
     };
 })();
