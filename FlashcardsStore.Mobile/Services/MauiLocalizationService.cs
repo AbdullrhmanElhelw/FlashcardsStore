@@ -137,6 +137,7 @@ public sealed class MauiLocalizationService : ILocalizationService
         ["TeacherVoiceTitle"] = ("بصوت ميس خلود النادي", "Miss Kholoud's Voice Note"),
         ["TeacherVoiceSubtitle"] = ("شرح ونطق صوتي حصري مسجّل لهذه الباقة", "Exclusive recorded pronunciation & guidance"),
         ["AboutPack"] = ("عن الباقة التعليمية", "About This Pack"),
+        ["FiltersBtn"] = ("الفلاتر", "Filters"),
         ["KeyPointsTitle"] = ("المواصفات والنقاط المميزة:", "Technical Specifications & Key Points:"),
         ["AudioStudioTitle"] = ("أستوديو النطق الصوتي التفاعلي", "Interactive Pronunciation Studio"),
         ["AudioStudioSubtitle"] = ("اضغطي على أي كلمة للنطق الصحيح", "Tap any word to hear pronunciation"),

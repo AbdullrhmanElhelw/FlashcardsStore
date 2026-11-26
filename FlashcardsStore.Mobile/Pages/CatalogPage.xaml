@@ -277,8 +277,8 @@
                             Padding="12"
                             Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                         <VerticalStackLayout Spacing="8">
-                            <Grid ColumnDefinitions="*,78" ColumnSpacing="8">
-                                <Border Style="{StaticResource InputBoxBorderStyle}" HeightRequest="46" Padding="12,0">
+                            <Grid ColumnDefinitions="*,68,68" ColumnSpacing="6">
+                                <Border Style="{StaticResource InputBoxBorderStyle}" HeightRequest="44" Padding="10,0">
                                     <Entry x:Name="SearchEntry"
                                            Placeholder="{Binding Loc[SearchPlaceholder]}"
                                            Text="{Binding SearchQuery}"
@@ -291,11 +291,21 @@
                                         Text="{Binding Loc[SearchBtn]}"
                                         Command="{Binding SearchCommand}"
                                         Style="{StaticResource PrimaryGoldButtonStyle}"
-                                        HeightRequest="46"
-                                        MinimumHeightRequest="46"
+                                        HeightRequest="44"
+                                        MinimumHeightRequest="44"
+                                        FontSize="12"
+                                        Padding="0" />
+                                <Button Grid.Column="2"
+                                        Text="{Binding Loc[FiltersBtn]}"
+                                        Command="{Binding ToggleFiltersCommand}"
+                                        Style="{StaticResource SecondaryCreamButtonStyle}"
+                                        HeightRequest="44"
+                                        MinimumHeightRequest="44"
+                                        FontSize="12"
                                         Padding="0" />
                             </Grid>
 
+                            <VerticalStackLayout IsVisible="{Binding IsFiltersExpanded}" Spacing="8" Padding="0,4,0,0">
                             <CollectionView ItemsSource="{Binding Grades}"
                                             HeightRequest="38"
                                             HorizontalScrollBarVisibility="Never"
@@ -346,6 +356,7 @@
                                         FontSize="12"
                                         Padding="6,4" />
                             </Grid>
+                            </VerticalStackLayout>
                         </VerticalStackLayout>
                     </Border>
 

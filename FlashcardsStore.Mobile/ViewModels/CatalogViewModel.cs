@@ -36,6 +36,7 @@ public sealed partial class CatalogViewModel : BaseViewModel
     [ObservableProperty] private bool _hasCartItems;
     [ObservableProperty] private bool _hasFeatured;
     [ObservableProperty] private bool _isRefreshing;
+    [ObservableProperty] private bool _isFiltersExpanded;
 
     public ObservableCollection<CategoryChipItem> Categories { get; } = new();
     public ObservableCollection<GradeChipItem> Grades { get; } = new();
@@ -126,6 +127,9 @@ public sealed partial class CatalogViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    [RelayCommand]
+    private void ToggleFilters() => IsFiltersExpanded = !IsFiltersExpanded;
 
     [RelayCommand]
     private async Task RefreshAsync()
