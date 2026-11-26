@@ -68,5 +68,15 @@
   "CertPresentedTo": "تُمنح هذه الشهادة إلى البطل",
   "CertForCompleting": "لإتمامه بنجاح",
   "CertStarsEarned": "النجوم المكتسبة",
-  "ShareCertBtn": "مشاركة الإنجاز"
+  "ShareCertBtn": "مشاركة الإنجاز",
+  "LearningPathTitle": "خريطة رحلة التأسيس",
+  "StartNodeTag": "ابدأ",
+  "StoriesSectionTitle": "قصص الفونكس المصورة",
+  "StoriesSectionSub": "قصص تفاعلية بالأنيميشن والنطق",
+  "StoryListenBtn": "اسمع المشهد",
+  "StoryPrevBtn": "السابق",
+  "StoryNextBtn": "المشهد التالي",
+  "StoryQuizBtn": "سؤال القصة",
+  "StoryQuizTitle": "سؤال سريع على القصة",
+  "StoryCompleteBadge": "ممتاز! +3 نجوم ذهبية"
 }

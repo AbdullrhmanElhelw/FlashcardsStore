@@ -6,5 +6,6 @@ public enum AppScreen
     Onboarding,
     Home,
     Playing,
-    Soundboard
+    Soundboard,
+    StoryPlayer
 }

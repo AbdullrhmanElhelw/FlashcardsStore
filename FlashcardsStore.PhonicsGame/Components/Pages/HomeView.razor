@@ -99,38 +99,81 @@
     </div>
 </div>
 
-<div class="stages-grid">
-    @foreach (var stage in PhonicsCurriculum.Stages)
+<!-- Animated Phonics Stories Section -->
+<div class="section-heading">
+    <span>@Loc.T("StoriesSectionTitle")</span>
+    <span style="font-size:11px;font-weight:700;color:var(--muted);">@Loc.T("StoriesSectionSub")</span>
+</div>
+<div class="stories-strip">
+    @foreach (var story in PhonicsStoriesData.Stories)
     {
+        var storyUnlocked = story.IsFree || Vm.IsActivated;
+        <div class="story-card-mini @(storyUnlocked ? "" : "locked")" @onclick="() => Vm.StartStoryAsync(story)">
+            <div class="story-mini-art">
+                @((MarkupString)WordArtwork.GetSvg(story.CoverArtworkKey, story.AccentColor))
+            </div>
+            <div style="font-size:13px;font-weight:900;color:var(--plum);text-align:center;">
+                @(Loc.IsArabic ? story.TitleAr : story.TitleEn)
+            </div>
+            <div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:2px;">
+                @(Loc.IsArabic ? story.SubtitleAr : story.SubtitleEn)
+            </div>
+            @if (!storyUnlocked)
+            {
+                <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#1E293B;color:#fff;padding:4px;">
+                    @((MarkupString)UiIcons.Lock)
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Duolingo-Style Winding Phonics Path -->
+<div class="section-heading">
+    <span>@Loc.T("LearningPathTitle")</span>
+</div>
+
+<div class="duo-path">
+    @{
+        var firstActiveFound = false;
+    }
+    @for (var i = 0; i < PhonicsCurriculum.Stages.Count; i++)
+    {
+        var stage = PhonicsCurriculum.Stages[i];
         var unlocked = stage.IsFree || Vm.IsActivated;
         var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
-        var pct = stage.Words.Count > 0 ? (int)Math.Round(completedCount * 100.0 / stage.Words.Count) : 0;
+        var isDone = completedCount >= stage.Words.Count;
+        var isCurrent = unlocked && !isDone && !firstActiveFound;
+        if (isCurrent) firstActiveFound = true;
 
-        <div class="stage-card @(unlocked ? "" : "locked")"
-             style="background: linear-gradient(135deg, @stage.GradientStart, @stage.GradientEnd);"
-             @onclick="() => Vm.StartStageAsync(stage)">
-            <div class="stage-icon-bubble">
-                @((MarkupString)WordArtwork.GetSvg(stage.BadgeKey, stage.GradientEnd))
-            </div>
-            <div class="stage-info">
-                <div class="stage-title">@(Loc.IsArabic ? stage.TitleAr : stage.TitleEn)</div>
-                <div class="stage-en-pill">@stage.TitleEn</div>
-                <div class="stage-sub">@(Loc.IsArabic ? stage.SubtitleAr : stage.SubtitleEn)</div>
-                <div class="stage-progress-bar">
-                    <div class="stage-progress-fill" style="width: @pct%"></div>
+        var posClass = (i % 4) switch
+        {
+            1 => "pos-right",
+            3 => "pos-left",
+            _ => "pos-center"
+        };
+
+        <div class="duo-node-wrap @posClass">
+            @if (isCurrent)
+            {
+                <div class="duo-start-callout">@Loc.T("StartNodeTag")</div>
+            }
+
+            <button class="duo-node-btn @(unlocked ? "" : "locked") @(isCurrent ? "active-node" : "")"
+                    style="background: linear-gradient(145deg, @stage.GradientStart, @stage.GradientEnd);"
+                    @onclick="() => Vm.StartStageAsync(stage)">
+                <div class="duo-node-inner">
+                    @((MarkupString)WordArtwork.GetSvg(stage.BadgeKey, stage.GradientEnd))
                 </div>
-            </div>
-            <div class="stage-action-badge">
-                @if (unlocked)
+                @if (!unlocked)
                 {
-                    <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Play)</span>
-                    <span>@Loc.T("PlayBtn") (@completedCount/@stage.Words.Count)</span>
+                    <div class="duo-lock-badge">@((MarkupString)UiIcons.Lock)</div>
                 }
-                else
-                {
-                    <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Lock)</span>
-                    <span>@Loc.T("LockedBtn")</span>
-                }
+            </button>
+
+            <div class="duo-node-label">
+                <div class="duo-node-title">@(Loc.IsArabic ? stage.TitleAr : stage.TitleEn)</div>
+                <div class="duo-node-prog">@completedCount / @stage.Words.Count</div>
             </div>
         </div>
     }

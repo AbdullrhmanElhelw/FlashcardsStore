@@ -1,0 +1,105 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+@if (Vm.ActiveStory is not null)
+{
+    <div class="game-header">
+        <button class="btn-back" @onclick="Vm.ExitStage">
+            <span class="icon-svg" style="width:15px;height:15px;">
+                @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
+            </span>
+            <span>@Loc.T("BackToStages")</span>
+        </button>
+        <div class="progress-dots">
+            @for (var i = 0; i <= Vm.ActiveStory.Scenes.Count; i++)
+            {
+                var current = Vm.InStoryQuiz ? Vm.ActiveStory.Scenes.Count : Vm.StorySceneIndex;
+                var cls = i < current ? "done" : (i == current ? "current" : "");
+                <span class="progress-dot @cls"></span>
+            }
+        </div>
+        <div style="font-size:12px;font-weight:800;color:var(--plum);">
+            @(Loc.IsArabic ? Vm.ActiveStory.TitleAr : Vm.ActiveStory.TitleEn)
+        </div>
+    </div>
+
+    @if (!Vm.InStoryQuiz)
+    {
+        var scene = Vm.ActiveStory.Scenes[Vm.StorySceneIndex];
+        <div class="story-stage" style="background: @scene.BgColor;">
+            <div class="story-sky-cloud c1"></div>
+            <div class="story-sky-cloud c2"></div>
+
+            <div class="story-art-box @scene.AnimationClass">
+                @((MarkupString)WordArtwork.GetSvg(scene.ArtworkKey, scene.AccentColor))
+            </div>
+
+            <div class="story-sentence-en">
+                @foreach (var token in scene.SentenceEn.Split(' '))
+                {
+                    var clean = token.Trim('.', '!', '?');
+                    if (string.Equals(clean, scene.FocusWord, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <span class="story-focus-word">@token</span>
+                    }
+                    else
+                    {
+                        <span>@token</span>
+                    }
+                    <span> </span>
+                }
+            </div>
+
+            <div class="story-sentence-ar">@scene.SentenceAr</div>
+
+            <div class="audio-controls">
+                <button class="btn-speak" @onclick="Vm.SpeakCurrentStorySceneAsync">
+                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                    <span>@Loc.T("StoryListenBtn")</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="story-nav-row">
+            <button class="btn-story-prev" disabled="@(Vm.StorySceneIndex == 0)" @onclick="Vm.PrevStorySceneAsync">
+                @Loc.T("StoryPrevBtn")
+            </button>
+            <button class="btn-primary" @onclick="Vm.NextStorySceneAsync">
+                @(Vm.StorySceneIndex + 1 < Vm.ActiveStory.Scenes.Count ? Loc.T("StoryNextBtn") : Loc.T("StoryQuizBtn"))
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="picture-stage">
+            <div class="icon-svg" style="width:54px;height:54px;margin:0 auto 10px;color:#F59E0B;">
+                @((MarkupString)UiIcons.Sparkles)
+            </div>
+            <h3 style="margin:0 0 8px;color:var(--plum);">@Loc.T("StoryQuizTitle")</h3>
+            <div style="font-size:18px;font-weight:900;color:var(--plum);margin-bottom:4px;">
+                @(Loc.IsArabic ? Vm.ActiveStory.QuizQuestionAr : Vm.ActiveStory.QuizQuestionEn)
+            </div>
+            <div style="font-size:13px;color:var(--muted);direction:ltr;">@Vm.ActiveStory.QuizQuestionEn</div>
+
+            <div class="story-quiz-options">
+                @foreach (var opt in Vm.ActiveStory.QuizOptions)
+                {
+                    var isRight = Vm.StoryQuizSolved && opt == Vm.ActiveStory.QuizCorrectWord;
+                    var isWrong = Vm.StoryQuizWrongOption == opt;
+                    var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+                    <button class="@cls" @onclick="() => Vm.AnswerStoryQuizAsync(opt)">
+                        @opt.ToUpperInvariant()
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (Vm.StoryQuizSolved)
+        {
+            <div class="celebrate-banner">
+                <div style="font-weight:900;">@Loc.T("StoryCompleteBadge")</div>
+                <button class="btn-next" @onclick="Vm.ExitStage">@Loc.T("ReturnHome")</button>
+            </div>
+        }
+    }
+}

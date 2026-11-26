@@ -77,6 +77,12 @@ public sealed class PhonicsGameViewModel : IDisposable
     public bool SpeechSuccess { get; private set; }
     public bool IsListeningSpeech { get; private set; }
 
+    public PhonicsStory? ActiveStory { get; private set; }
+    public int StorySceneIndex { get; private set; }
+    public bool InStoryQuiz { get; private set; }
+    public bool StoryQuizSolved { get; private set; }
+    public string? StoryQuizWrongOption { get; private set; }
+
     public bool ShowActivationModal { get; private set; }
     public string ActivationCodeInput { get; set; } = string.Empty;
     public string ActivationFeedback { get; private set; } = string.Empty;
@@ -199,10 +205,96 @@ public sealed class PhonicsGameViewModel : IDisposable
     public void ExitStage()
     {
         ActiveStage = null;
+        ActiveStory = null;
         StageFinished = false;
         CompletedWords = _progress.GetCompletedWords();
         CurrentScreen = AppScreen.Home;
         Notify();
+    }
+
+    public async Task StartStoryAsync(PhonicsStory story)
+    {
+        if (!story.IsFree && !_activation.IsActivated)
+        {
+            OpenActivationModal();
+            return;
+        }
+
+        ActiveStory = story;
+        StorySceneIndex = 0;
+        InStoryQuiz = false;
+        StoryQuizSolved = false;
+        StoryQuizWrongOption = null;
+        CurrentScreen = AppScreen.StoryPlayer;
+        Notify();
+        await SpeakCurrentStorySceneAsync();
+    }
+
+    public Task SpeakCurrentStorySceneAsync()
+    {
+        if (ActiveStory is null || InStoryQuiz) return Task.CompletedTask;
+        var scene = ActiveStory.Scenes[StorySceneIndex];
+        return _speech.SpeakAsync(scene.SentenceEn, pitch: 1.08f);
+    }
+
+    public async Task NextStorySceneAsync()
+    {
+        if (ActiveStory is null) return;
+        if (StorySceneIndex + 1 < ActiveStory.Scenes.Count)
+        {
+            StorySceneIndex++;
+            Notify();
+            await SpeakCurrentStorySceneAsync();
+        }
+        else
+        {
+            InStoryQuiz = true;
+            Notify();
+            await _speech.SpeakAsync(ActiveStory.QuizQuestionEn, pitch: 1.08f);
+        }
+    }
+
+    public async Task PrevStorySceneAsync()
+    {
+        if (ActiveStory is null) return;
+        if (InStoryQuiz)
+        {
+            InStoryQuiz = false;
+            Notify();
+            return;
+        }
+        if (StorySceneIndex > 0)
+        {
+            StorySceneIndex--;
+            Notify();
+            await SpeakCurrentStorySceneAsync();
+        }
+    }
+
+    public async Task AnswerStoryQuizAsync(string option)
+    {
+        if (ActiveStory is null || StoryQuizSolved) return;
+
+        if (string.Equals(option, ActiveStory.QuizCorrectWord, StringComparison.OrdinalIgnoreCase))
+        {
+            StoryQuizSolved = true;
+            StoryQuizWrongOption = null;
+            _progress.RecordWordCompleted(ActiveStory.QuizCorrectWord, 3, Streak + 1);
+            CompletedWords = _progress.GetCompletedWords();
+            await SafeJsAsync("phonicsAudio.success");
+            await SafeJsAsync("phonicsAudio.confetti");
+            await _speech.SpeakAsync($"Great job! {ActiveStory.QuizCorrectWord}", pitch: 1.15f);
+            Notify();
+        }
+        else
+        {
+            StoryQuizWrongOption = option;
+            await SafeJsAsync("phonicsAudio.wrong");
+            Notify();
+            await Task.Delay(450);
+            StoryQuizWrongOption = null;
+            Notify();
+        }
     }
 
     public void OpenSoundboard()

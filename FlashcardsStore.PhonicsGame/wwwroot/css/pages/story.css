@@ -1,0 +1,154 @@
+.story-stage {
+    border-radius: 30px;
+    padding: 24px 18px;
+    text-align: center;
+    box-shadow: 0 14px 30px rgba(43, 7, 28, 0.12);
+    border: 3px solid rgba(212, 175, 55, 0.45);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.story-sky-cloud {
+    position: absolute;
+    top: 14px;
+    width: 64px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.68);
+    border-radius: 999px;
+    animation: cloudDrift 7s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+.story-sky-cloud.c1 { left: 16px; }
+.story-sky-cloud.c2 { right: 20px; top: 30px; width: 48px; animation-delay: 1.5s; }
+
+.story-art-box {
+    width: 158px;
+    height: 158px;
+    margin: 10px auto 16px;
+    border-radius: 38px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 2.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-art-box svg {
+    width: 100%;
+    height: 100%;
+}
+
+.anim-bounce { animation: storyBounce 1.8s ease-in-out infinite; }
+.anim-float { animation: storyFloat 2.4s ease-in-out infinite; }
+.anim-wiggle { animation: storyWiggle 2s ease-in-out infinite; }
+.anim-slide { animation: storySlide 2.6s ease-in-out infinite; }
+.anim-spin-slow { animation: storySpin 10s linear infinite; }
+
+.story-sentence-en {
+    direction: ltr;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--plum);
+    line-height: 1.45;
+    margin-bottom: 6px;
+}
+
+.story-focus-word {
+    background: #FDE047;
+    color: #1E1B4B;
+    padding: 1px 8px;
+    border-radius: 10px;
+    box-shadow: 0 3px 0 #CA8A04;
+}
+
+.story-sentence-ar {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 16px;
+}
+
+.story-nav-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 10px;
+}
+
+.btn-story-prev {
+    background: #fff;
+    color: var(--plum);
+    border: 2px solid #CBD5E1;
+    border-radius: 16px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #CBD5E1;
+}
+
+.story-quiz-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.story-quiz-btn {
+    background: #fff;
+    border: 2.5px solid #E2E8F0;
+    border-radius: 18px;
+    padding: 14px 18px;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--plum);
+    direction: ltr;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #CBD5E1;
+}
+
+.story-quiz-btn.correct {
+    background: #ECFDF5;
+    border-color: var(--ok);
+    color: #047857;
+    box-shadow: 0 5px 0 #34D399;
+}
+
+.story-quiz-btn.wrong {
+    background: #FFF1F2;
+    border-color: var(--err);
+    animation: shake 0.4s ease;
+}
+
+@keyframes cloudDrift {
+    from { transform: translateX(-8px); }
+    to { transform: translateX(12px); }
+}
+
+@keyframes storyBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.04); }
+}
+
+@keyframes storyFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+}
+
+@keyframes storyWiggle {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(4deg); }
+}
+
+@keyframes storySlide {
+    0%, 100% { transform: translateX(-6px); }
+    50% { transform: translateX(8px); }
+}
+
+@keyframes storySpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

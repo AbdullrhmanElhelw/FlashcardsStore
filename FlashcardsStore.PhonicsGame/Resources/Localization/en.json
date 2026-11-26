@@ -68,5 +68,15 @@
   "CertPresentedTo": "Proudly presented to",
   "CertForCompleting": "For successfully completing",
   "CertStarsEarned": "Stars Earned",
-  "ShareCertBtn": "Share Achievement"
+  "ShareCertBtn": "Share Achievement",
+  "LearningPathTitle": "Your Phonics Path",
+  "StartNodeTag": "START",
+  "StoriesSectionTitle": "Animated Phonics Stories",
+  "StoriesSectionSub": "Interactive animated reading stories",
+  "StoryListenBtn": "Listen",
+  "StoryPrevBtn": "Back",
+  "StoryNextBtn": "Next Scene",
+  "StoryQuizBtn": "Story Quiz",
+  "StoryQuizTitle": "Quick Story Quiz",
+  "StoryCompleteBadge": "Awesome! +3 Gold Stars"
 }
