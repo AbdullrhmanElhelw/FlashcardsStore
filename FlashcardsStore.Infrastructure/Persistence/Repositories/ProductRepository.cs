@@ -33,6 +33,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
             if (gl == "kg")
             {
                 query = query.Where(p =>
+                    p.GradeLevel.ToLower() == "all" ||
                     p.GradeLevel.ToLower().Contains("kg") ||
                     p.GradeLevel.ToLower().Contains("pre-k") ||
                     p.TargetAudience.ToLower().Contains("kg") ||
@@ -43,11 +44,16 @@ public class ProductRepository : Repository<Product>, IProductRepository
             else if (gl == "primary-1-3" || gl == "primary-early")
             {
                 query = query.Where(p =>
+                    p.GradeLevel.ToLower() == "all" ||
+                    p.GradeLevel.ToLower().Contains("primary-1") ||
+                    p.GradeLevel.ToLower().Contains("primary-2") ||
+                    p.GradeLevel.ToLower().Contains("primary-3") ||
                     p.GradeLevel.ToLower().Contains("early") ||
                     p.GradeLevel.ToLower().Contains("primary 1") ||
                     p.GradeLevel.ToLower().Contains("primary 2") ||
                     p.GradeLevel.ToLower().Contains("primary 3") ||
                     p.GradeLevel.ToLower().Contains("pre-k to primary 3") ||
+                    p.TargetAudience.ToLower().Contains("الصفوف 1-3") ||
                     p.TargetAudience.ToLower().Contains("primary 1") ||
                     p.TargetAudience.ToLower().Contains("primary 2") ||
                     p.TargetAudience.ToLower().Contains("primary 3"));
@@ -55,12 +61,15 @@ public class ProductRepository : Repository<Product>, IProductRepository
             else if (gl == "primary-4-6" || gl == "primary-upper")
             {
                 query = query.Where(p =>
+                    p.GradeLevel.ToLower() == "all" ||
+                    p.GradeLevel.ToLower().Contains("primary-4-6") ||
                     p.GradeLevel.ToLower().Contains("4") ||
                     p.GradeLevel.ToLower().Contains("5") ||
                     p.GradeLevel.ToLower().Contains("6") ||
                     p.GradeLevel.ToLower().Contains("primary 1 - 4") ||
                     p.GradeLevel.ToLower().Contains("primary 2 - 6") ||
                     p.GradeLevel.ToLower().Contains("primary 3 - prep 3") ||
+                    p.TargetAudience.ToLower().Contains("الصفوف 4-6") ||
                     p.TargetAudience.ToLower().Contains("primary 4") ||
                     p.TargetAudience.ToLower().Contains("primary 5") ||
                     p.TargetAudience.ToLower().Contains("primary 6"));
@@ -68,6 +77,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
             else if (gl == "prep")
             {
                 query = query.Where(p =>
+                    p.GradeLevel.ToLower() == "all" ||
                     p.GradeLevel.ToLower().Contains("prep") ||
                     p.TargetAudience.ToLower().Contains("prep") ||
                     p.TargetAudience.ToLower().Contains("إعدادي"));
