@@ -18,9 +18,8 @@ public partial class CatalogPage : ContentPage
         await _viewModel.InitializeCommand.ExecuteAsync(null);
     }
 
-    private async void OnSearchToggleClicked(object? sender, EventArgs e)
+    private void OnSearchToggleClicked(object? sender, EventArgs e)
     {
-        await HomeScroll.ScrollToAsync(SearchEntry, ScrollToPosition.Center, true);
         SearchEntry.Focus();
     }
 
