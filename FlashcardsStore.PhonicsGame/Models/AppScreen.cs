@@ -9,5 +9,6 @@ public enum AppScreen
     Soundboard,
     StoryPlayer,
     Shop,
-    Dictionary
+    Dictionary,
+    ParentReport
 }

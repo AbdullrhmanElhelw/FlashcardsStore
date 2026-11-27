@@ -17,6 +17,7 @@ public sealed partial class HomeViewModel : BaseViewModel
     private readonly SoundboardViewModel _soundboard;
     private readonly DictionaryViewModel _dictionary;
     private readonly ModalsViewModel _modals;
+    private readonly ParentReportViewModel _parentReport;
 
     [ObservableProperty] private string _selectedCategory = "letters";
 
@@ -30,6 +31,7 @@ public sealed partial class HomeViewModel : BaseViewModel
         SoundboardViewModel soundboard,
         DictionaryViewModel dictionary,
         ModalsViewModel modals,
+        ParentReportViewModel parentReport,
         OnboardingViewModel onboarding)
     {
         _curriculum = curriculum;
@@ -41,6 +43,7 @@ public sealed partial class HomeViewModel : BaseViewModel
         _soundboard = soundboard;
         _dictionary = dictionary;
         _modals = modals;
+        _parentReport = parentReport;
 
         _curriculum.ContentReloaded += NotifyAll;
         onboarding.OnRequestStoriesStart = () =>
@@ -99,6 +102,8 @@ public sealed partial class HomeViewModel : BaseViewModel
     public Task StartListenChooseChallengeAsync() => _arena.StartListenChooseChallengeAsync();
     public Task StartSpeakRepeatChallengeAsync() => _arena.StartSpeakRepeatChallengeAsync();
     public Task StartListenCompleteChallengeAsync() => _arena.StartListenCompleteChallengeAsync();
+    public Task StartBalloonPopAsync() => _arena.StartBalloonPopAsync();
+    public void OpenParentReport() => _parentReport.Open();
 
     public void OpenSoundboard()
     {

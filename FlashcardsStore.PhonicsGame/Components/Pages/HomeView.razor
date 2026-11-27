@@ -194,6 +194,17 @@
 </div>
 
 <!-- Courses & Flashcards Store Integration -->
+<div class="extra-modes-row" style="grid-template-columns:1fr 1fr;margin:14px 0 10px;">
+    <div class="extra-mode-card rhyme" style="margin:0;" @onclick="Vm.StartBalloonPopAsync">
+        <div class="extra-mode-title">@Loc.T("BalloonGameTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("BalloonGameSub")</div>
+    </div>
+    <div class="extra-mode-card sentence" style="margin:0;" @onclick="Vm.OpenParentReport">
+        <div class="extra-mode-title">@Loc.T("ParentReportTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("ParentReportSub")</div>
+    </div>
+</div>
+
 <div class="store-cta-card" @onclick="Vm.OpenStoreCoursesAsync">
     <div style="display:flex;align-items:center;gap:12px;flex:1;">
         <div class="store-cta-icon icon-svg">

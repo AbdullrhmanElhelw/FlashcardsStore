@@ -33,6 +33,24 @@
             <partial name="_OrderStatusBadge" model="Model.Status" />
         </div>
 
+        @if (ViewBag.PhonicsCode is string phonicsCode && !string.IsNullOrWhiteSpace(phonicsCode))
+        {
+            <div class="p-5 rounded-3xl bg-gradient-to-l from-[#2B071C] to-[#521036] text-white max-w-xl mx-auto shadow-lg space-y-2">
+                <div class="text-xs font-bold text-amber-300">هدية طلبك — كود تفعيل تطبيق ألعاب Jolly Phonics</div>
+                <div class="flex items-center justify-center gap-3">
+                    <span id="orderPhonicsCode" class="font-mono text-2xl font-black tracking-wider text-white" dir="ltr">@phonicsCode</span>
+                    <button type="button"
+                            onclick="navigator.clipboard.writeText('@phonicsCode'); this.textContent='تم النسخ ✓';"
+                            class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold cursor-pointer">
+                        نسخ الكود
+                    </button>
+                </div>
+                <p class="text-[11px] text-amber-100/90">
+                    أدخل هذا الكود داخل تطبيق ألعاب الفونكس لفتح جميع المراحل والأصوات والقصص على جهازين.
+                </p>
+            </div>
+        }
+
         <!-- WhatsApp Direct Action Button (especially critical for WhatsAppDirect orders) -->
         <div class="p-6 rounded-3xl bg-emerald-50/70 border border-emerald-200/80 max-w-xl mx-auto space-y-3">
             <div class="flex items-center justify-center gap-2 text-emerald-800 font-extrabold text-sm">

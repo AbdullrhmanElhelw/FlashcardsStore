@@ -1,0 +1,89 @@
+@inherits PhonicsComponentBase<ParentReportViewModel>
+
+<div class="sb-header">
+    <button class="btn-back" @onclick="Shell.GoHome">
+        <span class="icon-svg" style="width:15px;height:15px;">
+            @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
+        </span>
+        <span>@Loc.T("BackToStages")</span>
+    </button>
+    <div style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("ParentReportTitle")</div>
+</div>
+
+@if (!Vm.IsGateUnlocked)
+{
+    <div class="picture-stage" style="padding:24px 18px;">
+        <div class="icon-svg" style="width:46px;height:46px;margin:0 auto 10px;color:#7C3AED;">
+            @((MarkupString)UiIcons.Lock)
+        </div>
+        <h3 style="margin:0 0 6px;color:var(--plum);">@Loc.T("ParentGateTitle")</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin:0 0 14px;">@Loc.T("ParentGateSub")</p>
+
+        <div style="font-size:26px;font-weight:900;color:var(--plum);direction:ltr;margin-bottom:12px;">
+            @Vm.GateA × @Vm.GateB = ?
+        </div>
+
+        <input class="profile-name-input"
+               type="number"
+               inputmode="numeric"
+               style="max-width:160px;margin:0 auto 12px;text-align:center;display:block;"
+               @bind="Vm.GateAnswer"
+               @bind:event="oninput" />
+
+        @if (Vm.GateWrong)
+        {
+            <div style="font-size:12px;font-weight:800;color:#E11D48;margin-bottom:10px;">@Loc.T("ParentGateWrong")</div>
+        }
+
+        <button class="btn-primary" @onclick="Vm.VerifyGate">@Loc.T("ParentGateBtn")</button>
+    </div>
+}
+else
+{
+    <div class="hero-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.MasteredCount/@Vm.TotalWords</div>
+            <div class="hero-chip-lbl">@Loc.T("WordsMastered")</div>
+        </div>
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.TotalStars</div>
+            <div class="hero-chip-lbl">@Loc.T("StarsLabel")</div>
+        </div>
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.BestStreak</div>
+            <div class="hero-chip-lbl">@Loc.T("BestStreakLabel")</div>
+        </div>
+    </div>
+
+    @if (Vm.WeakWords.Count > 0)
+    {
+        <div class="weak-card" style="margin-bottom:14px;" @onclick="Vm.PracticeWeakWordsAsync">
+            <div>
+                <div style="font-size:13.5px;font-weight:900;color:#881337;">@Loc.T("WeakWordsTitle"): @string.Join(", ", Vm.WeakWords.Take(6))</div>
+                <div style="font-size:11px;font-weight:600;color:#9F1239;">@Loc.T("WeakWordsSub")</div>
+            </div>
+            <div class="weak-badge">@Loc.T("WeakWordsBtn")</div>
+        </div>
+    }
+
+    <div class="section-heading">
+        <span>@Loc.T("ParentStagesProgress")</span>
+    </div>
+
+    <div class="topic-cards-grid">
+        @foreach (var st in Vm.Stages)
+        {
+            var done = st.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
+            var pct = st.Words.Count > 0 ? (int)Math.Round(done * 100.0 / st.Words.Count) : 0;
+            <div class="topic-card" style="cursor:default;flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="topic-card-title">@(Loc.IsArabic ? st.TitleAr : st.TitleEn)</span>
+                    <span style="font-size:12px;font-weight:900;color:#7C3AED;">@done / @st.Words.Count</span>
+                </div>
+                <div class="trace-progress-track">
+                    <div class="trace-progress-fill" style="width:@(pct)%"></div>
+                </div>
+            </div>
+        }
+    </div>
+}

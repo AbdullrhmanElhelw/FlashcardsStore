@@ -186,5 +186,17 @@
     "TraceDoneBtn":  "خلصت!",
     "TraceDemoBtn":  "ورّيني",
     "ModeTraceTitle":  "ارسم واكتب",
-    "TraceMissingLetters":  "تتبّع كل حروف الكلمة! باقي:"
+    "TraceMissingLetters":  "تتبّع كل حروف الكلمة! باقي:",
+    "ParentStagesProgress":  "تقدم الطفل في كل مرحلة",
+    "ParentGateTitle":  "منطقة أولياء الأمور",
+    "BalloonGameTitle":  "صياد الأصوات (البالونات)",
+    "ParentGateSub":  "حل المسألة البسيطة للدخول إلى التقرير:",
+    "StarsLabel":  "النجوم",
+    "BestStreakLabel":  "أفضل سلسلة",
+    "BalloonPrompt":  "اسمع الصوت وفرقع البالونة المطابقة!",
+    "ParentGateWrong":  "إجابة غير صحيحة، حاول مرة أخرى",
+    "ParentGateBtn":  "دخول للتقرير",
+    "ParentReportTitle":  "تقرير ولي الأمر",
+    "ParentReportSub":  "تقدم الطفل والأصوات الصعبة",
+    "BalloonGameSub":  "فرقع البالونة الصح"
 }

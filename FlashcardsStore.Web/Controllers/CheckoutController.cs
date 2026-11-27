@@ -1,9 +1,13 @@
+using System.Security.Cryptography;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using FlashcardsStore.Application.DTOs.Orders;
 using FlashcardsStore.Application.DTOs.PaymentProof;
 using FlashcardsStore.Application.Interfaces.Services;
+using FlashcardsStore.Domain.Entities;
 using FlashcardsStore.Domain.Enums;
+using FlashcardsStore.Infrastructure.Persistence;
 using FlashcardsStore.Web.Common;
 
 namespace FlashcardsStore.Web.Controllers;
@@ -16,6 +20,7 @@ public class CheckoutController : Controller
     private readonly IValidator<CheckoutDto> _checkoutValidator;
     private readonly IValidator<PaymentProofUploadDto> _proofValidator;
     private readonly ILocalizationService _loc;
+    private readonly FlashcardsStoreDbContext _db;
 
     public CheckoutController(
         IOrderService orderService,
@@ -23,7 +28,8 @@ public class CheckoutController : Controller
         CartSessionManager cartManager,
         IValidator<CheckoutDto> checkoutValidator,
         IValidator<PaymentProofUploadDto> proofValidator,
-        ILocalizationService loc)
+        ILocalizationService loc,
+        FlashcardsStoreDbContext db)
     {
         _orderService = orderService;
         _paymentProofService = paymentProofService;
@@ -31,6 +37,7 @@ public class CheckoutController : Controller
         _checkoutValidator = checkoutValidator;
         _proofValidator = proofValidator;
         _loc = loc;
+        _db = db;
     }
 
     [HttpGet]
@@ -81,6 +88,9 @@ public class CheckoutController : Controller
 
         // Clear cart after order creation
         _cartManager.ClearCart();
+
+        // Auto-generate a Jolly Phonics App activation code for this order
+        await EnsureOrderPhonicsCodeAsync(result.Data.OrderNumber, result.Data.CustomerName, cancellationToken);
 
         if (dto.PaymentMethod == PaymentMethod.WalletTransfer)
         {
@@ -163,6 +173,48 @@ public class CheckoutController : Controller
             return NotFound();
         }
 
+        var noteKey = $"Order:{orderNumber}";
+        var codeEntity = await _db.PhonicsActivationCodes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Notes == noteKey, cancellationToken);
+        ViewBag.PhonicsCode = codeEntity?.Code;
+
         return View(order);
+    }
+
+    private async Task EnsureOrderPhonicsCodeAsync(string orderNumber, string? customerName, CancellationToken ct)
+    {
+        var noteKey = $"Order:{orderNumber}";
+        var exists = await _db.PhonicsActivationCodes.AnyAsync(c => c.Notes == noteKey, ct);
+        if (exists) return;
+
+        string code;
+        do
+        {
+            code = GenerateOrderCode();
+        } while (await _db.PhonicsActivationCodes.AnyAsync(c => c.Code == code, ct));
+
+        _db.PhonicsActivationCodes.Add(new PhonicsActivationCode
+        {
+            Code = code,
+            BundleName = $"طلب المتجر ({customerName ?? orderNumber})",
+            Notes = noteKey,
+            MaxDevices = 2,
+            IsActive = true
+        });
+        await _db.SaveChangesAsync(ct);
+    }
+
+    private static string GenerateOrderCode()
+    {
+        const string alphabet = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+        Span<char> p1 = stackalloc char[4];
+        Span<char> p2 = stackalloc char[4];
+        for (var i = 0; i < 4; i++)
+        {
+            p1[i] = alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)];
+            p2[i] = alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)];
+        }
+        return $"KHO-{new string(p1)}-{new string(p2)}";
     }
 }

@@ -354,6 +354,197 @@ public static class WordArtwork
                 <rect x="30" y="54" width="60" height="42" rx="6" fill="#CCFBF1" stroke="#134E4A" stroke-width="3"/>
                 <rect x="52" y="68" width="16" height="28" rx="3" fill="#0F766E"/>
             </svg>
+            """,
+        ["ant"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="36" cy="70" rx="14" ry="12" fill="#B91C1C"/>
+                <circle cx="58" cy="64" r="10" fill="#DC2626"/>
+                <circle cx="78" cy="54" r="12" fill="#EF4444"/>
+                <circle cx="82" cy="51" r="3" fill="#fff"/>
+                <path d="M76 42L84 26M84 44L96 32" stroke="#7F1D1D" stroke-width="3" stroke-linecap="round"/>
+                <path d="M40 80L30 96M58 74L54 96M64 74L72 96" stroke="#7F1D1D" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["top"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="56" y="18" width="8" height="16" rx="4" fill="#1E293B"/>
+                <path d="M24 52C24 40 96 40 96 52L60 98L24 52Z" fill="#3B82F6" stroke="#1D4ED8" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M32 58H88" stroke="#FDE047" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["igloo"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 86C18 48 102 48 102 86Z" fill="#E0F2FE" stroke="#0284C7" stroke-width="3.5"/>
+                <path d="M48 86V68C48 60 72 60 72 68V86Z" fill="#0369A1"/>
+                <path d="M26 66H94M34 54H86" stroke="#7DD3FC" stroke-width="2.5"/>
+            </svg>
+            """,
+        ["egg"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M60 20C40 20 28 54 28 74C28 92 42 102 60 102C78 102 92 92 92 74C92 54 80 20 60 20Z" fill="#FEF3C7" stroke="#D97706" stroke-width="3.5"/>
+                <ellipse cx="48" cy="52" rx="7" ry="12" transform="rotate(-20 48 52)" fill="#fff" opacity="0.7"/>
+            </svg>
+            """,
+        ["lion"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="34" fill="#D97706"/>
+                <circle cx="60" cy="62" r="22" fill="#FDE68A"/>
+                <circle cx="52" cy="57" r="3.5" fill="#1E293B"/>
+                <circle cx="68" cy="57" r="3.5" fill="#1E293B"/>
+                <polygon points="60,62 55,68 65,68" fill="#92400E"/>
+            </svg>
+            """,
+        ["goat"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M42 36Q34 20 24 26M78 36Q86 20 96 26" stroke="#92400E" stroke-width="5" stroke-linecap="round"/>
+                <ellipse cx="60" cy="64" rx="24" ry="26" fill="#F1F5F9" stroke="#475569" stroke-width="3"/>
+                <circle cx="52" cy="58" r="3.5" fill="#1E293B"/>
+                <circle cx="68" cy="58" r="3.5" fill="#1E293B"/>
+                <path d="M56 88L60 102L64 88" fill="#CBD5E1"/>
+            </svg>
+            """,
+        ["octopus"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="48" r="24" fill="#8B5CF6"/>
+                <circle cx="52" cy="46" r="4" fill="#fff"/>
+                <circle cx="68" cy="46" r="4" fill="#fff"/>
+                <path d="M38 68Q24 88 32 98M50 70Q44 92 48 100M70 70Q76 92 72 100M82 68Q96 88 88 98" stroke="#7C3AED" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["umbrella"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 60C20 34 100 34 100 60Z" fill="#EC4899" stroke="#BE185D" stroke-width="3"/>
+                <path d="M60 36V88C60 96 72 96 72 88" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["rain"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M34 62H88C96 62 100 54 96 46C92 38 82 38 78 40C74 28 54 26 46 38C34 38 26 46 28 56C29 60 31 62 34 62Z" fill="#CBD5E1" stroke="#64748B" stroke-width="3"/>
+                <path d="M40 74L34 90M60 74L54 90M80 74L74 90" stroke="#0284C7" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["moon"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M74 24C52 24 36 42 36 62C36 82 54 98 76 96C58 90 52 72 56 54C60 38 66 30 74 24Z" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/>
+            </svg>
+            """,
+        ["night"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="18" y="20" width="84" height="80" rx="20" fill="#1E1B4B"/>
+                <path d="M72 34C58 34 48 46 48 60C48 74 60 84 74 82C62 78 58 64 62 52C64 42 68 38 72 34Z" fill="#FDE047"/>
+                <circle cx="38" cy="42" r="3" fill="#fff"/>
+                <circle cx="86" cy="68" r="2.5" fill="#fff"/>
+            </svg>
+            """,
+        ["light"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="52" r="22" fill="#FEF08A" stroke="#EAB308" stroke-width="3.5"/>
+                <rect x="50" y="74" width="20" height="14" rx="4" fill="#94A3B8"/>
+                <path d="M60 16V24M24 52H32M88 52H96M34 26L40 32M86 26L80 32" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["ear"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M46 34C66 22 86 36 82 58C79 74 68 88 56 90C46 92 40 84 44 74" fill="#FED7AA" stroke="#C2410C" stroke-width="4" stroke-linecap="round"/>
+                <path d="M56 46C66 44 70 54 64 64" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["chair"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="36" y="24" width="48" height="34" rx="6" fill="#F59E0B" stroke="#92400E" stroke-width="3"/>
+                <rect x="32" y="58" width="56" height="12" rx="4" fill="#D97706" stroke="#92400E" stroke-width="3"/>
+                <path d="M38 70V98M82 70V98" stroke="#78350F" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["lamb"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="52" cy="58" r="22" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+                <circle cx="70" cy="58" r="18" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+                <circle cx="78" cy="54" r="14" fill="#1E293B"/>
+                <circle cx="82" cy="51" r="2.5" fill="#fff"/>
+                <path d="M44 78V96M72 76V96" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["comb"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="22" y="38" width="76" height="16" rx="6" fill="#2563EB"/>
+                <path d="M28 54V82M38 54V82M48 54V82M58 54V82M68 54V82M78 54V82M88 54V82" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["knee"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M42 22L68 58L46 98" stroke="#FDBA74" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="68" cy="58" r="10" fill="#FB923C" opacity="0.45"/>
+            </svg>
+            """,
+        ["bone"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 52H88V68H32Z" fill="#F8FAFC"/>
+                <circle cx="28" cy="48" r="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
+                <circle cx="28" cy="70" r="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
+                <circle cx="92" cy="48" r="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
+                <circle cx="92" cy="70" r="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
+            </svg>
+            """,
+        ["cube"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="60,22 94,40 60,58 26,40" fill="#A78BFA" stroke="#5B21B6" stroke-width="3"/>
+                <polygon points="26,40 60,58 60,96 26,78" fill="#8B5CF6" stroke="#5B21B6" stroke-width="3"/>
+                <polygon points="94,40 60,58 60,96 94,78" fill="#7C3AED" stroke="#5B21B6" stroke-width="3"/>
+            </svg>
+            """,
+        ["cup"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M34 40H80V74C80 86 70 94 57 94C44 94 34 86 34 74V40Z" fill="#F472B6" stroke="#BE185D" stroke-width="3"/>
+                <path d="M80 48H90C96 48 96 68 90 68H80" stroke="#BE185D" stroke-width="4" fill="none"/>
+            </svg>
+            """,
+        ["ring"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="68" r="26" fill="none" stroke="#EAB308" stroke-width="8"/>
+                <polygon points="60,22 72,36 60,46 48,36" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5"/>
+            </svg>
+            """,
+        ["fork"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M46 22V48M60 22V48M74 22V48M46 48C46 58 74 58 74 48M60 56V98" stroke="#64748B" stroke-width="5.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["queen"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="24,80 28,36 48,56 60,26 72,56 92,36 96,80" fill="#FACC15" stroke="#B45309" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="60" cy="24" r="5" fill="#EC4899"/>
+            </svg>
+            """,
+        ["cloud"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 78H88C98 78 104 70 100 60C96 52 86 50 82 52C78 36 54 34 46 48C32 48 22 58 24 68C25 74 28 78 32 78Z" fill="#E0F2FE" stroke="#0284C7" stroke-width="3.5"/>
+            </svg>
+            """,
+        ["coin"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="34" fill="#FACC15" stroke="#CA8A04" stroke-width="4"/>
+                <circle cx="60" cy="60" r="24" fill="none" stroke="#FEF08A" stroke-width="3"/>
+                <text x="60" y="70" text-anchor="middle" font-family="Nunito, sans-serif" font-size="30" font-weight="900" fill="#92400E">$</text>
+            </svg>
+            """,
+        ["book"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 32C42 28 56 34 60 40C64 34 78 28 96 32V86C78 82 64 88 60 94C56 88 42 82 24 86V32Z" fill="#DBEAFE" stroke="#2563EB" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M60 40V94" stroke="#2563EB" stroke-width="3"/>
+            </svg>
+            """,
+        ["lake"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="60" cy="70" rx="42" ry="20" fill="#38BDF8" stroke="#0284C7" stroke-width="3"/>
+                <path d="M36 68Q48 62 60 68T84 68" stroke="#E0F2FE" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["rope"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M26 78C44 36 76 84 94 42" stroke="#D97706" stroke-width="8" stroke-linecap="round"/>
+                <path d="M26 78C44 36 76 84 94 42" stroke="#FEF3C7" stroke-width="3" stroke-dasharray="6 8" stroke-linecap="round"/>
+            </svg>
             """
     };
 }

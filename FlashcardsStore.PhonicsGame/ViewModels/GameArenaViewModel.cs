@@ -75,6 +75,12 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     [ObservableProperty] private List<string> _listenOptions = [];
     [ObservableProperty] private string? _listenWrongOption;
 
+    // Balloon Pop (Sound Pop)
+    [ObservableProperty] private List<BalloonItem> _balloons = [];
+    [ObservableProperty] private List<string> _balloonTargetQueue = [];
+    [ObservableProperty] private int _balloonQueueIndex;
+    [ObservableProperty] private string _targetBalloonSound = string.Empty;
+
     // Speech Check
     [ObservableProperty] private string _speechFeedback = string.Empty;
     [ObservableProperty] private bool _speechSuccess;
@@ -912,6 +918,86 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
             : $"{_loc.T("AcademyName")} - {_loc.T("CertTitle")}: {heroName} completed {stageTitle} and earned {StageStars} stars!";
         try { await Share.Default.RequestAsync(new ShareTextRequest { Title = _loc.T("CertTitle"), Text = text }); }
         catch { }
+    }
+
+    // --- Balloon Pop (Sound Pop) ---
+    public async Task StartBalloonPopAsync()
+    {
+        SelectedMode = GameMode.BalloonPop;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        WordSolved = false;
+        ActiveStage = new PhonicsStage(90, "صياد الأصوات (البالونات)", "Sound Pop Balloons", "", "", "star_badge", "#EC4899", "#8B5CF6", true, []);
+
+        var sounds = _curriculum.GetAlphabet()
+            .Where(l => _activation.IsActivated || l.Group <= 2)
+            .Select(l => l.DisplaySound)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Take(6)
+            .ToList();
+
+        if (sounds.Count == 0)
+            sounds = ["s", "a", "t", "i", "p", "n"];
+
+        string[] palette = ["#EC4899", "#7C3AED", "#0EA5E9", "#10B981", "#F59E0B", "#EF4444"];
+        Balloons = sounds.Select((s, idx) => new BalloonItem
+        {
+            Sound = s,
+            Color = palette[idx % palette.Length],
+            DelayMs = idx * 180
+        }).OrderBy(_ => _rng.Next()).ToList();
+
+        BalloonTargetQueue = sounds.OrderBy(_ => _rng.Next()).ToList();
+        BalloonQueueIndex = 0;
+        TargetBalloonSound = BalloonTargetQueue[0];
+
+        _shell.NavigateTo(AppScreen.Playing);
+        await SpeakTargetBalloonAsync();
+    }
+
+    [RelayCommand]
+    public Task SpeakTargetBalloonAsync()
+        => string.IsNullOrWhiteSpace(TargetBalloonSound) ? Task.CompletedTask : _speech.SpeakPhonemeAsync(TargetBalloonSound);
+
+    public async Task PopBalloonAsync(BalloonItem balloon)
+    {
+        if (balloon.IsPopped || StageFinished) return;
+
+        if (string.Equals(balloon.Sound, TargetBalloonSound, StringComparison.OrdinalIgnoreCase))
+        {
+            balloon.IsPopped = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(balloon.Sound, 1, Streak);
+            _shell.RefreshHeader();
+            await _js.InvokeAsync("phonicsAudio.success");
+            await _js.InvokeAsync("phonicsAudio.confetti");
+
+            if (BalloonQueueIndex + 1 < BalloonTargetQueue.Count)
+            {
+                BalloonQueueIndex++;
+                TargetBalloonSound = BalloonTargetQueue[BalloonQueueIndex];
+                NotifyAll();
+                await Task.Delay(400);
+                await SpeakTargetBalloonAsync();
+            }
+            else
+            {
+                StageFinished = true;
+                NotifyAll();
+            }
+        }
+        else
+        {
+            balloon.IsWrong = true;
+            Streak = 0;
+            NotifyAll();
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            await Task.Delay(420);
+            balloon.IsWrong = false;
+            NotifyAll();
+        }
     }
 
     public void Dispose() => _dotNetRef?.Dispose();

@@ -1,0 +1,25 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+<div class="picture-stage" style="padding:16px;">
+    <div class="arabic-hint" style="font-size:16px;margin-bottom:8px;">@Loc.T("BalloonPrompt")</div>
+    <div class="audio-controls">
+        <button class="btn-speak" @onclick="Vm.SpeakTargetBalloonAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+            <span>@Loc.T("ListenSoundBtn")</span>
+        </button>
+    </div>
+</div>
+
+<div class="balloon-sky">
+    @foreach (var b in Vm.Balloons)
+    {
+        var cls = "balloon-btn" + (b.IsPopped ? " popped" : "") + (b.IsWrong ? " wrong" : "");
+        <button class="@cls"
+                style="background: radial-gradient(circle at 32% 28%, #ffffff55, @b.Color); animation-delay: @(b.DelayMs)ms;"
+                disabled="@b.IsPopped"
+                @onclick="() => Vm.PopBalloonAsync(b)">
+            <span class="balloon-text">@b.Sound</span>
+            <span class="balloon-string"></span>
+        </button>
+    }
+</div>

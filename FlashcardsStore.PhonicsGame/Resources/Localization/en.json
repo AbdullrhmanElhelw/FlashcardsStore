@@ -186,5 +186,17 @@
     "TraceDoneBtn":  "Done!",
     "TraceDemoBtn":  "Demo",
     "ModeTraceTitle":  "Trace \u0026 Write",
-    "TraceMissingLetters":  "Trace every letter! Still missing:"
+    "TraceMissingLetters":  "Trace every letter! Still missing:",
+    "ParentStagesProgress":  "Progress by Stage",
+    "ParentGateTitle":  "Parents Only",
+    "BalloonGameTitle":  "Sound Pop Balloons",
+    "ParentGateSub":  "Solve this quick check to view the report:",
+    "StarsLabel":  "Stars",
+    "BestStreakLabel":  "Best Streak",
+    "BalloonPrompt":  "Hear the sound and pop the matching balloon!",
+    "ParentGateWrong":  "Wrong answer, please try again",
+    "ParentGateBtn":  "Unlock Report",
+    "ParentReportTitle":  "Parent Report",
+    "ParentReportSub":  "Child progress \u0026 weak sounds",
+    "BalloonGameSub":  "Pop the matching sound"
 }

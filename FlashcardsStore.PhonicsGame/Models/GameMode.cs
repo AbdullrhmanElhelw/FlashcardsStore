@@ -11,5 +11,6 @@ public enum GameMode
     GrammarQuiz,
     SpeakRepeat,
     ListenComplete,
-    TraceWrite
+    TraceWrite,
+    BalloonPop
 }
