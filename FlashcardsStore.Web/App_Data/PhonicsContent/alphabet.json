@@ -1,0 +1,30 @@
+{
+  "letters": [
+    { "letter": "A", "exampleWord": "Apple", "arabicWord": "تفاحة", "isVowel": true },
+    { "letter": "B", "exampleWord": "Ball", "arabicWord": "كرة", "isVowel": false },
+    { "letter": "C", "exampleWord": "Cat", "arabicWord": "قطة", "isVowel": false },
+    { "letter": "D", "exampleWord": "Dog", "arabicWord": "كلب", "isVowel": false },
+    { "letter": "E", "exampleWord": "Egg", "arabicWord": "بيضة", "isVowel": true },
+    { "letter": "F", "exampleWord": "Fan", "arabicWord": "مروحة", "isVowel": false },
+    { "letter": "G", "exampleWord": "Goat", "arabicWord": "ماعز", "isVowel": false },
+    { "letter": "H", "exampleWord": "Hat", "arabicWord": "قبعة", "isVowel": false },
+    { "letter": "I", "exampleWord": "Igloo", "arabicWord": "كوخ جليدي", "isVowel": true },
+    { "letter": "J", "exampleWord": "Jump", "arabicWord": "يقفز", "isVowel": false },
+    { "letter": "K", "exampleWord": "Kite", "arabicWord": "طائرة ورقية", "isVowel": false },
+    { "letter": "L", "exampleWord": "Lion", "arabicWord": "أسد", "isVowel": false },
+    { "letter": "M", "exampleWord": "Map", "arabicWord": "خريطة", "isVowel": false },
+    { "letter": "N", "exampleWord": "Net", "arabicWord": "شبكة", "isVowel": false },
+    { "letter": "O", "exampleWord": "Octopus", "arabicWord": "أخطبوط", "isVowel": true },
+    { "letter": "P", "exampleWord": "Pen", "arabicWord": "قلم", "isVowel": false },
+    { "letter": "Q", "exampleWord": "Queen", "arabicWord": "ملكة", "isVowel": false },
+    { "letter": "R", "exampleWord": "Run", "arabicWord": "يجري", "isVowel": false },
+    { "letter": "S", "exampleWord": "Sun", "arabicWord": "شمس", "isVowel": false },
+    { "letter": "T", "exampleWord": "Top", "arabicWord": "قمة", "isVowel": false },
+    { "letter": "U", "exampleWord": "Umbrella", "arabicWord": "مظلة", "isVowel": true },
+    { "letter": "V", "exampleWord": "Van", "arabicWord": "شاحنة", "isVowel": false },
+    { "letter": "W", "exampleWord": "Wig", "arabicWord": "باروكة", "isVowel": false },
+    { "letter": "X", "exampleWord": "Box", "arabicWord": "صندوق", "isVowel": false },
+    { "letter": "Y", "exampleWord": "Yellow", "arabicWord": "أصفر", "isVowel": false },
+    { "letter": "Z", "exampleWord": "Zebra", "arabicWord": "حمار وحشي", "isVowel": false }
+  ]
+}

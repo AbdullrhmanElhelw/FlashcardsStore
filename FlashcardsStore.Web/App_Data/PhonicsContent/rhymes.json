@@ -1,0 +1,12 @@
+{
+  "rhymes": [
+    { "targetWord": "cat", "targetArtworkKey": "cat", "targetAccentColor": "#F97316", "correctRhyme": "hat", "distractors": ["dog", "sun"], "isFree": true },
+    { "targetWord": "fan", "targetArtworkKey": "fan", "targetAccentColor": "#0284C7", "correctRhyme": "van", "distractors": ["pig", "bed"], "isFree": true },
+    { "targetWord": "pig", "targetArtworkKey": "pig", "targetAccentColor": "#DB2777", "correctRhyme": "wig", "distractors": ["mat", "box"], "isFree": true },
+    { "targetWord": "pen", "targetArtworkKey": "pen", "targetAccentColor": "#7C3AED", "correctRhyme": "hen", "distractors": ["cap", "mug"], "isFree": true },
+    { "targetWord": "dog", "targetArtworkKey": "dog", "targetAccentColor": "#D97706", "correctRhyme": "log", "distractors": ["fin", "hat"], "isFree": false },
+    { "targetWord": "bug", "targetArtworkKey": "bug", "targetAccentColor": "#DC2626", "correctRhyme": "mug", "distractors": ["ship", "net"], "isFree": false },
+    { "targetWord": "ship", "targetArtworkKey": "ship", "targetAccentColor": "#2563EB", "correctRhyme": "chip", "distractors": ["sun", "drum"], "isFree": false },
+    { "targetWord": "cake", "targetArtworkKey": "cake", "targetAccentColor": "#EC4899", "correctRhyme": "lake", "distractors": ["crab", "tree"], "isFree": false }
+  ]
+}

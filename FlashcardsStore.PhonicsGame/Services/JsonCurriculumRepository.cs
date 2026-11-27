@@ -5,7 +5,7 @@ using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
-/// <summary>Data-driven repository loading all educational content packs from embedded JSON resources.</summary>
+/// <summary>Loads curriculum packs from local OTA cache first, falling back to embedded JSON resources.</summary>
 public sealed class JsonCurriculumRepository : ICurriculumRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -13,20 +13,17 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly IReadOnlyList<PhonicsStage> _stages;
-    private readonly IReadOnlyList<PhonicsStory> _stories;
-    private readonly IReadOnlyList<SentenceChallenge> _sentences;
-    private readonly IReadOnlyList<RhymeChallenge> _rhymes;
-    private readonly IReadOnlyList<PhonicsLetterItem> _alphabet;
+    private IReadOnlyList<PhonicsStage> _stages = [];
+    private IReadOnlyList<PhonicsStory> _stories = [];
+    private IReadOnlyList<SentenceChallenge> _sentences = [];
+    private IReadOnlyList<RhymeChallenge> _rhymes = [];
+    private IReadOnlyList<PhonicsLetterItem> _alphabet = [];
+
+    public event Action? ContentReloaded;
 
     public JsonCurriculumRepository()
     {
-        _stages = LoadResource<CurriculumPack>("curriculum.json")?.Stages ?? [];
-        _stories = LoadResource<StoriesPack>("stories.json")?.Stories ?? [];
-        _sentences = LoadResource<SentencesPack>("sentences.json")?.Sentences ?? [];
-        _rhymes = LoadResource<RhymesPack>("rhymes.json")?.Rhymes ?? [];
-        _alphabet = LoadResource<AlphabetPack>("alphabet.json")?.Letters ?? [];
-        TotalWordsCount = _stages.Sum(s => s.Words.Count);
+        LoadAll();
     }
 
     public IReadOnlyList<PhonicsStage> GetStages() => _stages;
@@ -34,10 +31,43 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     public IReadOnlyList<SentenceChallenge> GetSentences() => _sentences;
     public IReadOnlyList<RhymeChallenge> GetRhymes() => _rhymes;
     public IReadOnlyList<PhonicsLetterItem> GetAlphabet() => _alphabet;
-    public int TotalWordsCount { get; }
+    public int TotalWordsCount { get; private set; }
 
-    private static T? LoadResource<T>(string fileName)
+    public void Reload()
     {
+        LoadAll();
+        ContentReloaded?.Invoke();
+    }
+
+    private void LoadAll()
+    {
+        _stages = LoadPack<CurriculumPack>("curriculum.json")?.Stages ?? [];
+        _stories = LoadPack<StoriesPack>("stories.json")?.Stories ?? [];
+        _sentences = LoadPack<SentencesPack>("sentences.json")?.Sentences ?? [];
+        _rhymes = LoadPack<RhymesPack>("rhymes.json")?.Rhymes ?? [];
+        _alphabet = LoadPack<AlphabetPack>("alphabet.json")?.Letters ?? [];
+        TotalWordsCount = _stages.Sum(s => s.Words.Count);
+    }
+
+    private static T? LoadPack<T>(string fileName)
+    {
+        // 1. Prefer OTA cached file if valid
+        var otaPath = Path.Combine(FileSystem.AppDataDirectory, "phonics_ota", fileName);
+        if (File.Exists(otaPath))
+        {
+            try
+            {
+                var cachedJson = File.ReadAllText(otaPath);
+                var parsed = JsonSerializer.Deserialize<T>(cachedJson, JsonOptions);
+                if (parsed is not null) return parsed;
+            }
+            catch
+            {
+                // Fall back to embedded pack if cached file is corrupted
+            }
+        }
+
+        // 2. Fallback to embedded JSON bundled in APK
         var asm = Assembly.GetExecutingAssembly();
         var resourceName = asm.GetManifestResourceNames()
             .FirstOrDefault(n => n.EndsWith($".{fileName}", StringComparison.OrdinalIgnoreCase));

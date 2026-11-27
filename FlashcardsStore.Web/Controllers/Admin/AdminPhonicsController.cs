@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using FlashcardsStore.Domain.Entities;
 using FlashcardsStore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,14 @@ namespace FlashcardsStore.Web.Controllers.Admin;
 public sealed class AdminPhonicsController : AdminControllerBase
 {
     private const string CodeAlphabet = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+    private static readonly string[] ContentPacks = ["curriculum", "stories", "sentences", "rhymes", "alphabet"];
     private readonly FlashcardsStoreDbContext _db;
+    private readonly IWebHostEnvironment _env;
 
-    public AdminPhonicsController(FlashcardsStoreDbContext db)
+    public AdminPhonicsController(FlashcardsStoreDbContext db, IWebHostEnvironment env)
     {
         _db = db;
+        _env = env;
     }
 
     [HttpGet("PhonicsCodes")]
@@ -179,5 +183,84 @@ public sealed class AdminPhonicsController : AdminControllerBase
             part2[i] = CodeAlphabet[RandomNumberGenerator.GetInt32(CodeAlphabet.Length)];
         }
         return $"KHO-{new string(part1)}-{new string(part2)}";
+    }
+
+    [HttpGet("PhonicsContent")]
+    public async Task<IActionResult> PhonicsContent(string pack = "curriculum", CancellationToken ct = default)
+    {
+        var selectedPack = ContentPacks.Contains(pack, StringComparer.OrdinalIgnoreCase)
+            ? pack.ToLowerInvariant()
+            : "curriculum";
+
+        var dir = Path.Combine(_env.ContentRootPath, "App_Data", "PhonicsContent");
+        var packPath = Path.Combine(dir, $"{selectedPack}.json");
+        var manifestPath = Path.Combine(dir, "manifest.json");
+
+        var jsonContent = System.IO.File.Exists(packPath)
+            ? await System.IO.File.ReadAllTextAsync(packPath, ct)
+            : "{}";
+
+        var version = 1;
+        if (System.IO.File.Exists(manifestPath))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(await System.IO.File.ReadAllTextAsync(manifestPath, ct));
+                if (doc.RootElement.TryGetProperty("version", out var v))
+                    version = v.GetInt32();
+            }
+            catch { }
+        }
+
+        ViewBag.SelectedPack = selectedPack;
+        ViewBag.AvailablePacks = ContentPacks;
+        ViewBag.JsonContent = jsonContent;
+        ViewBag.ManifestVersion = version;
+
+        return AdminView("PhonicsContent");
+    }
+
+    [HttpPost("PhonicsContent/Save")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePhonicsContent(string pack, string jsonContent, CancellationToken ct = default)
+    {
+        var selectedPack = ContentPacks.Contains(pack, StringComparer.OrdinalIgnoreCase)
+            ? pack.ToLowerInvariant()
+            : "curriculum";
+
+        try
+        {
+            using var parsed = JsonDocument.Parse(jsonContent ?? string.Empty);
+        }
+        catch (JsonException ex)
+        {
+            TempData["ErrorMessage"] = $"صيغة JSON غير صحيحة: {ex.Message}";
+            return RedirectToAction(nameof(PhonicsContent), new { pack = selectedPack });
+        }
+
+        var dir = Path.Combine(_env.ContentRootPath, "App_Data", "PhonicsContent");
+        Directory.CreateDirectory(dir);
+
+        var packPath = Path.Combine(dir, $"{selectedPack}.json");
+        await System.IO.File.WriteAllTextAsync(packPath, jsonContent, ct);
+
+        var manifestPath = Path.Combine(dir, "manifest.json");
+        var nextVersion = 1;
+        if (System.IO.File.Exists(manifestPath))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(await System.IO.File.ReadAllTextAsync(manifestPath, ct));
+                if (doc.RootElement.TryGetProperty("version", out var v))
+                    nextVersion = v.GetInt32() + 1;
+            }
+            catch { }
+        }
+
+        var newManifest = JsonSerializer.Serialize(new { version = nextVersion, updatedAtUtc = DateTime.UtcNow }, new JsonSerializerOptions { WriteIndented = true });
+        await System.IO.File.WriteAllTextAsync(manifestPath, newManifest, ct);
+
+        TempData["SuccessMessage"] = $"تم حفظ {selectedPack}.json وتحديث إصدار المنهج إلى v{nextVersion}. سيتم المزامنة تلقائياً مع تطبيقات الموبايل.";
+        return RedirectToAction(nameof(PhonicsContent), new { pack = selectedPack });
     }
 }

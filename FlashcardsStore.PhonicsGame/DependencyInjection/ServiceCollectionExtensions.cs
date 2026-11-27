@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<ICurriculumRepository, JsonCurriculumRepository>();
+        services.AddSingleton<IOtaContentSyncService, OtaContentSyncService>();
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<ISpeechService, SpeechService>();
         services.AddSingleton<ISpeechRecognitionService, SpeechRecognitionService>();

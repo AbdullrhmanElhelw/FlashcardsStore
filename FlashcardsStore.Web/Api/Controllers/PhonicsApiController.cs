@@ -11,11 +11,18 @@ namespace FlashcardsStore.Web.Api.Controllers;
 [Route("api/phonics")]
 public sealed class PhonicsApiController : ControllerBase
 {
-    private readonly FlashcardsStoreDbContext _db;
+    private static readonly HashSet<string> AllowedPacks = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "curriculum", "stories", "sentences", "rhymes", "alphabet"
+    };
 
-    public PhonicsApiController(FlashcardsStoreDbContext db)
+    private readonly FlashcardsStoreDbContext _db;
+    private readonly IWebHostEnvironment _env;
+
+    public PhonicsApiController(FlashcardsStoreDbContext db, IWebHostEnvironment env)
     {
         _db = db;
+        _env = env;
     }
 
     public sealed record PhonicsActivateRequest(string Code, string DeviceId, string? DeviceName);
@@ -158,5 +165,31 @@ public sealed class PhonicsApiController : ControllerBase
         await _db.SaveChangesAsync(ct);
 
         return Ok(new { isValid = true, bundleName = entity.BundleName });
+    }
+
+    [HttpGet("content/manifest")]
+    public async Task<IActionResult> GetContentManifest(CancellationToken ct)
+    {
+        var manifestPath = Path.Combine(_env.ContentRootPath, "App_Data", "PhonicsContent", "manifest.json");
+        if (!System.IO.File.Exists(manifestPath))
+            return Ok(new { version = 1, updatedAtUtc = DateTime.UtcNow });
+
+        var json = await System.IO.File.ReadAllTextAsync(manifestPath, ct);
+        return Content(json, "application/json");
+    }
+
+    [HttpGet("content/{packName}")]
+    public async Task<IActionResult> GetContentPack(string packName, CancellationToken ct)
+    {
+        var normalized = (packName ?? string.Empty).Trim().ToLowerInvariant();
+        if (!AllowedPacks.Contains(normalized))
+            return NotFound(new { error = "Unknown content pack." });
+
+        var packPath = Path.Combine(_env.ContentRootPath, "App_Data", "PhonicsContent", $"{normalized}.json");
+        if (!System.IO.File.Exists(packPath))
+            return NotFound(new { error = "Content pack not found." });
+
+        var json = await System.IO.File.ReadAllTextAsync(packPath, ct);
+        return Content(json, "application/json");
     }
 }

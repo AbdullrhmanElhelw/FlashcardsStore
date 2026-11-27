@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "إدارة منهج الفونكس (OTA JSON)";
+    Layout = "_AdminLayout";
+    var selectedPack = ViewBag.SelectedPack as string ?? "curriculum";
+    var availablePacks = ViewBag.AvailablePacks as string[] ?? ["curriculum", "stories", "sentences", "rhymes", "alphabet"];
+    var jsonContent = ViewBag.JsonContent as string ?? "{}";
+    var version = (int)(ViewBag.ManifestVersion ?? 1);
+}
+
+<div class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">إدارة منهج لعبة الفونكس أونلاين (OTA JSON)</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                أي تعديل هنا بيرفع إصدار المنهج تلقائياً (الحالي: <span class="font-mono font-bold text-indigo-700">v@(version)</span>) وتطبيقات الموبايل بتسحبه أوتوماتيك وتخزنه Offline.
+            </p>
+        </div>
+        <a asp-controller="AdminPhonics" asp-action="PhonicsCodes"
+           class="px-4 py-2 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50">
+            ← العودة لأكواد التفعيل
+        </a>
+    </div>
+
+    <!-- Pack Tabs -->
+    <div class="flex flex-wrap gap-2">
+        @foreach (var pack in availablePacks)
+        {
+            var isActive = string.Equals(pack, selectedPack, StringComparison.OrdinalIgnoreCase);
+            <a asp-controller="AdminPhonics" asp-action="PhonicsContent" asp-route-pack="@pack"
+               class="px-4 py-2 rounded-xl text-sm font-bold transition @(isActive ? "bg-[#3A0A26] text-white shadow" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50")">
+                @(pack).json
+            </a>
+        }
+    </div>
+
+    <!-- JSON Editor -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <form asp-controller="AdminPhonics" asp-action="SavePhonicsContent" method="post" hx-boost="false" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="pack" value="@selectedPack" />
+
+            <div class="flex items-center justify-between">
+                <label class="text-sm font-bold text-slate-700" dir="ltr">@(selectedPack).json</label>
+                <span class="text-xs text-slate-500">يتم التحقق من صحة الـ JSON تلقائياً قبل الحفظ</span>
+            </div>
+
+            <textarea name="jsonContent" rows="20" dir="ltr"
+                      class="w-full font-mono text-xs rounded-xl border border-slate-300 p-4 bg-slate-50 focus:ring-2 focus:ring-amber-400 focus:border-amber-400">@jsonContent</textarea>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="bg-[#3A0A26] hover:bg-[#521036] text-white font-bold py-2.5 px-6 rounded-xl transition cursor-pointer">
+                    حفظ ونشر التحديث (v@(version + 1))
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -11,6 +11,7 @@ public sealed class PhonicsGameViewModel : IDisposable
     private const string KeyOnboardingDone = "phonics_onboarding_done";
     private readonly Random _rng = new();
     private readonly ICurriculumRepository _curriculum;
+    private readonly IOtaContentSyncService _otaSync;
     private readonly ISpeechService _speech;
     private readonly ISpeechRecognitionService _speechRec;
     private readonly IChildProfileService _profileService;
@@ -24,6 +25,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public PhonicsGameViewModel(
         ICurriculumRepository curriculum,
+        IOtaContentSyncService otaSync,
         ISpeechService speech,
         ISpeechRecognitionService speechRec,
         IChildProfileService profileService,
@@ -32,6 +34,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         ILocalizationService loc)
     {
         _curriculum = curriculum;
+        _otaSync = otaSync;
         _speech = speech;
         _speechRec = speechRec;
         _profileService = profileService;
@@ -39,6 +42,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         _progress = progress;
         _loc = loc;
         _loc.Changed += Notify;
+        _curriculum.ContentReloaded += Notify;
         CompletedWords = _progress.GetCompletedWords();
         Profile = _profileService.GetProfile();
         ProfileNameInput = Profile.Name;
@@ -130,6 +134,9 @@ public sealed class PhonicsGameViewModel : IDisposable
         _dotNetRef ??= DotNetObjectReference.Create(this);
         await SafeJsAsync("phonicsDrag.register", _dotNetRef);
         await SyncDocumentDirectionAsync();
+
+        // Trigger non-blocking OTA content check in background
+        _ = _otaSync.SyncIfNeededAsync();
 
         if (CurrentScreen == AppScreen.Splash)
         {
@@ -991,6 +998,7 @@ public sealed class PhonicsGameViewModel : IDisposable
     public void Dispose()
     {
         _loc.Changed -= Notify;
+        _curriculum.ContentReloaded -= Notify;
         _dotNetRef?.Dispose();
     }
 }
