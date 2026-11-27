@@ -58,7 +58,10 @@
                 }
             </div>
 
-            <div class="story-sentence-ar">@scene.SentenceAr</div>
+            @if (Loc.IsArabic)
+            {
+                <div class="story-sentence-ar">@scene.SentenceAr</div>
+            }
 
             @if (!Vm.StoryBlankSolved)
             {
@@ -104,7 +107,10 @@
             <div style="font-size:18px;font-weight:900;color:var(--plum);margin-bottom:4px;">
                 @(Loc.IsArabic ? Vm.ActiveStory.QuizQuestionAr : Vm.ActiveStory.QuizQuestionEn)
             </div>
-            <div style="font-size:13px;color:var(--muted);direction:ltr;">@Vm.ActiveStory.QuizQuestionEn</div>
+            @if (Loc.IsArabic)
+            {
+                <div style="font-size:13px;color:var(--muted);direction:ltr;">@Vm.ActiveStory.QuizQuestionEn</div>
+            }
 
             <div class="story-quiz-options">
                 @foreach (var opt in Vm.ActiveStory.QuizOptions)

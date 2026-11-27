@@ -43,7 +43,10 @@
                 @((MarkupString)WordArtwork.GetSvg(w.ArtworkKey, w.AccentColor))
             </div>
             <div class="dict-word">@w.Word.ToUpperInvariant()</div>
-            <div class="dict-ar">@w.ArabicMeaning</div>
+            @if (Loc.IsArabic)
+            {
+                <div class="dict-ar">@w.ArabicMeaning</div>
+            }
             <div class="dict-stars">
                 @for (var s = 0; s < 3; s++)
                 {
