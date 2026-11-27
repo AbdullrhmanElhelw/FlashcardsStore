@@ -2,9 +2,55 @@ using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
-/// <summary>Offline-first English Text-to-Speech helper for phonics letters and words.</summary>
+/// <summary>Offline-first English Text-to-Speech helper that speaks Jolly Phonics phoneme sounds, not letter names.</summary>
 public sealed class SpeechService : ISpeechService
 {
+    private static readonly Dictionary<string, string> PhonemeMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["s"] = "ssss",
+        ["a"] = "ah",
+        ["t"] = "tuh",
+        ["i"] = "ih",
+        ["p"] = "puh",
+        ["n"] = "nnnn",
+        ["c"] = "kuh",
+        ["k"] = "kuh",
+        ["ck"] = "kuh",
+        ["e"] = "eh",
+        ["h"] = "huh",
+        ["r"] = "rrrr",
+        ["m"] = "mmmm",
+        ["d"] = "duh",
+        ["g"] = "guh",
+        ["o"] = "aw",
+        ["u"] = "uh",
+        ["l"] = "llll",
+        ["f"] = "ffff",
+        ["b"] = "buh",
+        ["ai"] = "ay",
+        ["j"] = "juh",
+        ["oa"] = "oh",
+        ["ie"] = "eye",
+        ["ee"] = "eee",
+        ["or"] = "or",
+        ["z"] = "zzzz",
+        ["w"] = "wuh",
+        ["ng"] = "nng",
+        ["v"] = "vvvv",
+        ["oo"] = "ooo",
+        ["y"] = "yuh",
+        ["x"] = "ksss",
+        ["ch"] = "chuh",
+        ["sh"] = "shhh",
+        ["th"] = "thhh",
+        ["qu"] = "kwuh",
+        ["ou"] = "oww",
+        ["oi"] = "oy",
+        ["ue"] = "yoo",
+        ["er"] = "err",
+        ["ar"] = "arrr"
+    };
+
     private CancellationTokenSource? _cts;
     private Locale? _englishLocale;
     private bool _localeResolved;
@@ -49,5 +95,12 @@ public sealed class SpeechService : ISpeechService
     }
 
     public Task SpeakLetterAsync(char letter)
-        => SpeakAsync(letter.ToString().ToLowerInvariant(), pitch: 1.15f);
+        => SpeakPhonemeAsync(letter.ToString());
+
+    public Task SpeakPhonemeAsync(string sound)
+    {
+        var key = sound.Trim().ToLowerInvariant();
+        var spoken = PhonemeMap.TryGetValue(key, out var phoneme) ? phoneme : key;
+        return SpeakAsync(spoken, pitch: 1.12f, rate: 0.82f);
+    }
 }

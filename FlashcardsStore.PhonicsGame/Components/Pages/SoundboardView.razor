@@ -7,53 +7,89 @@
         </span>
         <span>@Loc.T("BackToStages")</span>
     </button>
-    <div style="font-size:13px;font-weight:800;color:var(--plum);">@Loc.T("SoundboardTitle")</div>
+    <div style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("SoundboardTitle")</div>
 </div>
 
 <div class="sb-banner">
     <div class="sb-banner-title">@Loc.T("SoundboardTitle")</div>
     <div class="sb-banner-sub">@Loc.T("SoundboardHint")</div>
-    <div class="sb-legend">
-        <span style="display:inline-flex;align-items:center;gap:5px;">
-            <span class="sb-legend-dot" style="background:#F59E0B;"></span>
-            <span>@Loc.T("VowelsLegend")</span>
-        </span>
-        <span style="display:inline-flex;align-items:center;gap:5px;">
-            <span class="sb-legend-dot" style="background:#CBD5E1;"></span>
-            <span>@Loc.T("ConsonantsLegend")</span>
-        </span>
-    </div>
+</div>
+
+<div class="cat-tabs" style="margin-bottom:12px;">
+    @foreach (var g in new[]
+    {
+        (1, "G1: S A T I P N"),
+        (2, "G2: C K E H R M D"),
+        (3, "G3: G O U L F B"),
+        (4, "G4: AI J OA IE EE OR"),
+        (5, "G5: Z W NG V OO"),
+        (6, "G6: Y X CH SH TH"),
+        (7, "G7: QU OU OI UE ER AR"),
+        (0, Loc.T("CatAll"))
+    })
+    {
+        <button class="cat-tab @(Vm.SelectedGroup == g.Item1 ? "active" : "")"
+                @onclick="() => Vm.SetGroup(g.Item1)">
+            @g.Item2
+        </button>
+    }
 </div>
 
 <div class="sb-grid">
-    @foreach (var item in Vm.Letters)
+    @foreach (var item in Vm.FilteredLetters)
     {
-        var cls = "sb-card"
-            + (item.IsVowel ? " vowel" : "")
-            + (Vm.ActiveLetter == item.Letter ? " active" : "");
+        var isActive = Vm.ActiveItem == item;
+        var cls = "sb-card" + (item.IsVowel ? " vowel" : "") + (isActive ? " active" : "");
 
         <div class="@cls" @onclick="() => Vm.SpeakLetterAsync(item)">
-            <div class="sb-letter">@item.Letter@char.ToLowerInvariant(item.Letter)</div>
+            <div class="sb-letter">@item.DisplaySound.ToUpperInvariant() / @item.DisplaySound</div>
             <div class="sb-word">@(Loc.IsArabic ? item.ArabicWord : item.ExampleWord)</div>
         </div>
     }
 </div>
 
-@if (Vm.ActiveLetter is char activeChar)
+@if (Vm.ActiveItem is { } active)
 {
-    <div class="trace-box">
-        <div class="trace-header">
-            <span style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("TraceTitle") (@activeChar@char.ToLowerInvariant(activeChar))</span>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetColorAsync("#2B071C")'></span>
-                <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetColorAsync("#2563EB")'></span>
-                <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetColorAsync("#E11D48")'></span>
-                <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
+    <div class="jolly-card-detail">
+        <div class="jolly-card-top">
+            <div class="jolly-card-art">
+                @((MarkupString)WordArtwork.GetSvg(active.DisplayArtwork, "#7C3AED"))
+            </div>
+            <div style="flex:1;">
+                <div class="jolly-card-sound">@active.DisplaySound.ToUpperInvariant() @active.DisplaySound</div>
+                <div class="jolly-card-word">@active.ExampleWord — @active.ArabicWord</div>
+                <div class="jolly-action-pill">
+                    <span class="icon-svg" style="width:15px;height:15px;color:#EA580C;">@((MarkupString)UiIcons.Sparkles)</span>
+                    <span>@(Loc.IsArabic ? active.ActionAr : active.ActionEn)</span>
+                </div>
             </div>
         </div>
-        <div class="trace-canvas-wrap">
-            <div class="trace-guide">@activeChar@char.ToLowerInvariant(activeChar)</div>
-            <canvas id="letterTraceCanvas" width="320" height="170" class="trace-canvas"></canvas>
+
+        <div class="audio-controls" style="margin:10px 0 12px;">
+            <button class="btn-speak" @onclick="() => Vm.SpeakLetterAsync(active)">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenSoundBtn")</span>
+            </button>
+            <button class="btn-speak slow" @onclick="Vm.SpeakExampleWordAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.BookOpen)</span>
+                <span>@active.ExampleWord</span>
+            </button>
+        </div>
+
+        <div class="trace-box" style="margin-top:0;">
+            <div class="trace-header">
+                <span style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("TraceTitle") (@active.Letter@char.ToLowerInvariant(active.Letter))</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetColorAsync("#2B071C")'></span>
+                    <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetColorAsync("#2563EB")'></span>
+                    <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetColorAsync("#E11D48")'></span>
+                    <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
+                </div>
+            </div>
+            <div class="trace-canvas-wrap">
+                <div class="trace-guide">@active.Letter@char.ToLowerInvariant(active.Letter)</div>
+                <canvas id="letterTraceCanvas" width="320" height="170" class="trace-canvas"></canvas>
+            </div>
         </div>
     </div>
 }

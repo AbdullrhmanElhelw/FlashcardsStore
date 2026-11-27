@@ -29,6 +29,8 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     [ObservableProperty] private bool _stageFinished;
     [ObservableProperty] private bool _wordSolved;
     [ObservableProperty] private bool _isDailyChallenge;
+    [ObservableProperty] private bool _isRetryRound;
+    private readonly List<PhonicsWord> _mistakeRetryQueue = [];
 
     // Word Builder
     [ObservableProperty] private int[] _slots = [];
@@ -124,6 +126,8 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         }
 
         IsDailyChallenge = false;
+        IsRetryRound = false;
+        _mistakeRetryQueue.Clear();
         ActiveStage = stage;
         WordIndex = 0;
         StageStars = 0;
@@ -269,6 +273,7 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
             {
                 BuilderWrongFlash = true;
                 Streak = 0;
+                QueueCurrentWordForRetry();
                 _progress.RecordWordMistake(CurrentWord.Word);
                 await _js.InvokeAsync("phonicsAudio.wrong");
                 await Task.Delay(520);
@@ -321,6 +326,7 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         {
             WrongMatchWord = option.Word;
             Streak = 0;
+            QueueCurrentWordForRetry();
             _progress.RecordWordMistake(CurrentWord.Word);
             await _js.InvokeAsync("phonicsAudio.wrong");
             await Task.Delay(450);
@@ -401,6 +407,16 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         await _speech.SpeakAsync($"Great job! {CurrentWord.Word}", pitch: 1.15f);
     }
 
+    private void QueueCurrentWordForRetry()
+    {
+        if (ActiveStage is null || WordIndex >= ActiveStage.Words.Count) return;
+        var word = CurrentWord;
+        if (!_mistakeRetryQueue.Any(w => string.Equals(w.Word, word.Word, StringComparison.OrdinalIgnoreCase)))
+        {
+            _mistakeRetryQueue.Add(word);
+        }
+    }
+
     [RelayCommand]
     public async Task NextWordAsync()
     {
@@ -410,8 +426,18 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
             WordIndex++;
             await SetupCurrentWordAsync();
         }
+        else if (_mistakeRetryQueue.Count > 0)
+        {
+            var retryWords = _mistakeRetryQueue.ToList();
+            _mistakeRetryQueue.Clear();
+            IsRetryRound = true;
+            ActiveStage = ActiveStage with { Words = retryWords };
+            WordIndex = 0;
+            await SetupCurrentWordAsync();
+        }
         else
         {
+            IsRetryRound = false;
             if (IsDailyChallenge) _progress.MarkDailyChallengeCompleted();
             StageFinished = true;
             await _js.InvokeAsync("phonicsAudio.success");
@@ -459,6 +485,7 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         {
             SpeechSuccess = false;
             SpeechFeedback = _loc.T("SpeechMatchRetry");
+            QueueCurrentWordForRetry();
             await _js.InvokeAsync("phonicsAudio.wrong");
         }
     }

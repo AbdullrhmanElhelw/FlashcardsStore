@@ -26,6 +26,14 @@ else if (Vm.ActiveStage is not null)
         </div>
     </div>
 
+    @if (Vm.IsRetryRound)
+    {
+        <div class="retry-round-banner">
+            <span class="icon-svg" style="width:16px;height:16px;color:#D97706;">@((MarkupString)UiIcons.RefreshCw)</span>
+            <span>@Loc.T("RetryRoundBanner")</span>
+        </div>
+    }
+
     @switch (Vm.SelectedMode)
     {
         case GameMode.WordBuilder:

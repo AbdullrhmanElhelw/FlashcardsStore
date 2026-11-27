@@ -18,7 +18,7 @@ public sealed partial class HomeViewModel : BaseViewModel
     private readonly DictionaryViewModel _dictionary;
     private readonly ModalsViewModel _modals;
 
-    [ObservableProperty] private string _selectedCategory = "phonics";
+    [ObservableProperty] private string _selectedCategory = "letters";
 
     public HomeViewModel(
         ICurriculumRepository curriculum,
@@ -110,5 +110,18 @@ public sealed partial class HomeViewModel : BaseViewModel
     {
         _dictionary.Reset();
         _shell.NavigateTo(AppScreen.Dictionary);
+    }
+
+    [RelayCommand]
+    public async Task OpenStoreCoursesAsync()
+    {
+        try
+        {
+            await Launcher.Default.OpenAsync(new Uri("https://card-store.runasp.net/"));
+        }
+        catch
+        {
+            // Ignore if browser cannot be opened on device
+        }
     }
 }
