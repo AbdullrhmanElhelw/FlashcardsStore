@@ -55,6 +55,27 @@ public sealed class MobileApiClient(HttpClient httpClient, ICustomerSessionServi
             Content = JsonContent.Create(request, options: JsonOptions)
         }, cancellationToken);
 
+    public Task<CustomerProfile> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken cancellationToken = default)
+        => SendAsync<CustomerProfile>(new HttpRequestMessage(HttpMethod.Put, BuildUri("auth/me"))
+        {
+            Content = JsonContent.Create(request, options: JsonOptions)
+        }, cancellationToken);
+
+    public async Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        using var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, BuildUri("auth/change-password"))
+        {
+            Content = JsonContent.Create(request, options: JsonOptions)
+        }, cancellationToken);
+        await EnsureSuccessAsync(response, cancellationToken);
+    }
+
+    public async Task DeleteAccountAsync(CancellationToken cancellationToken = default)
+    {
+        using var response = await SendAsync(new HttpRequestMessage(HttpMethod.Delete, BuildUri("auth/me")), cancellationToken);
+        await EnsureSuccessAsync(response, cancellationToken);
+    }
+
     public Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken = default)
         => GetAsync<List<Category>>("categories", cancellationToken);
 

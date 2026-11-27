@@ -11,6 +11,9 @@ public interface IMobileApiClient
     Task<StoreConfig> GetConfigAsync(CancellationToken cancellationToken = default);
     Task<CustomerProfile> LoginAsync(CustomerLoginRequest request, CancellationToken cancellationToken = default);
     Task<CustomerProfile> RegisterAsync(CustomerRegisterRequest request, CancellationToken cancellationToken = default);
+    Task<CustomerProfile> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken cancellationToken = default);
+    Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken cancellationToken = default);
+    Task DeleteAccountAsync(CancellationToken cancellationToken = default);
     Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken = default);
     Task<List<ProductCard>> GetFeaturedAsync(CancellationToken cancellationToken = default);
     Task<PagedResult<ProductCard>> GetProductsAsync(

@@ -213,6 +213,72 @@
                     <Border Style="{StaticResource CardBorderStyle}" Padding="14,6" Shadow="{Shadow Brush='#18061A', Opacity='0.05', Radius='8', Offset='0,3'}">
                         <VerticalStackLayout Spacing="0">
 
+                            <!-- Edit Profile -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleEditProfileCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Image Source="auth_person.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding Loc[EditProfileRow]}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="←" FontSize="15" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <VerticalStackLayout IsVisible="{Binding IsEditProfileExpanded}" Spacing="8" Padding="4,4,4,12">
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[EditProfileNamePlaceholder]}" Text="{Binding EditFullName}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[EditProfilePhonePlaceholder]}" Keyboard="Telephone" Text="{Binding EditPhoneNumber}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[EditProfileGovernoratePlaceholder]}" Text="{Binding EditGovernorate}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[EditProfileCityPlaceholder]}" Text="{Binding EditCity}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[EditProfileAddressPlaceholder]}" Text="{Binding EditShippingAddress}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Label Text="{Binding ProfileErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasProfileError}" />
+                                <Button Text="{Binding Loc[SaveProfileBtn]}"
+                                        Command="{Binding SaveProfileCommand}"
+                                        IsEnabled="{Binding IsNotBusy}"
+                                        Style="{StaticResource PrimaryGoldButtonStyle}"
+                                        HeightRequest="42" />
+                            </VerticalStackLayout>
+
+                            <BoxView HeightRequest="1" Color="{StaticResource CardBorder}" />
+
+                            <!-- Change Password -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleChangePasswordCommand}" />
+                                </Grid.GestureRecognizers>
+                                <Image Source="auth_lock.png" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding Loc[ChangePasswordRow]}" Style="{StaticResource BodyLabelStyle}" FontAttributes="Bold" VerticalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="←" FontSize="15" TextColor="{StaticResource BrandGoldDark}" VerticalTextAlignment="Center" />
+                            </Grid>
+
+                            <VerticalStackLayout IsVisible="{Binding IsChangePasswordExpanded}" Spacing="8" Padding="4,4,4,12">
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[CurrentPasswordPlaceholder]}" IsPassword="True" Text="{Binding CurrentPassword}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[NewPasswordPlaceholder]}" IsPassword="True" Text="{Binding NewPassword}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Border Style="{StaticResource InputBoxBorderStyle}">
+                                    <Entry Placeholder="{Binding Loc[ConfirmNewPasswordPlaceholder]}" IsPassword="True" Text="{Binding ConfirmNewPassword}" Style="{StaticResource BrandEntryStyle}" />
+                                </Border>
+                                <Label Text="{Binding PasswordErrorMessage}" Style="{StaticResource ErrorLabelStyle}" IsVisible="{Binding HasPasswordError}" />
+                                <Button Text="{Binding Loc[SavePasswordBtn]}"
+                                        Command="{Binding SavePasswordCommand}"
+                                        IsEnabled="{Binding IsNotBusy}"
+                                        Style="{StaticResource PrimaryGoldButtonStyle}"
+                                        HeightRequest="42" />
+                            </VerticalStackLayout>
+
+                            <BoxView HeightRequest="1" Color="{StaticResource CardBorder}" />
+
                             <!-- Switch Language -->
                             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="4,12">
                                 <Grid.GestureRecognizers>
@@ -261,6 +327,20 @@
                             CornerRadius="26"
                             HeightRequest="50"
                             Margin="0,6,0,0" />
+
+                    <!-- Delete Account (AppGallery / Google Play Compliance) -->
+                    <Button Text="{Binding Loc[DeleteAccountBtn]}"
+                            Command="{Binding DeleteAccountCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
+                            BackgroundColor="{StaticResource DangerSoft}"
+                            BorderColor="{StaticResource DangerRed}"
+                            BorderWidth="1"
+                            TextColor="{StaticResource DangerRed}"
+                            FontFamily="Cairo"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            CornerRadius="26"
+                            HeightRequest="46" />
 
                 </VerticalStackLayout>
             </ScrollView>
