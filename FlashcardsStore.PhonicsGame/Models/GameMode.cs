@@ -7,5 +7,8 @@ public enum GameMode
     MemoryMatch,
     SentenceBuilder,
     RhymingMatch,
-    MinimalPairs
+    MinimalPairs,
+    GrammarQuiz,
+    SpeakRepeat,
+    ListenComplete
 }

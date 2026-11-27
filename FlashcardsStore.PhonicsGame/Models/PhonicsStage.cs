@@ -10,4 +10,5 @@ public sealed record PhonicsStage(
     string GradientStart,
     string GradientEnd,
     bool IsFree,
-    IReadOnlyList<PhonicsWord> Words);
+    IReadOnlyList<PhonicsWord> Words,
+    string Category = "phonics");

@@ -63,6 +63,16 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     [ObservableProperty] private bool _minimalTargetIsLong;
     [ObservableProperty] private string? _minimalWrongWord;
 
+    // Grammar Quiz
+    [ObservableProperty] private IReadOnlyList<GrammarChallenge> _grammarList = [];
+    [ObservableProperty] private int _grammarIndex;
+    [ObservableProperty] private string? _grammarWrongOption;
+
+    // Listen & Complete Sentence
+    [ObservableProperty] private string _listenMissingWord = string.Empty;
+    [ObservableProperty] private List<string> _listenOptions = [];
+    [ObservableProperty] private string? _listenWrongOption;
+
     // Speech Check
     [ObservableProperty] private string _speechFeedback = string.Empty;
     [ObservableProperty] private bool _speechSuccess;
@@ -94,6 +104,7 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     public SentenceChallenge? CurrentSentence => SentenceIndex < SentenceList.Count ? SentenceList[SentenceIndex] : null;
     public RhymeChallenge? CurrentRhyme => RhymeIndex < RhymeList.Count ? RhymeList[RhymeIndex] : null;
     public MinimalPairChallenge? CurrentMinimalPair => MinimalPairIndex < MinimalPairList.Count ? MinimalPairList[MinimalPairIndex] : null;
+    public GrammarChallenge? CurrentGrammar => GrammarIndex < GrammarList.Count ? GrammarList[GrammarIndex] : null;
     public string EquippedTheme => _progress.EquippedTheme;
 
     public Task RegisterDragBridgeAsync()
@@ -433,6 +444,12 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         {
             SpeechSuccess = true;
             SpeechFeedback = _loc.T("SpeechMatchOk");
+            if (SelectedMode == GameMode.SpeakRepeat && !WordSolved)
+            {
+                WordSolved = true;
+                Streak++;
+                StageStars++;
+            }
             _progress.RecordWordCompleted(CurrentWord.Word, 1, Streak + 1);
             _shell.RefreshHeader();
             await _js.InvokeAsync("phonicsAudio.success");
@@ -651,6 +668,165 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     public async Task NextMinimalPairAsync()
     {
         if (MinimalPairIndex + 1 < MinimalPairList.Count) { MinimalPairIndex++; await SetupCurrentMinimalPairAsync(); }
+        else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
+    }
+
+    // --- Grammar Quiz ---
+    public async Task StartGrammarChallengeAsync(string topic, bool isFree)
+    {
+        if (!isFree && !_activation.IsActivated)
+        {
+            _modals.OpenActivationModal();
+            return;
+        }
+
+        SelectedMode = GameMode.GrammarQuiz;
+        GrammarList = _curriculum.GetGrammarChallenges()
+            .Where(g => string.Equals(g.Topic, topic, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        GrammarIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        var first = GrammarList.FirstOrDefault();
+        ActiveStage = new PhonicsStage(94, first?.TitleAr ?? "القواعد", first?.TitleEn ?? "Grammar", "", "", "star_badge", "#7C3AED", "#2563EB", true, []);
+        _shell.NavigateTo(AppScreen.Playing);
+        await SetupCurrentGrammarAsync();
+    }
+
+    private async Task SetupCurrentGrammarAsync()
+    {
+        WordSolved = false;
+        GrammarWrongOption = null;
+        if (CurrentGrammar is null) return;
+        await SpeakGrammarPromptAsync();
+    }
+
+    [RelayCommand]
+    public Task SpeakGrammarPromptAsync()
+    {
+        if (CurrentGrammar is null) return Task.CompletedTask;
+        var text = WordSolved
+            ? CurrentGrammar.PromptTemplate.Replace("___", CurrentGrammar.CorrectOption)
+            : CurrentGrammar.PromptTemplate.Replace("___", "blank");
+        return _speech.SpeakAsync(text, pitch: 1.05f);
+    }
+
+    public async Task SelectGrammarOptionAsync(string option)
+    {
+        if (WordSolved || CurrentGrammar is null) return;
+        if (string.Equals(option, CurrentGrammar.CorrectOption, StringComparison.OrdinalIgnoreCase))
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(CurrentGrammar.CorrectOption, 1, Streak);
+            _shell.RefreshHeader();
+            await _js.InvokeAsync("phonicsAudio.success");
+            await _js.InvokeAsync("phonicsAudio.confetti");
+            var fullSentence = CurrentGrammar.PromptTemplate.Replace("___", CurrentGrammar.CorrectOption);
+            await _speech.SpeakAsync(fullSentence, pitch: 1.08f);
+        }
+        else
+        {
+            GrammarWrongOption = option;
+            Streak = 0;
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            await Task.Delay(450);
+            GrammarWrongOption = null;
+        }
+    }
+
+    [RelayCommand]
+    public async Task NextGrammarAsync()
+    {
+        if (GrammarIndex + 1 < GrammarList.Count) { GrammarIndex++; await SetupCurrentGrammarAsync(); }
+        else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
+    }
+
+    // --- Listening & Speaking Modes ---
+    public Task StartListenChooseChallengeAsync()
+    {
+        SelectedMode = GameMode.SoundMatch;
+        var pool = _curriculum.GetStages()
+            .Where(s => s.IsFree || _activation.IsActivated)
+            .SelectMany(s => s.Words)
+            .OrderBy(_ => _rng.Next())
+            .Take(8)
+            .ToList();
+        return StartStageAsync(new PhonicsStage(93, "اسمع واختار الصورة", "Listen & Pick Picture", "", "", "star_badge", "#0284C7", "#0EA5E9", true, pool));
+    }
+
+    public Task StartSpeakRepeatChallengeAsync()
+    {
+        SelectedMode = GameMode.SpeakRepeat;
+        var pool = _curriculum.GetStages()
+            .Where(s => s.IsFree || _activation.IsActivated)
+            .SelectMany(s => s.Words)
+            .OrderBy(_ => _rng.Next())
+            .Take(8)
+            .ToList();
+        return StartStageAsync(new PhonicsStage(92, "كرّر الكلمة بعد الصوت", "Repeat After Me", "", "", "star_badge", "#10B981", "#059669", true, pool));
+    }
+
+    public async Task StartListenCompleteChallengeAsync()
+    {
+        SelectedMode = GameMode.ListenComplete;
+        SentenceList = _curriculum.GetSentences().Where(s => s.IsFree || _activation.IsActivated).ToList();
+        SentenceIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(91, "اسمع وكمّل الجملة", "Listen & Complete", "", "", "star_badge", "#F97316", "#EA580C", true, []);
+        _shell.NavigateTo(AppScreen.Playing);
+        await SetupCurrentListenCompleteAsync();
+    }
+
+    private async Task SetupCurrentListenCompleteAsync()
+    {
+        WordSolved = false;
+        ListenWrongOption = null;
+        if (CurrentSentence is null) return;
+        ListenMissingWord = CurrentSentence.Words[^1];
+        var distractors = _curriculum.GetStages()
+            .SelectMany(s => s.Words)
+            .Select(w => w.Word)
+            .Where(w => !string.Equals(w, ListenMissingWord, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(_ => _rng.Next())
+            .Take(3)
+            .ToList();
+        ListenOptions = distractors.Append(ListenMissingWord).OrderBy(_ => _rng.Next()).ToList();
+        await SpeakCurrentSentenceAsync();
+    }
+
+    public async Task SelectListenCompleteOptionAsync(string option)
+    {
+        if (WordSolved || CurrentSentence is null) return;
+        if (string.Equals(option, ListenMissingWord, StringComparison.OrdinalIgnoreCase))
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(ListenMissingWord, 1, Streak);
+            _shell.RefreshHeader();
+            await _js.InvokeAsync("phonicsAudio.success");
+            await _js.InvokeAsync("phonicsAudio.confetti");
+        }
+        else
+        {
+            ListenWrongOption = option;
+            Streak = 0;
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            await Task.Delay(450);
+            ListenWrongOption = null;
+        }
+    }
+
+    [RelayCommand]
+    public async Task NextListenCompleteAsync()
+    {
+        if (SentenceIndex + 1 < SentenceList.Count) { SentenceIndex++; await SetupCurrentListenCompleteAsync(); }
         else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
     }
 

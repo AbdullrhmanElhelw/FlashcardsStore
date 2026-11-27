@@ -18,7 +18,7 @@ public sealed partial class HomeViewModel : BaseViewModel
     private readonly DictionaryViewModel _dictionary;
     private readonly ModalsViewModel _modals;
 
-    [ObservableProperty] private string _selectedCategory = "all";
+    [ObservableProperty] private string _selectedCategory = "phonics";
 
     public HomeViewModel(
         ICurriculumRepository curriculum,
@@ -77,15 +77,8 @@ public sealed partial class HomeViewModel : BaseViewModel
     public void SetCategory(string category)
         => SelectedCategory = string.IsNullOrWhiteSpace(category) ? "all" : category;
 
-    public IReadOnlyList<PhonicsStage> GetFilteredStages() => SelectedCategory switch
-    {
-        "short" => Stages.Where(s => s.Id is >= 1 and <= 4).ToList(),
-        "blends" => Stages.Where(s => s.Id is 5 or 6).ToList(),
-        "sight" => Stages.Where(s => s.Id is 7 or 8).ToList(),
-        "magice" => Stages.Where(s => s.Id is 9 or 10).ToList(),
-        "advanced" => Stages.Where(s => s.Id is 11 or 12).ToList(),
-        _ => Stages
-    };
+    public IReadOnlyList<PhonicsStage> GetFilteredStages()
+        => Stages.Where(s => string.Equals(s.Category, SelectedCategory, StringComparison.OrdinalIgnoreCase)).ToList();
 
     public IReadOnlyList<AchievementItem> GetAchievements() =>
     [
@@ -102,6 +95,10 @@ public sealed partial class HomeViewModel : BaseViewModel
     public Task StartSentenceChallengeAsync() => _arena.StartSentenceChallengeAsync();
     public Task StartRhymingChallengeAsync() => _arena.StartRhymingChallengeAsync();
     public Task StartMinimalPairsChallengeAsync() => _arena.StartMinimalPairsChallengeAsync();
+    public Task StartGrammarTopicAsync(string topic, bool isFree) => _arena.StartGrammarChallengeAsync(topic, isFree);
+    public Task StartListenChooseChallengeAsync() => _arena.StartListenChooseChallengeAsync();
+    public Task StartSpeakRepeatChallengeAsync() => _arena.StartSpeakRepeatChallengeAsync();
+    public Task StartListenCompleteChallengeAsync() => _arena.StartListenCompleteChallengeAsync();
 
     public void OpenSoundboard()
     {

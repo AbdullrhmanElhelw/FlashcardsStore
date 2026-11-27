@@ -12,6 +12,7 @@ public interface ICurriculumRepository
     IReadOnlyList<MinimalPairChallenge> GetMinimalPairs();
     IReadOnlyList<PhonicsLetterItem> GetAlphabet();
     IReadOnlyList<ShopItem> GetShopItems();
+    IReadOnlyList<GrammarChallenge> GetGrammarChallenges();
     int TotalWordsCount { get; }
     void Reload();
 }

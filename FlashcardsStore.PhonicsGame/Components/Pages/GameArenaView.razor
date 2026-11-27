@@ -46,12 +46,19 @@ else if (Vm.ActiveStage is not null)
         case GameMode.MinimalPairs:
             <MinimalPairsArena />
             break;
+        case GameMode.GrammarQuiz:
+            <GrammarArena />
+            break;
+        case GameMode.SpeakRepeat:
+            <SpeakRepeatArena />
+            break;
+        case GameMode.ListenComplete:
+            <ListenCompleteArena />
+            break;
     }
 
     @if (Vm.WordSolved
-         && Vm.SelectedMode != GameMode.SentenceBuilder
-         && Vm.SelectedMode != GameMode.RhymingMatch
-         && Vm.SelectedMode != GameMode.MinimalPairs)
+         && Vm.SelectedMode is GameMode.WordBuilder or GameMode.SoundMatch or GameMode.MemoryMatch or GameMode.SpeakRepeat)
     {
         <div class="celebrate-banner">
             <div>

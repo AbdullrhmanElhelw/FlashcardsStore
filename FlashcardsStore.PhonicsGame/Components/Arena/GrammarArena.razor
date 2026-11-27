@@ -1,0 +1,55 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentGrammar is { } q)
+{
+    <div class="picture-stage">
+        <div class="grammar-topic-pill">@(Loc.IsArabic ? q.TitleAr : q.TitleEn)</div>
+        <div class="arabic-hint" style="font-size:15px;margin-bottom:10px;">@Loc.T("GrammarPrompt")</div>
+
+        <div class="grammar-sentence-box">
+            @{
+                var parts = q.PromptTemplate.Split("___");
+            }
+            <span>@parts[0]</span>
+            <span class="grammar-blank @(Vm.WordSolved ? "solved" : "")">
+                @(Vm.WordSolved ? q.CorrectOption : "___")
+            </span>
+            @if (parts.Length > 1)
+            {
+                <span>@parts[1]</span>
+            }
+        </div>
+
+        <div class="grammar-hint-box">
+            <span class="icon-svg" style="width:15px;height:15px;color:#D97706;">@((MarkupString)UiIcons.Lightbulb)</span>
+            <span>@(Loc.IsArabic ? q.HintAr : q.HintEn)</span>
+        </div>
+
+        <div class="audio-controls" style="margin-top:12px;">
+            <button class="btn-speak" @onclick="Vm.SpeakGrammarPromptAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="rhyme-options-grid">
+        @foreach (var opt in q.Options)
+        {
+            var isRight = Vm.WordSolved && string.Equals(opt, q.CorrectOption, StringComparison.OrdinalIgnoreCase);
+            var isWrong = string.Equals(Vm.GrammarWrongOption, opt, StringComparison.OrdinalIgnoreCase);
+            var cls = "rhyme-option-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            <button class="@cls" @onclick="() => Vm.SelectGrammarOptionAsync(opt)">
+                @opt
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (@q.PromptTemplate.Replace("___", q.CorrectOption))</div>
+            <button class="btn-next" @onclick="Vm.NextGrammarAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

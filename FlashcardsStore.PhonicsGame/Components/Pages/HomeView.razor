@@ -77,112 +77,22 @@
     }
 </div>
 
-<!-- A-Z Phonics Soundboard & Picture Dictionary -->
-<div class="extra-modes-row" style="grid-template-columns:1fr 1fr;margin-bottom:14px;">
-    <div class="soundboard-cta" style="margin-bottom:0;" @onclick="Vm.OpenSoundboard">
-        <div style="display:flex;align-items:center;gap:9px;">
-            <div class="icon-svg" style="width:34px;height:34px;padding:6px;border-radius:10px;background:rgba(255,255,255,0.14);color:#FDE047;">
-                @((MarkupString)UiIcons.BookOpen)
-            </div>
-            <div>
-                <div style="font-size:13px;font-weight:900;">@Loc.T("SoundboardTitle")</div>
-                <div style="font-size:10.5px;color:#FDE68A;">@Loc.T("SoundboardMiniSub")</div>
-            </div>
+<!-- Picture Dictionary Quick Bar -->
+<div class="soundboard-cta" style="margin-bottom:14px;background:linear-gradient(135deg,#0F766E,#14B8A6);" @onclick="Vm.OpenDictionary">
+    <div style="display:flex;align-items:center;gap:10px;">
+        <div class="icon-svg" style="width:36px;height:36px;padding:7px;border-radius:10px;background:rgba(255,255,255,0.16);color:#fff;">
+            @((MarkupString)UiIcons.Search)
         </div>
-    </div>
-    <div class="soundboard-cta" style="margin-bottom:0;background:linear-gradient(135deg,#0F766E,#14B8A6);" @onclick="Vm.OpenDictionary">
-        <div style="display:flex;align-items:center;gap:9px;">
-            <div class="icon-svg" style="width:34px;height:34px;padding:6px;border-radius:10px;background:rgba(255,255,255,0.16);color:#fff;">
-                @((MarkupString)UiIcons.Search)
-            </div>
-            <div>
-                <div style="font-size:13px;font-weight:900;">@Loc.T("DictTitle")</div>
-                <div style="font-size:10.5px;color:#CCFBF1;">@Vm.TotalWordsCount @Loc.T("WordsMastered")</div>
-            </div>
+        <div>
+            <div style="font-size:14px;font-weight:900;">@Loc.T("DictTitle")</div>
+            <div style="font-size:11px;color:#CCFBF1;">@Vm.TotalWordsCount @Loc.T("WordsMastered")</div>
         </div>
     </div>
 </div>
 
-<div class="mode-tabs">
-    <div class="mode-tab @(Vm.SelectedMode == GameMode.WordBuilder ? "active" : "")"
-         @onclick="() => Vm.SetMode(GameMode.WordBuilder)">
-        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</div>
-        <div class="mode-tab-title">@Loc.T("ModeBuilderTitle")</div>
-        <div class="mode-tab-sub">@Loc.T("ModeBuilderSub")</div>
-    </div>
-    <div class="mode-tab @(Vm.SelectedMode == GameMode.SoundMatch ? "active" : "")"
-         @onclick="() => Vm.SetMode(GameMode.SoundMatch)">
-        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Headphones)</div>
-        <div class="mode-tab-title">@Loc.T("ModeMatchTitle")</div>
-        <div class="mode-tab-sub">@Loc.T("ModeMatchSub")</div>
-    </div>
-    <div class="mode-tab @(Vm.SelectedMode == GameMode.MemoryMatch ? "active" : "")"
-         @onclick="() => Vm.SetMode(GameMode.MemoryMatch)">
-        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.GridCards)</div>
-        <div class="mode-tab-title">@Loc.T("ModeMemoryTitle")</div>
-        <div class="mode-tab-sub">@Loc.T("ModeMemorySub")</div>
-    </div>
-</div>
-
-<!-- Sentence Builder, Rhyming Pairs & Minimal Pairs Quick Modes -->
-<div class="extra-modes-row">
-    <div class="extra-mode-card sentence" @onclick="Vm.StartSentenceChallengeAsync">
-        <div class="extra-mode-title">@Loc.T("ModeSentenceTitle")</div>
-        <div class="extra-mode-sub">@Loc.T("ModeSentenceSub")</div>
-    </div>
-    <div class="extra-mode-card rhyme" @onclick="Vm.StartRhymingChallengeAsync">
-        <div class="extra-mode-title">@Loc.T("ModeRhymeTitle")</div>
-        <div class="extra-mode-sub">@Loc.T("ModeRhymeSub")</div>
-    </div>
-    <div class="extra-mode-card minimal" @onclick="Vm.StartMinimalPairsChallengeAsync">
-        <div class="extra-mode-title">@Loc.T("ModeMinimalTitle")</div>
-        <div class="extra-mode-sub">@Loc.T("ModeMinimalSub")</div>
-    </div>
-</div>
-
-<!-- Animated Phonics Stories Section -->
-<div class="section-heading">
-    <span>@Loc.T("StoriesSectionTitle")</span>
-    <span style="font-size:11px;font-weight:700;color:var(--muted);">@Loc.T("StoriesSectionSub")</span>
-</div>
-<div class="stories-strip">
-    @foreach (var story in Vm.Stories)
-    {
-        var storyUnlocked = story.IsFree || Vm.IsActivated;
-        var storyDone = Vm.IsStoryCompleted(story.Id);
-        <div class="story-card-mini @(storyUnlocked ? "" : "locked")" @onclick="() => Vm.StartStoryAsync(story)">
-            <div class="story-mini-art">
-                @((MarkupString)WordArtwork.GetSvg(story.CoverArtworkKey, story.AccentColor))
-            </div>
-            <div style="font-size:13px;font-weight:900;color:var(--plum);text-align:center;">
-                @(Loc.IsArabic ? story.TitleAr : story.TitleEn)
-            </div>
-            <div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:2px;">
-                @(Loc.IsArabic ? story.SubtitleAr : story.SubtitleEn)
-            </div>
-            @if (!storyUnlocked)
-            {
-                <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#1E293B;color:#fff;padding:4px;">
-                    @((MarkupString)UiIcons.Lock)
-                </div>
-            }
-            else if (storyDone)
-            {
-                <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;padding:3px;">
-                    @((MarkupString)UiIcons.CheckCircle)
-                </div>
-            }
-        </div>
-    }
-</div>
-
-<!-- Duolingo-Style Winding Phonics Path with Categories -->
-<div class="section-heading">
-    <span>@Loc.T("LearningPathTitle")</span>
-</div>
-
+<!-- 5 Main Learning Categories -->
 <div class="cat-tabs">
-    @foreach (var cat in new[] { ("all", "CatAll"), ("short", "CatShort"), ("blends", "CatBlends"), ("sight", "CatSight"), ("magice", "CatMagicE"), ("advanced", "CatAdvanced") })
+    @foreach (var cat in new[] { ("phonics", "CatPhonics"), ("vocab", "CatVocab"), ("reading", "CatReading"), ("grammar", "CatGrammar"), ("listening", "CatListening") })
     {
         <button class="cat-tab @(Vm.SelectedCategory == cat.Item1 ? "active" : "")"
                 @onclick="() => Vm.SetCategory(cat.Item1)">
@@ -191,74 +101,222 @@
     }
 </div>
 
-<div class="duo-path">
-    @{
-        var firstActiveFound = false;
-        var filteredStages = Vm.GetFilteredStages();
-    }
-    @for (var i = 0; i < filteredStages.Count; i++)
+@if (Vm.SelectedCategory is "phonics" or "vocab")
+{
+    <div class="mode-tabs">
+        <div class="mode-tab @(Vm.SelectedMode == GameMode.WordBuilder ? "active" : "")"
+             @onclick="() => Vm.SetMode(GameMode.WordBuilder)">
+            <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</div>
+            <div class="mode-tab-title">@Loc.T("ModeBuilderTitle")</div>
+            <div class="mode-tab-sub">@Loc.T("ModeBuilderSub")</div>
+        </div>
+        <div class="mode-tab @(Vm.SelectedMode == GameMode.SoundMatch ? "active" : "")"
+             @onclick="() => Vm.SetMode(GameMode.SoundMatch)">
+            <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Headphones)</div>
+            <div class="mode-tab-title">@Loc.T("ModeMatchTitle")</div>
+            <div class="mode-tab-sub">@Loc.T("ModeMatchSub")</div>
+        </div>
+        <div class="mode-tab @(Vm.SelectedMode == GameMode.MemoryMatch ? "active" : "")"
+             @onclick="() => Vm.SetMode(GameMode.MemoryMatch)">
+            <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.GridCards)</div>
+            <div class="mode-tab-title">@Loc.T("ModeMemoryTitle")</div>
+            <div class="mode-tab-sub">@Loc.T("ModeMemorySub")</div>
+        </div>
+    </div>
+
+    @if (Vm.SelectedCategory == "phonics")
     {
-        var stage = filteredStages[i];
-        var unlocked = stage.IsFree || Vm.IsActivated;
-        var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
-        var isDone = completedCount >= stage.Words.Count;
-        var isCurrent = unlocked && !isDone && !firstActiveFound;
-        if (isCurrent) firstActiveFound = true;
-
-        var posClass = (i % 4) switch
-        {
-            1 => "pos-right",
-            3 => "pos-left",
-            _ => "pos-center"
-        };
-
-        if (stage.Id == 1)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit1Title")</div>
-        }
-        else if (stage.Id == 5)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit2Title")</div>
-        }
-        else if (stage.Id == 7)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit3Title")</div>
-        }
-        else if (stage.Id == 9)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit4Title")</div>
-        }
-        else if (stage.Id == 11)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit5Title")</div>
-        }
-        else if (stage.Id == 12)
-        {
-            <div class="duo-unit-banner">@Loc.T("Unit6Title")</div>
-        }
-
-        <div class="duo-node-wrap @posClass">
-            @if (isCurrent)
-            {
-                <div class="duo-start-callout">@Loc.T("StartNodeTag")</div>
-            }
-
-            <button class="duo-node-btn @(unlocked ? "" : "locked") @(isCurrent ? "active-node" : "")"
-                    style="background: linear-gradient(145deg, @stage.GradientStart, @stage.GradientEnd);"
-                    @onclick="() => Vm.StartStageAsync(stage)">
-                <div class="duo-node-inner">
-                    @((MarkupString)WordArtwork.GetSvg(stage.BadgeKey, stage.GradientEnd))
+        <div class="soundboard-cta" style="margin-bottom:12px;" @onclick="Vm.OpenSoundboard">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="icon-svg" style="width:36px;height:36px;padding:7px;border-radius:10px;background:rgba(255,255,255,0.14);color:#FDE047;">
+                    @((MarkupString)UiIcons.BookOpen)
                 </div>
-                @if (!unlocked)
-                {
-                    <div class="duo-lock-badge">@((MarkupString)UiIcons.Lock)</div>
-                }
-            </button>
+                <div>
+                    <div style="font-size:14px;font-weight:900;">@Loc.T("PhonicsQuickTitle")</div>
+                    <div style="font-size:11px;color:#FDE68A;">@Loc.T("PhonicsQuickSub")</div>
+                </div>
+            </div>
+        </div>
 
-            <div class="duo-node-label">
-                <div class="duo-node-title">@(Loc.IsArabic ? stage.TitleAr : stage.TitleEn)</div>
-                <div class="duo-node-prog">@completedCount / @stage.Words.Count</div>
+        <div class="extra-modes-row" style="grid-template-columns:1fr 1fr;">
+            <div class="extra-mode-card rhyme" @onclick="Vm.StartRhymingChallengeAsync">
+                <div class="extra-mode-title">@Loc.T("ModeRhymeTitle")</div>
+                <div class="extra-mode-sub">@Loc.T("ModeRhymeSub")</div>
+            </div>
+            <div class="extra-mode-card minimal" @onclick="Vm.StartMinimalPairsChallengeAsync">
+                <div class="extra-mode-title">@Loc.T("ModeMinimalTitle")</div>
+                <div class="extra-mode-sub">@Loc.T("ModeMinimalSub")</div>
             </div>
         </div>
     }
-</div>
+}
+else if (Vm.SelectedCategory == "reading")
+{
+    <div class="extra-modes-row" style="grid-template-columns:1fr;margin-bottom:14px;">
+        <div class="extra-mode-card sentence" @onclick="Vm.StartSentenceChallengeAsync">
+            <div class="extra-mode-title">@Loc.T("ModeSentenceTitle")</div>
+            <div class="extra-mode-sub">@Loc.T("ModeSentenceSub")</div>
+        </div>
+    </div>
+
+    <div class="section-heading">
+        <span>@Loc.T("StoriesSectionTitle")</span>
+        <span style="font-size:11px;font-weight:700;color:var(--muted);">@Loc.T("StoriesSectionSub")</span>
+    </div>
+    <div class="stories-strip">
+        @foreach (var story in Vm.Stories)
+        {
+            var storyUnlocked = story.IsFree || Vm.IsActivated;
+            var storyDone = Vm.IsStoryCompleted(story.Id);
+            <div class="story-card-mini @(storyUnlocked ? "" : "locked")" @onclick="() => Vm.StartStoryAsync(story)">
+                <div class="story-mini-art">
+                    @((MarkupString)WordArtwork.GetSvg(story.CoverArtworkKey, story.AccentColor))
+                </div>
+                <div style="font-size:13px;font-weight:900;color:var(--plum);text-align:center;">
+                    @(Loc.IsArabic ? story.TitleAr : story.TitleEn)
+                </div>
+                <div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:2px;">
+                    @(Loc.IsArabic ? story.SubtitleAr : story.SubtitleEn)
+                </div>
+                @if (!storyUnlocked)
+                {
+                    <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#1E293B;color:#fff;padding:4px;">
+                        @((MarkupString)UiIcons.Lock)
+                    </div>
+                }
+                else if (storyDone)
+                {
+                    <div style="position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;padding:3px;">
+                        @((MarkupString)UiIcons.CheckCircle)
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else if (Vm.SelectedCategory == "grammar")
+{
+    <div class="topic-cards-grid">
+        @foreach (var g in new[]
+        {
+            ("pronouns", "GramPronounsTitle", "GramPronounsSub", true, "#7C3AED"),
+            ("verbs", "GramVerbsTitle", "GramVerbsSub", false, "#2563EB"),
+            ("plural", "GramPluralTitle", "GramPluralSub", false, "#0D9488"),
+            ("tenses", "GramTensesTitle", "GramTensesSub", false, "#EA580C"),
+            ("prepositions", "GramPrepsTitle", "GramPrepsSub", false, "#DB2777")
+        })
+        {
+            var unlocked = g.Item4 || Vm.IsActivated;
+            <div class="topic-card @(unlocked ? "" : "locked")" style="border-color:@(g.Item5)33;" @onclick="() => Vm.StartGrammarTopicAsync(g.Item1, g.Item4)">
+                <div class="topic-card-badge" style="background:@g.Item5;">
+                    <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Sparkles)</span>
+                </div>
+                <div style="flex:1;">
+                    <div class="topic-card-title">@Loc.T(g.Item2)</div>
+                    <div class="topic-card-sub">@Loc.T(g.Item3)</div>
+                </div>
+                @if (!unlocked)
+                {
+                    <span class="icon-svg" style="width:18px;height:18px;color:#64748B;">@((MarkupString)UiIcons.Lock)</span>
+                }
+            </div>
+        }
+    </div>
+}
+else if (Vm.SelectedCategory == "listening")
+{
+    <div class="topic-cards-grid">
+        <div class="topic-card" style="border-color:#0284C733;" @onclick="Vm.StartListenChooseChallengeAsync">
+            <div class="topic-card-badge" style="background:#0284C7;">
+                <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Headphones)</span>
+            </div>
+            <div style="flex:1;">
+                <div class="topic-card-title">@Loc.T("ListenChooseTitle")</div>
+                <div class="topic-card-sub">@Loc.T("ListenChooseSub")</div>
+            </div>
+        </div>
+
+        <div class="topic-card" style="border-color:#10B98133;" @onclick="Vm.StartSpeakRepeatChallengeAsync">
+            <div class="topic-card-badge" style="background:#10B981;">
+                <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Mic)</span>
+            </div>
+            <div style="flex:1;">
+                <div class="topic-card-title">@Loc.T("SpeakRepeatTitle")</div>
+                <div class="topic-card-sub">@Loc.T("SpeakRepeatSub")</div>
+            </div>
+        </div>
+
+        <div class="topic-card" style="border-color:#F9731633;" @onclick="Vm.StartListenCompleteChallengeAsync">
+            <div class="topic-card-badge" style="background:#F97316;">
+                <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Volume)</span>
+            </div>
+            <div style="flex:1;">
+                <div class="topic-card-title">@Loc.T("ListenCompleteTitle")</div>
+                <div class="topic-card-sub">@Loc.T("ListenCompleteSub")</div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Vm.SelectedCategory is "phonics" or "vocab" or "reading")
+{
+    <div class="section-heading">
+        <span>@Loc.T("LearningPathTitle")</span>
+    </div>
+
+    <div class="duo-path">
+        @{
+            var firstActiveFound = false;
+            var filteredStages = Vm.GetFilteredStages();
+        }
+        @for (var i = 0; i < filteredStages.Count; i++)
+        {
+            var stage = filteredStages[i];
+            var unlocked = stage.IsFree || Vm.IsActivated;
+            var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
+            var isDone = completedCount >= stage.Words.Count;
+            var isCurrent = unlocked && !isDone && !firstActiveFound;
+            if (isCurrent) firstActiveFound = true;
+
+            var posClass = (i % 4) switch
+            {
+                1 => "pos-right",
+                3 => "pos-left",
+                _ => "pos-center"
+            };
+
+            if (stage.Id == 1) { <div class="duo-unit-banner">@Loc.T("Unit1Title")</div> }
+            else if (stage.Id == 5) { <div class="duo-unit-banner">@Loc.T("Unit2Title")</div> }
+            else if (stage.Id == 7) { <div class="duo-unit-banner">@Loc.T("Unit3Title")</div> }
+            else if (stage.Id == 9) { <div class="duo-unit-banner">@Loc.T("Unit4Title")</div> }
+            else if (stage.Id == 11) { <div class="duo-unit-banner">@Loc.T("Unit5Title")</div> }
+            else if (stage.Id == 12) { <div class="duo-unit-banner">@Loc.T("Unit6Title")</div> }
+            else if (stage.Id == 13) { <div class="duo-unit-banner">@Loc.T("Unit7Title")</div> }
+            else if (stage.Id == 14) { <div class="duo-unit-banner">@Loc.T("VocabBannerTitle")</div> }
+
+            <div class="duo-node-wrap @posClass">
+                @if (isCurrent)
+                {
+                    <div class="duo-start-callout">@Loc.T("StartNodeTag")</div>
+                }
+
+                <button class="duo-node-btn @(unlocked ? "" : "locked") @(isCurrent ? "active-node" : "")"
+                        style="background: linear-gradient(145deg, @stage.GradientStart, @stage.GradientEnd);"
+                        @onclick="() => Vm.StartStageAsync(stage)">
+                    <div class="duo-node-inner">
+                        @((MarkupString)WordArtwork.GetSvg(stage.BadgeKey, stage.GradientEnd))
+                    </div>
+                    @if (!unlocked)
+                    {
+                        <div class="duo-lock-badge">@((MarkupString)UiIcons.Lock)</div>
+                    }
+                </button>
+
+                <div class="duo-node-label">
+                    <div class="duo-node-title">@(Loc.IsArabic ? stage.TitleAr : stage.TitleEn)</div>
+                    <div class="duo-node-prog">@completedCount / @stage.Words.Count</div>
+                </div>
+            </div>
+        }
+    </div>
+}

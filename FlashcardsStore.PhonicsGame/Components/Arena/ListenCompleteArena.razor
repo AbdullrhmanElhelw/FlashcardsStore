@@ -1,0 +1,59 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentSentence is { } s)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background: #FFF7ED;width:96px;height:96px;">
+            @((MarkupString)WordArtwork.GetSvg(s.ArtworkKey, s.AccentColor))
+        </div>
+        <div class="arabic-hint" style="font-size:15px;">@Loc.T("ListenCompletePrompt")</div>
+
+        <div class="grammar-sentence-box" style="margin-top:8px;">
+            @for (var i = 0; i < s.Words.Count; i++)
+            {
+                if (i == s.Words.Count - 1)
+                {
+                    <span class="grammar-blank @(Vm.WordSolved ? "solved" : "")">
+                        @(Vm.WordSolved ? Vm.ListenMissingWord : "___")
+                    </span>
+                }
+                else
+                {
+                    <span>@s.Words[i] </span>
+                }
+            }
+        </div>
+
+        @if (Loc.IsArabic)
+        {
+            <div style="font-size:13px;font-weight:700;color:var(--muted);margin-top:6px;">@s.ArabicMeaning</div>
+        }
+
+        <div class="audio-controls" style="margin-top:12px;">
+            <button class="btn-speak" @onclick="Vm.SpeakCurrentSentenceAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="rhyme-options-grid">
+        @foreach (var opt in Vm.ListenOptions)
+        {
+            var isRight = Vm.WordSolved && string.Equals(opt, Vm.ListenMissingWord, StringComparison.OrdinalIgnoreCase);
+            var isWrong = string.Equals(Vm.ListenWrongOption, opt, StringComparison.OrdinalIgnoreCase);
+            var cls = "rhyme-option-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            <button class="@cls" @onclick="() => Vm.SelectListenCompleteOptionAsync(opt)">
+                @opt
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (@string.Join(' ', s.Words))</div>
+            <button class="btn-next" @onclick="Vm.NextListenCompleteAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

@@ -1,0 +1,35 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+<div class="picture-stage">
+    <div class="picture-circle" style="background: @Vm.CurrentWord.BgColor;">
+        @((MarkupString)WordArtwork.GetSvg(Vm.CurrentWord.ArtworkKey, Vm.CurrentWord.AccentColor))
+    </div>
+    <div class="arabic-hint" style="font-size:24px;">@Vm.CurrentWord.Word.ToUpperInvariant()</div>
+    @if (Loc.IsArabic)
+    {
+        <div style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:8px;">@Vm.CurrentWord.ArabicMeaning</div>
+    }
+    <div style="font-size:12.5px;font-weight:700;color:var(--plum);margin-bottom:12px;">@Loc.T("RepeatPrompt")</div>
+
+    <div class="audio-controls" style="flex-wrap:wrap;">
+        <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+            <span>@Loc.T("ListenWord")</span>
+        </button>
+        <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
+            <span>@Loc.T("SlowSpeak")</span>
+        </button>
+        <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
+            <span>@Loc.T("SayItBtn")</span>
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
+    {
+        <div style="margin-top:12px;font-size:13.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
+            @Vm.SpeechFeedback
+        </div>
+    }
+</div>

@@ -20,6 +20,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     private IReadOnlyList<MinimalPairChallenge> _minimalPairs = [];
     private IReadOnlyList<PhonicsLetterItem> _alphabet = [];
     private IReadOnlyList<ShopItem> _shopItems = [];
+    private IReadOnlyList<GrammarChallenge> _grammar = [];
 
     public event Action? ContentReloaded;
 
@@ -35,6 +36,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     public IReadOnlyList<MinimalPairChallenge> GetMinimalPairs() => _minimalPairs;
     public IReadOnlyList<PhonicsLetterItem> GetAlphabet() => _alphabet;
     public IReadOnlyList<ShopItem> GetShopItems() => _shopItems;
+    public IReadOnlyList<GrammarChallenge> GetGrammarChallenges() => _grammar;
     public int TotalWordsCount { get; private set; }
 
     public void Reload()
@@ -52,6 +54,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
         _minimalPairs = LoadPack<MinimalPairsPack>("minimal_pairs.json")?.Pairs ?? [];
         _alphabet = LoadPack<AlphabetPack>("alphabet.json")?.Letters ?? [];
         _shopItems = LoadPack<ShopPack>("shop.json")?.Items ?? [];
+        _grammar = LoadPack<GrammarPack>("grammar.json")?.Questions ?? [];
         TotalWordsCount = _stages.Sum(s => s.Words.Count);
     }
 
