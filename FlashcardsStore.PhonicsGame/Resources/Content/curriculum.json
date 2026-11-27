@@ -183,6 +183,52 @@
         { "word": "this", "arabicMeaning": "هذا", "artworkKey": "sight_this", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": true },
         { "word": "blue", "arabicMeaning": "أزرق", "artworkKey": "sight_blue", "bgColor": "#DBEAFE", "accentColor": "#1D4ED8", "isSightWord": true }
       ]
+    },
+    {
+      "id": 9,
+      "titleAr": "المرحلة 9: السحر الصامت (Magic E - A & I)",
+      "titleEn": "Stage 9: Magic E (a_e / i_e)",
+      "subtitleAr": "تمديد الصوت بالحرف الصامت e في النهاية",
+      "subtitleEn": "Long A & Long I with silent Magic E",
+      "badgeKey": "cake",
+      "gradientStart": "#F43F5E",
+      "gradientEnd": "#E11D48",
+      "isFree": false,
+      "words": [
+        { "word": "cake", "arabicMeaning": "كعكة", "artworkKey": "cake", "bgColor": "#FFE4E6", "accentColor": "#E11D48", "isSightWord": false },
+        { "word": "make", "arabicMeaning": "يصنع", "artworkKey": "cake", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
+        { "word": "lake", "arabicMeaning": "بحيرة", "artworkKey": "fish", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
+        { "word": "gate", "arabicMeaning": "بوابة", "artworkKey": "home", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": false },
+        { "word": "name", "arabicMeaning": "اسم", "artworkKey": "star", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false },
+        { "word": "bike", "arabicMeaning": "دراجة", "artworkKey": "bike", "bgColor": "#DBEAFE", "accentColor": "#2563EB", "isSightWord": false },
+        { "word": "kite", "arabicMeaning": "طائرة ورقية", "artworkKey": "kite", "bgColor": "#FEF9C3", "accentColor": "#CA8A04", "isSightWord": false },
+        { "word": "ride", "arabicMeaning": "يركب", "artworkKey": "bike", "bgColor": "#CFFAFE", "accentColor": "#0891B2", "isSightWord": false },
+        { "word": "five", "arabicMeaning": "خمسة", "artworkKey": "star", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
+        { "word": "time", "arabicMeaning": "وقت", "artworkKey": "sun", "bgColor": "#FFEDD5", "accentColor": "#EA580C", "isSightWord": false }
+      ]
+    },
+    {
+      "id": 10,
+      "titleAr": "المرحلة 10: السحر الصامت (Magic E - O & U)",
+      "titleEn": "Stage 10: Magic E (o_e / u_e)",
+      "subtitleAr": "إتقان المد الطويل مع o_e و u_e",
+      "subtitleEn": "Long O & Long U with silent Magic E",
+      "badgeKey": "home",
+      "gradientStart": "#14B8A6",
+      "gradientEnd": "#0F766E",
+      "isFree": false,
+      "words": [
+        { "word": "home", "arabicMeaning": "منزل", "artworkKey": "home", "bgColor": "#CCFBF1", "accentColor": "#0D9488", "isSightWord": false },
+        { "word": "bone", "arabicMeaning": "عظمة", "artworkKey": "dog", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
+        { "word": "rope", "arabicMeaning": "حبل", "artworkKey": "net", "bgColor": "#FFEDD5", "accentColor": "#C2410C", "isSightWord": false },
+        { "word": "nose", "arabicMeaning": "أنف", "artworkKey": "pig", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
+        { "word": "rose", "arabicMeaning": "وردة", "artworkKey": "red", "bgColor": "#FFE4E6", "accentColor": "#E11D48", "isSightWord": false },
+        { "word": "cube", "arabicMeaning": "مكعب", "artworkKey": "box", "bgColor": "#DBEAFE", "accentColor": "#2563EB", "isSightWord": false },
+        { "word": "tube", "arabicMeaning": "أنبوب", "artworkKey": "pen", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": false },
+        { "word": "cute", "arabicMeaning": "لطيف", "artworkKey": "cat", "bgColor": "#FFF1F2", "accentColor": "#F43F5E", "isSightWord": false },
+        { "word": "tune", "arabicMeaning": "لحن", "artworkKey": "drum", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
+        { "word": "mule", "arabicMeaning": "بغل", "artworkKey": "hen", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false }
+      ]
     }
   ]
 }

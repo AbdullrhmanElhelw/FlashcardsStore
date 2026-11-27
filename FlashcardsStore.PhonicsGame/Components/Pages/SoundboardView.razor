@@ -27,7 +27,7 @@
 </div>
 
 <div class="sb-grid">
-    @foreach (var item in AlphabetSoundboardData.Letters)
+    @foreach (var item in Vm.Alphabet)
     {
         var cls = "sb-card"
             + (item.IsVowel ? " vowel" : "")
@@ -39,3 +39,22 @@
         </div>
     }
 </div>
+
+@if (Vm.ActiveSoundboardLetter is char activeChar)
+{
+    <div class="trace-box">
+        <div class="trace-header">
+            <span style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("TraceTitle") (@activeChar@char.ToLowerInvariant(activeChar))</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetTracingColorAsync("#2B071C")'></span>
+                <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetTracingColorAsync("#2563EB")'></span>
+                <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetTracingColorAsync("#E11D48")'></span>
+                <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearTracingCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
+            </div>
+        </div>
+        <div class="trace-canvas-wrap">
+            <div class="trace-guide">@activeChar@char.ToLowerInvariant(activeChar)</div>
+            <canvas id="letterTraceCanvas" width="320" height="170" class="trace-canvas"></canvas>
+        </div>
+    </div>
+}

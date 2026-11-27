@@ -300,6 +300,36 @@ public static class WordArtwork
                 <circle cx="40" cy="54" r="4" fill="#1E1B4B"/>
                 <path d="M54 46Q62 60 54 74" stroke="#BAE6FD" stroke-width="3" stroke-linecap="round"/>
             </svg>
+            """,
+        ["cake"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="26" y="54" width="68" height="38" rx="10" fill="#F9A8D4" stroke="#9D174D" stroke-width="3"/>
+                <path d="M26 62Q38 72 50 62Q62 72 74 62Q86 72 94 62" stroke="#FFF1F2" stroke-width="6" stroke-linecap="round"/>
+                <rect x="56" y="34" width="8" height="20" rx="3" fill="#FDE047" stroke="#CA8A04" stroke-width="2"/>
+                <circle cx="60" cy="26" r="5" fill="#F97316"/>
+            </svg>
+            """,
+        ["bike"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="34" cy="76" r="18" fill="none" stroke="#1E293B" stroke-width="5"/>
+                <circle cx="86" cy="76" r="18" fill="none" stroke="#1E293B" stroke-width="5"/>
+                <path d="M34 76L54 48H74L86 76M54 48L62 76H34" stroke="#2563EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M70 42H80" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["kite"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="60,16 92,48 60,82 28,48" fill="#FACC15" stroke="#CA8A04" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M60 16V82M28 48H92" stroke="#92400E" stroke-width="2.5"/>
+                <path d="M60 82Q70 94 56 104" stroke="#EF4444" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+            """,
+        ["home"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="60,20 100,54 20,54" fill="#0D9488" stroke="#134E4A" stroke-width="3" stroke-linejoin="round"/>
+                <rect x="30" y="54" width="60" height="42" rx="6" fill="#CCFBF1" stroke="#134E4A" stroke-width="3"/>
+                <rect x="52" y="68" width="16" height="28" rx="3" fill="#0F766E"/>
+            </svg>
             """
     };
 }

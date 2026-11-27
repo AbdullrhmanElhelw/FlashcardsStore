@@ -48,6 +48,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public IReadOnlyList<PhonicsStage> Stages => _curriculum.GetStages();
     public IReadOnlyList<PhonicsStory> Stories => _curriculum.GetStories();
+    public IReadOnlyList<PhonicsLetterItem> Alphabet => _curriculum.GetAlphabet();
     public int TotalWordsCount => _curriculum.TotalWordsCount;
     public int TotalXp => _progress.TotalXp;
     public int DailyStreakDays => _progress.DailyStreakDays;
@@ -96,6 +97,21 @@ public sealed class PhonicsGameViewModel : IDisposable
     public bool InStoryQuiz { get; private set; }
     public bool StoryQuizSolved { get; private set; }
     public string? StoryQuizWrongOption { get; private set; }
+
+    // Sentence Builder state
+    public IReadOnlyList<SentenceChallenge> SentenceList { get; private set; } = [];
+    public int SentenceIndex { get; private set; }
+    public SentenceChallenge? CurrentSentence => SentenceIndex < SentenceList.Count ? SentenceList[SentenceIndex] : null;
+    public int[] SentenceSlots { get; private set; } = [];
+    public List<(string Word, bool Used)> SentenceBank { get; private set; } = [];
+    public bool SentenceWrongFlash { get; private set; }
+
+    // Rhyming Pairs state
+    public IReadOnlyList<RhymeChallenge> RhymeList { get; private set; } = [];
+    public int RhymeIndex { get; private set; }
+    public RhymeChallenge? CurrentRhyme => RhymeIndex < RhymeList.Count ? RhymeList[RhymeIndex] : null;
+    public List<string> RhymeOptions { get; private set; } = [];
+    public string? RhymeWrongOption { get; private set; }
 
     public bool ShowActivationModal { get; private set; }
     public string ActivationCodeInput { get; set; } = string.Empty;
@@ -325,7 +341,191 @@ public sealed class PhonicsGameViewModel : IDisposable
         ActiveSoundboardLetter = item.Letter;
         Notify();
         await SafeJsAsync("phonicsAudio.pop");
+        await SafeJsAsync("phonicsTracing.init", "letterTraceCanvas");
         await _speech.SpeakAsync($"{item.Letter}, {item.ExampleWord}", pitch: 1.1f);
+    }
+
+    public Task ClearTracingCanvasAsync() => SafeJsAsync("phonicsTracing.clear");
+    public Task SetTracingColorAsync(string color) => SafeJsAsync("phonicsTracing.setColor", color);
+
+    public async Task StartSentenceChallengeAsync()
+    {
+        SelectedMode = GameMode.SentenceBuilder;
+        SentenceList = _curriculum.GetSentences()
+            .Where(s => s.IsFree || _activation.IsActivated)
+            .ToList();
+        SentenceIndex = 0;
+        StageStars = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(97, "تركيب الجمل", "Sentence Builder", "", "", "star_badge", "#0284C7", "#2563EB", true, []);
+        CurrentScreen = AppScreen.Playing;
+        await SetupCurrentSentenceAsync();
+    }
+
+    private async Task SetupCurrentSentenceAsync()
+    {
+        WordSolved = false;
+        SentenceWrongFlash = false;
+        if (CurrentSentence is null) return;
+
+        SentenceSlots = Enumerable.Repeat(-1, CurrentSentence.Words.Count).ToArray();
+        SentenceBank = CurrentSentence.Words
+            .OrderBy(_ => _rng.Next())
+            .Select(w => (w, false))
+            .ToList();
+
+        Notify();
+        await SpeakCurrentSentenceAsync();
+    }
+
+    public Task SpeakCurrentSentenceAsync()
+        => CurrentSentence is null ? Task.CompletedTask : _speech.SpeakAsync(string.Join(' ', CurrentSentence.Words), pitch: 1.05f);
+
+    public async Task SelectSentenceWordAsync(int bankIdx)
+    {
+        if (WordSolved || bankIdx < 0 || bankIdx >= SentenceBank.Count || SentenceBank[bankIdx].Used)
+            return;
+
+        var emptySlot = Array.FindIndex(SentenceSlots, s => s < 0);
+        if (emptySlot < 0) return;
+
+        SentenceSlots[emptySlot] = bankIdx;
+        SentenceBank[bankIdx] = (SentenceBank[bankIdx].Word, true);
+        await SafeJsAsync("phonicsAudio.pop");
+        _ = _speech.SpeakAsync(SentenceBank[bankIdx].Word, pitch: 1.1f);
+
+        if (SentenceSlots.All(s => s >= 0) && CurrentSentence is not null)
+        {
+            var built = string.Join(' ', SentenceSlots.Select(i => SentenceBank[i].Word));
+            var target = string.Join(' ', CurrentSentence.Words);
+            if (string.Equals(built, target, StringComparison.OrdinalIgnoreCase))
+            {
+                WordSolved = true;
+                Streak++;
+                StageStars += 2;
+                _progress.RecordWordCompleted(CurrentSentence.Words[0], 2, Streak);
+                CompletedWords = _progress.GetCompletedWords();
+                await SafeJsAsync("phonicsAudio.success");
+                await SafeJsAsync("phonicsAudio.confetti");
+                await _speech.SpeakAsync(target, pitch: 1.1f);
+            }
+            else
+            {
+                SentenceWrongFlash = true;
+                Streak = 0;
+                await SafeJsAsync("phonicsAudio.wrong");
+                Notify();
+                await Task.Delay(520);
+                for (var i = 0; i < SentenceSlots.Length; i++)
+                {
+                    if (SentenceSlots[i] >= 0)
+                        SentenceBank[SentenceSlots[i]] = (SentenceBank[SentenceSlots[i]].Word, false);
+                    SentenceSlots[i] = -1;
+                }
+                SentenceWrongFlash = false;
+            }
+        }
+        Notify();
+    }
+
+    public async Task ClearSentenceSlotAsync(int slotIdx)
+    {
+        if (WordSolved || slotIdx < 0 || slotIdx >= SentenceSlots.Length || SentenceSlots[slotIdx] < 0)
+            return;
+        var bIdx = SentenceSlots[slotIdx];
+        SentenceBank[bIdx] = (SentenceBank[bIdx].Word, false);
+        SentenceSlots[slotIdx] = -1;
+        await SafeJsAsync("phonicsAudio.pop");
+        Notify();
+    }
+
+    public async Task NextSentenceAsync()
+    {
+        if (SentenceIndex + 1 < SentenceList.Count)
+        {
+            SentenceIndex++;
+            await SetupCurrentSentenceAsync();
+        }
+        else
+        {
+            StageFinished = true;
+            await SafeJsAsync("phonicsAudio.confetti");
+            Notify();
+        }
+    }
+
+    public async Task StartRhymingChallengeAsync()
+    {
+        SelectedMode = GameMode.RhymingMatch;
+        RhymeList = _curriculum.GetRhymes()
+            .Where(r => r.IsFree || _activation.IsActivated)
+            .ToList();
+        RhymeIndex = 0;
+        StageStars = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(98, "لعبة القافية", "Rhyming Pairs", "", "", "star_badge", "#7C3AED", "#EC4899", true, []);
+        CurrentScreen = AppScreen.Playing;
+        await SetupCurrentRhymeAsync();
+    }
+
+    private async Task SetupCurrentRhymeAsync()
+    {
+        WordSolved = false;
+        RhymeWrongOption = null;
+        if (CurrentRhyme is null) return;
+
+        RhymeOptions = CurrentRhyme.Distractors
+            .Append(CurrentRhyme.CorrectRhyme)
+            .OrderBy(_ => _rng.Next())
+            .ToList();
+
+        Notify();
+        await SpeakCurrentRhymeTargetAsync();
+    }
+
+    public Task SpeakCurrentRhymeTargetAsync()
+        => CurrentRhyme is null ? Task.CompletedTask : _speech.SpeakAsync(CurrentRhyme.TargetWord, pitch: 1.05f);
+
+    public async Task SelectRhymeOptionAsync(string option)
+    {
+        if (WordSolved || CurrentRhyme is null) return;
+        if (string.Equals(option, CurrentRhyme.CorrectRhyme, StringComparison.OrdinalIgnoreCase))
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(CurrentRhyme.CorrectRhyme, 1, Streak);
+            CompletedWords = _progress.GetCompletedWords();
+            await SafeJsAsync("phonicsAudio.success");
+            await SafeJsAsync("phonicsAudio.confetti");
+            await _speech.SpeakAsync($"{CurrentRhyme.TargetWord}, {CurrentRhyme.CorrectRhyme}", pitch: 1.12f);
+            Notify();
+        }
+        else
+        {
+            RhymeWrongOption = option;
+            Streak = 0;
+            await SafeJsAsync("phonicsAudio.wrong");
+            Notify();
+            await Task.Delay(450);
+            RhymeWrongOption = null;
+            Notify();
+        }
+    }
+
+    public async Task NextRhymeAsync()
+    {
+        if (RhymeIndex + 1 < RhymeList.Count)
+        {
+            RhymeIndex++;
+            await SetupCurrentRhymeAsync();
+        }
+        else
+        {
+            StageFinished = true;
+            await SafeJsAsync("phonicsAudio.confetti");
+            Notify();
+        }
     }
 
     public IReadOnlyList<AchievementItem> GetAchievements() =>

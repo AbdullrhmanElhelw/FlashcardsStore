@@ -160,7 +160,40 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 9px;
+    margin-bottom: 12px;
+}
+
+.extra-modes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     margin-bottom: 16px;
+}
+
+.extra-mode-card {
+    border-radius: 18px;
+    padding: 12px 12px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.16);
+}
+
+.extra-mode-card.sentence {
+    background: linear-gradient(135deg, #0284C7, #2563EB);
+}
+
+.extra-mode-card.rhyme {
+    background: linear-gradient(135deg, #7C3AED, #EC4899);
+}
+
+.extra-mode-title {
+    font-size: 13.5px;
+    font-weight: 900;
+}
+
+.extra-mode-sub {
+    font-size: 10.5px;
+    opacity: 0.92;
 }
 
 .soundboard-cta {

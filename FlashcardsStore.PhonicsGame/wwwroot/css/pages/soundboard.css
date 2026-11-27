@@ -90,3 +90,60 @@
     color: var(--muted);
     margin-top: 2px;
 }
+
+.trace-box {
+    margin-top: 16px;
+    background: #fff;
+    border: 2.5px solid rgba(212, 175, 55, 0.45);
+    border-radius: 22px;
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(43, 7, 28, 0.08);
+}
+
+.trace-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.trace-color-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1.5px #CBD5E1;
+}
+
+.trace-canvas-wrap {
+    position: relative;
+    height: 170px;
+    border-radius: 16px;
+    background: #FFFDF8;
+    border: 2px dashed #CBD5E1;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.trace-guide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 118px;
+    font-weight: 900;
+    color: rgba(43, 7, 28, 0.08);
+    pointer-events: none;
+    direction: ltr;
+}
+
+.trace-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+}

@@ -99,6 +99,26 @@
       "quizQuestionEn": "What jumped out of the water?",
       "quizCorrectWord": "fish",
       "quizOptions": ["fish", "shop", "chip"]
+    },
+    {
+      "id": 6,
+      "titleAr": "رحلة الكعكة والدراجة",
+      "titleEn": "Magic E & the Cake",
+      "subtitleAr": "قصة السحر الصامت (Magic E)",
+      "subtitleEn": "Animated Long Vowels & Magic E Story",
+      "coverArtworkKey": "cake",
+      "accentColor": "#E11D48",
+      "isFree": false,
+      "scenes": [
+        { "sentenceEn": "Mom can bake a sweet cake.", "sentenceAr": "تخبز أمي كعكة لذيذة.", "focusWord": "cake", "artworkKey": "cake", "bgColor": "#FFE4E6", "accentColor": "#E11D48", "animationClass": "anim-bounce" },
+        { "sentenceEn": "Sam rides his fast blue bike.", "sentenceAr": "يركب سام دراجته الزرقاء السريعة.", "focusWord": "bike", "artworkKey": "bike", "bgColor": "#EFF6FF", "accentColor": "#2563EB", "animationClass": "anim-slide" },
+        { "sentenceEn": "Look at the kite in the sky!", "sentenceAr": "انظر إلى الطائرة الورقية في السماء!", "focusWord": "kite", "artworkKey": "kite", "bgColor": "#FEFCE8", "accentColor": "#CA8A04", "animationClass": "anim-float" },
+        { "sentenceEn": "They come back to a warm home.", "sentenceAr": "يعودون إلى منزل دافئ سعيد.", "focusWord": "home", "artworkKey": "home", "bgColor": "#ECFDF5", "accentColor": "#0D9488", "animationClass": "anim-bounce" }
+      ],
+      "quizQuestionAr": "ماذا ركب سام؟",
+      "quizQuestionEn": "What did Sam ride?",
+      "quizCorrectWord": "bike",
+      "quizOptions": ["bike", "cake", "home"]
     }
   ]
 }

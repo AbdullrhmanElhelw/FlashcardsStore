@@ -6,5 +6,8 @@ public interface ICurriculumRepository
 {
     IReadOnlyList<PhonicsStage> GetStages();
     IReadOnlyList<PhonicsStory> GetStories();
+    IReadOnlyList<SentenceChallenge> GetSentences();
+    IReadOnlyList<RhymeChallenge> GetRhymes();
+    IReadOnlyList<PhonicsLetterItem> GetAlphabet();
     int TotalWordsCount { get; }
 }

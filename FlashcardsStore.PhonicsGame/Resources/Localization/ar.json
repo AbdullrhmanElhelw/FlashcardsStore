@@ -88,5 +88,13 @@
   "Goal5Label": "5 دقائق / يوم — هادئ",
   "Goal10Label": "10 دقائق / يوم — منتظم",
   "Goal15Label": "15 دقيقة / يوم — بطل",
-  "XpLabel": "XP"
+  "XpLabel": "XP",
+  "ModeSentenceTitle": "تركيب الجمل",
+  "ModeSentenceSub": "رتب الكلمات لتكوين جملة",
+  "ModeRhymeTitle": "لعبة القافية",
+  "ModeRhymeSub": "اختر الكلمة المتشابهة في الصوت",
+  "SentencePrompt": "رتب الكلمات لتكوين جملة صحيحة",
+  "RhymePrompt": "ما الكلمة التي لها نفس نغمة:",
+  "TraceTitle": "تدرّب على كتابة الحرف بإصبعك",
+  "ClearCanvasBtn": "مسح"
 }

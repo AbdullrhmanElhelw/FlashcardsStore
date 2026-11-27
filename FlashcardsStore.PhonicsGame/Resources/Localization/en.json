@@ -88,5 +88,13 @@
   "Goal5Label": "5 min / day — Relaxed",
   "Goal10Label": "10 min / day — Regular",
   "Goal15Label": "15 min / day — Champion",
-  "XpLabel": "XP"
+  "XpLabel": "XP",
+  "ModeSentenceTitle": "Sentence Builder",
+  "ModeSentenceSub": "Arrange words into a sentence",
+  "ModeRhymeTitle": "Rhyming Pairs",
+  "ModeRhymeSub": "Pick the word that rhymes",
+  "SentencePrompt": "Tap the words in order to build a sentence",
+  "RhymePrompt": "Which word rhymes with:",
+  "TraceTitle": "Trace the letter with your finger",
+  "ClearCanvasBtn": "Clear"
 }

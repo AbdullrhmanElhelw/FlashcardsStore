@@ -4,5 +4,7 @@ public enum GameMode
 {
     WordBuilder,
     SoundMatch,
-    MemoryMatch
+    MemoryMatch,
+    SentenceBuilder,
+    RhymingMatch
 }

@@ -5,7 +5,7 @@ using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
 namespace FlashcardsStore.PhonicsGame.Services;
 
-/// <summary>Data-driven repository loading phonics stages and animated stories from embedded JSON packs.</summary>
+/// <summary>Data-driven repository loading all educational content packs from embedded JSON resources.</summary>
 public sealed class JsonCurriculumRepository : ICurriculumRepository
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -15,16 +15,25 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
 
     private readonly IReadOnlyList<PhonicsStage> _stages;
     private readonly IReadOnlyList<PhonicsStory> _stories;
+    private readonly IReadOnlyList<SentenceChallenge> _sentences;
+    private readonly IReadOnlyList<RhymeChallenge> _rhymes;
+    private readonly IReadOnlyList<PhonicsLetterItem> _alphabet;
 
     public JsonCurriculumRepository()
     {
         _stages = LoadResource<CurriculumPack>("curriculum.json")?.Stages ?? [];
         _stories = LoadResource<StoriesPack>("stories.json")?.Stories ?? [];
+        _sentences = LoadResource<SentencesPack>("sentences.json")?.Sentences ?? [];
+        _rhymes = LoadResource<RhymesPack>("rhymes.json")?.Rhymes ?? [];
+        _alphabet = LoadResource<AlphabetPack>("alphabet.json")?.Letters ?? [];
         TotalWordsCount = _stages.Sum(s => s.Words.Count);
     }
 
     public IReadOnlyList<PhonicsStage> GetStages() => _stages;
     public IReadOnlyList<PhonicsStory> GetStories() => _stories;
+    public IReadOnlyList<SentenceChallenge> GetSentences() => _sentences;
+    public IReadOnlyList<RhymeChallenge> GetRhymes() => _rhymes;
+    public IReadOnlyList<PhonicsLetterItem> GetAlphabet() => _alphabet;
     public int TotalWordsCount { get; }
 
     private static T? LoadResource<T>(string fileName)

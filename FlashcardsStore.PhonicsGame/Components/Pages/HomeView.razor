@@ -99,6 +99,18 @@
     </div>
 </div>
 
+<!-- Sentence Builder & Rhyming Pairs Quick Modes -->
+<div class="extra-modes-row">
+    <div class="extra-mode-card sentence" @onclick="Vm.StartSentenceChallengeAsync">
+        <div class="extra-mode-title">@Loc.T("ModeSentenceTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("ModeSentenceSub")</div>
+    </div>
+    <div class="extra-mode-card rhyme" @onclick="Vm.StartRhymingChallengeAsync">
+        <div class="extra-mode-title">@Loc.T("ModeRhymeTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("ModeRhymeSub")</div>
+    </div>
+</div>
+
 <!-- Animated Phonics Stories Section -->
 <div class="section-heading">
     <span>@Loc.T("StoriesSectionTitle")</span>
