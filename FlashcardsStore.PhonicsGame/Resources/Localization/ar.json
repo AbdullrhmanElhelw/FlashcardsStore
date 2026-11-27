@@ -105,5 +105,9 @@
   "ShopUnlocked": "مفتوح",
   "ShopEquipped": "مُفعّل",
   "ShopEquip": "تفعيل",
-  "ShopNotEnough": "نجوم غير كافية"
+  "ShopNotEnough": "نجوم غير كافية",
+  "Unit1Title": "الوحدة 1: الحروف المتحركة القصيرة",
+  "Unit2Title": "الوحدة 2: دمج السواكن والحروف المركبة",
+  "Unit3Title": "الوحدة 3: الكلمات البصرية السريعة",
+  "Unit4Title": "الوحدة 4: السحر الصامت (Magic E)"
 }

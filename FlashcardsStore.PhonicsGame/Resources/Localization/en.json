@@ -105,5 +105,9 @@
   "ShopUnlocked": "Unlocked",
   "ShopEquipped": "Equipped",
   "ShopEquip": "Equip",
-  "ShopNotEnough": "Need more stars"
+  "ShopNotEnough": "Need more stars",
+  "Unit1Title": "Unit 1: Short Vowels",
+  "Unit2Title": "Unit 2: Blends & Digraphs",
+  "Unit3Title": "Unit 3: Sight Words",
+  "Unit4Title": "Unit 4: Magic E (Long Vowels)"
 }

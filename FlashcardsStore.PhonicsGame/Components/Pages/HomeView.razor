@@ -188,6 +188,23 @@
             _ => "pos-center"
         };
 
+        if (i == 0)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit1Title")</div>
+        }
+        else if (i == 4)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit2Title")</div>
+        }
+        else if (i == 6)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit3Title")</div>
+        }
+        else if (i == 8)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit4Title")</div>
+        }
+
         <div class="duo-node-wrap @posClass">
             @if (isCurrent)
             {

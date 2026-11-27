@@ -618,3 +618,17 @@
     font-weight: 700;
     color: var(--muted);
 }
+
+.duo-unit-banner {
+    width: 100%;
+    background: linear-gradient(135deg, #2B071C, #561239);
+    color: #FDE68A;
+    border: 1.5px solid rgba(212, 175, 55, 0.5);
+    border-radius: 16px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 900;
+    text-align: center;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(43, 7, 28, 0.16);
+}

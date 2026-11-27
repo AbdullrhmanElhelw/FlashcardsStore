@@ -1,6 +1,6 @@
 namespace FlashcardsStore.PhonicsGame.Data;
 
-/// <summary>Custom vector SVG avatars for the child profile & Reward Shop (zero emojis).</summary>
+/// <summary>Custom vector SVG avatars for the child profile &amp; Reward Shop (zero emojis).</summary>
 public static class AvatarArtwork
 {
     public static IReadOnlyList<(string Key, string LabelAr, string LabelEn)> Avatars { get; } =
