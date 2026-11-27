@@ -164,10 +164,10 @@
                 </a>
             </nav>
 
-            <!-- Actions: Language Switcher + WhatsApp + Wishlist + Cart + Mobile Toggle -->
-            <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            <!-- Actions: Language Switcher + Wishlist + Cart + Mobile Toggle -->
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
 
-                <!-- Language Switcher Toggle (Compact on mobile, full text on sm+) -->
+                <!-- Language Switcher Toggle -->
                 <form asp-controller="Culture" asp-action="SetCulture" method="post" class="inline-flex items-center">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="culture" value="@targetCulture" />
@@ -182,54 +182,6 @@
                         <span class="sm:hidden font-extrabold text-[11px]">@(isRtl ? "EN" : "عربي")</span>
                     </button>
                 </form>
-
-                <!-- Android App Download + QR Popover (Desktop / Tablet) -->
-                <div class="relative hidden md:block" x-data="{ appQrOpen: false }" @@click.outside="appQrOpen = false">
-                    <button type="button"
-                            @@click="appQrOpen = !appQrOpen"
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#18061A] text-[#D4AF37] hover:bg-[#290A2E] font-bold text-xs border border-[#D4AF37]/40 whitespace-nowrap transition-colors shadow-2xs cursor-pointer"
-                            title="@Loc.Get("DownloadAndroidApp")">
-                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                        <span class="hidden xl:inline">@Loc.Get("DownloadAppShort")</span>
-                        <span class="xl:hidden">APK</span>
-                    </button>
-
-                    <div x-show="appQrOpen"
-                         x-transition
-                         style="display: none;"
-                         class="absolute end-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-[#D4AF37]/30 p-4 z-50 text-center space-y-2.5">
-                        <div class="text-xs font-black text-[#18061A]">@Loc.Get("DownloadAndroidApp")</div>
-                        <div class="bg-[#FAF8F5] p-2 rounded-xl border border-slate-200 inline-block">
-                            <img src="~/images/app-download-qr.png" alt="Android App QR Code" class="w-36 h-36 mx-auto rounded-lg" />
-                        </div>
-                        <p class="text-[11px] font-semibold text-slate-500">
-                            @Loc.GetLocalized("امسح الكود بكاميرا الموبايل أو اضغط للتحميل", "Scan with phone camera or click below")
-                        </p>
-                        <a href="https://github.com/AbdullrhmanElhelw/FlashcardsStore/releases/latest/download/com.kholoudelnady.flashcards-Signed.apk"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="btn-gold-primary w-full py-2 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-slate-950 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                            <span>@Loc.GetLocalized("تحميل مباشر (APK)", "Direct Download (APK)")</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Direct WhatsApp Contact (Desktop / Tablet) -->
-                <a href="@navWhatsAppUrl" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200/80 whitespace-nowrap transition-colors shadow-2xs"
-                   title="@Loc.GetLocalized("تواصل واتساب", "WhatsApp Support")">
-                    <svg class="w-3.5 h-3.5 fill-current text-emerald-600 shrink-0" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z"/>
-                    </svg>
-                    <span class="hidden xl:inline">@Loc.GetLocalized("واتساب", "WhatsApp")</span>
-                </a>
 
                 <!-- Wishlist Toggle (Comfortable tap target on all screens) -->
                 <a asp-controller="Wishlist" asp-action="Index"
@@ -320,6 +272,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 <span>@Loc.Get("NavCatalog")</span>
+            </a>
+
+            <a asp-controller="Home" asp-action="Apps"
+               @@click="mobileMenuOpen = false"
+               class="col-span-2 flex items-center justify-center gap-2 p-3 rounded-xl font-extrabold text-xs text-white bg-[#2B071C] hover:bg-[#3A0A26] transition-colors">
+                <svg class="w-4 h-4 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span>@(isRtl ? "تطبيقاتنا (الفونكس والمتجر)" : "Our Mobile Apps")</span>
             </a>
         </div>
 
@@ -429,16 +390,6 @@
                     <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.761.815 2.796.815 3.18 0 5.766-2.587 5.767-5.766.001-3.18-2.585-5.766-5.767-5.766zm9.969 5.766c0 5.421-4.409 9.83-9.83 9.83-1.637 0-3.174-.403-4.524-1.111l-5.646 1.479 1.509-5.508c-.808-1.408-1.269-3.04-1.269-4.69 0-5.421 4.409-9.83 9.83-9.83 5.421 0 9.83 4.409 9.83 9.83z"/>
                 </svg>
                 <span>@Loc.GetLocalized("تواصل مباشر عبر واتساب", "Direct WhatsApp Support")</span>
-            </a>
-
-            <a href="https://github.com/AbdullrhmanElhelw/FlashcardsStore/releases/latest/download/com.kholoudelnady.flashcards-Signed.apk"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="flex items-center gap-2.5 p-2.5 rounded-xl font-bold text-xs text-[#D4AF37] bg-[#18061A] border border-[#D4AF37]/30 hover:bg-[#290A2E] transition-colors">
-                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                <span>@Loc.Get("DownloadAndroidApp")</span>
             </a>
         </div>
     </div>
