@@ -1,0 +1,64 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<div class="sb-header">
+    <button class="btn-back" @onclick="Vm.ExitStage">
+        <span class="icon-svg" style="width:15px;height:15px;">
+            @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
+        </span>
+        <span>@Loc.T("BackToStages")</span>
+    </button>
+    <div class="stat-pill" style="background:var(--plum);">
+        <span class="icon-svg" style="width:15px;height:15px;color:#FDE047;">@((MarkupString)UiIcons.Star)</span>
+        <span>@Vm.AvailableStars</span>
+    </div>
+</div>
+
+<div class="shop-banner">
+    <div style="font-size:17px;font-weight:900;color:#FDE68A;">@Loc.T("ShopTitle")</div>
+    <div style="font-size:12px;opacity:0.9;">@Loc.T("ShopSub")</div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Vm.ShopFeedback))
+{
+    <div style="background:#FFF1F2;border:1.5px solid #FDA4AF;color:#BE123C;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:800;margin-bottom:12px;text-align:center;">
+        @Vm.ShopFeedback
+    </div>
+}
+
+<div class="shop-grid">
+    @foreach (var item in Vm.ShopItems)
+    {
+        var unlocked = Vm.IsShopItemUnlocked(item.Id);
+        var equipped = Vm.IsShopItemEquipped(item);
+
+        <div class="shop-card @(equipped ? "equipped" : "")" @onclick="() => Vm.BuyOrEquipShopItemAsync(item)">
+            <div class="shop-preview" style="background:@item.PreviewColor;">
+                @if (item.Kind == "avatar")
+                {
+                    @((MarkupString)AvatarArtwork.GetSvg(item.Key))
+                }
+                else
+                {
+                    <span class="icon-svg" style="width:36px;height:36px;color:#FDE047;">@((MarkupString)UiIcons.Award)</span>
+                }
+            </div>
+            <div class="shop-item-title">@(Loc.IsArabic ? item.TitleAr : item.TitleEn)</div>
+            <div class="shop-item-action @(equipped ? "is-equipped" : (unlocked ? "is-unlocked" : ""))">
+                @if (equipped)
+                {
+                    <span>@Loc.T("ShopEquipped")</span>
+                }
+                else if (unlocked)
+                {
+                    <span>@Loc.T("ShopEquip")</span>
+                }
+                else
+                {
+                    <span class="icon-svg" style="width:13px;height:13px;color:#FDE047;">@((MarkupString)UiIcons.Star)</span>
+                    <span>@item.CostStars</span>
+                }
+            </div>
+        </div>
+    }
+</div>

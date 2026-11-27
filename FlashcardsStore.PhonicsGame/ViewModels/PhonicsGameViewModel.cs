@@ -53,7 +53,12 @@ public sealed class PhonicsGameViewModel : IDisposable
     public IReadOnlyList<PhonicsStage> Stages => _curriculum.GetStages();
     public IReadOnlyList<PhonicsStory> Stories => _curriculum.GetStories();
     public IReadOnlyList<PhonicsLetterItem> Alphabet => _curriculum.GetAlphabet();
+    public IReadOnlyList<ShopItem> ShopItems => _curriculum.GetShopItems();
     public int TotalWordsCount => _curriculum.TotalWordsCount;
+    public int AvailableStars => _progress.AvailableStars;
+    public IReadOnlyList<string> WeakWords => _progress.GetWeakWords();
+    public string EquippedTheme => _progress.EquippedTheme;
+    public string ShopFeedback { get; private set; } = string.Empty;
     public int TotalXp => _progress.TotalXp;
     public int DailyStreakDays => _progress.DailyStreakDays;
     public int OnboardingGoalMinutes { get; set; } = 10;
@@ -336,6 +341,102 @@ public sealed class PhonicsGameViewModel : IDisposable
         }
     }
 
+    public void OpenShop()
+    {
+        ShopFeedback = string.Empty;
+        CurrentScreen = AppScreen.Shop;
+        Notify();
+    }
+
+    public bool IsShopItemUnlocked(string itemId) => _progress.IsShopItemUnlocked(itemId);
+
+    public bool IsShopItemEquipped(ShopItem item) => item.Kind switch
+    {
+        "avatar" => string.Equals(Profile.AvatarKey, item.Key, StringComparison.OrdinalIgnoreCase),
+        "theme" => string.Equals(EquippedTheme, item.Key, StringComparison.OrdinalIgnoreCase),
+        _ => false
+    };
+
+    public async Task BuyOrEquipShopItemAsync(ShopItem item)
+    {
+        ShopFeedback = string.Empty;
+        if (!IsShopItemUnlocked(item.Id))
+        {
+            if (!_progress.TryUnlockShopItem(item.Id, item.CostStars))
+            {
+                ShopFeedback = _loc.T("ShopNotEnough");
+                await SafeJsAsync("phonicsAudio.wrong");
+                Notify();
+                return;
+            }
+            await SafeJsAsync("phonicsAudio.success");
+            await SafeJsAsync("phonicsAudio.confetti");
+        }
+        else
+        {
+            await SafeJsAsync("phonicsAudio.pop");
+        }
+
+        if (item.Kind == "avatar")
+        {
+            _profileService.SaveProfile(Profile.Name, item.Key, Profile.DailyGoalMinutes);
+            Profile = _profileService.GetProfile();
+        }
+        else if (item.Kind == "theme")
+        {
+            _progress.SetEquippedTheme(item.Key);
+        }
+
+        Notify();
+    }
+
+    public IReadOnlyList<(string Key, string LabelAr, string LabelEn)> GetAvailableAvatars()
+    {
+        var list = AvatarArtwork.Avatars.ToList();
+        foreach (var sa in AvatarArtwork.ShopAvatars)
+        {
+            var shopItem = ShopItems.FirstOrDefault(i => i.Kind == "avatar" && i.Key == sa.Key);
+            if (shopItem is not null && IsShopItemUnlocked(shopItem.Id))
+                list.Add(sa);
+        }
+        return list;
+    }
+
+    public async Task StartWeakWordsReviewAsync()
+    {
+        var weakKeys = WeakWords.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (weakKeys.Count == 0) return;
+
+        var reviewWords = Stages
+            .SelectMany(s => s.Words)
+            .Where(w => weakKeys.Contains(w.Word))
+            .DistinctBy(w => w.Word, StringComparer.OrdinalIgnoreCase)
+            .Take(8)
+            .ToList();
+
+        if (reviewWords.Count == 0) return;
+
+        IsDailyChallengeMode = false;
+        SelectedMode = GameMode.WordBuilder;
+        ActiveStage = new PhonicsStage(
+            Id: 96,
+            TitleAr: "مراجعة الكلمات الصعبة",
+            TitleEn: "Weak Words Review",
+            SubtitleAr: "",
+            SubtitleEn: "",
+            BadgeKey: "star_badge",
+            GradientStart: "#E11D48",
+            GradientEnd: "#BE123C",
+            IsFree: true,
+            Words: reviewWords);
+        WordIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        CurrentScreen = AppScreen.Playing;
+        await SetupCurrentWordAsync();
+    }
+
     public void OpenSoundboard()
     {
         ActiveSoundboardLetter = null;
@@ -512,6 +613,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         {
             RhymeWrongOption = option;
             Streak = 0;
+            _progress.RecordWordMistake(CurrentRhyme.TargetWord);
             await SafeJsAsync("phonicsAudio.wrong");
             Notify();
             await Task.Delay(450);
@@ -767,6 +869,7 @@ public sealed class PhonicsGameViewModel : IDisposable
             {
                 BuilderWrongFlash = true;
                 Streak = 0;
+                _progress.RecordWordMistake(CurrentWord.Word);
                 await SafeJsAsync("phonicsAudio.wrong");
                 Notify();
                 await Task.Delay(520);
@@ -808,6 +911,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         {
             WrongMatchWord = option.Word;
             Streak = 0;
+            _progress.RecordWordMistake(CurrentWord.Word);
             await SafeJsAsync("phonicsAudio.wrong");
             Notify();
             await Task.Delay(450);

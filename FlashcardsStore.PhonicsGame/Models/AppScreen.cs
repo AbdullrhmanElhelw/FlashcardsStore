@@ -7,5 +7,6 @@ public enum AppScreen
     Home,
     Playing,
     Soundboard,
-    StoryPlayer
+    StoryPlayer,
+    Shop
 }

@@ -16,9 +16,12 @@
             <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Globe)</span>
             <span>@(Loc.IsArabic ? "EN" : "AR")</span>
         </button>
+        <button class="btn-lang-pill" @onclick="Vm.OpenShop" title="Shop">
+            <span class="icon-svg" style="width:14px;height:14px;color:#FDE047;">@((MarkupString)UiIcons.ShoppingBag)</span>
+        </button>
         <div class="stat-pill">
             <span class="icon-svg" style="width:15px;height:15px;color:#FDE047;">@((MarkupString)UiIcons.Star)</span>
-            <span>@Vm.TotalStars</span>
+            <span>@Vm.AvailableStars</span>
         </div>
         @if (Vm.IsActivated)
         {

@@ -51,6 +51,22 @@
     </div>
 </div>
 
+@if (Vm.WeakWords.Count > 0)
+{
+    <div class="weak-card" @onclick="Vm.StartWeakWordsReviewAsync">
+        <div style="display:flex;align-items:center;gap:11px;">
+            <div class="weak-icon">
+                <span class="icon-svg" style="width:20px;height:20px;">@((MarkupString)UiIcons.RefreshCw)</span>
+            </div>
+            <div>
+                <div style="font-size:13.5px;font-weight:900;color:#881337;">@Loc.T("WeakWordsTitle") (@Vm.WeakWords.Count)</div>
+                <div style="font-size:11px;font-weight:600;color:#9F1239;">@Loc.T("WeakWordsSub")</div>
+            </div>
+        </div>
+        <div class="weak-badge">@Loc.T("WeakWordsBtn")</div>
+    </div>
+}
+
 <!-- Achievements Strip -->
 <div class="achievements-strip">
     @foreach (var badge in Vm.GetAchievements())

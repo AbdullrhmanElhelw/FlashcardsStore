@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "id": "av_panda", "kind": "avatar", "key": "panda", "titleAr": "باندا لطيف", "titleEn": "Cute Panda", "costStars": 5, "previewColor": "#DCFCE7" },
+    { "id": "av_unicorn", "kind": "avatar", "key": "unicorn", "titleAr": "يونيكورن سحري", "titleEn": "Magic Unicorn", "costStars": 10, "previewColor": "#FCE7F3" },
+    { "id": "av_rocket", "kind": "avatar", "key": "rocket", "titleAr": "صاروخ سريع", "titleEn": "Space Rocket", "costStars": 12, "previewColor": "#DBEAFE" },
+    { "id": "av_crown_cat", "kind": "avatar", "key": "crown_cat", "titleAr": "القط الملكي", "titleEn": "Royal Cat", "costStars": 15, "previewColor": "#FEF3C7" },
+    { "id": "th_royal", "kind": "theme", "key": "royal_plum", "titleAr": "إطار شهادة ملكي", "titleEn": "Royal Plum Certificate", "costStars": 8, "previewColor": "#2B071C" },
+    { "id": "th_emerald", "kind": "theme", "key": "emerald_gold", "titleAr": "إطار شهادة زمردي", "titleEn": "Emerald Gold Certificate", "costStars": 10, "previewColor": "#059669" }
+  ]
+}

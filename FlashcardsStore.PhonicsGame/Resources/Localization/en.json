@@ -96,5 +96,14 @@
   "SentencePrompt": "Tap the words in order to build a sentence",
   "RhymePrompt": "Which word rhymes with:",
   "TraceTitle": "Trace the letter with your finger",
-  "ClearCanvasBtn": "Clear"
+  "ClearCanvasBtn": "Clear",
+  "WeakWordsTitle": "Weak Words Review",
+  "WeakWordsSub": "Practice tricky words to master them",
+  "WeakWordsBtn": "Review",
+  "ShopTitle": "Reward Shop",
+  "ShopSub": "Spend your stars on exclusive avatars & themes",
+  "ShopUnlocked": "Unlocked",
+  "ShopEquipped": "Equipped",
+  "ShopEquip": "Equip",
+  "ShopNotEnough": "Need more stars"
 }

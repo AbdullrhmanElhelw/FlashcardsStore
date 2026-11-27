@@ -16,7 +16,7 @@
 
             <div class="profile-field-label">@Loc.T("ProfileAvatarLabel")</div>
             <div class="avatar-grid">
-                @foreach (var av in AvatarArtwork.Avatars)
+                @foreach (var av in Vm.GetAvailableAvatars())
                 {
                     var selected = Vm.ProfileAvatarInput == av.Key;
                     <div class="avatar-opt @(selected ? "selected" : "")"

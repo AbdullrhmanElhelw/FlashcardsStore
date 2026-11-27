@@ -96,5 +96,14 @@
   "SentencePrompt": "رتب الكلمات لتكوين جملة صحيحة",
   "RhymePrompt": "ما الكلمة التي لها نفس نغمة:",
   "TraceTitle": "تدرّب على كتابة الحرف بإصبعك",
-  "ClearCanvasBtn": "مسح"
+  "ClearCanvasBtn": "مسح",
+  "WeakWordsTitle": "مراجعة الكلمات الصعبة",
+  "WeakWordsSub": "كلمات تحتاج تدريب سريع لإتقانها",
+  "WeakWordsBtn": "راجع الآن",
+  "ShopTitle": "متجر المكافآت",
+  "ShopSub": "استبدل نجومك بشخصيات وأوسمة حصرية",
+  "ShopUnlocked": "مفتوح",
+  "ShopEquipped": "مُفعّل",
+  "ShopEquip": "تفعيل",
+  "ShopNotEnough": "نجوم غير كافية"
 }

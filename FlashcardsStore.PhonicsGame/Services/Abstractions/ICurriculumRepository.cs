@@ -10,6 +10,7 @@ public interface ICurriculumRepository
     IReadOnlyList<SentenceChallenge> GetSentences();
     IReadOnlyList<RhymeChallenge> GetRhymes();
     IReadOnlyList<PhonicsLetterItem> GetAlphabet();
+    IReadOnlyList<ShopItem> GetShopItems();
     int TotalWordsCount { get; }
     void Reload();
 }

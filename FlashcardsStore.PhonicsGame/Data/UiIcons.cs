@@ -174,4 +174,18 @@ public static class UiIcons
             <path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/>
         </svg>
         """;
+
+    public const string ShoppingBag = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 7h12l1 13H5L6 7z" fill="currentColor" fill-opacity="0.16"/>
+            <path d="M9 7V5a3 3 0 0 1 6 0v2"/>
+        </svg>
+        """;
+
+    public const string RefreshCw = """
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+            <polyline points="21 3 21 9 15 9"/>
+        </svg>
+        """;
 }

@@ -18,6 +18,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     private IReadOnlyList<SentenceChallenge> _sentences = [];
     private IReadOnlyList<RhymeChallenge> _rhymes = [];
     private IReadOnlyList<PhonicsLetterItem> _alphabet = [];
+    private IReadOnlyList<ShopItem> _shopItems = [];
 
     public event Action? ContentReloaded;
 
@@ -31,6 +32,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     public IReadOnlyList<SentenceChallenge> GetSentences() => _sentences;
     public IReadOnlyList<RhymeChallenge> GetRhymes() => _rhymes;
     public IReadOnlyList<PhonicsLetterItem> GetAlphabet() => _alphabet;
+    public IReadOnlyList<ShopItem> GetShopItems() => _shopItems;
     public int TotalWordsCount { get; private set; }
 
     public void Reload()
@@ -46,6 +48,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
         _sentences = LoadPack<SentencesPack>("sentences.json")?.Sentences ?? [];
         _rhymes = LoadPack<RhymesPack>("rhymes.json")?.Rhymes ?? [];
         _alphabet = LoadPack<AlphabetPack>("alphabet.json")?.Letters ?? [];
+        _shopItems = LoadPack<ShopPack>("shop.json")?.Items ?? [];
         TotalWordsCount = _stages.Sum(s => s.Words.Count);
     }
 

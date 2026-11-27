@@ -8,6 +8,16 @@
     animation: popIn 0.3s ease;
 }
 
+.cert-card.theme-royal_plum {
+    background: linear-gradient(165deg, #FFF5FA 0%, #FCE7F3 100%);
+    border-color: #561239;
+}
+
+.cert-card.theme-emerald_gold {
+    background: linear-gradient(165deg, #ECFDF5 0%, #FEF3C7 100%);
+    border-color: #059669;
+}
+
 .cert-seal {
     width: 68px;
     height: 68px;
