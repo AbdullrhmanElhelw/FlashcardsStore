@@ -65,6 +65,38 @@
     box-shadow: 0 3px 0 #CA8A04;
 }
 
+.story-blank-slot {
+    display: inline-block;
+    border-bottom: 3px dashed var(--plum);
+    color: var(--muted);
+    padding: 0 8px;
+}
+
+.story-blank-choices {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    direction: ltr;
+}
+
+.story-blank-btn {
+    background: #fff;
+    border: 2px solid var(--plum);
+    border-radius: 14px;
+    padding: 8px 18px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--plum);
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--plum);
+}
+
+.story-blank-btn.wrong {
+    border-color: var(--err);
+    background: #FFF1F2;
+    animation: shake 0.4s ease;
+}
+
 .story-sentence-ar {
     font-size: 16px;
     font-weight: 700;

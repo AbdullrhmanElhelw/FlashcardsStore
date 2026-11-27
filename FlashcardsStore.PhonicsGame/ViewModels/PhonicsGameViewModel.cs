@@ -62,6 +62,7 @@ public sealed class PhonicsGameViewModel : IDisposable
     public int TotalXp => _progress.TotalXp;
     public int DailyStreakDays => _progress.DailyStreakDays;
     public int OnboardingGoalMinutes { get; set; } = 10;
+    public string OnboardingFocus { get; set; } = "words";
     public bool IsStoryCompleted(int storyId) => _progress.IsStoryCompleted(storyId);
 
     public AppScreen CurrentScreen { get; private set; } = AppScreen.Splash;
@@ -106,6 +107,13 @@ public sealed class PhonicsGameViewModel : IDisposable
     public bool InStoryQuiz { get; private set; }
     public bool StoryQuizSolved { get; private set; }
     public string? StoryQuizWrongOption { get; private set; }
+    public bool StoryBlankSolved { get; private set; }
+    public List<string> StoryBlankOptions { get; private set; } = [];
+    public string? StoryBlankWrongOption { get; private set; }
+
+    // Picture Dictionary state
+    public string DictionarySearch { get; set; } = string.Empty;
+    public int DictionaryStageId { get; set; } = 0;
 
     // Sentence Builder state
     public IReadOnlyList<SentenceChallenge> SentenceList { get; private set; } = [];
@@ -169,6 +177,13 @@ public sealed class PhonicsGameViewModel : IDisposable
         Notify();
     }
 
+    public async Task SetLanguageAsync(string lang)
+    {
+        _loc.SetLanguage(lang);
+        await SyncDocumentDirectionAsync();
+        Notify();
+    }
+
     private Task SyncDocumentDirectionAsync()
         => SafeJsAsync("phonicsDom.setLocale", _loc.CurrentLang, _loc.Direction);
 
@@ -196,7 +211,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public void NextOnboardingSlide()
     {
-        if (OnboardingSlide < 3)
+        if (OnboardingSlide < 4)
         {
             OnboardingSlide++;
             Notify();
@@ -209,7 +224,7 @@ public sealed class PhonicsGameViewModel : IDisposable
 
     public void SetOnboardingSlide(int index)
     {
-        OnboardingSlide = Math.Clamp(index, 0, 3);
+        OnboardingSlide = Math.Clamp(index, 0, 4);
         Notify();
     }
 
@@ -218,6 +233,22 @@ public sealed class PhonicsGameViewModel : IDisposable
         _profileService.SaveProfile(ProfileNameInput, ProfileAvatarInput, OnboardingGoalMinutes);
         Profile = _profileService.GetProfile();
         Preferences.Default.Set(KeyOnboardingDone, true);
+
+        if (OnboardingFocus == "stories")
+        {
+            var firstStory = Stories.FirstOrDefault(s => s.IsFree);
+            if (firstStory is not null)
+            {
+                _ = StartStoryAsync(firstStory);
+                return;
+            }
+        }
+        else if (OnboardingFocus == "sentences")
+        {
+            _ = StartSentenceChallengeAsync();
+            return;
+        }
+
         CurrentScreen = AppScreen.Home;
         Notify();
     }
@@ -282,6 +313,44 @@ public sealed class PhonicsGameViewModel : IDisposable
         Notify();
     }
 
+    public void OpenDictionary()
+    {
+        DictionarySearch = string.Empty;
+        DictionaryStageId = 0;
+        CurrentScreen = AppScreen.Dictionary;
+        Notify();
+    }
+
+    public IReadOnlyList<(PhonicsWord Word, bool Unlocked, int Mastery)> GetDictionaryWords()
+    {
+        var term = (DictionarySearch ?? string.Empty).Trim();
+        var results = new List<(PhonicsWord, bool, int)>();
+        foreach (var stage in Stages)
+        {
+            if (DictionaryStageId > 0 && stage.Id != DictionaryStageId)
+                continue;
+
+            var unlocked = stage.IsFree || _activation.IsActivated;
+            foreach (var w in stage.Words)
+            {
+                if (!string.IsNullOrEmpty(term) &&
+                    !w.Word.Contains(term, StringComparison.OrdinalIgnoreCase) &&
+                    !w.ArabicMeaning.Contains(term, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                results.Add((w, unlocked, _progress.GetWordMastery(w.Word)));
+            }
+        }
+        return results;
+    }
+
+    public async Task SpeakWordAsync(string word)
+    {
+        await SafeJsAsync("phonicsAudio.pop");
+        await _speech.SpeakAsync(word, pitch: 1.08f);
+    }
+
     public async Task StartStoryAsync(PhonicsStory story)
     {
         if (!story.IsFree && !_activation.IsActivated)
@@ -295,9 +364,52 @@ public sealed class PhonicsGameViewModel : IDisposable
         InStoryQuiz = false;
         StoryQuizSolved = false;
         StoryQuizWrongOption = null;
+        SetupStoryBlank();
         CurrentScreen = AppScreen.StoryPlayer;
         Notify();
         await SpeakCurrentStorySceneAsync();
+    }
+
+    private void SetupStoryBlank()
+    {
+        StoryBlankSolved = false;
+        StoryBlankWrongOption = null;
+        if (ActiveStory is null) return;
+
+        var scene = ActiveStory.Scenes[StorySceneIndex];
+        var distractors = ActiveStory.Scenes
+            .Select(s => s.FocusWord)
+            .Where(w => !string.Equals(w, scene.FocusWord, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(_ => _rng.Next())
+            .Take(2)
+            .ToList();
+
+        distractors.Add(scene.FocusWord);
+        StoryBlankOptions = distractors.OrderBy(_ => _rng.Next()).ToList();
+    }
+
+    public async Task SelectStoryBlankOptionAsync(string option)
+    {
+        if (ActiveStory is null || StoryBlankSolved) return;
+        var scene = ActiveStory.Scenes[StorySceneIndex];
+        if (string.Equals(option, scene.FocusWord, StringComparison.OrdinalIgnoreCase))
+        {
+            StoryBlankSolved = true;
+            StoryBlankWrongOption = null;
+            await SafeJsAsync("phonicsAudio.success");
+            Notify();
+            await _speech.SpeakAsync(scene.SentenceEn, pitch: 1.08f);
+        }
+        else
+        {
+            StoryBlankWrongOption = option;
+            await SafeJsAsync("phonicsAudio.wrong");
+            Notify();
+            await Task.Delay(450);
+            StoryBlankWrongOption = null;
+            Notify();
+        }
     }
 
     public Task SpeakCurrentStorySceneAsync()
@@ -313,6 +425,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         if (StorySceneIndex + 1 < ActiveStory.Scenes.Count)
         {
             StorySceneIndex++;
+            SetupStoryBlank();
             Notify();
             await SpeakCurrentStorySceneAsync();
         }
@@ -336,6 +449,7 @@ public sealed class PhonicsGameViewModel : IDisposable
         if (StorySceneIndex > 0)
         {
             StorySceneIndex--;
+            SetupStoryBlank();
             Notify();
             await SpeakCurrentStorySceneAsync();
         }

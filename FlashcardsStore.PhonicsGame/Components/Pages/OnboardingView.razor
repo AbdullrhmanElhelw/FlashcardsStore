@@ -7,25 +7,77 @@
             <img src="images/logo_gold.png" alt="Logo" />
             <span>@Loc.T("AcademyName")</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-            <button class="btn-lang-pill" style="color:var(--plum);border-color:#CBD5E1;background:#fff;" @onclick="Vm.ToggleLanguageAsync">
-                <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Globe)</span>
-                <span>@(Loc.IsArabic ? "EN" : "AR")</span>
-            </button>
-            <button class="onb-skip" @onclick="Vm.CompleteOnboarding">@Loc.T("Skip")</button>
-        </div>
+        <button class="onb-skip" @onclick="Vm.CompleteOnboarding">@Loc.T("Skip")</button>
     </div>
 
     <div class="onb-body">
         @if (Vm.OnboardingSlide == 0)
         {
-            <div class="onb-art-card">
-                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Puzzle)</span>
+            <div class="onb-art-card" style="width:128px;height:128px;padding:30px;margin-bottom:18px;">
+                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Globe)</span>
             </div>
-            <h2 class="onb-title">@Loc.T("Onb1Title")</h2>
-            <p class="onb-desc">@Loc.T("Onb1Desc")</p>
+            <h2 class="onb-title">@Loc.T("OnbLangTitle")</h2>
+            <p class="onb-desc" style="margin-bottom:18px;">@Loc.T("OnbLangDesc")</p>
+
+            <div class="onb-lang-grid">
+                <div class="onb-lang-card @(Loc.IsArabic ? "selected" : "")" @onclick='() => Vm.SetLanguageAsync("ar")'>
+                    <div class="onb-lang-code">ع</div>
+                    <div class="onb-lang-name">العربية</div>
+                </div>
+                <div class="onb-lang-card @(!Loc.IsArabic ? "selected" : "")" @onclick='() => Vm.SetLanguageAsync("en")'>
+                    <div class="onb-lang-code">En</div>
+                    <div class="onb-lang-name">English</div>
+                </div>
+            </div>
         }
         else if (Vm.OnboardingSlide == 1)
+        {
+            <h2 class="onb-title">@Loc.T("OnbOverviewTitle")</h2>
+            <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbOverviewDesc")</p>
+
+            <div class="onb-feat-list">
+                <div class="onb-feat-item">
+                    <span class="onb-feat-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</span>
+                    <span>@Loc.T("OnbFeat1")</span>
+                </div>
+                <div class="onb-feat-item">
+                    <span class="onb-feat-icon icon-svg">@((MarkupString)UiIcons.BookOpen)</span>
+                    <span>@Loc.T("OnbFeat2")</span>
+                </div>
+                <div class="onb-feat-item">
+                    <span class="onb-feat-icon icon-svg">@((MarkupString)UiIcons.Volume)</span>
+                    <span>@Loc.T("OnbFeat3")</span>
+                </div>
+                <div class="onb-feat-item">
+                    <span class="onb-feat-icon icon-svg">@((MarkupString)UiIcons.Mic)</span>
+                    <span>@Loc.T("OnbFeat4")</span>
+                </div>
+            </div>
+        }
+        else if (Vm.OnboardingSlide == 2)
+        {
+            <h2 class="onb-title">@Loc.T("OnbFocusTitle")</h2>
+            <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbFocusDesc")</p>
+
+            <div class="onb-goal-list">
+                <div class="onb-goal-item @(Vm.OnboardingFocus == "words" ? "selected" : "")"
+                     @onclick='() => Vm.OnboardingFocus = "words"'>
+                    <span class="icon-svg" style="width:22px;height:22px;color:var(--plum);">@((MarkupString)UiIcons.Puzzle)</span>
+                    <span>@Loc.T("FocusWords")</span>
+                </div>
+                <div class="onb-goal-item @(Vm.OnboardingFocus == "stories" ? "selected" : "")"
+                     @onclick='() => Vm.OnboardingFocus = "stories"'>
+                    <span class="icon-svg" style="width:22px;height:22px;color:#EA580C;">@((MarkupString)UiIcons.BookOpen)</span>
+                    <span>@Loc.T("FocusStories")</span>
+                </div>
+                <div class="onb-goal-item @(Vm.OnboardingFocus == "sentences" ? "selected" : "")"
+                     @onclick='() => Vm.OnboardingFocus = "sentences"'>
+                    <span class="icon-svg" style="width:22px;height:22px;color:#2563EB;">@((MarkupString)UiIcons.Sparkles)</span>
+                    <span>@Loc.T("FocusSentences")</span>
+                </div>
+            </div>
+        }
+        else if (Vm.OnboardingSlide == 3)
         {
             <h2 class="onb-title">@Loc.T("OnbStep2Title")</h2>
             <p class="onb-desc" style="margin-bottom:14px;">@Loc.T("OnbStep2Desc")</p>
@@ -48,7 +100,7 @@
                 }
             </div>
         }
-        else if (Vm.OnboardingSlide == 2)
+        else
         {
             <h2 class="onb-title">@Loc.T("OnbStep3Title")</h2>
             <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbStep3Desc")</p>
@@ -65,19 +117,11 @@
                 }
             </div>
         }
-        else
-        {
-            <div class="onb-art-card">
-                <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Trophy)</span>
-            </div>
-            <h2 class="onb-title">@Loc.T("OnbStep4Title")</h2>
-            <p class="onb-desc">@Loc.T("OnbStep4Desc")</p>
-        }
     </div>
 
     <div class="onb-footer">
         <div class="onb-dots">
-            @for (var i = 0; i < 4; i++)
+            @for (var i = 0; i < 5; i++)
             {
                 var idx = i;
                 <span class="onb-dot @(Vm.OnboardingSlide == idx ? "active" : "")"
@@ -85,7 +129,7 @@
             }
         </div>
         <button class="btn-primary" @onclick="Vm.NextOnboardingSlide">
-            @(Vm.OnboardingSlide == 3 ? Loc.T("StartPlaying") : Loc.T("Next"))
+            @(Vm.OnboardingSlide == 4 ? Loc.T("StartPlaying") : Loc.T("Next"))
         </button>
     </div>
 </div>

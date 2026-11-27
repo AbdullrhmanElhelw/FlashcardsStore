@@ -1,0 +1,73 @@
+@inject PhonicsGameViewModel Vm
+@inject ILocalizationService Loc
+
+<div class="sb-header">
+    <button class="btn-back" @onclick="Vm.ExitStage">
+        <span class="icon-svg" style="width:15px;height:15px;">
+            @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
+        </span>
+        <span>@Loc.T("BackToStages")</span>
+    </button>
+    <div style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("DictTitle")</div>
+</div>
+
+<div class="dict-search-wrap">
+    <span class="icon-svg dict-search-icon">@((MarkupString)UiIcons.Search)</span>
+    <input class="dict-search-input"
+           placeholder="@Loc.T("DictSearchPlaceholder")"
+           @bind="Vm.DictionarySearch"
+           @bind:event="oninput" />
+</div>
+
+<div class="cat-tabs" style="margin-bottom:14px;">
+    <button class="cat-tab @(Vm.DictionaryStageId == 0 ? "active" : "")"
+            @onclick="() => Vm.DictionaryStageId = 0">
+        @Loc.T("CatAll")
+    </button>
+    @foreach (var st in Vm.Stages)
+    {
+        <button class="cat-tab @(Vm.DictionaryStageId == st.Id ? "active" : "")"
+                @onclick="() => Vm.DictionaryStageId = st.Id">
+            @(Loc.IsArabic ? st.TitleAr : st.TitleEn)
+        </button>
+    }
+</div>
+
+<div class="dict-grid">
+    @foreach (var entry in Vm.GetDictionaryWords())
+    {
+        var w = entry.Word;
+        <div class="dict-card @(entry.Unlocked ? "" : "locked")"
+             @onclick="() => HandleCardTapAsync(w.Word, entry.Unlocked)">
+            <div class="dict-art" style="background:@w.BgColor;">
+                @((MarkupString)WordArtwork.GetSvg(w.ArtworkKey, w.AccentColor))
+            </div>
+            <div class="dict-word">@w.Word.ToUpperInvariant()</div>
+            <div class="dict-ar">@w.ArabicMeaning</div>
+            <div class="dict-stars">
+                @for (var s = 0; s < 3; s++)
+                {
+                    <span class="icon-svg" style="width:12px;height:12px;color:@(s < entry.Mastery ? "#F59E0B" : "#CBD5E1");">
+                        @((MarkupString)UiIcons.Star)
+                    </span>
+                }
+            </div>
+            @if (!entry.Unlocked)
+            {
+                <div class="dict-lock-tag icon-svg">@((MarkupString)UiIcons.Lock)</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private Task HandleCardTapAsync(string word, bool unlocked)
+    {
+        if (!unlocked)
+        {
+            Vm.OpenActivationModal();
+            return Task.CompletedTask;
+        }
+        return Vm.SpeakWordAsync(word);
+    }
+}

@@ -78,20 +78,30 @@
     }
 </div>
 
-<!-- A-Z Phonics Soundboard Banner -->
-<div class="soundboard-cta" @onclick="Vm.OpenSoundboard">
-    <div style="display:flex;align-items:center;gap:12px;">
-        <div class="icon-svg" style="width:38px;height:38px;padding:7px;border-radius:12px;background:rgba(255,255,255,0.14);color:#FDE047;">
-            @((MarkupString)UiIcons.BookOpen)
-        </div>
-        <div>
-            <div style="font-size:14.5px;font-weight:900;">@Loc.T("SoundboardTitle")</div>
-            <div style="font-size:11.5px;color:#FDE68A;">@Loc.T("SoundboardSub")</div>
+<!-- A-Z Phonics Soundboard & Picture Dictionary -->
+<div class="extra-modes-row" style="grid-template-columns:1fr 1fr;margin-bottom:14px;">
+    <div class="soundboard-cta" style="margin-bottom:0;" @onclick="Vm.OpenSoundboard">
+        <div style="display:flex;align-items:center;gap:9px;">
+            <div class="icon-svg" style="width:34px;height:34px;padding:6px;border-radius:10px;background:rgba(255,255,255,0.14);color:#FDE047;">
+                @((MarkupString)UiIcons.BookOpen)
+            </div>
+            <div>
+                <div style="font-size:13px;font-weight:900;">@Loc.T("SoundboardTitle")</div>
+                <div style="font-size:10.5px;color:#FDE68A;">A-Z + Tracing</div>
+            </div>
         </div>
     </div>
-    <span class="icon-svg" style="width:20px;height:20px;color:#FDE047;">
-        @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronLeft : UiIcons.ChevronRight))
-    </span>
+    <div class="soundboard-cta" style="margin-bottom:0;background:linear-gradient(135deg,#0F766E,#14B8A6);" @onclick="Vm.OpenDictionary">
+        <div style="display:flex;align-items:center;gap:9px;">
+            <div class="icon-svg" style="width:34px;height:34px;padding:6px;border-radius:10px;background:rgba(255,255,255,0.16);color:#fff;">
+                @((MarkupString)UiIcons.Search)
+            </div>
+            <div>
+                <div style="font-size:13px;font-weight:900;">@Loc.T("DictTitle")</div>
+                <div style="font-size:10.5px;color:#CCFBF1;">@Vm.TotalWordsCount Words</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="mode-tabs">

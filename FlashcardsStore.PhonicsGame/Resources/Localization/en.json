@@ -120,5 +120,22 @@
   "CatAdvanced": "Teams & R",
   "ModeMinimalTitle": "Minimal Pairs",
   "ModeMinimalSub": "Short vs Magic E",
-  "MinimalPrompt": "Listen and pick the word you hear"
+  "MinimalPrompt": "Listen and pick the word you hear",
+  "StoryFillPrompt": "Pick the missing word to complete the sentence:",
+  "DictTitle": "Picture Dictionary",
+  "DictSub": "Browse all 120 words with audio & art",
+  "DictSearchPlaceholder": "Search in English or Arabic...",
+  "OnbLangTitle": "Choose Your Language",
+  "OnbLangDesc": "You can switch between Arabic and English anytime",
+  "OnbOverviewTitle": "What Does This App Do?",
+  "OnbOverviewDesc": "A complete phonics journey from A-Z sounds to reading stories",
+  "OnbFeat1": "12 Stages & 120 Illustrated Phonics Words",
+  "OnbFeat2": "6 Animated Fill-in-the-Blank Stories",
+  "OnbFeat3": "A-Z Soundboard & Finger Letter Tracing",
+  "OnbFeat4": "Rhymes, Sentence Builder & Speech Check",
+  "OnbFocusTitle": "What Would You Like to Start With?",
+  "OnbFocusDesc": "We will tailor your starting experience",
+  "FocusWords": "Phonics & Word Building",
+  "FocusStories": "Animated Stories & Reading",
+  "FocusSentences": "Sentence Builder & Rhymes"
 }

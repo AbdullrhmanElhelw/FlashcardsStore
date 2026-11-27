@@ -8,5 +8,6 @@ public enum AppScreen
     Playing,
     Soundboard,
     StoryPlayer,
-    Shop
+    Shop,
+    Dictionary
 }
