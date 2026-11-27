@@ -109,5 +109,16 @@
   "Unit1Title": "Unit 1: Short Vowels",
   "Unit2Title": "Unit 2: Blends & Digraphs",
   "Unit3Title": "Unit 3: Sight Words",
-  "Unit4Title": "Unit 4: Magic E (Long Vowels)"
+  "Unit4Title": "Unit 4: Magic E (Long Vowels)",
+  "Unit5Title": "Unit 5: Vowel Teams",
+  "Unit6Title": "Unit 6: R-Controlled Vowels",
+  "CatAll": "All",
+  "CatShort": "Short Vowels",
+  "CatBlends": "Blends",
+  "CatSight": "Sight Words",
+  "CatMagicE": "Magic E",
+  "CatAdvanced": "Teams & R",
+  "ModeMinimalTitle": "Minimal Pairs",
+  "ModeMinimalSub": "Short vs Magic E",
+  "MinimalPrompt": "Listen and pick the word you hear"
 }

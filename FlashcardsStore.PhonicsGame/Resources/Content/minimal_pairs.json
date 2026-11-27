@@ -1,0 +1,12 @@
+{
+  "pairs": [
+    { "shortWord": "cap", "longWord": "cape", "shortArabic": "كاب", "longArabic": "رداء", "isFree": true },
+    { "shortWord": "hat", "longWord": "hate", "shortArabic": "قبعة", "longArabic": "يكره", "isFree": true },
+    { "shortWord": "kit", "longWord": "kite", "shortArabic": "عدة", "longArabic": "طائرة ورقية", "isFree": true },
+    { "shortWord": "pin", "longWord": "pine", "shortArabic": "دبوس", "longArabic": "شجرة صنوبر", "isFree": true },
+    { "shortWord": "cub", "longWord": "cube", "shortArabic": "شبل", "longArabic": "مكعب", "isFree": false },
+    { "shortWord": "tub", "longWord": "tube", "shortArabic": "حوض", "longArabic": "أنبوب", "isFree": false },
+    { "shortWord": "not", "longWord": "note", "shortArabic": "لا", "longArabic": "ملاحظة", "isFree": false },
+    { "shortWord": "mad", "longWord": "made", "shortArabic": "غاضب", "longArabic": "صَنَعَ", "isFree": false }
+  ]
+}

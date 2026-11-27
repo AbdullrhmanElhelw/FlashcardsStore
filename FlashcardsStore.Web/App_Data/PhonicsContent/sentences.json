@@ -2,7 +2,7 @@
   "sentences": [
     { "id": 1, "words": ["The", "cat", "is", "big"], "arabicMeaning": "القطة كبيرة", "artworkKey": "cat", "accentColor": "#F97316", "isFree": true },
     { "id": 2, "words": ["Sam", "has", "a", "hat"], "arabicMeaning": "سام لديه قبعة", "artworkKey": "hat", "accentColor": "#F59E0B", "isFree": true },
-    { "id": 3, "words": ["The", "pig", "is", "pink"], "arabicMeaning": "الخنزير الصغير وردي", "artworkKey": "pig", "accentColor": "#DB2777", "isFree": true },
+    { "id": 3, "words": ["The", "hen", "is", "red"], "arabicMeaning": "الدجاجة حمراء", "artworkKey": "hen", "accentColor": "#D97706", "isFree": true },
     { "id": 4, "words": ["I", "see", "a", "red", "pen"], "arabicMeaning": "أرى قلماً أحمر", "artworkKey": "pen", "accentColor": "#7C3AED", "isFree": true },
     { "id": 5, "words": ["The", "sun", "is", "hot"], "arabicMeaning": "الشمس ساخنة", "artworkKey": "sun", "accentColor": "#CA8A04", "isFree": false },
     { "id": 6, "words": ["A", "frog", "can", "hop"], "arabicMeaning": "الضفدع يستطيع القفز", "artworkKey": "dog", "accentColor": "#16A34A", "isFree": false },

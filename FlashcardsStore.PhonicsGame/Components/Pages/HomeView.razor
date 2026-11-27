@@ -115,7 +115,7 @@
     </div>
 </div>
 
-<!-- Sentence Builder & Rhyming Pairs Quick Modes -->
+<!-- Sentence Builder, Rhyming Pairs & Minimal Pairs Quick Modes -->
 <div class="extra-modes-row">
     <div class="extra-mode-card sentence" @onclick="Vm.StartSentenceChallengeAsync">
         <div class="extra-mode-title">@Loc.T("ModeSentenceTitle")</div>
@@ -124,6 +124,10 @@
     <div class="extra-mode-card rhyme" @onclick="Vm.StartRhymingChallengeAsync">
         <div class="extra-mode-title">@Loc.T("ModeRhymeTitle")</div>
         <div class="extra-mode-sub">@Loc.T("ModeRhymeSub")</div>
+    </div>
+    <div class="extra-mode-card minimal" @onclick="Vm.StartMinimalPairsChallengeAsync">
+        <div class="extra-mode-title">@Loc.T("ModeMinimalTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("ModeMinimalSub")</div>
     </div>
 </div>
 
@@ -163,18 +167,29 @@
     }
 </div>
 
-<!-- Duolingo-Style Winding Phonics Path -->
+<!-- Duolingo-Style Winding Phonics Path with Categories -->
 <div class="section-heading">
     <span>@Loc.T("LearningPathTitle")</span>
+</div>
+
+<div class="cat-tabs">
+    @foreach (var cat in new[] { ("all", "CatAll"), ("short", "CatShort"), ("blends", "CatBlends"), ("sight", "CatSight"), ("magice", "CatMagicE"), ("advanced", "CatAdvanced") })
+    {
+        <button class="cat-tab @(Vm.SelectedCategory == cat.Item1 ? "active" : "")"
+                @onclick="() => Vm.SetCategory(cat.Item1)">
+            @Loc.T(cat.Item2)
+        </button>
+    }
 </div>
 
 <div class="duo-path">
     @{
         var firstActiveFound = false;
+        var filteredStages = Vm.GetFilteredStages();
     }
-    @for (var i = 0; i < Vm.Stages.Count; i++)
+    @for (var i = 0; i < filteredStages.Count; i++)
     {
-        var stage = Vm.Stages[i];
+        var stage = filteredStages[i];
         var unlocked = stage.IsFree || Vm.IsActivated;
         var completedCount = stage.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
         var isDone = completedCount >= stage.Words.Count;
@@ -188,21 +203,29 @@
             _ => "pos-center"
         };
 
-        if (i == 0)
+        if (stage.Id == 1)
         {
             <div class="duo-unit-banner">@Loc.T("Unit1Title")</div>
         }
-        else if (i == 4)
+        else if (stage.Id == 5)
         {
             <div class="duo-unit-banner">@Loc.T("Unit2Title")</div>
         }
-        else if (i == 6)
+        else if (stage.Id == 7)
         {
             <div class="duo-unit-banner">@Loc.T("Unit3Title")</div>
         }
-        else if (i == 8)
+        else if (stage.Id == 9)
         {
             <div class="duo-unit-banner">@Loc.T("Unit4Title")</div>
+        }
+        else if (stage.Id == 11)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit5Title")</div>
+        }
+        else if (stage.Id == 12)
+        {
+            <div class="duo-unit-banner">@Loc.T("Unit6Title")</div>
         }
 
         <div class="duo-node-wrap @posClass">

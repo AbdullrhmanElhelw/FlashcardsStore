@@ -10,7 +10,7 @@ public sealed class OtaContentSyncService : IOtaContentSyncService
 {
     private const string KeyOtaVersion = "phonics_ota_version";
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
-    private static readonly string[] PackNames = ["curriculum", "stories", "sentences", "rhymes", "alphabet"];
+    private static readonly string[] PackNames = ["curriculum", "stories", "sentences", "rhymes", "minimal_pairs", "alphabet"];
 
     private readonly HttpClient _http;
     private readonly ICurriculumRepository _curriculum;
@@ -76,6 +76,7 @@ public sealed class OtaContentSyncService : IOtaContentSyncService
                 "stories" => JsonSerializer.Deserialize<StoriesPack>(json, JsonOptions)?.Stories.Count > 0,
                 "sentences" => JsonSerializer.Deserialize<SentencesPack>(json, JsonOptions)?.Sentences.Count > 0,
                 "rhymes" => JsonSerializer.Deserialize<RhymesPack>(json, JsonOptions)?.Rhymes.Count > 0,
+                "minimal_pairs" => JsonSerializer.Deserialize<MinimalPairsPack>(json, JsonOptions)?.Pairs.Count > 0,
                 "alphabet" => JsonSerializer.Deserialize<AlphabetPack>(json, JsonOptions)?.Letters.Count > 0,
                 _ => false
             };

@@ -17,6 +17,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     private IReadOnlyList<PhonicsStory> _stories = [];
     private IReadOnlyList<SentenceChallenge> _sentences = [];
     private IReadOnlyList<RhymeChallenge> _rhymes = [];
+    private IReadOnlyList<MinimalPairChallenge> _minimalPairs = [];
     private IReadOnlyList<PhonicsLetterItem> _alphabet = [];
     private IReadOnlyList<ShopItem> _shopItems = [];
 
@@ -31,6 +32,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
     public IReadOnlyList<PhonicsStory> GetStories() => _stories;
     public IReadOnlyList<SentenceChallenge> GetSentences() => _sentences;
     public IReadOnlyList<RhymeChallenge> GetRhymes() => _rhymes;
+    public IReadOnlyList<MinimalPairChallenge> GetMinimalPairs() => _minimalPairs;
     public IReadOnlyList<PhonicsLetterItem> GetAlphabet() => _alphabet;
     public IReadOnlyList<ShopItem> GetShopItems() => _shopItems;
     public int TotalWordsCount { get; private set; }
@@ -47,6 +49,7 @@ public sealed class JsonCurriculumRepository : ICurriculumRepository
         _stories = LoadPack<StoriesPack>("stories.json")?.Stories ?? [];
         _sentences = LoadPack<SentencesPack>("sentences.json")?.Sentences ?? [];
         _rhymes = LoadPack<RhymesPack>("rhymes.json")?.Rhymes ?? [];
+        _minimalPairs = LoadPack<MinimalPairsPack>("minimal_pairs.json")?.Pairs ?? [];
         _alphabet = LoadPack<AlphabetPack>("alphabet.json")?.Letters ?? [];
         _shopItems = LoadPack<ShopPack>("shop.json")?.Items ?? [];
         TotalWordsCount = _stages.Sum(s => s.Words.Count);

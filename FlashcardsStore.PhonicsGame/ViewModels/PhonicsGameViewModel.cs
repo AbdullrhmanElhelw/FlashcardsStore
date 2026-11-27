@@ -122,6 +122,16 @@ public sealed class PhonicsGameViewModel : IDisposable
     public List<string> RhymeOptions { get; private set; } = [];
     public string? RhymeWrongOption { get; private set; }
 
+    // Minimal Pairs state
+    public IReadOnlyList<MinimalPairChallenge> MinimalPairList { get; private set; } = [];
+    public int MinimalPairIndex { get; private set; }
+    public MinimalPairChallenge? CurrentMinimalPair => MinimalPairIndex < MinimalPairList.Count ? MinimalPairList[MinimalPairIndex] : null;
+    public bool MinimalTargetIsLong { get; private set; }
+    public string? MinimalWrongWord { get; private set; }
+
+    // Home Category filter
+    public string SelectedCategory { get; private set; } = "all";
+
     public bool ShowActivationModal { get; private set; }
     public string ActivationCodeInput { get; set; } = string.Empty;
     public string ActivationFeedback { get; private set; } = string.Empty;
@@ -167,6 +177,22 @@ public sealed class PhonicsGameViewModel : IDisposable
         SelectedMode = mode;
         Notify();
     }
+
+    public void SetCategory(string category)
+    {
+        SelectedCategory = string.IsNullOrWhiteSpace(category) ? "all" : category;
+        Notify();
+    }
+
+    public IReadOnlyList<PhonicsStage> GetFilteredStages() => SelectedCategory switch
+    {
+        "short" => Stages.Where(s => s.Id is >= 1 and <= 4).ToList(),
+        "blends" => Stages.Where(s => s.Id is 5 or 6).ToList(),
+        "sight" => Stages.Where(s => s.Id is 7 or 8).ToList(),
+        "magice" => Stages.Where(s => s.Id is 9 or 10).ToList(),
+        "advanced" => Stages.Where(s => s.Id is 11 or 12).ToList(),
+        _ => Stages
+    };
 
     public void NextOnboardingSlide()
     {
@@ -628,6 +654,83 @@ public sealed class PhonicsGameViewModel : IDisposable
         {
             RhymeIndex++;
             await SetupCurrentRhymeAsync();
+        }
+        else
+        {
+            StageFinished = true;
+            await SafeJsAsync("phonicsAudio.confetti");
+            Notify();
+        }
+    }
+
+    public async Task StartMinimalPairsChallengeAsync()
+    {
+        SelectedMode = GameMode.MinimalPairs;
+        MinimalPairList = _curriculum.GetMinimalPairs()
+            .Where(p => p.IsFree || _activation.IsActivated)
+            .ToList();
+        MinimalPairIndex = 0;
+        StageStars = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(95, "الفرق الصوتي", "Minimal Pairs", "", "", "star_badge", "#0D9488", "#0284C7", true, []);
+        CurrentScreen = AppScreen.Playing;
+        await SetupCurrentMinimalPairAsync();
+    }
+
+    private async Task SetupCurrentMinimalPairAsync()
+    {
+        WordSolved = false;
+        MinimalWrongWord = null;
+        if (CurrentMinimalPair is null) return;
+
+        MinimalTargetIsLong = _rng.Next(2) == 1;
+        Notify();
+        await SpeakCurrentMinimalPairAsync();
+    }
+
+    public Task SpeakCurrentMinimalPairAsync()
+    {
+        if (CurrentMinimalPair is null) return Task.CompletedTask;
+        var word = MinimalTargetIsLong ? CurrentMinimalPair.LongWord : CurrentMinimalPair.ShortWord;
+        return _speech.SpeakAsync(word, pitch: 1.05f);
+    }
+
+    public async Task SelectMinimalOptionAsync(bool pickedLong)
+    {
+        if (WordSolved || CurrentMinimalPair is null) return;
+        var targetWord = MinimalTargetIsLong ? CurrentMinimalPair.LongWord : CurrentMinimalPair.ShortWord;
+
+        if (pickedLong == MinimalTargetIsLong)
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(targetWord, 1, Streak);
+            CompletedWords = _progress.GetCompletedWords();
+            await SafeJsAsync("phonicsAudio.success");
+            await SafeJsAsync("phonicsAudio.confetti");
+            await _speech.SpeakAsync($"Great! {targetWord}", pitch: 1.12f);
+            Notify();
+        }
+        else
+        {
+            MinimalWrongWord = pickedLong ? CurrentMinimalPair.LongWord : CurrentMinimalPair.ShortWord;
+            Streak = 0;
+            _progress.RecordWordMistake(targetWord);
+            await SafeJsAsync("phonicsAudio.wrong");
+            Notify();
+            await Task.Delay(450);
+            MinimalWrongWord = null;
+            Notify();
+        }
+    }
+
+    public async Task NextMinimalPairAsync()
+    {
+        if (MinimalPairIndex + 1 < MinimalPairList.Count)
+        {
+            MinimalPairIndex++;
+            await SetupCurrentMinimalPairAsync();
         }
         else
         {

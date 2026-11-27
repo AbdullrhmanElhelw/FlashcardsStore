@@ -109,5 +109,16 @@
   "Unit1Title": "الوحدة 1: الحروف المتحركة القصيرة",
   "Unit2Title": "الوحدة 2: دمج السواكن والحروف المركبة",
   "Unit3Title": "الوحدة 3: الكلمات البصرية السريعة",
-  "Unit4Title": "الوحدة 4: السحر الصامت (Magic E)"
+  "Unit4Title": "الوحدة 4: السحر الصامت (Magic E)",
+  "Unit5Title": "الوحدة 5: مدود الحروف (Vowel Teams)",
+  "Unit6Title": "الوحدة 6: صوت R القوي (R-Controlled)",
+  "CatAll": "الكل",
+  "CatShort": "الحركات القصيرة",
+  "CatBlends": "الدمج والحروف المركبة",
+  "CatSight": "الكلمات البصرية",
+  "CatMagicE": "Magic E",
+  "CatAdvanced": "المدود و R",
+  "ModeMinimalTitle": "الفرق الصوتي",
+  "ModeMinimalSub": "قصير vs Magic E",
+  "MinimalPrompt": "اسمع الكلمة واختر النطق الصحيح"
 }

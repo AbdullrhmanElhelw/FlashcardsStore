@@ -150,16 +150,40 @@ public static class WordArtwork
                 <path d="M40 32L46 86M60 32V86M80 32L74 86M28 50H92M32 68H88" stroke="#16A34A" stroke-width="2.5"/>
             </svg>
             """,
-        ["pig"] = """
+        ["fig"] = """
             <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M26 42L22 20L44 30Z" fill="#F9A8D4" stroke="#9D174D" stroke-width="3" stroke-linejoin="round"/>
-                <path d="M94 42L98 20L76 30Z" fill="#F9A8D4" stroke="#9D174D" stroke-width="3" stroke-linejoin="round"/>
-                <circle cx="60" cy="62" r="35" fill="#FBCFE8" stroke="#9D174D" stroke-width="3"/>
-                <ellipse cx="60" cy="70" rx="16" ry="11" fill="#F472B6" stroke="#9D174D" stroke-width="2.5"/>
-                <circle cx="54" cy="70" r="2.8" fill="#831843"/>
-                <circle cx="66" cy="70" r="2.8" fill="#831843"/>
-                <circle cx="44" cy="52" r="4" fill="#1E1B4B"/>
-                <circle cx="76" cy="52" r="4" fill="#1E1B4B"/>
+                <path d="M60 22C66 22 70 28 70 36C82 44 88 60 84 76C80 90 70 96 60 96C50 96 40 90 36 76C32 60 38 44 50 36C50 28 54 22 60 22Z" fill="#7E22CE" stroke="#4C1D95" stroke-width="3"/>
+                <path d="M60 22C64 14 74 14 78 20C72 24 65 24 60 22Z" fill="#16A34A"/>
+            </svg>
+            """,
+        ["bee"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="46" cy="36" rx="14" ry="10" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.5"/>
+                <ellipse cx="74" cy="36" rx="14" ry="10" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.5"/>
+                <ellipse cx="60" cy="64" rx="30" ry="22" fill="#FACC15" stroke="#1E1B4B" stroke-width="3"/>
+                <path d="M48 44V84M62 42V86M76 46V82" stroke="#1E1B4B" stroke-width="5"/>
+            </svg>
+            """,
+        ["boat"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="60,22 60,64 88,64" fill="#F97316" stroke="#9A3412" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M20 68H100L86 88H34L20 68Z" fill="#0284C7" stroke="#0C4A6E" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+            """,
+        ["car"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 62L34 40H80L98 62V78H22V62Z" fill="#EF4444" stroke="#991B1B" stroke-width="3" stroke-linejoin="round"/>
+                <rect x="38" y="45" width="38" height="14" rx="3" fill="#DBEAFE"/>
+                <circle cx="38" cy="80" r="10" fill="#1E293B" stroke="#F8FAFC" stroke-width="3"/>
+                <circle cx="82" cy="80" r="10" fill="#1E293B" stroke="#F8FAFC" stroke-width="3"/>
+            </svg>
+            """,
+        ["bird"] = """
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="58" cy="64" rx="28" ry="22" fill="#38BDF8" stroke="#0369A1" stroke-width="3"/>
+                <circle cx="74" cy="46" r="14" fill="#38BDF8" stroke="#0369A1" stroke-width="3"/>
+                <polygon points="88,46 100,50 88,54" fill="#F59E0B"/>
+                <circle cx="78" cy="44" r="3" fill="#1E1B4B"/>
             </svg>
             """,
         ["wig"] = """

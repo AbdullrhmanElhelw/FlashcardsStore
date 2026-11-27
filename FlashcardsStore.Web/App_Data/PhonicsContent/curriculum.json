@@ -29,7 +29,7 @@
       "titleEn": "Stage 2: Short E & I",
       "subtitleAr": "تأسيس النطق والتمييز (-ed / -en / -ig / -in) — مجانية",
       "subtitleEn": "Phonics & sound contrast (-ed / -en / -ig / -in) — Free",
-      "badgeKey": "pig",
+      "badgeKey": "hen",
       "gradientStart": "#10B981",
       "gradientEnd": "#0D9488",
       "isFree": true,
@@ -39,7 +39,7 @@
         { "word": "pen", "arabicMeaning": "قلم", "artworkKey": "pen", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": false },
         { "word": "hen", "arabicMeaning": "دجاجة", "artworkKey": "hen", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
         { "word": "net", "arabicMeaning": "شبكة", "artworkKey": "net", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false },
-        { "word": "pig", "arabicMeaning": "خنزير صغير", "artworkKey": "pig", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
+        { "word": "fig", "arabicMeaning": "تين", "artworkKey": "fig", "bgColor": "#F3E8FF", "accentColor": "#7E22CE", "isSightWord": false },
         { "word": "wig", "arabicMeaning": "باروكة", "artworkKey": "wig", "bgColor": "#FAE8FF", "accentColor": "#C026D3", "isSightWord": false },
         { "word": "pin", "arabicMeaning": "دبوس", "artworkKey": "pin", "bgColor": "#FFE4E6", "accentColor": "#E11D48", "isSightWord": false },
         { "word": "bin", "arabicMeaning": "سلة", "artworkKey": "bin", "bgColor": "#E2E8F0", "accentColor": "#475569", "isSightWord": false },
@@ -221,13 +221,59 @@
         { "word": "home", "arabicMeaning": "منزل", "artworkKey": "home", "bgColor": "#CCFBF1", "accentColor": "#0D9488", "isSightWord": false },
         { "word": "bone", "arabicMeaning": "عظمة", "artworkKey": "dog", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
         { "word": "rope", "arabicMeaning": "حبل", "artworkKey": "net", "bgColor": "#FFEDD5", "accentColor": "#C2410C", "isSightWord": false },
-        { "word": "nose", "arabicMeaning": "أنف", "artworkKey": "pig", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
+        { "word": "nose", "arabicMeaning": "أنف", "artworkKey": "cat", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
         { "word": "rose", "arabicMeaning": "وردة", "artworkKey": "red", "bgColor": "#FFE4E6", "accentColor": "#E11D48", "isSightWord": false },
         { "word": "cube", "arabicMeaning": "مكعب", "artworkKey": "box", "bgColor": "#DBEAFE", "accentColor": "#2563EB", "isSightWord": false },
         { "word": "tube", "arabicMeaning": "أنبوب", "artworkKey": "pen", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": false },
         { "word": "cute", "arabicMeaning": "لطيف", "artworkKey": "cat", "bgColor": "#FFF1F2", "accentColor": "#F43F5E", "isSightWord": false },
         { "word": "tune", "arabicMeaning": "لحن", "artworkKey": "drum", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
         { "word": "mule", "arabicMeaning": "بغل", "artworkKey": "hen", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false }
+      ]
+    },
+    {
+      "id": 11,
+      "titleAr": "المرحلة 11: مدود الحروف (Vowel Teams)",
+      "titleEn": "Stage 11: Vowel Teams (ai / ee / oa)",
+      "subtitleAr": "دمج حروف المد الطويلة (ai / ay / ee / ea / oa)",
+      "subtitleEn": "Long vowel teams (ai / ay / ee / ea / oa)",
+      "badgeKey": "bee",
+      "gradientStart": "#EAB308",
+      "gradientEnd": "#CA8A04",
+      "isFree": false,
+      "words": [
+        { "word": "rain", "arabicMeaning": "مطر", "artworkKey": "boat", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
+        { "word": "train", "arabicMeaning": "قطار", "artworkKey": "van", "bgColor": "#DBEAFE", "accentColor": "#2563EB", "isSightWord": false },
+        { "word": "play", "arabicMeaning": "يلعب", "artworkKey": "star", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
+        { "word": "tray", "arabicMeaning": "صينية", "artworkKey": "pan", "bgColor": "#F1F5F9", "accentColor": "#475569", "isSightWord": false },
+        { "word": "tree", "arabicMeaning": "شجرة", "artworkKey": "tree", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false },
+        { "word": "bee", "arabicMeaning": "نحلة", "artworkKey": "bee", "bgColor": "#FEF9C3", "accentColor": "#CA8A04", "isSightWord": false },
+        { "word": "read", "arabicMeaning": "يقرأ", "artworkKey": "pen", "bgColor": "#EDE9FE", "accentColor": "#7C3AED", "isSightWord": false },
+        { "word": "leaf", "arabicMeaning": "ورقة شجر", "artworkKey": "tree", "bgColor": "#DCFCE7", "accentColor": "#059669", "isSightWord": false },
+        { "word": "boat", "arabicMeaning": "قارب", "artworkKey": "boat", "bgColor": "#CFFAFE", "accentColor": "#0891B2", "isSightWord": false },
+        { "word": "goat", "arabicMeaning": "ماعز", "artworkKey": "dog", "bgColor": "#FFEDD5", "accentColor": "#EA580C", "isSightWord": false }
+      ]
+    },
+    {
+      "id": 12,
+      "titleAr": "المرحلة 12: صوت R القوي (R-Controlled)",
+      "titleEn": "Stage 12: R-Controlled (ar / or / ir)",
+      "subtitleAr": "تأثير حرف R على الحروف المتحركة",
+      "subtitleEn": "Bossy R sounds (ar / or / er / ir / ur)",
+      "badgeKey": "car",
+      "gradientStart": "#DC2626",
+      "gradientEnd": "#991B1B",
+      "isFree": false,
+      "words": [
+        { "word": "car", "arabicMeaning": "سيارة", "artworkKey": "car", "bgColor": "#FEE2E2", "accentColor": "#DC2626", "isSightWord": false },
+        { "word": "star", "arabicMeaning": "نجمة", "artworkKey": "star", "bgColor": "#FEF9C3", "accentColor": "#CA8A04", "isSightWord": false },
+        { "word": "jar", "arabicMeaning": "برطمان", "artworkKey": "mug", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
+        { "word": "fork", "arabicMeaning": "شوكة", "artworkKey": "pan", "bgColor": "#F1F5F9", "accentColor": "#475569", "isSightWord": false },
+        { "word": "corn", "arabicMeaning": "ذرة", "artworkKey": "sun", "bgColor": "#FEF3C7", "accentColor": "#D97706", "isSightWord": false },
+        { "word": "bird", "arabicMeaning": "طائر", "artworkKey": "bird", "bgColor": "#E0F2FE", "accentColor": "#0284C7", "isSightWord": false },
+        { "word": "girl", "arabicMeaning": "بنت", "artworkKey": "hat", "bgColor": "#FCE7F3", "accentColor": "#DB2777", "isSightWord": false },
+        { "word": "fern", "arabicMeaning": "نبات السرخس", "artworkKey": "tree", "bgColor": "#DCFCE7", "accentColor": "#16A34A", "isSightWord": false },
+        { "word": "surf", "arabicMeaning": "يركب الأمواج", "artworkKey": "boat", "bgColor": "#CFFAFE", "accentColor": "#0891B2", "isSightWord": false },
+        { "word": "turn", "arabicMeaning": "ينعطف", "artworkKey": "car", "bgColor": "#FFEDD5", "accentColor": "#EA580C", "isSightWord": false }
       ]
     }
   ]

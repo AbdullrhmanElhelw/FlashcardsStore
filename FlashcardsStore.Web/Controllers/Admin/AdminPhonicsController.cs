@@ -11,7 +11,7 @@ namespace FlashcardsStore.Web.Controllers.Admin;
 public sealed class AdminPhonicsController : AdminControllerBase
 {
     private const string CodeAlphabet = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
-    private static readonly string[] ContentPacks = ["curriculum", "stories", "sentences", "rhymes", "alphabet"];
+    private static readonly string[] ContentPacks = ["curriculum", "stories", "sentences", "rhymes", "minimal_pairs", "alphabet"];
     private readonly FlashcardsStoreDbContext _db;
     private readonly IWebHostEnvironment _env;
 

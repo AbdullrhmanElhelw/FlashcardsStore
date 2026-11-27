@@ -201,17 +201,18 @@
 
 .extra-modes-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     margin-bottom: 16px;
 }
 
 .extra-mode-card {
     border-radius: 18px;
-    padding: 12px 12px;
+    padding: 11px 9px;
     color: #fff;
     cursor: pointer;
     box-shadow: 0 5px 0 rgba(0, 0, 0, 0.16);
+    text-align: center;
 }
 
 .extra-mode-card.sentence {
@@ -220,6 +221,36 @@
 
 .extra-mode-card.rhyme {
     background: linear-gradient(135deg, #7C3AED, #EC4899);
+}
+
+.extra-mode-card.minimal {
+    background: linear-gradient(135deg, #0D9488, #059669);
+}
+
+.cat-tabs {
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+.cat-tab {
+    flex-shrink: 0;
+    background: #fff;
+    border: 1.5px solid #CBD5E1;
+    color: var(--plum);
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.cat-tab.active {
+    background: var(--plum);
+    border-color: var(--plum);
+    color: #FDE68A;
 }
 
 .extra-mode-title {

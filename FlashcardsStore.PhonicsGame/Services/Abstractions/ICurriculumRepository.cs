@@ -9,6 +9,7 @@ public interface ICurriculumRepository
     IReadOnlyList<PhonicsStory> GetStories();
     IReadOnlyList<SentenceChallenge> GetSentences();
     IReadOnlyList<RhymeChallenge> GetRhymes();
+    IReadOnlyList<MinimalPairChallenge> GetMinimalPairs();
     IReadOnlyList<PhonicsLetterItem> GetAlphabet();
     IReadOnlyList<ShopItem> GetShopItems();
     int TotalWordsCount { get; }

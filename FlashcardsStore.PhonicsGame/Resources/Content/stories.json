@@ -22,23 +22,23 @@
     },
     {
       "id": 2,
-      "titleAr": "الخنزير بيب والقلم",
-      "titleEn": "Pip the Pig & the Pen",
+      "titleAr": "الدجاجة بين والقلم",
+      "titleEn": "Ben the Hen & the Pen",
       "subtitleAr": "قصة مصورة لصوت Short E & I",
       "subtitleEn": "Animated Short E & I Story",
-      "coverArtworkKey": "pig",
+      "coverArtworkKey": "hen",
       "accentColor": "#10B981",
       "isFree": false,
       "scenes": [
-        { "sentenceEn": "Pip is a happy pink pig.", "sentenceAr": "بيب خنزير صغير سعيد.", "focusWord": "pig", "artworkKey": "pig", "bgColor": "#FDF2F8", "accentColor": "#DB2777", "animationClass": "anim-bounce" },
-        { "sentenceEn": "Pip has a red pen.", "sentenceAr": "بيب لديه قلم أحمر.", "focusWord": "pen", "artworkKey": "pen", "bgColor": "#F5F3FF", "accentColor": "#7C3AED", "animationClass": "anim-wiggle" },
-        { "sentenceEn": "Pip sees a little hen.", "sentenceAr": "يرى بيب دجاجة صغيرة.", "focusWord": "hen", "artworkKey": "hen", "bgColor": "#FFFBEB", "accentColor": "#D97706", "animationClass": "anim-float" },
-        { "sentenceEn": "Pip naps on his warm bed.", "sentenceAr": "ينام بيب على سريره الدافئ.", "focusWord": "bed", "artworkKey": "bed", "bgColor": "#F0F9FF", "accentColor": "#0284C7", "animationClass": "anim-float" }
+        { "sentenceEn": "Ben is a happy little hen.", "sentenceAr": "بين دجاجة صغيرة سعيدة.", "focusWord": "hen", "artworkKey": "hen", "bgColor": "#FFFBEB", "accentColor": "#D97706", "animationClass": "anim-bounce" },
+        { "sentenceEn": "Ben has a red pen.", "sentenceAr": "بين لديها قلم أحمر.", "focusWord": "pen", "artworkKey": "pen", "bgColor": "#F5F3FF", "accentColor": "#7C3AED", "animationClass": "anim-wiggle" },
+        { "sentenceEn": "Ben eats a sweet fig.", "sentenceAr": "تأكل بين حبة تين حلوة.", "focusWord": "fig", "artworkKey": "fig", "bgColor": "#F3E8FF", "accentColor": "#7E22CE", "animationClass": "anim-float" },
+        { "sentenceEn": "Ben naps on her warm bed.", "sentenceAr": "تنام بين على سريرها الدافئ.", "focusWord": "bed", "artworkKey": "bed", "bgColor": "#F0F9FF", "accentColor": "#0284C7", "animationClass": "anim-float" }
       ],
-      "quizQuestionAr": "ماذا كان لدى بيب؟",
-      "quizQuestionEn": "What did Pip have?",
-      "quizCorrectWord": "pen",
-      "quizOptions": ["pen", "net", "bin"]
+      "quizQuestionAr": "ماذا أكلت بين؟",
+      "quizQuestionEn": "What did Ben eat?",
+      "quizCorrectWord": "fig",
+      "quizOptions": ["fig", "net", "bin"]
     },
     {
       "id": 3,

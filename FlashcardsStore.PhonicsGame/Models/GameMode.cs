@@ -6,5 +6,6 @@ public enum GameMode
     SoundMatch,
     MemoryMatch,
     SentenceBuilder,
-    RhymingMatch
+    RhymingMatch,
+    MinimalPairs
 }
