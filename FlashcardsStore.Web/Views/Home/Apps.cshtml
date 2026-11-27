@@ -41,6 +41,13 @@
             <!-- Tab 1: Phonics Game Hero -->
             <div x-show="tab === 'phonics'" x-transition class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                 <div class="lg:col-span-7 space-y-5 text-start">
+                    <div class="inline-flex items-center gap-3 bg-[#14B8A6]/15 border border-[#14B8A6]/40 rounded-2xl px-3.5 py-2">
+                        <img src="~/images/phonics-app/phonics-logo.png" asp-append-version="true" alt="Phonics App Logo" class="w-11 h-11 rounded-xl shadow" />
+                        <div>
+                            <div class="text-xs font-black text-[#5EEAD4]">JOLLY PHONICS KIDS GAME</div>
+                            <div class="text-[11px] text-amber-200 font-bold">@(isRtl ? "رفيق الكروت المطبوعة للأطفال" : "Official Kids Phonics Companion")</div>
+                        </div>
+                    </div>
                     <h2 class="text-2xl sm:text-4xl font-black leading-tight">
                         @(isRtl ? "لعبة Jolly Phonics التفاعلية للأطفال" : "Interactive Jolly Phonics Kids Game")
                     </h2>
@@ -51,15 +58,15 @@
                     </p>
                     <div class="flex flex-wrap gap-3">
                         <a asp-controller="Catalog" asp-action="Index"
-                           class="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow-lg transition">
+                           class="px-6 py-3 rounded-2xl bg-[#14B8A6] hover:bg-[#0D9488] text-white font-extrabold text-sm shadow-lg transition">
                             @(isRtl ? "اطلب الكروت واحصل على كود التفعيل" : "Order Flashcards & Get Code")
                         </a>
                         <a href="@waLink" target="_blank" rel="noopener noreferrer"
-                           class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-sm transition">
+                           class="px-6 py-3 rounded-2xl bg-[#F59E0B] hover:bg-[#D97706] text-white font-extrabold text-sm shadow-lg transition">
                             @(isRtl ? "احجز كورس التأسيس" : "Book Course")
                         </a>
                     </div>
-                    <div class="inline-flex items-center gap-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border-2 border-amber-300/70">
+                    <div class="inline-flex items-center gap-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border-2 border-[#14B8A6]/60">
                         <img src="~/images/phonics-app/qr-phonics-app.png" asp-append-version="true" alt="QR Phonics App" class="w-24 h-24 rounded-xl border border-slate-200 shrink-0" />
                         <div class="space-y-1 text-start">
                             <div class="text-xs font-black text-amber-700">@(isRtl ? "امسح الكود بموبايلك" : "Scan with your phone")</div>
