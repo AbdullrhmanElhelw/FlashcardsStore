@@ -35,6 +35,7 @@ public sealed partial class AppShellViewModel : BaseViewModel
         _activation = activation;
         _modals = modals;
         _loc.Changed += NotifyAll;
+        _activation.ActivationChanged += NotifyAll;
         _modals.PropertyChanged += (_, _) => NotifyAll();
     }
 
@@ -47,6 +48,7 @@ public sealed partial class AppShellViewModel : BaseViewModel
         _js.Attach(js);
         await SyncDocumentDirectionAsync();
         _ = _otaSync.SyncIfNeededAsync();
+        _ = _activation.VerifyActivationAsync();
 
         if (CurrentScreen == AppScreen.Splash)
         {

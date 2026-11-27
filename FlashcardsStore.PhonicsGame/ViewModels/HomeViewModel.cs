@@ -46,6 +46,7 @@ public sealed partial class HomeViewModel : BaseViewModel
         _parentReport = parentReport;
 
         _curriculum.ContentReloaded += NotifyAll;
+        _activation.ActivationChanged += NotifyAll;
         onboarding.OnRequestStoriesStart = () =>
         {
             var first = Stories.FirstOrDefault(s => s.IsFree);

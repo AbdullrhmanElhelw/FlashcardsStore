@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using FlashcardsStore.PhonicsGame.Models;
 using FlashcardsStore.PhonicsGame.Services.Abstractions;
 
@@ -11,8 +12,11 @@ public sealed class ActivationService : IActivationService
     private const string KeyCode = "phonics_activation_code";
     private const string KeyBundle = "phonics_bundle_name";
     private const string KeyDeviceId = "phonics_device_id";
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly HttpClient _http;
+
+    public event Action? ActivationChanged;
 
     public ActivationService(HttpClient http)
     {
@@ -57,6 +61,7 @@ public sealed class ActivationService : IActivationService
                 Preferences.Default.Set(KeyActivated, true);
                 Preferences.Default.Set(KeyCode, body.Code ?? code);
                 Preferences.Default.Set(KeyBundle, body.BundleName ?? "Full Version");
+                ActivationChanged?.Invoke();
                 return new ActivationResult(
                     true,
                     body.MessageAr ?? "تم تفعيل جميع المراحل بنجاح.",
@@ -82,4 +87,55 @@ public sealed class ActivationService : IActivationService
             return new ActivationResult(false, "حدث خطأ غير متوقع أثناء التفعيل.", "An unexpected error occurred.");
         }
     }
+
+    public async Task<bool> VerifyActivationAsync(CancellationToken ct = default)
+    {
+        if (!IsActivated)
+            return false;
+
+        var code = ActivatedCode;
+        if (string.IsNullOrWhiteSpace(code))
+            return false;
+
+        try
+        {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            cts.CancelAfter(TimeSpan.FromSeconds(8));
+
+            var payload = new
+            {
+                Code = code,
+                DeviceId = GetOrCreateDeviceId()
+            };
+
+            using var response = await _http.PostAsJsonAsync("api/phonics/verify", payload, cts.Token);
+            if (!response.IsSuccessStatusCode)
+                return true;
+
+            var body = await response.Content.ReadFromJsonAsync<PhonicsVerifyApiResponse>(JsonOptions, cts.Token);
+            if (body is null)
+                return true;
+
+            if (!body.IsValid)
+            {
+                Preferences.Default.Remove(KeyActivated);
+                Preferences.Default.Remove(KeyCode);
+                Preferences.Default.Remove(KeyBundle);
+                ActivationChanged?.Invoke();
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(body.BundleName))
+                Preferences.Default.Set(KeyBundle, body.BundleName);
+
+            return true;
+        }
+        catch
+        {
+            // Keep offline activation intact when network is unavailable or times out.
+            return true;
+        }
+    }
+
+    private sealed record PhonicsVerifyApiResponse(bool IsValid, string? BundleName, string? Reason);
 }
