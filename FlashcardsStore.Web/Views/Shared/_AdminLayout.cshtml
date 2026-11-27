@@ -7,7 +7,7 @@
     var isCategories = currentAction == "Categories" || currentAction == "CreateCategory" || currentAction == "EditCategory";
     var isCustomers = currentAction == "Customers";
     var isReviews = currentAction == "Reviews";
-    var isPhonics = currentAction == "PhonicsCodes";
+    var isPhonics = currentAction == "PhonicsCodes" || currentAction == "PhonicsContent";
     var isSettings = currentAction == "Settings";
     var adminUser = User.Identity?.Name ?? Context.Session.GetString("AdminLoggedInUser") ?? "المشرف";
     var dashboardSummary = await AdminOrderService.GetAdminDashboardMetricsAsync();

@@ -12,6 +12,7 @@
         if (path.includes('/admin/categories') || path.includes('/admin/createcategory') || path.includes('/admin/editcategory')) return 'categories';
         if (path.includes('/admin/customers')) return 'customers';
         if (path.includes('/admin/reviews')) return 'reviews';
+        if (path.includes('/admin/phonics')) return 'phonics';
         if (path.includes('/admin/settings')) return 'settings';
         return 'dashboard';
     }

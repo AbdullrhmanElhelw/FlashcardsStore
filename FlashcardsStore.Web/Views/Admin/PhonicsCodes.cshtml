@@ -11,84 +11,116 @@
     var paginationBaseUrl = ViewBag.PaginationBaseUrl as string ?? "/Admin/PhonicsCodes";
 }
 
-<div class="space-y-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-6 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">أكواد تفعيل لعبة Jolly Phonics</h1>
-            <p class="text-sm text-slate-500 mt-1">توليد وإدارة أكواد التفعيل التي تُباع مع الباقات أو الكورسات لفتح جميع مراحل التطبيق.</p>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
+                <a asp-controller="AdminDashboard" asp-action="Dashboard" class="hover:underline">لوحة التحكم</a>
+                <span>/</span>
+                <span class="text-slate-900">أكواد لعبة الفونكس</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900">أكواد تفعيل لعبة Jolly Phonics</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">توليد وإدارة أكواد التفعيل التي تُباع مع الباقات أو الكورسات لفتح جميع مراحل التطبيق.</p>
         </div>
         <a asp-controller="AdminPhonics" asp-action="PhonicsContent"
-           class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-sm whitespace-nowrap">
-            إدارة منهج Jolly Phonics (OTA)
+           class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#3A0A26] hover:bg-[#521036] text-white text-sm font-bold border border-[#D4AF37]/40 shadow-sm transition whitespace-nowrap self-start sm:self-auto">
+            <svg class="w-4 h-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span>إدارة منهج Jolly Phonics (OTA)</span>
         </a>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <div class="text-xs font-semibold text-slate-500">إجمالي الأكواد</div>
-            <div class="text-3xl font-extrabold text-slate-900 mt-1">@totalCodes</div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
+            <div>
+                <div class="text-xs font-bold text-slate-500">إجمالي الأكواد</div>
+                <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">@totalCodes</div>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+            </div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <div class="text-xs font-semibold text-emerald-600">أكواد نشطة</div>
-            <div class="text-3xl font-extrabold text-emerald-700 mt-1">@activeCodes</div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
+            <div>
+                <div class="text-xs font-bold text-emerald-700">أكواد نشطة</div>
+                <div class="text-2xl sm:text-3xl font-black text-emerald-700 mt-1">@activeCodes</div>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <div class="text-xs font-semibold text-indigo-600">أجهزة مفعّلة</div>
-            <div class="text-3xl font-extrabold text-indigo-700 mt-1">@totalDevices</div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex items-center justify-between">
+            <div>
+                <div class="text-xs font-bold text-[#7A1C4B]">أجهزة مفعّلة</div>
+                <div class="text-2xl sm:text-3xl font-black text-[#4A0D29] mt-1">@totalDevices</div>
+            </div>
+            <div class="w-11 h-11 rounded-xl bg-[#4A0D29]/10 text-[#4A0D29] flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+            </div>
         </div>
     </div>
 
     <!-- Generate Codes Form -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-        <h2 class="text-lg font-bold text-slate-900 mb-4">توليد أكواد تفعيل جديدة</h2>
-        <form asp-controller="AdminPhonics" asp-action="Generate" method="post" hx-boost="false" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+        <h2 class="text-lg font-black text-slate-900 mb-4">توليد أكواد تفعيل جديدة</h2>
+        <form asp-controller="AdminPhonics" asp-action="Generate" method="post" hx-boost="false" class="space-y-4">
             @Html.AntiForgeryToken()
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">عدد الأكواد (1-50)</label>
-                <input type="number" name="count" value="5" min="1" max="50" required
-                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">عدد الأكواد (1-50)</label>
+                    <input type="number" name="count" value="5" min="1" max="50" required
+                           class="w-full h-11 rounded-xl border border-slate-300 px-3.5 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">اسم الباقة / الاشتراك</label>
+                    <input type="text" name="bundleName" value="باقة تأسيس الفونكس" maxlength="150"
+                           class="w-full h-11 rounded-xl border border-slate-300 px-3.5 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">الحد الأقصى للأجهزة</label>
+                    <input type="number" name="maxDevices" value="2" min="1" max="10" required
+                           class="w-full h-11 rounded-xl border border-slate-300 px-3.5 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">صلاحية (أيام - اختياري)</label>
+                    <input type="number" name="expiresInDays" placeholder="دائم إذا تُرك فارغاً" min="1"
+                           class="w-full h-11 rounded-xl border border-slate-300 px-3.5 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+                </div>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">اسم الباقة / الاشتراك</label>
-                <input type="text" name="bundleName" value="باقة تأسيس الفونكس" maxlength="150"
-                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">الحد الأقصى للأجهزة</label>
-                <input type="number" name="maxDevices" value="2" min="1" max="10" required
-                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">صلاحية (أيام - اختياري)</label>
-                <input type="number" name="expiresInDays" placeholder="دائم إذا تُرك فارغاً" min="1"
-                       class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
-            </div>
-            <div>
+            <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">ملاحظات إضافية (اختياري)</label>
+                    <input type="text" name="notes" placeholder="مثلاً: دفعة مطبعة نوفمبر أو عميل محدد" maxlength="500"
+                           class="w-full h-11 rounded-xl border border-slate-300 px-3.5 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+                </div>
                 <button type="submit"
-                        class="w-full bg-[#3A0A26] hover:bg-[#521036] text-white font-bold py-2.5 px-4 rounded-xl transition cursor-pointer">
+                        class="h-11 bg-[#3A0A26] hover:bg-[#521036] text-white font-bold px-6 rounded-xl transition cursor-pointer shadow-xs whitespace-nowrap">
                     + توليد الأكواد
                 </button>
-            </div>
-            <div class="md:col-span-5">
-                <input type="text" name="notes" placeholder="ملاحظات إضافية (اختياري، مثلاً: دفعة مطبعة نوفمبر أو عميل محدد)" maxlength="500"
-                       class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400" />
             </div>
         </form>
     </div>
 
     <!-- Filter & Search -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
         <form method="get" asp-controller="AdminPhonics" asp-action="PhonicsCodes" class="flex flex-col sm:flex-row gap-3">
             <input type="text" name="search" value="@search" placeholder="ابحث بالكود أو اسم الباقة أو الملاحظات..."
-                   class="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm" />
-            <select name="status" class="rounded-xl border border-slate-300 px-4 py-2 text-sm">
+                   class="flex-1 h-11 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]" />
+            <select name="status" class="h-11 rounded-xl border border-slate-300 px-4 text-sm bg-white outline-none focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37]">
                 <option value="all" selected="@(statusFilter == "all")">كل الحالات</option>
                 <option value="active" selected="@(statusFilter == "active")">نشط فقط</option>
                 <option value="inactive" selected="@(statusFilter == "inactive")">موقوف فقط</option>
             </select>
-            <button type="submit" class="bg-slate-800 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-900 cursor-pointer">
+            <button type="submit" class="h-11 bg-slate-800 text-white px-6 rounded-xl text-sm font-bold hover:bg-slate-900 cursor-pointer transition whitespace-nowrap">
                 بحث
             </button>
         </form>
