@@ -40,6 +40,7 @@ public sealed partial class AppShellViewModel : BaseViewModel
 
     public int AvailableStars => _progress.AvailableStars;
     public bool IsActivated => _activation.IsActivated;
+    public bool ShowBottomNav => CurrentScreen is AppScreen.Home or AppScreen.GamesHub or AppScreen.Progress or AppScreen.Soundboard or AppScreen.Dictionary or AppScreen.ParentReport;
 
     public async Task InitializeAsync(IJSRuntime js)
     {

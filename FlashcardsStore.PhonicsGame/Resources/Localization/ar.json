@@ -29,7 +29,6 @@
     "ConsonantsLegend":  "الحروف الساكنة",
     "HintBtn":  "مساعدة",
     "MemoryMatchPrompt":  "اقلب بطاقتين متطابقتين (الصورة والكلمة)",
-    "AchievementsTitle":  "أوسمة البطل",
     "PlayBtn":  "العب",
     "LockedBtn":  "مقفول",
     "BackToStages":  "المراحل",
@@ -212,5 +211,16 @@
     "BlendSliderHint":  "اضغط للدمج التدريجي صوت بصوت ← كلمة",
     "DecodableTitle":  "قراءة SATIPN",
     "PosFirst":  "الأول",
-    "DecodableSub":  "جمل من أول 6 حروف"
+    "DecodableSub":  "جمل من أول 6 حروف",
+    "BackBtn":  "رجوع",
+    "AchievementsTitle":  "شارات الإنجاز",
+    "GamesHubSub":  "اختر طريقة اللعب أو تدريب الصوتيات المناسب لك",
+    "DrillsSectionTitle":  "تمارين تأسيس القراءة",
+    "NavProgress":  "التقدم",
+    "GamesHubTitle":  "صالة ألعاب الفونكس",
+    "NavCards":  "الكروت",
+    "NavGames":  "الألعاب",
+    "ProgressSub":  "إنجازاتك ونجومك ومستواك في المنهج",
+    "ChoosePlayModeTitle":  "طريقة اللعب في المراحل",
+    "NavLearn":  "التعلم"
 }

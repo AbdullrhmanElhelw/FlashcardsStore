@@ -42,6 +42,12 @@ public sealed partial class OnboardingViewModel : BaseViewModel
     public void SetSlide(int index) => SlideIndex = Math.Clamp(index, 0, 4);
 
     [RelayCommand]
+    public void PrevSlide()
+    {
+        if (SlideIndex > 0) SlideIndex--;
+    }
+
+    [RelayCommand]
     public void NextSlide()
     {
         if (SlideIndex < 4)

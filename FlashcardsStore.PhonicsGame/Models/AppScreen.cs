@@ -10,5 +10,7 @@ public enum AppScreen
     StoryPlayer,
     Shop,
     Dictionary,
-    ParentReport
+    ParentReport,
+    GamesHub,
+    Progress
 }

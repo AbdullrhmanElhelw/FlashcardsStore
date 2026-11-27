@@ -119,6 +119,14 @@
     </div>
 
     <div class="onb-footer">
+        @if (Vm.SlideIndex > 0)
+        {
+            <button class="btn-back" style="padding:10px 14px;" @onclick="Vm.PrevSlide">@Loc.T("BackBtn")</button>
+        }
+        else
+        {
+            <div style="font-size:12px;font-weight:900;color:var(--muted);">1 / 5</div>
+        }
         <div class="onb-dots">
             @for (var i = 0; i < 5; i++)
             {

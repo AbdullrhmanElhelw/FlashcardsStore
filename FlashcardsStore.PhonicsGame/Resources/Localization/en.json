@@ -29,7 +29,6 @@
     "ConsonantsLegend":  "Consonants",
     "HintBtn":  "Hint",
     "MemoryMatchPrompt":  "Flip matching pairs (picture \u0026 word)",
-    "AchievementsTitle":  "Champion Badges",
     "PlayBtn":  "Play",
     "LockedBtn":  "Locked",
     "BackToStages":  "Stages",
@@ -212,5 +211,16 @@
     "BlendSliderHint":  "Tap to blend sound-by-sound into the word",
     "DecodableTitle":  "SATIPN Reader",
     "PosFirst":  "First",
-    "DecodableSub":  "Read mini sentences"
+    "DecodableSub":  "Read mini sentences",
+    "BackBtn":  "Back",
+    "AchievementsTitle":  "Achievements",
+    "GamesHubSub":  "Pick your play mode or practice phonics drills",
+    "DrillsSectionTitle":  "Reading Foundation Drills",
+    "NavProgress":  "Progress",
+    "GamesHubTitle":  "Phonics Games Arcade",
+    "NavCards":  "Cards",
+    "NavGames":  "Games",
+    "ProgressSub":  "Your stars, badges \u0026 Jolly Phonics mastery",
+    "ChoosePlayModeTitle":  "Stage Play Mode",
+    "NavLearn":  "Learn"
 }

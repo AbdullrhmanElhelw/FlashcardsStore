@@ -1,0 +1,114 @@
+@inherits PhonicsComponentBase<HomeViewModel>
+
+<div class="hero-card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" @onclick="Modals.OpenProfileModal">
+        <div class="hero-avatar-btn">
+            @((MarkupString)AvatarArtwork.GetSvg(Vm.Profile.AvatarKey))
+        </div>
+        <div>
+            <div class="hero-greeting">@(string.IsNullOrWhiteSpace(Vm.Profile.Name) ? Loc.T("DefaultHeroName") : Vm.Profile.Name)</div>
+            <div class="hero-sub">@Loc.T("ProgressSub")</div>
+        </div>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.CompletedWords.Count/@Vm.TotalWordsCount</div>
+            <div class="hero-chip-lbl">@Loc.T("WordsMastered")</div>
+        </div>
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.TotalStars</div>
+            <div class="hero-chip-lbl">@Loc.T("StarsLabel")</div>
+        </div>
+        <div class="hero-chip">
+            <div class="hero-chip-val">@Vm.BestStreak</div>
+            <div class="hero-chip-lbl">@Loc.T("BestStreakLabel")</div>
+        </div>
+    </div>
+</div>
+
+<!-- Achievements -->
+<div class="section-heading">
+    <span>@Loc.T("AchievementsTitle")</span>
+</div>
+<div class="achievements-strip" style="margin-bottom:14px;">
+    @foreach (var badge in Vm.GetAchievements())
+    {
+        <div class="ach-pill @(badge.Unlocked ? "unlocked" : "")">
+            <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Award)</span>
+            <span>@(Loc.IsArabic ? badge.TitleAr : badge.TitleEn)</span>
+        </div>
+    }
+</div>
+
+@if (Vm.WeakWords.Count > 0)
+{
+    <div class="weak-card" style="margin-bottom:14px;" @onclick="Vm.StartWeakWordsReviewAsync">
+        <div style="display:flex;align-items:center;gap:11px;">
+            <div class="weak-icon">
+                <span class="icon-svg" style="width:20px;height:20px;">@((MarkupString)UiIcons.RefreshCw)</span>
+            </div>
+            <div>
+                <div style="font-size:13.5px;font-weight:900;color:#881337;">@Loc.T("WeakWordsTitle") (@Vm.WeakWords.Count)</div>
+                <div style="font-size:11px;font-weight:600;color:#9F1239;">@Loc.T("WeakWordsSub")</div>
+            </div>
+        </div>
+        <div class="weak-badge">@Loc.T("WeakWordsBtn")</div>
+    </div>
+}
+
+<!-- Quick Actions: Stars Shop, Parent Report, Store -->
+<div class="topic-cards-grid" style="margin-bottom:14px;">
+    <div class="topic-card" style="border-color:#F59E0B44;" @onclick="() => Shell.NavigateTo(AppScreen.Shop)">
+        <div class="topic-card-badge" style="background:#F59E0B;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Star)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("ShopTitle")</div>
+            <div class="topic-card-sub">@Loc.T("ShopSub")</div>
+        </div>
+    </div>
+
+    <div class="topic-card" style="border-color:#2563EB33;" @onclick="Vm.OpenParentReport">
+        <div class="topic-card-badge" style="background:#2563EB;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Lock)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("ParentReportTitle")</div>
+            <div class="topic-card-sub">@Loc.T("ParentReportSub")</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stage Mastery Bars -->
+<div class="section-heading">
+    <span>@Loc.T("ParentStagesProgress")</span>
+</div>
+<div class="topic-cards-grid">
+    @foreach (var st in Vm.Stages)
+    {
+        var done = st.Words.Count(w => Vm.CompletedWords.Contains(w.Word));
+        var pct = st.Words.Count > 0 ? (int)Math.Round(done * 100.0 / st.Words.Count) : 0;
+        <div class="topic-card" style="cursor:pointer;flex-direction:column;align-items:stretch;gap:8px;" @onclick="() => Vm.StartStageAsync(st)">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="topic-card-title">@(Loc.IsArabic ? st.TitleAr : st.TitleEn)</span>
+                <span style="font-size:12px;font-weight:900;color:#7C3AED;">@done / @st.Words.Count</span>
+            </div>
+            <div class="trace-progress-track">
+                <div class="trace-progress-fill" style="width:@(pct)%"></div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="store-cta-card" @onclick="Vm.OpenStoreCoursesAsync">
+    <div style="display:flex;align-items:center;gap:12px;flex:1;">
+        <div class="store-cta-icon icon-svg">
+            @((MarkupString)UiIcons.ShoppingBag)
+        </div>
+        <div>
+            <div style="font-size:14px;font-weight:900;color:#fff;">@Loc.T("StoreTitle")</div>
+            <div style="font-size:11px;color:#FDE68A;">@Loc.T("StoreSub")</div>
+        </div>
+    </div>
+    <div class="store-cta-btn">@Loc.T("StoreBtn")</div>
+</div>

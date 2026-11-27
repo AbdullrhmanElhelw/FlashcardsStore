@@ -1,0 +1,93 @@
+@inherits PhonicsComponentBase<HomeViewModel>
+
+<div class="sb-banner" style="margin-bottom:14px;">
+    <div class="sb-banner-title">@Loc.T("GamesHubTitle")</div>
+    <div class="sb-banner-sub">@Loc.T("GamesHubSub")</div>
+</div>
+
+<!-- Default Gameplay Mode Selector -->
+<div class="section-heading">
+    <span>@Loc.T("ChoosePlayModeTitle")</span>
+</div>
+<div class="mode-tabs" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px;">
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.WordBuilder ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.WordBuilder)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</div>
+        <div class="mode-tab-title">@Loc.T("ModeBuilderTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeBuilderSub")</div>
+    </div>
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.SoundMatch ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.SoundMatch)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Headphones)</div>
+        <div class="mode-tab-title">@Loc.T("ModeMatchTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeMatchSub")</div>
+    </div>
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.SpeakRepeat ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.SpeakRepeat)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Mic)</div>
+        <div class="mode-tab-title">@Loc.T("ModeRepeatTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeRepeatSub")</div>
+    </div>
+    <div class="mode-tab @(Vm.SelectedMode == GameMode.TraceWrite ? "active" : "")"
+         @onclick="() => Vm.SetMode(GameMode.TraceWrite)">
+        <div class="mode-tab-icon icon-svg">@((MarkupString)UiIcons.Sparkles)</div>
+        <div class="mode-tab-title">@Loc.T("ModeTraceTitle")</div>
+        <div class="mode-tab-sub">@Loc.T("ModeTraceSub")</div>
+    </div>
+</div>
+
+<!-- Phonics Skill Drills -->
+<div class="section-heading">
+    <span>@Loc.T("DrillsSectionTitle")</span>
+</div>
+<div class="topic-cards-grid">
+    <div class="topic-card" style="border-color:#EC489933;" @onclick="Vm.StartBalloonPopAsync">
+        <div class="topic-card-badge" style="background:#EC4899;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Sparkles)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("BalloonGameTitle")</div>
+            <div class="topic-card-sub">@Loc.T("BalloonGameSub")</div>
+        </div>
+    </div>
+
+    <div class="topic-card" style="border-color:#7C3AED33;" @onclick="Vm.StartSoundSegmentAsync">
+        <div class="topic-card-badge" style="background:#7C3AED;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Puzzle)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("SegmentGameTitle")</div>
+            <div class="topic-card-sub">@Loc.T("SegmentGameSub")</div>
+        </div>
+    </div>
+
+    <div class="topic-card" style="border-color:#0EA5E933;" @onclick="Vm.StartSoundPositionAsync">
+        <div class="topic-card-badge" style="background:#0EA5E9;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Headphones)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("PositionGameTitle")</div>
+            <div class="topic-card-sub">@Loc.T("PositionGameSub")</div>
+        </div>
+    </div>
+
+    <div class="topic-card" style="border-color:#10B98133;" @onclick="Vm.StartDecodableReaderAsync">
+        <div class="topic-card-badge" style="background:#10B981;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.BookOpen)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("DecodableTitle")</div>
+            <div class="topic-card-sub">@Loc.T("DecodableSub")</div>
+        </div>
+    </div>
+
+    <div class="topic-card" style="border-color:#0F766E33;" @onclick="Vm.OpenDictionary">
+        <div class="topic-card-badge" style="background:#0F766E;">
+            <span class="icon-svg" style="width:18px;height:18px;color:#fff;">@((MarkupString)UiIcons.Search)</span>
+        </div>
+        <div style="flex:1;">
+            <div class="topic-card-title">@Loc.T("DictTitle")</div>
+            <div class="topic-card-sub">@Vm.TotalWordsCount @Loc.T("WordsMastered")</div>
+        </div>
+    </div>
+</div>

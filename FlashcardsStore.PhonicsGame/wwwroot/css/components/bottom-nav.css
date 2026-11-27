@@ -1,0 +1,55 @@
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 560px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid #F1F5F9;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    z-index: 30;
+    box-shadow: 0 -8px 24px rgba(43, 7, 28, 0.08);
+}
+
+.bnav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 4px;
+    color: #64748B;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+}
+
+.bnav-item:active {
+    transform: scale(0.94);
+}
+
+.bnav-item.active {
+    background: #F5F3FF;
+    color: var(--plum);
+}
+
+.bnav-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.bnav-lbl {
+    font-size: 10.5px;
+    font-weight: 800;
+}
+
+main.container {
+    padding-bottom: 92px;
+}

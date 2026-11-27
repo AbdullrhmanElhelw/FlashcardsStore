@@ -41,7 +41,16 @@ else
             {
                 <ParentReportView />
             }
+            else if (Vm.CurrentScreen == AppScreen.GamesHub)
+            {
+                <GamesView />
+            }
+            else if (Vm.CurrentScreen == AppScreen.Progress)
+            {
+                <ProgressView />
+            }
         </main>
+        <BottomNav />
     </div>
     <ActivationModal />
     <ProfileModal />

@@ -1,0 +1,30 @@
+@inherits PhonicsComponentBase<AppShellViewModel>
+
+@if (Vm.ShowBottomNav)
+{
+    <nav class="bottom-nav">
+        <button class="bnav-item @(Vm.CurrentScreen == AppScreen.Home ? "active" : "")"
+                @onclick="() => Vm.NavigateTo(AppScreen.Home)">
+            <span class="bnav-icon icon-svg">@((MarkupString)UiIcons.Sparkles)</span>
+            <span class="bnav-lbl">@Loc.T("NavLearn")</span>
+        </button>
+
+        <button class="bnav-item @(Vm.CurrentScreen == AppScreen.GamesHub ? "active" : "")"
+                @onclick="() => Vm.NavigateTo(AppScreen.GamesHub)">
+            <span class="bnav-icon icon-svg">@((MarkupString)UiIcons.Puzzle)</span>
+            <span class="bnav-lbl">@Loc.T("NavGames")</span>
+        </button>
+
+        <button class="bnav-item @(Vm.CurrentScreen == AppScreen.Soundboard ? "active" : "")"
+                @onclick="() => Vm.NavigateTo(AppScreen.Soundboard)">
+            <span class="bnav-icon icon-svg">@((MarkupString)UiIcons.BookOpen)</span>
+            <span class="bnav-lbl">@Loc.T("NavCards")</span>
+        </button>
+
+        <button class="bnav-item @(Vm.CurrentScreen == AppScreen.Progress ? "active" : "")"
+                @onclick="() => Vm.NavigateTo(AppScreen.Progress)">
+            <span class="bnav-icon icon-svg">@((MarkupString)UiIcons.Award)</span>
+            <span class="bnav-lbl">@Loc.T("NavProgress")</span>
+        </button>
+    </nav>
+}
