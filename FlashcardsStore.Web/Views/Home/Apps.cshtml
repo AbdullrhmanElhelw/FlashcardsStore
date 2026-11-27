@@ -1,0 +1,190 @@
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@inject FlashcardsStore.Application.Interfaces.Services.IStoreSettingsService SettingsService
+@{
+    var isRtl = Loc.IsRtl;
+    var activeTab = ViewBag.ActiveTab as string ?? "phonics";
+    ViewData["Title"] = isRtl ? "تطبيقات أكاديمية خلود النادي" : "Kholoud Elnady Mobile Apps";
+    var waLink = SettingsService.GetWhatsAppLink(isRtl
+        ? "مرحباً مس خلود، أريد الاستفسار عن تطبيقات وكروت الأكاديمية"
+        : "Hello Miss Kholoud, I want to ask about the academy apps and flashcards");
+}
+
+<div x-data="{ tab: '@activeTab' }">
+    <!-- Unified Header & App Switcher -->
+    <section class="bg-gradient-to-b from-[#2B071C] via-[#3A0A26] to-[#1A0412] text-white pt-12 pb-16 sm:pt-16 sm:pb-20 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
+            <!-- Switcher Pills -->
+            <div class="flex flex-col items-center text-center space-y-4">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/15 border border-amber-400/35 text-amber-300 text-xs font-extrabold">
+                    @(isRtl ? "منظومة أكاديمية خلود النادي المتكاملة" : "Kholoud Elnady Integrated Ecosystem")
+                </span>
+                <h1 class="text-3xl sm:text-5xl font-black">
+                    @(isRtl ? "تطبيقاتنا على الموبايل" : "Our Mobile Apps")
+                </h1>
+
+                <div class="inline-flex p-1.5 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md gap-1.5">
+                    <button type="button"
+                            @@click="tab = 'phonics'"
+                            :class="tab === 'phonics' ? 'bg-amber-500 text-white shadow-lg' : 'text-amber-100 hover:bg-white/10'"
+                            class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                        @(isRtl ? "1. تطبيق ألعاب الفونكس (للطفل)" : "1. Jolly Phonics Game App")
+                    </button>
+                    <button type="button"
+                            @@click="tab = 'store'"
+                            :class="tab === 'store' ? 'bg-amber-500 text-white shadow-lg' : 'text-amber-100 hover:bg-white/10'"
+                            class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                        @(isRtl ? "2. تطبيق متجر الكروت (لولي الأمر)" : "2. Flashcards Store App")
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Phonics Game Hero -->
+            <div x-show="tab === 'phonics'" x-transition class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div class="lg:col-span-7 space-y-5 text-start">
+                    <h2 class="text-2xl sm:text-4xl font-black leading-tight">
+                        @(isRtl ? "لعبة Jolly Phonics التفاعلية للأطفال" : "Interactive Jolly Phonics Kids Game")
+                    </h2>
+                    <p class="text-sm sm:text-base text-amber-100/90 leading-relaxed">
+                        @(isRtl
+                            ? "رحلة تأسيس تبدأ بأصوات S A T I P N ثم الدمج وتقطيع الأصوات والكتابة بالأسهم على السطور — مع نطق الصوت الحقيقي (ssss) وتقرير لولي الأمر."
+                            : "A joyful foundation from S A T I P N sounds to blending, segmenting, and stroke-guided tracing — with true phoneme audio and a parent progress report.")
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <a asp-controller="Catalog" asp-action="Index"
+                           class="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow-lg transition">
+                            @(isRtl ? "اطلب الكروت واحصل على كود التفعيل" : "Order Flashcards & Get Code")
+                        </a>
+                        <a href="@waLink" target="_blank" rel="noopener noreferrer"
+                           class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-sm transition">
+                            @(isRtl ? "احجز كورس التأسيس" : "Book Course")
+                        </a>
+                    </div>
+                    <div class="inline-flex items-center gap-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border-2 border-amber-300/70">
+                        <img src="~/images/phonics-app/qr-phonics-app.png" asp-append-version="true" alt="QR Phonics App" class="w-24 h-24 rounded-xl border border-slate-200 shrink-0" />
+                        <div class="space-y-1 text-start">
+                            <div class="text-xs font-black text-amber-700">@(isRtl ? "امسح الكود بموبايلك" : "Scan with your phone")</div>
+                            <div class="text-sm font-extrabold text-[#2B071C]">@(isRtl ? "تطبيق ألعاب الفونكس" : "Jolly Phonics App")</div>
+                            <p class="text-[11px] text-slate-500 max-w-xs">@(isRtl ? "وجّه الكاميرا نحو الكود لفتح صفحة التطبيق مباشرة." : "Point your camera to open the app page instantly.")</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="w-[260px] sm:w-[280px] bg-slate-950 rounded-[2.6rem] p-3 shadow-2xl border-[3px] border-amber-400/40">
+                        <div class="w-20 h-4 bg-slate-950 rounded-b-2xl mx-auto mb-1"></div>
+                        <img src="~/images/phonics-app/screen-home.png" asp-append-version="true" alt="Phonics Game Home" class="w-full rounded-[2rem]" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Store App Hero -->
+            <div x-show="tab === 'store'" x-cloak x-transition class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div class="lg:col-span-7 space-y-5 text-start">
+                    <h2 class="text-2xl sm:text-4xl font-black leading-tight">
+                        @(isRtl ? "تطبيق متجر بطاقات الفلاش كاردز" : "Flashcards Store Mobile App")
+                    </h2>
+                    <p class="text-sm sm:text-base text-amber-100/90 leading-relaxed">
+                        @(isRtl
+                            ? "تصفحي كل باقات الفونكس والجرامر والمفردات، أضيفي للسلة، وتابعي شحن طلبك خطوة بخطوة — ومع كل طلب يظهر لك كود تفعيل لتطبيق الألعاب تلقائياً."
+                            : "Browse all flashcard bundles, manage your cart & wishlist, track shipping live, and automatically receive a Phonics Game activation code with every order.")
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <a asp-controller="Catalog" asp-action="Index"
+                           class="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow-lg transition">
+                            @(isRtl ? "تصفح المتجر الآن" : "Browse Web Store")
+                        </a>
+                        <a href="@waLink" target="_blank" rel="noopener noreferrer"
+                           class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-sm transition">
+                            @(isRtl ? "تواصل عبر واتساب" : "Contact WhatsApp")
+                        </a>
+                    </div>
+                    <div class="inline-flex items-center gap-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border-2 border-amber-300/70">
+                        <img src="~/images/store-app/qr-store-app.png" asp-append-version="true" alt="QR Store App" class="w-24 h-24 rounded-xl border border-slate-200 shrink-0" />
+                        <div class="space-y-1 text-start">
+                            <div class="text-xs font-black text-amber-700">@(isRtl ? "امسح الكود بموبايلك" : "Scan with your phone")</div>
+                            <div class="text-sm font-extrabold text-[#2B071C]">@(isRtl ? "تطبيق متجر الفلاش كاردز" : "Flashcards Store App")</div>
+                            <p class="text-[11px] text-slate-500 max-w-xs">@(isRtl ? "وجّه الكاميرا نحو الكود لفتح صفحة تطبيق المتجر." : "Point your camera to open the Store App page.")</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="w-[260px] sm:w-[280px] bg-slate-950 rounded-[2.6rem] p-3 shadow-2xl border-[3px] border-amber-400/40">
+                        <div class="w-20 h-4 bg-slate-950 rounded-b-2xl mx-auto mb-1"></div>
+                        <img src="~/images/store-app/store-home.png" asp-append-version="true" alt="Store App Home" class="w-full rounded-[2rem]" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Gallery (Switches per Active Tab) -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8">
+        <div class="text-center space-y-2">
+            <span class="text-xs font-extrabold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                @(isRtl ? "صور حقيقية من داخل التطبيق" : "Real In-App Screenshots")
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900" x-text="tab === 'phonics' ? '@(isRtl ? "جولة داخل تطبيق ألعاب الفونكس" : "Inside the Phonics Game App")' : '@(isRtl ? "جولة داخل تطبيق المتجر" : "Inside the Store App")'"></h2>
+        </div>
+
+        <!-- Phonics Screenshots -->
+        <div x-show="tab === 'phonics'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/phonics-app/screen-home.png" asp-append-version="true" alt="Learn Path" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "1. مسار S A T I P N" : "1. S A T I P N Path")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/phonics-app/screen-cards.png" asp-append-version="true" alt="Sound Cards" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "2. كروت الأصوات والتتبع" : "2. Cards & Tracing")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/phonics-app/screen-games.png" asp-append-version="true" alt="Games Hub" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "3. صالة الألعاب والتمارين" : "3. Games & Drills")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/phonics-app/screen-progress.png" asp-append-version="true" alt="Progress" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "4. التقدم وتقرير ولي الأمر" : "4. Progress & Report")</h3>
+            </div>
+        </div>
+
+        <!-- Store Screenshots -->
+        <div x-show="tab === 'store'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/store-app/store-home.png" asp-append-version="true" alt="Store Home" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "1. الرئيسية والباقات" : "1. Home & Bundles")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/store-app/store-wishlist.png" asp-append-version="true" alt="Wishlist" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "2. المفضلة" : "2. Wishlist")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/store-app/store-cart.png" asp-append-version="true" alt="Cart" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "3. سلة المشتريات" : "3. Shopping Cart")</h3>
+            </div>
+            <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+                <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                    <img src="~/images/store-app/store-track.png" asp-append-version="true" alt="Track Order" class="w-full rounded-[1.5rem]" />
+                </div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "4. تتبع الطلبات" : "4. Order Tracking")</h3>
+            </div>
+        </div>
+
+        <div class="text-center pt-4">
+            <a asp-controller="Home" asp-action="Privacy" class="text-xs font-bold text-slate-500 hover:text-[#2B071C] underline">
+                @(isRtl ? "سياسة الخصوصية للموقع وتطبيق المتجر وتطبيق ألعاب الفونكس" : "Privacy Policy for Website, Store App & Phonics Game App")
+            </a>
+        </div>
+    </section>
+</div>

@@ -44,8 +44,7 @@
                 <ul class="space-y-2.5 text-sm">
                     <li><a asp-controller="Home" asp-action="Index" class="hover:text-[#D4AF37] font-bold text-white transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"></span> @Loc.Get("NavHome")</a></li>
                     <li><a asp-controller="Catalog" asp-action="Index" class="hover:text-[#D4AF37] font-bold text-amber-300 transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> @Loc.Get("NavCatalog")</a></li>
-                    <li><a asp-controller="Home" asp-action="PhonicsApp" class="hover:text-[#D4AF37] font-bold text-amber-200 transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @(Loc.IsRtl ? "تطبيق ألعاب الفونكس" : "Phonics Game App")</a></li>
-                    <li><a asp-controller="Home" asp-action="StoreApp" class="hover:text-[#D4AF37] font-bold text-amber-200 transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> @(Loc.IsRtl ? "تطبيق المتجر" : "Store Mobile App")</a></li>
+                    <li><a asp-controller="Home" asp-action="Apps" class="hover:text-[#D4AF37] font-bold text-amber-200 transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @(Loc.IsRtl ? "تطبيقات الموبايل" : "Mobile Apps")</a></li>
                     <li><a asp-controller="Home" asp-action="Privacy" class="hover:text-[#D4AF37] transition">@(Loc.IsRtl ? "سياسة الخصوصية" : "Privacy Policy")</a></li>
                     <li class="pt-1"><a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="1" class="hover:text-[#D4AF37] transition">@Loc.Get("NavPhonics")</a></li>
                     <li><a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="2" class="hover:text-[#D4AF37] transition">@Loc.Get("NavGrammar")</a></li>

@@ -34,11 +34,18 @@ public class HomeController : Controller
         return View(featuredProducts);
     }
 
+    [HttpGet("Apps")]
+    public IActionResult Apps(string tab = "phonics")
+    {
+        ViewBag.ActiveTab = string.Equals(tab, "store", StringComparison.OrdinalIgnoreCase) ? "store" : "phonics";
+        return View("Apps");
+    }
+
     [HttpGet("PhonicsApp")]
-    public IActionResult PhonicsApp() => View();
+    public IActionResult PhonicsApp() => RedirectToAction(nameof(Apps), new { tab = "phonics" });
 
     [HttpGet("StoreApp")]
-    public IActionResult StoreApp() => View();
+    public IActionResult StoreApp() => RedirectToAction(nameof(Apps), new { tab = "store" });
 
     [HttpGet("Privacy")]
     public IActionResult Privacy() => View();

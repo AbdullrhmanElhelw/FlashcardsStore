@@ -48,14 +48,9 @@
                     <span>@Loc.Get("NavCatalog")</span>
                 </a>
 
-                <a asp-controller="Home" asp-action="PhonicsApp"
-                   class="inline-flex items-center gap-1.5 px-2 xl:px-3 py-2 rounded-xl text-[#3A0A26] bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap">
-                    <span>@(isRtl ? "تطبيق الفونكس" : "Phonics App")</span>
-                </a>
-
-                <a asp-controller="Home" asp-action="StoreApp"
-                   class="inline-flex items-center gap-1.5 px-2 xl:px-3 py-2 rounded-xl text-slate-700 hover:text-[#3A0A26] hover:bg-slate-100 transition-colors whitespace-nowrap">
-                    <span>@(isRtl ? "تطبيق المتجر" : "Store App")</span>
+                <a asp-controller="Home" asp-action="Apps"
+                   class="inline-flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 rounded-xl text-[#3A0A26] bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap">
+                    <span>@(isRtl ? "تطبيقاتنا" : "Our Apps")</span>
                 </a>
 
                 <!-- Interactive Categories Dropdown -->
