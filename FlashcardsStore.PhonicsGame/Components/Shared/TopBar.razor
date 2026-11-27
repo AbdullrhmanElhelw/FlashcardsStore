@@ -1,4 +1,4 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<AppShellViewModel>
 
 <header class="topbar">
     <div class="brand-wrap">
@@ -15,7 +15,7 @@
             <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Globe)</span>
             <span>@(Loc.IsArabic ? "EN" : "AR")</span>
         </button>
-        <button class="btn-lang-pill" @onclick="Vm.OpenShop" title="Shop">
+        <button class="btn-lang-pill" @onclick="() => Vm.NavigateTo(AppScreen.Shop)" title="Shop">
             <span class="icon-svg" style="width:14px;height:14px;color:#FDE047;">@((MarkupString)UiIcons.ShoppingBag)</span>
         </button>
         <div class="stat-pill">
@@ -31,7 +31,7 @@
         }
         else
         {
-            <button class="btn-activate-pill" @onclick="Vm.OpenActivationModal">
+            <button class="btn-activate-pill" @onclick="Modals.OpenActivationModal">
                 <span class="icon-svg" style="width:13px;height:13px;">@((MarkupString)UiIcons.Key)</span>
                 <span>@Loc.T("ActivateCode")</span>
             </button>

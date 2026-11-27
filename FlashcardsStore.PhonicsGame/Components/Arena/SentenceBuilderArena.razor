@@ -1,0 +1,59 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentSentence is not null)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background: #FFF9F2;">
+            @((MarkupString)WordArtwork.GetSvg(Vm.CurrentSentence.ArtworkKey, Vm.CurrentSentence.AccentColor))
+        </div>
+        @if (Loc.IsArabic)
+        {
+            <div class="arabic-hint">@Vm.CurrentSentence.ArabicMeaning</div>
+        }
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">@Loc.T("SentencePrompt")</div>
+        <div class="audio-controls">
+            <button class="btn-speak" @onclick="Vm.SpeakCurrentSentenceAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="sentence-slots-row">
+        @for (var i = 0; i < Vm.SentenceSlots.Length; i++)
+        {
+            var slotIdx = i;
+            var bankIdx = Vm.SentenceSlots[slotIdx];
+            var hasWord = bankIdx >= 0;
+            var cls = "sentence-slot"
+                + (hasWord ? " filled" : "")
+                + (Vm.WordSolved ? " correct" : "")
+                + (Vm.SentenceWrongFlash ? " wrong" : "");
+
+            <div class="@cls" @onclick="() => Vm.ClearSentenceSlotAsync(slotIdx)">
+                @(hasWord ? Vm.SentenceBank[bankIdx].Word : "___")
+            </div>
+        }
+    </div>
+
+    <div class="tiles-bank" style="margin-top:14px;">
+        @for (var i = 0; i < Vm.SentenceBank.Count; i++)
+        {
+            var bIdx = i;
+            var item = Vm.SentenceBank[bIdx];
+            <button class="sentence-chip @(item.Used ? "used" : "")"
+                    disabled="@item.Used"
+                    @onclick="() => Vm.SelectSentenceWordAsync(bIdx)">
+                @item.Word
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (+2)</div>
+            <button class="btn-next" @onclick="Vm.NextSentenceAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

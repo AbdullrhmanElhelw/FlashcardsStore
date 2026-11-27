@@ -1,4 +1,4 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<GameArenaViewModel>
 
 @if (Vm.StageFinished)
 {
@@ -7,7 +7,7 @@
 else if (Vm.ActiveStage is not null)
 {
     <div class="game-header">
-        <button class="btn-back" @onclick="Vm.ExitStage">
+        <button class="btn-back" @onclick="Shell.GoHome">
             <span class="icon-svg" style="width:15px;height:15px;">
                 @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
             </span>
@@ -26,306 +26,32 @@ else if (Vm.ActiveStage is not null)
         </div>
     </div>
 
-    @if (Vm.SelectedMode == GameMode.WordBuilder)
+    @switch (Vm.SelectedMode)
     {
-        <div class="picture-stage">
-            <div class="picture-circle" style="background: @Vm.CurrentWord.BgColor;">
-                @((MarkupString)WordArtwork.GetSvg(Vm.CurrentWord.ArtworkKey, Vm.CurrentWord.AccentColor))
-            </div>
-            <div class="arabic-hint">
-                @(Loc.IsArabic ? Vm.CurrentWord.ArabicMeaning : Vm.CurrentWord.Word.ToUpperInvariant())
-            </div>
-            <div class="audio-controls" style="flex-wrap:wrap;">
-                <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
-                    <span>@Loc.T("ListenWord")</span>
-                </button>
-                <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
-                    <span>@Loc.T("SlowSpeak")</span>
-                </button>
-                <button class="btn-speak hint" @onclick="Vm.UseHintAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
-                    <span>@Loc.T("HintBtn")</span>
-                </button>
-                <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
-                    <span>@Loc.T("SayItBtn")</span>
-                </button>
-            </div>
-            @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
-            {
-                <div style="margin-top:10px;font-size:12.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
-                    @Vm.SpeechFeedback
-                </div>
-            }
-        </div>
-
-        <div class="slots-row">
-            @for (var i = 0; i < Vm.Slots.Length; i++)
-            {
-                var slotIdx = i;
-                var tileIdx = Vm.Slots[slotIdx];
-                var isVowelSlot = !Vm.CurrentWord.IsSightWord && Vm.CurrentWord.Word.Length == 3 && slotIdx == 1;
-                var hasLetter = tileIdx >= 0;
-                var slotClass = "letter-slot";
-                if (isVowelSlot) slotClass += " vowel-slot";
-                if (hasLetter) slotClass += " filled";
-                if (Vm.WordSolved) slotClass += " correct";
-                else if (Vm.BuilderWrongFlash) slotClass += " wrong";
-
-                <div class="@slotClass"
-                     data-slot-index="@slotIdx"
-                     @onclick="() => Vm.ClearSlotAsync(slotIdx)">
-                    @(hasLetter ? Vm.Tiles[tileIdx].Letter : "")
-                </div>
-            }
-        </div>
-
-        <div class="tiles-bank">
-            @for (var i = 0; i < Vm.Tiles.Count; i++)
-            {
-                var tileIdx = i;
-                var tile = Vm.Tiles[tileIdx];
-                var tileClass = "letter-tile"
-                    + (PhonicsGameViewModel.IsVowel(tile.Letter) ? " vowel-tile" : "")
-                    + (tile.Used ? " used" : "");
-
-                <div class="@tileClass"
-                     @onpointerdown="(e) => Vm.StartTileDragAsync(tileIdx, e.ClientX, e.ClientY)">
-                    @tile.Letter
-                </div>
-            }
-        </div>
-    }
-    else if (Vm.SelectedMode == GameMode.SoundMatch)
-    {
-        <div class="picture-stage">
-            <div class="icon-svg" style="width:58px;height:58px;margin:0 auto 10px;color:var(--plum);">
-                @((MarkupString)UiIcons.Headphones)
-            </div>
-            <div class="arabic-hint">@Loc.T("MatchPrompt")</div>
-            <div class="audio-controls" style="flex-wrap:wrap;">
-                <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
-                    <span>@Loc.T("ListenWord")</span>
-                </button>
-                <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
-                    <span>@Loc.T("SlowSpeak")</span>
-                </button>
-                <button class="btn-speak hint" @onclick="Vm.UseHintAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
-                    <span>@Loc.T("HintBtn")</span>
-                </button>
-                <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
-                    <span>@Loc.T("SayItBtn")</span>
-                </button>
-            </div>
-            @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
-            {
-                <div style="margin-top:10px;font-size:12.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
-                    @Vm.SpeechFeedback
-                </div>
-            }
-        </div>
-
-        <div class="match-grid">
-            @foreach (var opt in Vm.MatchOptions)
-            {
-                var isRight = Vm.WordSolved && opt.Word == Vm.CurrentWord.Word;
-                var isWrong = Vm.WrongMatchWord == opt.Word;
-                var cardClass = "match-card" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
-
-                <div class="@cardClass" @onclick="() => Vm.SelectMatchOptionAsync(opt)">
-                    <div class="match-art">
-                        @((MarkupString)WordArtwork.GetSvg(opt.ArtworkKey, opt.AccentColor))
-                    </div>
-                    <div class="match-ar">@(Loc.IsArabic ? opt.ArabicMeaning : opt.Word.ToUpperInvariant())</div>
-                    @if (isRight)
-                    {
-                        <div style="margin-top: 4px; font-weight: 900; color: #059669; direction: ltr;">@opt.Word.ToUpperInvariant()</div>
-                    }
-                </div>
-            }
-        </div>
-    }
-    else if (Vm.SelectedMode == GameMode.SentenceBuilder && Vm.CurrentSentence is not null)
-    {
-        <div class="picture-stage">
-            <div class="picture-circle" style="background: #FFF9F2;">
-                @((MarkupString)WordArtwork.GetSvg(Vm.CurrentSentence.ArtworkKey, Vm.CurrentSentence.AccentColor))
-            </div>
-            @if (Loc.IsArabic)
-            {
-                <div class="arabic-hint">@Vm.CurrentSentence.ArabicMeaning</div>
-            }
-            <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">@Loc.T("SentencePrompt")</div>
-            <div class="audio-controls">
-                <button class="btn-speak" @onclick="Vm.SpeakCurrentSentenceAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
-                    <span>@Loc.T("ListenWord")</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="sentence-slots-row">
-            @for (var i = 0; i < Vm.SentenceSlots.Length; i++)
-            {
-                var slotIdx = i;
-                var bankIdx = Vm.SentenceSlots[slotIdx];
-                var hasWord = bankIdx >= 0;
-                var cls = "sentence-slot"
-                    + (hasWord ? " filled" : "")
-                    + (Vm.WordSolved ? " correct" : "")
-                    + (Vm.SentenceWrongFlash ? " wrong" : "");
-
-                <div class="@cls" @onclick="() => Vm.ClearSentenceSlotAsync(slotIdx)">
-                    @(hasWord ? Vm.SentenceBank[bankIdx].Word : "___")
-                </div>
-            }
-        </div>
-
-        <div class="tiles-bank" style="margin-top:14px;">
-            @for (var i = 0; i < Vm.SentenceBank.Count; i++)
-            {
-                var bIdx = i;
-                var item = Vm.SentenceBank[bIdx];
-                <button class="sentence-chip @(item.Used ? "used" : "")"
-                        disabled="@item.Used"
-                        @onclick="() => Vm.SelectSentenceWordAsync(bIdx)">
-                    @item.Word
-                </button>
-            }
-        </div>
-
-        @if (Vm.WordSolved && Vm.SelectedMode != GameMode.SentenceBuilder && Vm.SelectedMode != GameMode.RhymingMatch && Vm.SelectedMode != GameMode.MinimalPairs)
-        {
-            <div class="celebrate-banner">
-                <div style="font-weight:900;">@Loc.T("GreatJob") (+2)</div>
-                <button class="btn-next" @onclick="Vm.NextSentenceAsync">@Loc.T("NextWord")</button>
-            </div>
-        }
-    }
-    else if (Vm.SelectedMode == GameMode.RhymingMatch && Vm.CurrentRhyme is not null)
-    {
-        <div class="picture-stage">
-            <div class="picture-circle" style="background: #FFF9F2;">
-                @((MarkupString)WordArtwork.GetSvg(Vm.CurrentRhyme.TargetArtworkKey, Vm.CurrentRhyme.TargetAccentColor))
-            </div>
-            <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">@Loc.T("RhymePrompt")</div>
-            <div class="arabic-hint" style="direction:ltr;font-size:28px;">@Vm.CurrentRhyme.TargetWord.ToUpperInvariant()</div>
-            <div class="audio-controls">
-                <button class="btn-speak" @onclick="Vm.SpeakCurrentRhymeTargetAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
-                    <span>@Loc.T("ListenWord")</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="story-quiz-options">
-            @foreach (var opt in Vm.RhymeOptions)
-            {
-                var isRight = Vm.WordSolved && opt == Vm.CurrentRhyme.CorrectRhyme;
-                var isWrong = Vm.RhymeWrongOption == opt;
-                var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
-                <button class="@cls" @onclick="() => Vm.SelectRhymeOptionAsync(opt)">
-                    @opt.ToUpperInvariant()
-                </button>
-            }
-        </div>
-
-        @if (Vm.WordSolved)
-        {
-            <div class="celebrate-banner">
-                <div style="font-weight:900;">@Loc.T("GreatJob") (@Vm.CurrentRhyme.TargetWord ↔ @Vm.CurrentRhyme.CorrectRhyme)</div>
-                <button class="btn-next" @onclick="Vm.NextRhymeAsync">@Loc.T("NextWord")</button>
-            </div>
-        }
-    }
-    else if (Vm.SelectedMode == GameMode.MinimalPairs && Vm.CurrentMinimalPair is not null)
-    {
-        var pair = Vm.CurrentMinimalPair;
-        var shortRight = Vm.WordSolved && !Vm.MinimalTargetIsLong;
-        var longRight = Vm.WordSolved && Vm.MinimalTargetIsLong;
-        var shortWrong = Vm.MinimalWrongWord == pair.ShortWord;
-        var longWrong = Vm.MinimalWrongWord == pair.LongWord;
-
-        <div class="picture-stage">
-            <div class="icon-svg" style="width:54px;height:54px;margin:0 auto 10px;color:var(--plum);">
-                @((MarkupString)UiIcons.Headphones)
-            </div>
-            <div class="arabic-hint">@Loc.T("MinimalPrompt")</div>
-            <div class="audio-controls">
-                <button class="btn-speak" @onclick="Vm.SpeakCurrentMinimalPairAsync">
-                    <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
-                    <span>@Loc.T("ListenWord")</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="match-grid">
-            <button class="match-card @(shortRight ? "correct" : "") @(shortWrong ? "wrong" : "")"
-                    @onclick="() => Vm.SelectMinimalOptionAsync(false)">
-                <div style="font-size:28px;font-weight:900;color:var(--plum);direction:ltr;">@pair.ShortWord.ToUpperInvariant()</div>
-                @if (Loc.IsArabic)
-                {
-                    <div style="font-size:12px;color:var(--muted);margin-top:4px;">@pair.ShortArabic</div>
-                }
-            </button>
-            <button class="match-card @(longRight ? "correct" : "") @(longWrong ? "wrong" : "")"
-                    @onclick="() => Vm.SelectMinimalOptionAsync(true)">
-                <div style="font-size:28px;font-weight:900;color:#D97706;direction:ltr;">@pair.LongWord.ToUpperInvariant()</div>
-                @if (Loc.IsArabic)
-                {
-                    <div style="font-size:12px;color:var(--muted);margin-top:4px;">@pair.LongArabic</div>
-                }
-            </button>
-        </div>
-
-        @if (Vm.WordSolved)
-        {
-            <div class="celebrate-banner">
-                <div style="font-weight:900;">@Loc.T("GreatJob") (@pair.ShortWord ↔ @pair.LongWord)</div>
-                <button class="btn-next" @onclick="Vm.NextMinimalPairAsync">@Loc.T("NextWord")</button>
-            </div>
-        }
-    }
-    else
-    {
-        <div class="picture-stage" style="padding:14px 16px;margin-bottom:10px;">
-            <div class="arabic-hint" style="font-size:16px;margin:0;">@Loc.T("MemoryMatchPrompt")</div>
-        </div>
-
-        <div class="memory-grid">
-            @foreach (var card in Vm.MemoryCards)
-            {
-                var cls = "memory-card"
-                    + (card.IsFlipped || card.IsMatched ? " flipped" : "")
-                    + (card.IsMatched ? " matched" : "");
-
-                <div class="@cls" @onclick="() => Vm.FlipMemoryCardAsync(card)">
-                    @if (!card.IsFlipped && !card.IsMatched)
-                    {
-                        <span class="icon-svg" style="width:36px;height:36px;">@((MarkupString)UiIcons.Sparkles)</span>
-                    }
-                    else if (card.IsPictureCard)
-                    {
-                        <div class="match-art" style="width:78px;height:78px;margin:0;">
-                            @((MarkupString)WordArtwork.GetSvg(card.ArtworkKey, card.AccentColor))
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="memory-word-text">@card.WordKey.ToUpperInvariant()</div>
-                    }
-                </div>
-            }
-        </div>
+        case GameMode.WordBuilder:
+            <WordBuilderArena />
+            break;
+        case GameMode.SoundMatch:
+            <SoundMatchArena />
+            break;
+        case GameMode.MemoryMatch:
+            <MemoryMatchArena />
+            break;
+        case GameMode.SentenceBuilder:
+            <SentenceBuilderArena />
+            break;
+        case GameMode.RhymingMatch:
+            <RhymingMatchArena />
+            break;
+        case GameMode.MinimalPairs:
+            <MinimalPairsArena />
+            break;
     }
 
-    @if (Vm.WordSolved && Vm.SelectedMode != GameMode.SentenceBuilder && Vm.SelectedMode != GameMode.RhymingMatch && Vm.SelectedMode != GameMode.MinimalPairs)
+    @if (Vm.WordSolved
+         && Vm.SelectedMode != GameMode.SentenceBuilder
+         && Vm.SelectedMode != GameMode.RhymingMatch
+         && Vm.SelectedMode != GameMode.MinimalPairs)
     {
         <div class="celebrate-banner">
             <div>

@@ -1,6 +1,4 @@
-@inject PhonicsGameViewModel Vm
-@inject IJSRuntime JS
-@implements IDisposable
+@inherits PhonicsComponentBase<AppShellViewModel>
 
 @if (Vm.CurrentScreen == AppScreen.Splash)
 {
@@ -43,26 +41,4 @@ else
     </div>
     <ActivationModal />
     <ProfileModal />
-}
-
-@code {
-    protected override void OnInitialized()
-    {
-        Vm.StateChanged += OnVmChanged;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await Vm.InitializeAsync(JS);
-        }
-    }
-
-    private void OnVmChanged() => InvokeAsync(StateHasChanged);
-
-    public void Dispose()
-    {
-        Vm.StateChanged -= OnVmChanged;
-    }
 }

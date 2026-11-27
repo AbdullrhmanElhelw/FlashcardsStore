@@ -1,7 +1,7 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<ShopViewModel>
 
 <div class="sb-header">
-    <button class="btn-back" @onclick="Vm.ExitStage">
+    <button class="btn-back" @onclick="Shell.GoHome">
         <span class="icon-svg" style="width:15px;height:15px;">
             @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
         </span>
@@ -18,20 +18,20 @@
     <div style="font-size:12px;opacity:0.9;">@Loc.T("ShopSub")</div>
 </div>
 
-@if (!string.IsNullOrWhiteSpace(Vm.ShopFeedback))
+@if (!string.IsNullOrWhiteSpace(Vm.Feedback))
 {
     <div style="background:#FFF1F2;border:1.5px solid #FDA4AF;color:#BE123C;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:800;margin-bottom:12px;text-align:center;">
-        @Vm.ShopFeedback
+        @Vm.Feedback
     </div>
 }
 
 <div class="shop-grid">
-    @foreach (var item in Vm.ShopItems)
+    @foreach (var item in Vm.Items)
     {
-        var unlocked = Vm.IsShopItemUnlocked(item.Id);
-        var equipped = Vm.IsShopItemEquipped(item);
+        var unlocked = Vm.IsUnlocked(item.Id);
+        var equipped = Vm.IsEquipped(item);
 
-        <div class="shop-card @(equipped ? "equipped" : "")" @onclick="() => Vm.BuyOrEquipShopItemAsync(item)">
+        <div class="shop-card @(equipped ? "equipped" : "")" @onclick="() => Vm.BuyOrEquipAsync(item)">
             <div class="shop-preview" style="background:@item.PreviewColor;">
                 @if (item.Kind == "avatar")
                 {

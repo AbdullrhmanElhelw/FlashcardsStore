@@ -1,0 +1,38 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentRhyme is not null)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background: #FFF9F2;">
+            @((MarkupString)WordArtwork.GetSvg(Vm.CurrentRhyme.TargetArtworkKey, Vm.CurrentRhyme.TargetAccentColor))
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">@Loc.T("RhymePrompt")</div>
+        <div class="arabic-hint" style="direction:ltr;font-size:28px;">@Vm.CurrentRhyme.TargetWord.ToUpperInvariant()</div>
+        <div class="audio-controls">
+            <button class="btn-speak" @onclick="Vm.SpeakCurrentRhymeTargetAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="story-quiz-options">
+        @foreach (var opt in Vm.RhymeOptions)
+        {
+            var isRight = Vm.WordSolved && opt == Vm.CurrentRhyme.CorrectRhyme;
+            var isWrong = Vm.RhymeWrongOption == opt;
+            var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            <button class="@cls" @onclick="() => Vm.SelectRhymeOptionAsync(opt)">
+                @opt.ToUpperInvariant()
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (@Vm.CurrentRhyme.TargetWord ↔ @Vm.CurrentRhyme.CorrectRhyme)</div>
+            <button class="btn-next" @onclick="Vm.NextRhymeAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

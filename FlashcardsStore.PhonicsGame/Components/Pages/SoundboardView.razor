@@ -1,7 +1,7 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<SoundboardViewModel>
 
 <div class="sb-header">
-    <button class="btn-back" @onclick="Vm.ExitStage">
+    <button class="btn-back" @onclick="Shell.GoHome">
         <span class="icon-svg" style="width:15px;height:15px;">
             @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
         </span>
@@ -26,29 +26,29 @@
 </div>
 
 <div class="sb-grid">
-    @foreach (var item in Vm.Alphabet)
+    @foreach (var item in Vm.Letters)
     {
         var cls = "sb-card"
             + (item.IsVowel ? " vowel" : "")
-            + (Vm.ActiveSoundboardLetter == item.Letter ? " active" : "");
+            + (Vm.ActiveLetter == item.Letter ? " active" : "");
 
-        <div class="@cls" @onclick="() => Vm.SpeakAlphabetLetterAsync(item)">
+        <div class="@cls" @onclick="() => Vm.SpeakLetterAsync(item)">
             <div class="sb-letter">@item.Letter@char.ToLowerInvariant(item.Letter)</div>
             <div class="sb-word">@(Loc.IsArabic ? item.ArabicWord : item.ExampleWord)</div>
         </div>
     }
 </div>
 
-@if (Vm.ActiveSoundboardLetter is char activeChar)
+@if (Vm.ActiveLetter is char activeChar)
 {
     <div class="trace-box">
         <div class="trace-header">
             <span style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("TraceTitle") (@activeChar@char.ToLowerInvariant(activeChar))</span>
             <div style="display:flex;align-items:center;gap:6px;">
-                <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetTracingColorAsync("#2B071C")'></span>
-                <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetTracingColorAsync("#2563EB")'></span>
-                <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetTracingColorAsync("#E11D48")'></span>
-                <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearTracingCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
+                <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetColorAsync("#2B071C")'></span>
+                <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetColorAsync("#2563EB")'></span>
+                <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetColorAsync("#E11D48")'></span>
+                <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
             </div>
         </div>
         <div class="trace-canvas-wrap">

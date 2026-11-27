@@ -1,9 +1,9 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<StoryPlayerViewModel>
 
 @if (Vm.ActiveStory is not null)
 {
     <div class="game-header">
-        <button class="btn-back" @onclick="Vm.ExitStage">
+        <button class="btn-back" @onclick="Shell.GoHome">
             <span class="icon-svg" style="width:15px;height:15px;">
                 @((MarkupString)(Loc.IsArabic ? UiIcons.ChevronRight : UiIcons.ChevronLeft))
             </span>
@@ -12,7 +12,7 @@
         <div class="progress-dots">
             @for (var i = 0; i <= Vm.ActiveStory.Scenes.Count; i++)
             {
-                var current = Vm.InStoryQuiz ? Vm.ActiveStory.Scenes.Count : Vm.StorySceneIndex;
+                var current = Vm.InQuiz ? Vm.ActiveStory.Scenes.Count : Vm.SceneIndex;
                 var cls = i < current ? "done" : (i == current ? "current" : "");
                 <span class="progress-dot @cls"></span>
             }
@@ -22,9 +22,9 @@
         </div>
     </div>
 
-    @if (!Vm.InStoryQuiz)
+    @if (!Vm.InQuiz)
     {
-        var scene = Vm.ActiveStory.Scenes[Vm.StorySceneIndex];
+        var scene = Vm.ActiveStory.Scenes[Vm.SceneIndex];
         <div class="story-stage" style="background: @scene.BgColor;">
             <div class="story-sky-cloud c1"></div>
             <div class="story-sky-cloud c2"></div>
@@ -40,7 +40,7 @@
                     var punct = token.EndsWith('.') ? "." : (token.EndsWith('!') ? "!" : (token.EndsWith('?') ? "?" : ""));
                     if (string.Equals(clean, scene.FocusWord, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (Vm.StoryBlankSolved)
+                        if (Vm.BlankSolved)
                         {
                             <span class="story-focus-word">@token</span>
                         }
@@ -62,15 +62,15 @@
                 <div class="story-sentence-ar">@scene.SentenceAr</div>
             }
 
-            @if (!Vm.StoryBlankSolved)
+            @if (!Vm.BlankSolved)
             {
                 <div style="font-size:12.5px;font-weight:800;color:var(--plum);margin-bottom:8px;">@Loc.T("StoryFillPrompt")</div>
                 <div class="story-blank-choices">
-                    @foreach (var opt in Vm.StoryBlankOptions)
+                    @foreach (var opt in Vm.BlankOptions)
                     {
-                        var isWrong = Vm.StoryBlankWrongOption == opt;
+                        var isWrong = Vm.BlankWrongOption == opt;
                         <button class="story-blank-btn @(isWrong ? "wrong" : "")"
-                                @onclick="() => Vm.SelectStoryBlankOptionAsync(opt)">
+                                @onclick="() => Vm.SelectBlankOptionAsync(opt)">
                             @opt
                         </button>
                     }
@@ -79,7 +79,7 @@
             else
             {
                 <div class="audio-controls">
-                    <button class="btn-speak" @onclick="Vm.SpeakCurrentStorySceneAsync">
+                    <button class="btn-speak" @onclick="Vm.SpeakSceneAsync">
                         <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
                         <span>@Loc.T("StoryListenBtn")</span>
                     </button>
@@ -88,11 +88,11 @@
         </div>
 
         <div class="story-nav-row">
-            <button class="btn-story-prev" disabled="@(Vm.StorySceneIndex == 0)" @onclick="Vm.PrevStorySceneAsync">
+            <button class="btn-story-prev" disabled="@(Vm.SceneIndex == 0)" @onclick="Vm.PrevSceneAsync">
                 @Loc.T("StoryPrevBtn")
             </button>
-            <button class="btn-primary" disabled="@(!Vm.StoryBlankSolved)" style="opacity:@(Vm.StoryBlankSolved ? "1" : "0.5")" @onclick="Vm.NextStorySceneAsync">
-                @(Vm.StorySceneIndex + 1 < Vm.ActiveStory.Scenes.Count ? Loc.T("StoryNextBtn") : Loc.T("StoryQuizBtn"))
+            <button class="btn-primary" disabled="@(!Vm.BlankSolved)" style="opacity:@(Vm.BlankSolved ? "1" : "0.5")" @onclick="Vm.NextSceneAsync">
+                @(Vm.SceneIndex + 1 < Vm.ActiveStory.Scenes.Count ? Loc.T("StoryNextBtn") : Loc.T("StoryQuizBtn"))
             </button>
         </div>
     }
@@ -114,21 +114,21 @@
             <div class="story-quiz-options">
                 @foreach (var opt in Vm.ActiveStory.QuizOptions)
                 {
-                    var isRight = Vm.StoryQuizSolved && opt == Vm.ActiveStory.QuizCorrectWord;
-                    var isWrong = Vm.StoryQuizWrongOption == opt;
+                    var isRight = Vm.QuizSolved && opt == Vm.ActiveStory.QuizCorrectWord;
+                    var isWrong = Vm.QuizWrongOption == opt;
                     var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
-                    <button class="@cls" @onclick="() => Vm.AnswerStoryQuizAsync(opt)">
+                    <button class="@cls" @onclick="() => Vm.AnswerQuizAsync(opt)">
                         @opt.ToUpperInvariant()
                     </button>
                 }
             </div>
         </div>
 
-        @if (Vm.StoryQuizSolved)
+        @if (Vm.QuizSolved)
         {
             <div class="celebrate-banner">
                 <div style="font-weight:900;">@Loc.T("StoryCompleteBadge")</div>
-                <button class="btn-next" @onclick="Vm.ExitStage">@Loc.T("ReturnHome")</button>
+                <button class="btn-next" @onclick="Shell.GoHome">@Loc.T("ReturnHome")</button>
             </div>
         }
     }

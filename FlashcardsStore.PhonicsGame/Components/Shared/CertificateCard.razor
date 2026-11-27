@@ -1,13 +1,4 @@
-@inherits PhonicsComponentBase
-
-@{
-    var heroName = string.IsNullOrWhiteSpace(Vm.Profile.Name)
-        ? Loc.T("DefaultHeroName")
-        : Vm.Profile.Name;
-    var stageName = Vm.ActiveStage is null
-        ? Loc.T("AppTitle")
-        : (Loc.IsArabic ? Vm.ActiveStage.TitleAr : Vm.ActiveStage.TitleEn);
-}
+@inherits PhonicsComponentBase<GameArenaViewModel>
 
 <div class="cert-card theme-@Vm.EquippedTheme">
     <div class="cert-seal">
@@ -19,13 +10,13 @@
 
     <div class="cert-hero-row">
         <div class="cert-avatar">
-            @((MarkupString)AvatarArtwork.GetSvg(Vm.Profile.AvatarKey))
+            @((MarkupString)AvatarArtwork.GetSvg(Modals.Profile.AvatarKey))
         </div>
-        <div class="cert-hero-name">@heroName</div>
+        <div class="cert-hero-name">@HeroName</div>
     </div>
 
     <div class="cert-sub">@Loc.T("CertForCompleting")</div>
-    <div class="cert-stage-name">@stageName</div>
+    <div class="cert-stage-name">@StageName</div>
 
     <div class="cert-stars-pill">
         <span class="icon-svg" style="width:18px;height:18px;color:#F59E0B;">@((MarkupString)UiIcons.Star)</span>
@@ -37,6 +28,6 @@
             <span class="icon-svg" style="width:17px;height:17px;">@((MarkupString)UiIcons.Share)</span>
             <span>@Loc.T("ShareCertBtn")</span>
         </button>
-        <button class="btn-primary" @onclick="Vm.ExitStage">@Loc.T("ReturnHome")</button>
+        <button class="btn-primary" @onclick="Shell.GoHome">@Loc.T("ReturnHome")</button>
     </div>
 </div>

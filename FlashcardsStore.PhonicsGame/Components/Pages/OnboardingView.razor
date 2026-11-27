@@ -1,4 +1,4 @@
-@inherits PhonicsComponentBase
+@inherits PhonicsComponentBase<OnboardingViewModel>
 
 <div class="onb-screen">
     <div class="onb-top">
@@ -10,7 +10,7 @@
     </div>
 
     <div class="onb-body">
-        @if (Vm.OnboardingSlide == 0)
+        @if (Vm.SlideIndex == 0)
         {
             <div class="onb-art-card" style="width:128px;height:128px;padding:30px;margin-bottom:18px;">
                 <span class="icon-svg" style="width:100%;height:100%;">@((MarkupString)UiIcons.Globe)</span>
@@ -29,7 +29,7 @@
                 </div>
             </div>
         }
-        else if (Vm.OnboardingSlide == 1)
+        else if (Vm.SlideIndex == 1)
         {
             <h2 class="onb-title">@Loc.T("OnbOverviewTitle")</h2>
             <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbOverviewDesc")</p>
@@ -53,30 +53,30 @@
                 </div>
             </div>
         }
-        else if (Vm.OnboardingSlide == 2)
+        else if (Vm.SlideIndex == 2)
         {
             <h2 class="onb-title">@Loc.T("OnbFocusTitle")</h2>
             <p class="onb-desc" style="margin-bottom:16px;">@Loc.T("OnbFocusDesc")</p>
 
             <div class="onb-goal-list">
-                <div class="onb-goal-item @(Vm.OnboardingFocus == "words" ? "selected" : "")"
-                     @onclick='() => Vm.OnboardingFocus = "words"'>
+                <div class="onb-goal-item @(Vm.Focus == "words" ? "selected" : "")"
+                     @onclick='() => Vm.Focus = "words"'>
                     <span class="icon-svg" style="width:22px;height:22px;color:var(--plum);">@((MarkupString)UiIcons.Puzzle)</span>
                     <span>@Loc.T("FocusWords")</span>
                 </div>
-                <div class="onb-goal-item @(Vm.OnboardingFocus == "stories" ? "selected" : "")"
-                     @onclick='() => Vm.OnboardingFocus = "stories"'>
+                <div class="onb-goal-item @(Vm.Focus == "stories" ? "selected" : "")"
+                     @onclick='() => Vm.Focus = "stories"'>
                     <span class="icon-svg" style="width:22px;height:22px;color:#EA580C;">@((MarkupString)UiIcons.BookOpen)</span>
                     <span>@Loc.T("FocusStories")</span>
                 </div>
-                <div class="onb-goal-item @(Vm.OnboardingFocus == "sentences" ? "selected" : "")"
-                     @onclick='() => Vm.OnboardingFocus = "sentences"'>
+                <div class="onb-goal-item @(Vm.Focus == "sentences" ? "selected" : "")"
+                     @onclick='() => Vm.Focus = "sentences"'>
                     <span class="icon-svg" style="width:22px;height:22px;color:#2563EB;">@((MarkupString)UiIcons.Sparkles)</span>
                     <span>@Loc.T("FocusSentences")</span>
                 </div>
             </div>
         }
-        else if (Vm.OnboardingSlide == 3)
+        else if (Vm.SlideIndex == 3)
         {
             <h2 class="onb-title">@Loc.T("OnbStep2Title")</h2>
             <p class="onb-desc" style="margin-bottom:14px;">@Loc.T("OnbStep2Desc")</p>
@@ -84,15 +84,15 @@
             <input class="profile-name-input"
                    maxlength="24"
                    placeholder="@Loc.T("ProfileNamePlaceholder")"
-                   @bind="Vm.ProfileNameInput"
+                   @bind="Vm.NameInput"
                    @bind:event="oninput" />
 
             <div class="avatar-grid" style="margin-bottom:0;">
                 @foreach (var av in AvatarArtwork.Avatars)
                 {
-                    var selected = Vm.ProfileAvatarInput == av.Key;
+                    var selected = Vm.AvatarInput == av.Key;
                     <div class="avatar-opt @(selected ? "selected" : "")"
-                         @onclick="() => Vm.ProfileAvatarInput = av.Key">
+                         @onclick="() => Vm.AvatarInput = av.Key">
                         <div class="avatar-opt-svg">@((MarkupString)AvatarArtwork.GetSvg(av.Key))</div>
                         <div class="avatar-opt-lbl">@(Loc.IsArabic ? av.LabelAr : av.LabelEn)</div>
                     </div>
@@ -107,9 +107,9 @@
             <div class="onb-goal-list">
                 @foreach (var goal in new[] { (5, "Goal5Label"), (10, "Goal10Label"), (15, "Goal15Label") })
                 {
-                    var selected = Vm.OnboardingGoalMinutes == goal.Item1;
+                    var selected = Vm.GoalMinutes == goal.Item1;
                     <div class="onb-goal-item @(selected ? "selected" : "")"
-                         @onclick="() => Vm.OnboardingGoalMinutes = goal.Item1">
+                         @onclick="() => Vm.GoalMinutes = goal.Item1">
                         <span class="icon-svg" style="width:20px;height:20px;color:#F59E0B;">@((MarkupString)UiIcons.Flame)</span>
                         <span>@Loc.T(goal.Item2)</span>
                     </div>
@@ -123,12 +123,12 @@
             @for (var i = 0; i < 5; i++)
             {
                 var idx = i;
-                <span class="onb-dot @(Vm.OnboardingSlide == idx ? "active" : "")"
-                      @onclick="() => Vm.SetOnboardingSlide(idx)"></span>
+                <span class="onb-dot @(Vm.SlideIndex == idx ? "active" : "")"
+                      @onclick="() => Vm.SetSlide(idx)"></span>
             }
         </div>
-        <button class="btn-primary" @onclick="Vm.NextOnboardingSlide">
-            @(Vm.OnboardingSlide == 4 ? Loc.T("StartPlaying") : Loc.T("Next"))
+        <button class="btn-primary" @onclick="Vm.NextSlide">
+            @(Vm.SlideIndex == 4 ? Loc.T("StartPlaying") : Loc.T("Next"))
         </button>
     </div>
 </div>

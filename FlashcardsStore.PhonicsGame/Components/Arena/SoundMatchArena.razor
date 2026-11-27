@@ -1,0 +1,38 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+<div class="picture-stage">
+    <div class="icon-svg" style="width:58px;height:58px;margin:0 auto 10px;color:var(--plum);">
+        @((MarkupString)UiIcons.Headphones)
+    </div>
+    <div class="arabic-hint">@Loc.T("MatchPrompt")</div>
+    <div class="audio-controls">
+        <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+            <span>@Loc.T("ListenWord")</span>
+        </button>
+        <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
+            <span>@Loc.T("SlowSpeak")</span>
+        </button>
+    </div>
+</div>
+
+<div class="match-grid">
+    @foreach (var opt in Vm.MatchOptions)
+    {
+        var isRight = Vm.WordSolved && opt.Word == Vm.CurrentWord.Word;
+        var isWrong = Vm.WrongMatchWord == opt.Word;
+        var cardClass = "match-card" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+
+        <div class="@cardClass" @onclick="() => Vm.SelectMatchOptionAsync(opt)">
+            <div class="match-art">
+                @((MarkupString)WordArtwork.GetSvg(opt.ArtworkKey, opt.AccentColor))
+            </div>
+            <div class="match-ar">@(Loc.IsArabic ? opt.ArabicMeaning : opt.Word.ToUpperInvariant())</div>
+            @if (isRight)
+            {
+                <div style="margin-top: 4px; font-weight: 900; color: #059669; direction: ltr;">@opt.Word.ToUpperInvariant()</div>
+            }
+        </div>
+    }
+</div>

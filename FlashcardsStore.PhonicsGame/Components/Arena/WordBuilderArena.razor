@@ -1,0 +1,71 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+<div class="picture-stage">
+    <div class="picture-circle" style="background: @Vm.CurrentWord.BgColor;">
+        @((MarkupString)WordArtwork.GetSvg(Vm.CurrentWord.ArtworkKey, Vm.CurrentWord.AccentColor))
+    </div>
+    <div class="arabic-hint">
+        @(Loc.IsArabic ? Vm.CurrentWord.ArabicMeaning : Vm.CurrentWord.Word.ToUpperInvariant())
+    </div>
+    <div class="audio-controls" style="flex-wrap:wrap;">
+        <button class="btn-speak" @onclick="Vm.SpeakCurrentWordAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+            <span>@Loc.T("ListenWord")</span>
+        </button>
+        <button class="btn-speak slow" @onclick="Vm.SpeakCurrentWordSlowAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.SlowWave)</span>
+            <span>@Loc.T("SlowSpeak")</span>
+        </button>
+        <button class="btn-speak hint" @onclick="Vm.UseHintAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Lightbulb)</span>
+            <span>@Loc.T("HintBtn")</span>
+        </button>
+        <button class="btn-speak mic" disabled="@Vm.IsListeningSpeech" @onclick="Vm.CheckPronunciationAsync">
+            <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Mic)</span>
+            <span>@Loc.T("SayItBtn")</span>
+        </button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
+    {
+        <div style="margin-top:10px;font-size:12.5px;font-weight:800;color:@(Vm.SpeechSuccess ? "#059669" : "#E11D48");">
+            @Vm.SpeechFeedback
+        </div>
+    }
+</div>
+
+<div class="slots-row">
+    @for (var i = 0; i < Vm.Slots.Length; i++)
+    {
+        var slotIdx = i;
+        var tileIdx = Vm.Slots[slotIdx];
+        var isVowelSlot = !Vm.CurrentWord.IsSightWord && Vm.CurrentWord.Word.Length == 3 && slotIdx == 1;
+        var hasLetter = tileIdx >= 0;
+        var slotClass = "letter-slot";
+        if (isVowelSlot) slotClass += " vowel-slot";
+        if (hasLetter) slotClass += " filled";
+        if (Vm.WordSolved) slotClass += " correct";
+        else if (Vm.BuilderWrongFlash) slotClass += " wrong";
+
+        <div class="@slotClass"
+             data-slot-index="@slotIdx"
+             @onclick="() => Vm.ClearSlotAsync(slotIdx)">
+            @(hasLetter ? Vm.Tiles[tileIdx].Letter : "")
+        </div>
+    }
+</div>
+
+<div class="tiles-bank">
+    @for (var i = 0; i < Vm.Tiles.Count; i++)
+    {
+        var tileIdx = i;
+        var tile = Vm.Tiles[tileIdx];
+        var tileClass = "letter-tile"
+            + (GameArenaViewModel.IsVowel(tile.Letter) ? " vowel-tile" : "")
+            + (tile.Used ? " used" : "");
+
+        <div class="@tileClass"
+             @onpointerdown="(e) => Vm.StartTileDragAsync(tileIdx, e.ClientX, e.ClientY)">
+            @tile.Letter
+        </div>
+    }
+</div>
