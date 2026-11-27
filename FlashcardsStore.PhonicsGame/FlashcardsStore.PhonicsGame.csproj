@@ -16,6 +16,8 @@
 		<ApplicationVersion>1</ApplicationVersion>
 		<AndroidManifestPlaceholders>usesCleartextTraffic=false</AndroidManifestPlaceholders>
 		<PublishReadyToRun>false</PublishReadyToRun>
+		<AndroidEnableResourceShrinker>false</AndroidEnableResourceShrinker>
+		<AndroidLinkResources>false</AndroidLinkResources>
 
 		<SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-android'))">24.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
