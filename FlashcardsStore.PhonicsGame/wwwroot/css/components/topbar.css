@@ -1,11 +1,11 @@
 .topbar {
     background: linear-gradient(135deg, #240517 0%, var(--plum-light) 100%);
     color: #fff;
-    padding: 42px 16px 15px;
+    padding: 42px 12px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     border-bottom: 3px solid rgba(212, 175, 55, 0.45);
     border-bottom-left-radius: 26px;
     border-bottom-right-radius: 26px;
@@ -53,7 +53,7 @@
 }
 
 .brand-sub {
-    font-size: 10px;
+    font-size: 9px;
     color: #FDE68A;
     font-weight: 700;
     white-space: nowrap;

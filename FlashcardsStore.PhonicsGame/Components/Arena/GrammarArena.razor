@@ -12,7 +12,7 @@
             }
             <span>@parts[0]</span>
             <span class="grammar-blank @(Vm.WordSolved ? "solved" : "")">
-                @(Vm.WordSolved ? q.CorrectOption : "___")
+                @(Vm.WordSolved ? q.CorrectOption : "...")
             </span>
             @if (parts.Length > 1)
             {
@@ -33,12 +33,12 @@
         </div>
     </div>
 
-    <div class="rhyme-options-grid">
+    <div class="story-quiz-options">
         @foreach (var opt in q.Options)
         {
             var isRight = Vm.WordSolved && string.Equals(opt, q.CorrectOption, StringComparison.OrdinalIgnoreCase);
             var isWrong = string.Equals(Vm.GrammarWrongOption, opt, StringComparison.OrdinalIgnoreCase);
-            var cls = "rhyme-option-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
             <button class="@cls" @onclick="() => Vm.SelectGrammarOptionAsync(opt)">
                 @opt
             </button>
