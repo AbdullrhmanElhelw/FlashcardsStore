@@ -80,15 +80,24 @@
             <div class="trace-header">
                 <span style="font-size:13px;font-weight:900;color:var(--plum);">@Loc.T("TraceTitle") (@active.Letter@char.ToLowerInvariant(active.Letter))</span>
                 <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="trace-color-dot" style="background:#2B071C;" @onclick='() => Vm.SetColorAsync("#2B071C")'></span>
+                    <span class="trace-color-dot" style="background:#7C3AED;" @onclick='() => Vm.SetColorAsync("#7C3AED")'></span>
                     <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetColorAsync("#2563EB")'></span>
                     <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetColorAsync("#E11D48")'></span>
-                    <button class="btn-back" style="padding:5px 10px;font-size:11.5px;" @onclick="Vm.ClearCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
                 </div>
             </div>
-            <div class="trace-canvas-wrap">
-                <div class="trace-guide">@active.Letter@char.ToLowerInvariant(active.Letter)</div>
-                <canvas id="letterTraceCanvas" width="320" height="170" class="trace-canvas"></canvas>
+            <div class="lingo-grid-wrap" style="height:185px;">
+                <div class="lingo-line l-top"></div>
+                <div class="lingo-line l-mid"></div>
+                <div class="lingo-line l-base"></div>
+                <div class="lingo-line l-bot"></div>
+                <div class="lingo-vline"></div>
+                <div id="letterTraceGuide" class="lingo-guide-word">@active.Letter@char.ToLowerInvariant(active.Letter)</div>
+                <canvas id="letterTraceCanvas" width="340" height="185" class="lingo-canvas"></canvas>
+            </div>
+            <div class="lingo-toolbar" style="margin-top:10px;">
+                <button class="btn-back" style="padding:6px 11px;font-size:11.5px;" @onclick="Vm.PlayDemoAsync">@Loc.T("TraceDemoBtn")</button>
+                <button class="btn-back" style="padding:6px 11px;font-size:11.5px;" @onclick="Vm.UndoCanvasAsync">@Loc.T("TraceUndoBtn")</button>
+                <button class="btn-back" style="padding:6px 11px;font-size:11.5px;" @onclick="Vm.ClearCanvasAsync">@Loc.T("ClearCanvasBtn")</button>
             </div>
         </div>
     </div>

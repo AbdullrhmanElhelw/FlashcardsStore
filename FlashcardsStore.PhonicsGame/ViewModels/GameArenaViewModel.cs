@@ -220,10 +220,15 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
             pool.Add(CurrentWord);
             MatchOptions = pool.OrderBy(_ => _rng.Next()).ToList();
         }
-        else
+        else if (SelectedMode == GameMode.MemoryMatch)
         {
             SetupMemoryDeck();
             return;
+        }
+        else if (SelectedMode == GameMode.TraceWrite)
+        {
+            await Task.Delay(50);
+            await _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas");
         }
 
         await SpeakCurrentWordAsync();
@@ -855,6 +860,41 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     {
         if (SentenceIndex + 1 < SentenceList.Count) { SentenceIndex++; await SetupCurrentListenCompleteAsync(); }
         else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
+    }
+
+    // --- Trace & Write (LingoDeer-style) ---
+    public Task InitWordTraceAsync() => _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas");
+
+    [RelayCommand]
+    public Task UndoTraceAsync() => _js.InvokeAsync("phonicsTracing.undo");
+
+    [RelayCommand]
+    public Task ClearTraceAsync() => _js.InvokeAsync("phonicsTracing.clear");
+
+    public Task SetTraceColorAsync(string color) => _js.InvokeAsync("phonicsTracing.setColor", color);
+
+    [RelayCommand]
+    public async Task PlayTraceDemoAsync()
+    {
+        await _js.InvokeAsync("phonicsTracing.playDemo", "wordTraceGuide");
+        await SpeakCurrentWordAsync();
+    }
+
+    [RelayCommand]
+    public async Task CompleteTraceAsync()
+    {
+        if (WordSolved) return;
+        var drawn = await _js.InvokeAsync<bool>("phonicsTracing.hasDrawnEnough");
+        if (!drawn)
+        {
+            SpeechSuccess = false;
+            SpeechFeedback = _loc.T("TraceMorePrompt");
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            return;
+        }
+
+        SpeechFeedback = string.Empty;
+        await MarkWordSolvedAsync();
     }
 
     [RelayCommand]

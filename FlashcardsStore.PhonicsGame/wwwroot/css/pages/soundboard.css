@@ -199,3 +199,108 @@
     font-size: 11.5px;
     font-weight: 800;
 }
+
+/* LingoDeer-Style 4-Line Handwriting & Tracing Grid */
+.lingo-trace-box {
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    border-radius: 22px;
+    padding: 14px;
+    box-shadow: 0 8px 20px rgba(43, 7, 28, 0.06);
+}
+
+.lingo-grid-wrap {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    background: #FFFDF7;
+    border: 2px solid #CBD5E1;
+    border-radius: 18px;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.lingo-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.lingo-line.l-top {
+    top: 22%;
+    border-top: 1.5px solid #CBD5E1;
+}
+
+.lingo-line.l-mid {
+    top: 46%;
+    border-top: 1.5px dashed #94A3B8;
+}
+
+.lingo-line.l-base {
+    top: 72%;
+    border-top: 2px solid #F59E0B;
+}
+
+.lingo-line.l-bot {
+    top: 88%;
+    border-top: 1.5px dashed #E2E8F0;
+}
+
+.lingo-vline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border-left: 1.5px dashed #E2E8F0;
+    pointer-events: none;
+}
+
+.lingo-guide-word {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', 'Fredoka', sans-serif;
+    font-size: 96px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    color: rgba(124, 58, 237, 0.14);
+    -webkit-text-stroke: 2.5px rgba(124, 58, 237, 0.42);
+    user-select: none;
+    pointer-events: none;
+    direction: ltr;
+}
+
+.lingo-guide-word.compact {
+    font-size: 72px;
+    letter-spacing: 3px;
+}
+
+.lingo-guide-word.demo-pulse {
+    animation: lingoDemoPulse 1.1s ease-in-out;
+}
+
+@keyframes lingoDemoPulse {
+    0% { color: rgba(124, 58, 237, 0.14); -webkit-text-stroke-color: rgba(124, 58, 237, 0.42); }
+    45% { color: rgba(245, 158, 11, 0.35); -webkit-text-stroke-color: #7C3AED; transform: scale(1.03); }
+    100% { color: rgba(124, 58, 237, 0.14); -webkit-text-stroke-color: rgba(124, 58, 237, 0.42); }
+}
+
+.lingo-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 2;
+    touch-action: none;
+}
+
+.lingo-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+}

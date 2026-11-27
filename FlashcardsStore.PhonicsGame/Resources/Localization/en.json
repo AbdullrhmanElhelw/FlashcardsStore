@@ -178,5 +178,12 @@
     "ListenSoundBtn":  "Hear Sound",
     "CatSilent":  "Silent Letters",
     "StoreBtn":  "Open Store",
-    "CatBlending":  "Blending"
+    "CatBlending":  "Blending",
+    "TracePrompt":  "Trace the word on the guide lines:",
+    "ModeTraceSub":  "Draw the word on lines",
+    "TraceMorePrompt":  "Trace over the guide word with your finger first!",
+    "TraceUndoBtn":  "Undo",
+    "TraceDoneBtn":  "Done!",
+    "TraceDemoBtn":  "Demo",
+    "ModeTraceTitle":  "Trace \u0026 Write"
 }

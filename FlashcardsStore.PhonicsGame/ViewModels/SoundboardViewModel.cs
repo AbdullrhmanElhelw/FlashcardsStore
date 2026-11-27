@@ -63,5 +63,16 @@ public sealed partial class SoundboardViewModel : BaseViewModel
     [RelayCommand]
     public Task ClearCanvasAsync() => _js.InvokeAsync("phonicsTracing.clear");
 
+    [RelayCommand]
+    public Task UndoCanvasAsync() => _js.InvokeAsync("phonicsTracing.undo");
+
+    [RelayCommand]
+    public async Task PlayDemoAsync()
+    {
+        await _js.InvokeAsync("phonicsTracing.playDemo", "letterTraceGuide");
+        if (ActiveItem is not null)
+            await _speech.SpeakPhonemeAsync(ActiveItem.DisplaySound);
+    }
+
     public Task SetColorAsync(string color) => _js.InvokeAsync("phonicsTracing.setColor", color);
 }

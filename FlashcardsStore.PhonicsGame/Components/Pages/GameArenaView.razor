@@ -63,10 +63,13 @@ else if (Vm.ActiveStage is not null)
         case GameMode.ListenComplete:
             <ListenCompleteArena />
             break;
+        case GameMode.TraceWrite:
+            <TraceWriteArena />
+            break;
     }
 
     @if (Vm.WordSolved
-         && Vm.SelectedMode is GameMode.WordBuilder or GameMode.SoundMatch or GameMode.MemoryMatch or GameMode.SpeakRepeat)
+         && Vm.SelectedMode is GameMode.WordBuilder or GameMode.SoundMatch or GameMode.MemoryMatch or GameMode.SpeakRepeat or GameMode.TraceWrite)
     {
         <div class="celebrate-banner">
             <div>

@@ -22,4 +22,17 @@ public sealed class JsBridgeService : IJsBridgeService
             // Ignore transient WebView JS interop errors
         }
     }
+
+    public async Task<T> InvokeAsync<T>(string identifier, params object?[] args)
+    {
+        if (_js is null) return default!;
+        try
+        {
+            return await _js.InvokeAsync<T>(identifier, args);
+        }
+        catch
+        {
+            return default!;
+        }
+    }
 }

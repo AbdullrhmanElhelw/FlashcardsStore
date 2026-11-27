@@ -10,5 +10,6 @@ public enum GameMode
     MinimalPairs,
     GrammarQuiz,
     SpeakRepeat,
-    ListenComplete
+    ListenComplete,
+    TraceWrite
 }

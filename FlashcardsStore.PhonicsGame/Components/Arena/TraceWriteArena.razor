@@ -1,0 +1,76 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+<div class="picture-stage" style="padding:14px 16px;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+        <div class="picture-circle" style="background:@Vm.CurrentWord.BgColor;width:78px;height:78px;margin:0;">
+            @((MarkupString)WordArtwork.GetSvg(Vm.CurrentWord.ArtworkKey, Vm.CurrentWord.AccentColor))
+        </div>
+        <div style="text-align:start;">
+            <div style="font-size:24px;font-weight:900;color:var(--plum);direction:ltr;">@Vm.CurrentWord.Word.ToLowerInvariant()</div>
+            @if (Loc.IsArabic)
+            {
+                <div style="font-size:14px;font-weight:800;color:var(--muted);">@Vm.CurrentWord.ArabicMeaning</div>
+            }
+            <div style="display:flex;gap:8px;margin-top:6px;">
+                <button class="btn-speak" style="padding:6px 12px;font-size:12px;" @onclick="Vm.SpeakCurrentWordAsync">
+                    <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Volume)</span>
+                    <span>@Loc.T("ListenWord")</span>
+                </button>
+                <button class="btn-speak hint" style="padding:6px 12px;font-size:12px;" @onclick="Vm.PlayTraceDemoAsync">
+                    <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.Sparkles)</span>
+                    <span>@Loc.T("TraceDemoBtn")</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LingoDeer-Style 4-Line Handwriting & Tracing Board -->
+<div class="lingo-trace-box">
+    <div class="trace-header">
+        <span style="font-size:12.5px;font-weight:900;color:var(--plum);">@Loc.T("TracePrompt")</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+            <span class="trace-color-dot" style="background:#7C3AED;" @onclick='() => Vm.SetTraceColorAsync("#7C3AED")'></span>
+            <span class="trace-color-dot" style="background:#2563EB;" @onclick='() => Vm.SetTraceColorAsync("#2563EB")'></span>
+            <span class="trace-color-dot" style="background:#E11D48;" @onclick='() => Vm.SetTraceColorAsync("#E11D48")'></span>
+            <span class="trace-color-dot" style="background:#059669;" @onclick='() => Vm.SetTraceColorAsync("#059669")'></span>
+        </div>
+    </div>
+
+    <div class="lingo-grid-wrap">
+        <!-- 4-Line Notebook Guides (Sky, Midline, Baseline, Descender) -->
+        <div class="lingo-line l-top"></div>
+        <div class="lingo-line l-mid"></div>
+        <div class="lingo-line l-base"></div>
+        <div class="lingo-line l-bot"></div>
+        <div class="lingo-vline"></div>
+
+        <div id="wordTraceGuide" class="lingo-guide-word @(Vm.CurrentWord.Word.Length > 5 ? "compact" : "")">
+            @Vm.CurrentWord.Word.ToLowerInvariant()
+        </div>
+        <canvas id="wordTraceCanvas" width="340" height="210" class="lingo-canvas"></canvas>
+    </div>
+
+    <div class="lingo-toolbar">
+        <button class="btn-back" style="padding:8px 14px;" @onclick="Vm.UndoTraceAsync">
+            <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.RefreshCw)</span>
+            <span>@Loc.T("TraceUndoBtn")</span>
+        </button>
+        <button class="btn-back" style="padding:8px 14px;" @onclick="Vm.ClearTraceAsync">
+            <span>@Loc.T("ClearCanvasBtn")</span>
+        </button>
+        @if (!Vm.WordSolved)
+        {
+            <button class="btn-primary" style="padding:9px 18px;font-size:13.5px;" @onclick="Vm.CompleteTraceAsync">
+                <span>@Loc.T("TraceDoneBtn")</span>
+            </button>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Vm.SpeechFeedback))
+    {
+        <div style="text-align:center;margin-top:8px;font-size:12.5px;font-weight:800;color:#E11D48;">
+            @Vm.SpeechFeedback
+        </div>
+    }
+</div>

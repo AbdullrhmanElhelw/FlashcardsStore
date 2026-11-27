@@ -178,5 +178,12 @@
     "ListenSoundBtn":  "اسمع الصوت",
     "CatSilent":  "Silent Letters",
     "StoreBtn":  "تصفح المتجر",
-    "CatBlending":  "دمج الأصوات"
+    "CatBlending":  "دمج الأصوات",
+    "TracePrompt":  "تتبع الكلمة على السطور:",
+    "ModeTraceSub":  "تتبع الكلمة بإصبعك",
+    "TraceMorePrompt":  "ارسم فوق الكلمة الأول بإصبعك!",
+    "TraceUndoBtn":  "تراجع",
+    "TraceDoneBtn":  "خلصت!",
+    "TraceDemoBtn":  "ورّيني",
+    "ModeTraceTitle":  "ارسم واكتب"
 }
