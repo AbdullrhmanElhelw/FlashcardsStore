@@ -1,24 +1,87 @@
+@using System.Text.Json
+@using FlashcardsStore.Web.Controllers.Admin
 @{
-    ViewData["Title"] = "إدارة منهج الفونكس (OTA JSON)";
+    ViewData["Title"] = "إدارة منهج Jolly Phonics (OTA)";
     Layout = "_AdminLayout";
     var selectedPack = ViewBag.SelectedPack as string ?? "curriculum";
-    var availablePacks = ViewBag.AvailablePacks as string[] ?? ["curriculum", "stories", "sentences", "rhymes", "alphabet"];
+    var availablePacks = ViewBag.AvailablePacks as string[] ?? ["curriculum", "alphabet", "stories", "sentences", "rhymes", "minimal_pairs", "shop"];
     var jsonContent = ViewBag.JsonContent as string ?? "{}";
     var version = (int)(ViewBag.ManifestVersion ?? 1);
+    var isOtaActive = (bool)(ViewBag.IsOtaActive ?? false);
+    var hasAppDefaults = (bool)(ViewBag.HasAppDefaults ?? false);
+
+    var jsonOpts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    AdminPhonicsController.CurriculumDoc? curriculumDoc = null;
+    AdminPhonicsController.AlphabetDoc? alphabetDoc = null;
+
+    if (selectedPack == "curriculum")
+    {
+        try { curriculumDoc = JsonSerializer.Deserialize<AdminPhonicsController.CurriculumDoc>(jsonContent, jsonOpts); } catch { }
+    }
+    else if (selectedPack == "alphabet")
+    {
+        try { alphabetDoc = JsonSerializer.Deserialize<AdminPhonicsController.AlphabetDoc>(jsonContent, jsonOpts); } catch { }
+    }
+
+    string PackLabel(string p) => p switch
+    {
+        "curriculum" => "المراحل والكلمات",
+        "alphabet" => "كروت الأصوات (SATIPN)",
+        "stories" => "القصص المصورة",
+        "sentences" => "الجمل القصيرة",
+        "rhymes" => "القوافي",
+        "minimal_pairs" => "الأصوات الطويلة والقصيرة",
+        "shop" => "متجر النجوم",
+        _ => p
+    };
+
+    string CategoryBadge(string cat) => cat switch
+    {
+        "letters" => "الحروف والأصوات",
+        "blending" => "دمج الأصوات",
+        "digraphs" => "Digraphs & Trigraphs",
+        "silent" => "Silent Letters",
+        _ => cat
+    };
 }
 
 <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Top Header -->
+    <div class="bg-gradient-to-l from-[#2B071C] to-[#521036] rounded-3xl p-6 text-white shadow-lg flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">إدارة منهج لعبة الفونكس أونلاين (OTA JSON)</h1>
-            <p class="text-sm text-slate-500 mt-1">
-                أي تعديل هنا بيرفع إصدار المنهج تلقائياً (الحالي: <span class="font-mono font-bold text-indigo-700">v@(version)</span>) وتطبيقات الموبايل بتسحبه أوتوماتيك وتخزنه Offline.
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold mb-2">
+                <span>OTA Version v@(version)</span>
+                <span>•</span>
+                <span>@(isOtaActive ? "منشور من السيرفر (OTA)" : "نسخة المنهج الافتراضية")</span>
+            </div>
+            <h1 class="text-2xl font-extrabold">إدارة منهج لعبة Jolly Phonics</h1>
+            <p class="text-sm text-amber-100/90 mt-1">
+                أضف أو عدّل المراحل، الكلمات، وكروت الأصوات (S A T I P N) وسيتم تحديث تطبيقات الموبايل تلقائياً.
             </p>
         </div>
-        <a asp-controller="AdminPhonics" asp-action="PhonicsCodes"
-           class="px-4 py-2 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50">
-            ← العودة لأكواد التفعيل
-        </a>
+
+        <div class="flex flex-wrap items-center gap-2">
+            @if (hasAppDefaults)
+            {
+                <form asp-controller="AdminPhonics" asp-action="SyncFromAppDefaults" method="post" hx-boost="false"
+                      onsubmit="return confirm('سيتم استيراد أحدث ملفات منهج Jolly Phonics من التطبيق ونشر إصدار جديد. هل أنت متأكد؟');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="pack" value="@selectedPack" />
+                    <button type="submit"
+                            class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold shadow transition cursor-pointer">
+                        مزامنة من أحدث منهج التطبيق
+                    </button>
+                </form>
+            }
+            <a asp-controller="AdminPhonics" asp-action="DownloadPack" asp-route-pack="@selectedPack"
+               class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition">
+                تحميل @(selectedPack).json
+            </a>
+            <a asp-controller="AdminPhonics" asp-action="PhonicsCodes"
+               class="px-4 py-2.5 rounded-xl bg-white text-[#2B071C] hover:bg-amber-50 text-xs font-extrabold transition">
+                أكواد التفعيل ←
+            </a>
+        </div>
     </div>
 
     <!-- Pack Tabs -->
@@ -27,24 +90,203 @@
         {
             var isActive = string.Equals(pack, selectedPack, StringComparison.OrdinalIgnoreCase);
             <a asp-controller="AdminPhonics" asp-action="PhonicsContent" asp-route-pack="@pack"
-               class="px-4 py-2 rounded-xl text-sm font-bold transition @(isActive ? "bg-[#3A0A26] text-white shadow" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50")">
-                @(pack).json
+               class="px-4 py-2.5 rounded-xl text-xs font-extrabold transition @(isActive ? "bg-[#3A0A26] text-white shadow-md" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50")">
+                <span>@PackLabel(pack)</span>
+                <span class="opacity-70 font-mono mr-1">(@(pack).json)</span>
             </a>
         }
     </div>
 
-    <!-- JSON Editor -->
+    @if (selectedPack == "curriculum" && curriculumDoc is not null)
+    {
+        var totalWords = curriculumDoc.Stages.Sum(s => s.Words.Count);
+        var freeStages = curriculumDoc.Stages.Count(s => s.IsFree);
+
+        <!-- Visual Curriculum KPIs & Toolbar -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div class="text-xs font-semibold text-slate-500">إجمالي المراحل</div>
+                <div class="text-2xl font-black text-slate-900 mt-1">@curriculumDoc.Stages.Count</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div class="text-xs font-semibold text-indigo-600">إجمالي الكلمات</div>
+                <div class="text-2xl font-black text-indigo-700 mt-1">@totalWords</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-semibold text-emerald-600">مراحل مجانية</div>
+                    <div class="text-2xl font-black text-emerald-700 mt-1">@freeStages</div>
+                </div>
+                <button type="button" onclick="openStageModal()"
+                        class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow cursor-pointer">
+                    + إضافة مرحلة
+                </button>
+            </div>
+        </div>
+
+        <!-- Stages List -->
+        <div class="space-y-4">
+            @foreach (var stage in curriculumDoc.Stages)
+            {
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50/70">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shadow"
+                                  style="background: linear-gradient(135deg, @stage.GradientStart, @stage.GradientEnd);">
+                                @stage.Id
+                            </span>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="font-extrabold text-slate-900 text-sm">@stage.TitleAr</h3>
+                                    <span class="text-xs font-mono text-slate-500">(@stage.TitleEn)</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700">@CategoryBadge(stage.Category)</span>
+                                    @if (stage.IsFree)
+                                    {
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">مجانية</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">مدفوعة</span>
+                                    }
+                                </div>
+                                <p class="text-xs text-slate-500 mt-0.5">@stage.SubtitleAr</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button"
+                                    onclick='openWordModal(@stage.Id, "", "", "", "#FEF3C7", "#D97706", false)'
+                                    class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer">
+                                + كلمة
+                            </button>
+                            <button type="button"
+                                    onclick='openStageModal(@Html.Raw(JsonSerializer.Serialize(stage)))'
+                                    class="px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold cursor-pointer">
+                                تعديل
+                            </button>
+                            <form asp-controller="AdminPhonics" asp-action="DeleteStage" method="post" hx-boost="false"
+                                  onsubmit="return confirm('حذف المرحلة @stage.TitleAr بالكامل؟');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@stage.Id" />
+                                <button type="submit"
+                                        class="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold cursor-pointer">
+                                    حذف
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Stage Words Grid -->
+                    <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
+                        @foreach (var w in stage.Words)
+                        {
+                            <div class="rounded-xl border border-slate-200 p-2.5 flex flex-col justify-between gap-2"
+                                 style="background:@w.BgColor;">
+                                <div class="flex items-start justify-between gap-1">
+                                    <div>
+                                        <div class="font-black text-slate-900 text-sm font-mono" dir="ltr">@w.Word</div>
+                                        <div class="text-xs font-bold text-slate-700">@w.ArabicMeaning</div>
+                                    </div>
+                                    <span class="w-3 h-3 rounded-full shrink-0 mt-1" style="background:@w.AccentColor;"></span>
+                                </div>
+                                <div class="flex items-center justify-end gap-1 pt-1 border-t border-black/5">
+                                    <button type="button"
+                                            onclick='openWordModal(@stage.Id, @Html.Raw(JsonSerializer.Serialize(w.Word)), @Html.Raw(JsonSerializer.Serialize(w.ArabicMeaning)), @Html.Raw(JsonSerializer.Serialize(w.ArtworkKey)), @Html.Raw(JsonSerializer.Serialize(w.BgColor)), @Html.Raw(JsonSerializer.Serialize(w.AccentColor)), @(w.IsSightWord ? "true" : "false"))'
+                                            class="text-[11px] font-bold text-indigo-700 hover:underline px-1 cursor-pointer">
+                                        تعديل
+                                    </button>
+                                    <form asp-controller="AdminPhonics" asp-action="DeleteWord" method="post" hx-boost="false"
+                                          onsubmit="return confirm('حذف كلمة @w.Word؟');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="stageId" value="@stage.Id" />
+                                        <input type="hidden" name="word" value="@w.Word" />
+                                        <button type="submit" class="text-[11px] font-bold text-rose-700 hover:underline px-1 cursor-pointer">حذف</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (selectedPack == "alphabet" && alphabetDoc is not null)
+    {
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h2 class="text-base font-extrabold text-slate-900">كروت Jolly Phonics (@alphabetDoc.Letters.Count صوت)</h2>
+                <p class="text-xs text-slate-500">مرتبة من المجموعة 1 (S A T I P N) حتى المجموعة 7 مع الحركة والصورة.</p>
+            </div>
+            <button type="button" onclick="openLetterModal()"
+                    class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow cursor-pointer">
+                + إضافة كارت صوت
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            @foreach (var item in alphabetDoc.Letters.OrderBy(l => l.Group))
+            {
+                <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col justify-between gap-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg @(item.IsVowel ? "bg-amber-100 text-amber-800" : "bg-indigo-100 text-indigo-800")" dir="ltr">
+                                @item.Sound
+                            </div>
+                            <div>
+                                <div class="font-extrabold text-slate-900 text-sm">
+                                    <span dir="ltr">@item.ExampleWord</span> — @item.ArabicWord
+                                </div>
+                                <div class="text-[11px] font-bold text-slate-500">Group @item.Group • Letter @item.Letter</div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold @(item.IsVowel ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600")">
+                            @(item.IsVowel ? "Vowel" : "Consonant")
+                        </span>
+                    </div>
+
+                    <div class="text-xs bg-orange-50 text-orange-900 rounded-xl p-2.5 border border-orange-100">
+                        <div class="font-bold">الحركة: @item.ActionAr</div>
+                        <div class="text-[11px] opacity-80 mt-0.5" dir="ltr">@item.ActionEn</div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                        <button type="button"
+                                onclick='openLetterModal(@Html.Raw(JsonSerializer.Serialize(item)))'
+                                class="px-3 py-1 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                            تعديل
+                        </button>
+                        <form asp-controller="AdminPhonics" asp-action="DeleteLetter" method="post" hx-boost="false"
+                              onsubmit="return confirm('حذف كارت الصوت @item.Sound؟');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sound" value="@item.Sound" />
+                            <button type="submit" class="px-3 py-1 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100 cursor-pointer">
+                                حذف
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Raw JSON Editor (Always Available for All Packs) -->
     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
         <form asp-controller="AdminPhonics" asp-action="SavePhonicsContent" method="post" hx-boost="false" class="space-y-4">
             @Html.AntiForgeryToken()
             <input type="hidden" name="pack" value="@selectedPack" />
 
-            <div class="flex items-center justify-between">
-                <label class="text-sm font-bold text-slate-700" dir="ltr">@(selectedPack).json</label>
-                <span class="text-xs text-slate-500">يتم التحقق من صحة الـ JSON تلقائياً قبل الحفظ</span>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                    <label class="text-sm font-extrabold text-slate-900" dir="ltr">محرر JSON المباشر — @(selectedPack).json</label>
+                    <span id="jsonValidBadge" class="mr-2 text-xs font-bold text-emerald-700">✓ صيغة صالحة</span>
+                </div>
+                <button type="button" onclick="formatJsonEditor()"
+                        class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                    تنسيق وفحص JSON
+                </button>
             </div>
 
-            <textarea name="jsonContent" rows="20" dir="ltr"
+            <textarea id="jsonContentBox" name="jsonContent" rows="16" dir="ltr" oninput="validateJsonEditor()"
                       class="w-full font-mono text-xs rounded-xl border border-slate-300 p-4 bg-slate-50 focus:ring-2 focus:ring-amber-400 focus:border-amber-400">@jsonContent</textarea>
 
             <div class="flex justify-end">
@@ -56,3 +298,241 @@
         </form>
     </div>
 </div>
+
+<!-- Stage Upsert Modal -->
+<div id="stageModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 id="stageModalTitle" class="text-lg font-extrabold text-slate-900">إضافة / تعديل مرحلة</h3>
+            <button type="button" onclick="closeModal('stageModal')" class="text-slate-400 hover:text-slate-700 font-bold text-lg cursor-pointer">✕</button>
+        </div>
+        <form asp-controller="AdminPhonics" asp-action="UpsertStage" method="post" hx-boost="false" class="space-y-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="st_id" name="Id" value="" />
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">العنوان بالعربي</label>
+                    <input id="st_titleAr" name="TitleAr" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">العنوان بالإنجليزي</label>
+                    <input id="st_titleEn" name="TitleEn" required dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">الوصف بالعربي</label>
+                    <input id="st_subAr" name="SubtitleAr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">الوصف بالإنجليزي</label>
+                    <input id="st_subEn" name="SubtitleEn" dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">القسم</label>
+                    <select id="st_cat" name="Category" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                        <option value="letters">الحروف (SATIPN)</option>
+                        <option value="blending">دمج الأصوات (Blending)</option>
+                        <option value="digraphs">Digraphs & Trigraphs</option>
+                        <option value="silent">Silent Letters</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">أيقونة المرحلة</label>
+                    <input id="st_badge" name="BadgeKey" value="sun" dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div class="flex items-end pb-2">
+                    <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                        <input id="st_free" type="checkbox" name="IsFree" value="true" class="rounded" />
+                        <span>مرحلة مجانية</span>
+                    </label>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">لون البداية</label>
+                    <input id="st_g1" name="GradientStart" type="color" value="#F97316" class="w-full h-10 rounded-xl border border-slate-300" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">لون النهاية</label>
+                    <input id="st_g2" name="GradientEnd" type="color" value="#EA580C" class="w-full h-10 rounded-xl border border-slate-300" />
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeModal('stageModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold cursor-pointer">إلغاء</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-[#3A0A26] text-white text-xs font-extrabold cursor-pointer">حفظ المرحلة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Word Upsert Modal -->
+<div id="wordModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-slate-900">إضافة / تعديل كلمة</h3>
+            <button type="button" onclick="closeModal('wordModal')" class="text-slate-400 hover:text-slate-700 font-bold text-lg cursor-pointer">✕</button>
+        </div>
+        <form asp-controller="AdminPhonics" asp-action="UpsertWord" method="post" hx-boost="false" class="space-y-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="wd_stageId" name="StageId" />
+            <input type="hidden" id="wd_orig" name="OriginalWord" />
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">الكلمة (EN)</label>
+                    <input id="wd_word" name="Word" required dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">المعنى بالعربي</label>
+                    <input id="wd_ar" name="ArabicMeaning" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">مفتاح الرسمة</label>
+                    <input id="wd_art" name="ArtworkKey" dir="ltr" placeholder="اختياري" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">لون الخلفية</label>
+                    <input id="wd_bg" name="BgColor" type="color" value="#FEF3C7" class="w-full h-10 rounded-xl border border-slate-300" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">لون التمييز</label>
+                    <input id="wd_ac" name="AccentColor" type="color" value="#D97706" class="w-full h-10 rounded-xl border border-slate-300" />
+                </div>
+            </div>
+            <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                <input id="wd_sight" type="checkbox" name="IsSightWord" value="true" class="rounded" />
+                <span>Sight Word</span>
+            </label>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeModal('wordModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold cursor-pointer">إلغاء</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-[#3A0A26] text-white text-xs font-extrabold cursor-pointer">حفظ الكلمة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Letter Upsert Modal -->
+<div id="letterModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-slate-900">إضافة / تعديل كارت صوت (Jolly Phonics)</h3>
+            <button type="button" onclick="closeModal('letterModal')" class="text-slate-400 hover:text-slate-700 font-bold text-lg cursor-pointer">✕</button>
+        </div>
+        <form asp-controller="AdminPhonics" asp-action="UpsertLetter" method="post" hx-boost="false" class="space-y-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="lt_orig" name="OriginalSound" />
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">الصوت (مثلاً s, sh)</label>
+                    <input id="lt_sound" name="Sound" required dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">الحرف الأساسي</label>
+                    <input id="lt_letter" name="Letter" maxlength="1" required dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">المجموعة (1-7)</label>
+                    <input id="lt_group" name="Group" type="number" min="1" max="7" value="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">كلمة مثال (EN)</label>
+                    <input id="lt_ex" name="ExampleWord" required dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">المعنى بالعربي</label>
+                    <input id="lt_ar" name="ArabicWord" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                </div>
+                <div class="flex items-end pb-2">
+                    <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                        <input id="lt_vowel" type="checkbox" name="IsVowel" value="true" class="rounded" />
+                        <span>حرف متحرك (Vowel)</span>
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">الحركة بالعربي (Action AR)</label>
+                <input id="lt_actAr" name="ActionAr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">الحركة بالإنجليزي (Action EN)</label>
+                <input id="lt_actEn" name="ActionEn" dir="ltr" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeModal('letterModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold cursor-pointer">إلغاء</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-[#3A0A26] text-white text-xs font-extrabold cursor-pointer">حفظ الكارت</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    function openStageModal(stage) {
+        document.getElementById('st_id').value = stage ? stage.Id : '';
+        document.getElementById('st_titleAr').value = stage ? stage.TitleAr : '';
+        document.getElementById('st_titleEn').value = stage ? stage.TitleEn : '';
+        document.getElementById('st_subAr').value = stage ? stage.SubtitleAr : '';
+        document.getElementById('st_subEn').value = stage ? stage.SubtitleEn : '';
+        document.getElementById('st_cat').value = stage ? (stage.Category || 'letters') : 'letters';
+        document.getElementById('st_badge').value = stage ? (stage.BadgeKey || 'sun') : 'sun';
+        document.getElementById('st_free').checked = stage ? !!stage.IsFree : false;
+        document.getElementById('st_g1').value = stage ? (stage.GradientStart || '#F97316') : '#F97316';
+        document.getElementById('st_g2').value = stage ? (stage.GradientEnd || '#EA580C') : '#EA580C';
+        document.getElementById('stageModal').classList.remove('hidden');
+    }
+
+    function openWordModal(stageId, word, ar, art, bg, ac, isSight) {
+        document.getElementById('wd_stageId').value = stageId;
+        document.getElementById('wd_orig').value = word || '';
+        document.getElementById('wd_word').value = word || '';
+        document.getElementById('wd_ar').value = ar || '';
+        document.getElementById('wd_art').value = art || '';
+        document.getElementById('wd_bg').value = bg || '#FEF3C7';
+        document.getElementById('wd_ac').value = ac || '#D97706';
+        document.getElementById('wd_sight').checked = !!isSight;
+        document.getElementById('wordModal').classList.remove('hidden');
+    }
+
+    function openLetterModal(item) {
+        document.getElementById('lt_orig').value = item ? item.Sound : '';
+        document.getElementById('lt_sound').value = item ? item.Sound : '';
+        document.getElementById('lt_letter').value = item ? item.Letter : '';
+        document.getElementById('lt_group').value = item ? item.Group : 1;
+        document.getElementById('lt_ex').value = item ? item.ExampleWord : '';
+        document.getElementById('lt_ar').value = item ? item.ArabicWord : '';
+        document.getElementById('lt_vowel').checked = item ? !!item.IsVowel : false;
+        document.getElementById('lt_actAr').value = item ? item.ActionAr : '';
+        document.getElementById('lt_actEn').value = item ? item.ActionEn : '';
+        document.getElementById('letterModal').classList.remove('hidden');
+    }
+
+    function validateJsonEditor() {
+        const box = document.getElementById('jsonContentBox');
+        const badge = document.getElementById('jsonValidBadge');
+        try {
+            JSON.parse(box.value);
+            badge.textContent = '✓ صيغة صالحة';
+            badge.className = 'mr-2 text-xs font-bold text-emerald-700';
+            return true;
+        } catch (e) {
+            badge.textContent = '✕ خطأ في JSON: ' + e.message;
+            badge.className = 'mr-2 text-xs font-bold text-rose-600';
+            return false;
+        }
+    }
+
+    function formatJsonEditor() {
+        const box = document.getElementById('jsonContentBox');
+        if (!validateJsonEditor()) return;
+        box.value = JSON.stringify(JSON.parse(box.value), null, 2);
+    }
+</script>

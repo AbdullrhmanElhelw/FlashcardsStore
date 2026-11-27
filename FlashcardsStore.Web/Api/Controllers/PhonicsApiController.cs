@@ -13,7 +13,7 @@ public sealed class PhonicsApiController : ControllerBase
 {
     private static readonly HashSet<string> AllowedPacks = new(StringComparer.OrdinalIgnoreCase)
     {
-        "curriculum", "stories", "sentences", "rhymes", "minimal_pairs", "alphabet"
+        "curriculum", "stories", "sentences", "rhymes", "minimal_pairs", "alphabet", "shop"
     };
 
     private readonly FlashcardsStoreDbContext _db;
