@@ -91,7 +91,14 @@
                 <div class="lingo-line l-base"></div>
                 <div class="lingo-line l-bot"></div>
                 <div class="lingo-vline"></div>
-                <div id="letterTraceGuide" class="lingo-guide-word">@active.Letter@char.ToLowerInvariant(active.Letter)</div>
+                <div id="letterTraceGuide" class="lingo-guide-row">
+                    <div class="lingo-letter-cell" data-char="@active.Letter">
+                        @((MarkupString)LetterStrokeGuides.GetLetterSvg(active.Letter))
+                    </div>
+                    <div class="lingo-letter-cell" data-char="@char.ToLowerInvariant(active.Letter)">
+                        @((MarkupString)LetterStrokeGuides.GetLetterSvg(char.ToLowerInvariant(active.Letter)))
+                    </div>
+                </div>
                 <canvas id="letterTraceCanvas" width="340" height="185" class="lingo-canvas"></canvas>
             </div>
             <div class="lingo-toolbar" style="margin-top:10px;">

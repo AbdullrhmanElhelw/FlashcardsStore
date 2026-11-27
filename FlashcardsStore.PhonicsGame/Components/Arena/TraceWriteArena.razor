@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<!-- LingoDeer-Style 4-Line Handwriting & Tracing Board -->
+<!-- LingoDeer-Style 4-Line Handwriting & Stroke-Guided Tracing Board -->
 <div class="lingo-trace-box">
     <div class="trace-header">
         <span style="font-size:12.5px;font-weight:900;color:var(--plum);">@Loc.T("TracePrompt")</span>
@@ -45,31 +45,39 @@
     </div>
 
     <div class="lingo-grid-wrap">
-        <!-- 4-Line Notebook Guides (Sky, Midline, Baseline, Descender) -->
         <div class="lingo-line l-top"></div>
         <div class="lingo-line l-mid"></div>
         <div class="lingo-line l-base"></div>
         <div class="lingo-line l-bot"></div>
         <div class="lingo-vline"></div>
 
-        <div id="wordTraceGuide" class="lingo-guide-word @(Vm.CurrentWord.Word.Length > 5 ? "compact" : "")">
-            @Vm.CurrentWord.Word.ToLowerInvariant()
+        @{
+            var lowerWord = Vm.CurrentWord.Word.ToLowerInvariant();
+            var isCompact = lowerWord.Length > 4;
+        }
+        <div id="wordTraceGuide" class="lingo-guide-row">
+            @foreach (var ch in lowerWord)
+            {
+                <div class="lingo-letter-cell" data-char="@ch">
+                    @((MarkupString)LetterStrokeGuides.GetLetterSvg(ch, isCompact))
+                </div>
+            }
         </div>
         <canvas id="wordTraceCanvas" width="340" height="210" class="lingo-canvas"></canvas>
     </div>
 
     <div class="lingo-toolbar">
-        <button class="btn-back" style="padding:8px 14px;" @onclick="Vm.UndoTraceAsync">
+        <button class="btn-back" style="padding:10px 14px;" @onclick="Vm.UndoTraceAsync">
             <span class="icon-svg" style="width:14px;height:14px;">@((MarkupString)UiIcons.RefreshCw)</span>
             <span>@Loc.T("TraceUndoBtn")</span>
         </button>
-        <button class="btn-back" style="padding:8px 14px;" @onclick="Vm.ClearTraceAsync">
+        <button class="btn-back" style="padding:10px 14px;" @onclick="Vm.ClearTraceAsync">
             <span>@Loc.T("ClearCanvasBtn")</span>
         </button>
         @if (!Vm.WordSolved)
         {
-            <button class="btn-primary" style="padding:9px 18px;font-size:13.5px;" @onclick="Vm.CompleteTraceAsync">
-                <span>@Loc.T("TraceDoneBtn")</span>
+            <button class="btn-trace-done" @onclick="Vm.CompleteTraceAsync">
+                @Loc.T("TraceDoneBtn")
             </button>
         }
     </div>

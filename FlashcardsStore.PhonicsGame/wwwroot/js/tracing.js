@@ -30,21 +30,37 @@ window.phonicsTracing = (() => {
 
         if (!targetWord) return;
 
-        const isCompact = targetWord.length > 5;
-        const fontSize = isCompact ? 72 : 96;
-        maskCtx.font = `800 ${fontSize}px Nunito, Fredoka, sans-serif`;
+        const cRect = canvas.getBoundingClientRect();
+        const cells = document.querySelectorAll('#wordTraceGuide .lingo-letter-cell');
         maskCtx.textAlign = 'center';
         maskCtx.textBaseline = 'middle';
-        // Draw thick stroke + fill so finger tolerance matches the visual hollow word
         maskCtx.lineWidth = 18;
         maskCtx.strokeStyle = '#000';
         maskCtx.fillStyle = '#000';
-        const cx = maskCanvas.width / 2;
-        const cy = maskCanvas.height / 2 + 2;
-        maskCtx.strokeText(targetWord, cx, cy);
-        maskCtx.fillText(targetWord, cx, cy);
 
-        // Compute tight horizontal bounds of the rendered word
+        if (cells.length > 0 && cRect.width > 0 && cRect.height > 0) {
+            const scaleX = canvas.width / cRect.width;
+            const scaleY = canvas.height / cRect.height;
+            const fontSize = targetWord.length > 4 ? 76 : 96;
+            maskCtx.font = `800 ${fontSize}px Nunito, Fredoka, sans-serif`;
+
+            cells.forEach(cell => {
+                const r = cell.getBoundingClientRect();
+                const cx = (r.left - cRect.left + r.width / 2) * scaleX;
+                const cy = (r.top - cRect.top + r.height / 2 + 4) * scaleY;
+                const ch = cell.getAttribute('data-char') || '';
+                maskCtx.strokeText(ch, cx, cy);
+                maskCtx.fillText(ch, cx, cy);
+            });
+        } else {
+            const fontSize = targetWord.length > 4 ? 76 : 96;
+            maskCtx.font = `800 ${fontSize}px Nunito, Fredoka, sans-serif`;
+            const cx = maskCanvas.width / 2;
+            const cy = maskCanvas.height / 2 + 2;
+            maskCtx.strokeText(targetWord, cx, cy);
+            maskCtx.fillText(targetWord, cx, cy);
+        }
+
         const data = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height).data;
         let minX = maskCanvas.width, maxX = 0, minY = maskCanvas.height, maxY = 0;
         for (let y = 0; y < maskCanvas.height; y += 2) {
@@ -214,11 +230,19 @@ window.phonicsTracing = (() => {
             return computeEvaluation();
         },
         playDemo(guideId) {
-            const el = document.getElementById(guideId);
-            if (!el) return;
-            el.classList.remove('demo-pulse');
-            void el.offsetWidth;
-            el.classList.add('demo-pulse');
+            const container = document.getElementById(guideId);
+            if (!container) return;
+            const cells = container.querySelectorAll('.lingo-letter-cell');
+            if (cells.length > 0) {
+                cells.forEach((cell, i) => {
+                    setTimeout(() => {
+                        cell.classList.remove('demo-pulse');
+                        void cell.offsetWidth;
+                        cell.classList.add('demo-pulse');
+                        setTimeout(() => cell.classList.remove('demo-pulse'), 650);
+                    }, i * 380);
+                });
+            }
         }
     };
 })();
