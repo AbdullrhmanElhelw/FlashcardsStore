@@ -8,6 +8,39 @@
         <Setter Property="FlowDirection" Value="RightToLeft" />
     </Style>
 
+    <!-- Global Typography Defaults (Unified Arabic & English) -->
+    <Style TargetType="Label">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="FontFamily" Value="Cairo" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+    </Style>
+
+    <Style TargetType="SearchBar">
+        <Setter Property="FontFamily" Value="Cairo" />
+        <Setter Property="TextColor" Value="{StaticResource BrandInk}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
+    </Style>
+
     <Style x:Key="HeadingLabelStyle" TargetType="Label">
         <Setter Property="FontFamily" Value="Cairo" />
         <Setter Property="FontSize" Value="21" />
