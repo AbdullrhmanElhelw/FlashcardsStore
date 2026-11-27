@@ -48,6 +48,11 @@
                     <span>@Loc.Get("NavCatalog")</span>
                 </a>
 
+                <a asp-controller="Home" asp-action="PhonicsApp"
+                   class="inline-flex items-center gap-1.5 px-2 xl:px-3 py-2 rounded-xl text-[#3A0A26] bg-amber-50 hover:bg-amber-100 transition-colors whitespace-nowrap">
+                    <span>@(isRtl ? "تطبيق الفونكس" : "Phonics App")</span>
+                </a>
+
                 <!-- Interactive Categories Dropdown -->
                 <div class="relative" x-data="{ catDropdownOpen: false }" @@click.away="catDropdownOpen = false">
                     <button type="button"

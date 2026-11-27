@@ -1,0 +1,204 @@
+{
+  "questions": [
+    {
+      "topic": "pronouns",
+      "titleAr": "الضمائر: I, you, he, she",
+      "titleEn": "Pronouns: I, you, he, she",
+      "promptTemplate": "___ am a happy kid.",
+      "correctOption": "I",
+      "options": ["I", "He", "She"],
+      "hintAr": "نستخدم I عندما نتحدث عن أنفسنا",
+      "hintEn": "Use I when talking about yourself"
+    },
+    {
+      "topic": "pronouns",
+      "titleAr": "الضمائر: I, you, he, she",
+      "titleEn": "Pronouns: I, you, he, she",
+      "promptTemplate": "___ is my dad.",
+      "correctOption": "He",
+      "options": ["He", "She", "I"],
+      "hintAr": "نستخدم He للمذكر المفرد (الولد/الأب)",
+      "hintEn": "Use He for a boy or man"
+    },
+    {
+      "topic": "pronouns",
+      "titleAr": "الضمائر: I, you, he, she",
+      "titleEn": "Pronouns: I, you, he, she",
+      "promptTemplate": "___ is my mom.",
+      "correctOption": "She",
+      "options": ["She", "He", "You"],
+      "hintAr": "نستخدم She للمؤنث المفرد (البنت/الأم)",
+      "hintEn": "Use She for a girl or woman"
+    },
+    {
+      "topic": "pronouns",
+      "titleAr": "الضمائر: I, you, he, she",
+      "titleEn": "Pronouns: I, you, he, she",
+      "promptTemplate": "___ are my best friend.",
+      "correctOption": "You",
+      "options": ["You", "He", "She"],
+      "hintAr": "نستخدم You عندما نخاطب شخصاً أمامنا",
+      "hintEn": "Use You when talking to someone"
+    },
+    {
+      "topic": "verbs",
+      "titleAr": "الأفعال البسيطة والشاذة",
+      "titleEn": "Simple & Irregular Verbs",
+      "promptTemplate": "I ___ an apple every day.",
+      "correctOption": "eat",
+      "options": ["eat", "eats", "ate"],
+      "hintAr": "مع الضمير I نستخدم الفعل البسيط بدون s",
+      "hintEn": "With I, use the base verb without s"
+    },
+    {
+      "topic": "verbs",
+      "titleAr": "الأفعال البسيطة والشاذة",
+      "titleEn": "Simple & Irregular Verbs",
+      "promptTemplate": "She ___ a book now.",
+      "correctOption": "reads",
+      "options": ["reads", "read", "reading"],
+      "hintAr": "مع He و She نضيف s للفعل في المضارع",
+      "hintEn": "With He/She, add s to the verb"
+    },
+    {
+      "topic": "verbs",
+      "titleAr": "الأفعال البسيطة والشاذة",
+      "titleEn": "Simple & Irregular Verbs",
+      "promptTemplate": "Yesterday, I ___ to the park.",
+      "correctOption": "went",
+      "options": ["went", "go", "goes"],
+      "hintAr": "الفعل go فعل شاذ، ماضيه went",
+      "hintEn": "go is irregular — its past form is went"
+    },
+    {
+      "topic": "verbs",
+      "titleAr": "الأفعال البسيطة والشاذة",
+      "titleEn": "Simple & Irregular Verbs",
+      "promptTemplate": "Yesterday, we ___ a big lion.",
+      "correctOption": "saw",
+      "options": ["saw", "see", "sees"],
+      "hintAr": "الفعل see فعل شاذ، ماضيه saw",
+      "hintEn": "see is irregular — its past form is saw"
+    },
+    {
+      "topic": "plural",
+      "titleAr": "الجمع والمفرد",
+      "titleEn": "Singular & Plural",
+      "promptTemplate": "One cat, two ___.",
+      "correctOption": "cats",
+      "options": ["cats", "cat", "cates"],
+      "hintAr": "نضيف s لتحويل المفرد إلى جمع",
+      "hintEn": "Add s to make most nouns plural"
+    },
+    {
+      "topic": "plural",
+      "titleAr": "الجمع والمفرد",
+      "titleEn": "Singular & Plural",
+      "promptTemplate": "One box, three ___.",
+      "correctOption": "boxes",
+      "options": ["boxes", "boxs", "box"],
+      "hintAr": "الكلمات المنتهية بـ x نضيف لها es",
+      "hintEn": "Words ending in x take es in plural"
+    },
+    {
+      "topic": "plural",
+      "titleAr": "الجمع والمفرد",
+      "titleEn": "Singular & Plural",
+      "promptTemplate": "One foot, two ___.",
+      "correctOption": "feet",
+      "options": ["feet", "foots", "foot"],
+      "hintAr": "foot جمعها شاذ وهو feet",
+      "hintEn": "foot has an irregular plural: feet"
+    },
+    {
+      "topic": "plural",
+      "titleAr": "الجمع والمفرد",
+      "titleEn": "Singular & Plural",
+      "promptTemplate": "One child, many ___.",
+      "correctOption": "children",
+      "options": ["children", "childs", "child"],
+      "hintAr": "child جمعها شاذ وهو children",
+      "hintEn": "child has an irregular plural: children"
+    },
+    {
+      "topic": "tenses",
+      "titleAr": "الأزمنة البسيطة",
+      "titleEn": "Simple Tenses",
+      "promptTemplate": "Every day, I ___ with my dog.",
+      "correctOption": "play",
+      "options": ["play", "played", "will play"],
+      "hintAr": "Every day تدل على المضارع البسيط",
+      "hintEn": "Every day uses Present Simple"
+    },
+    {
+      "topic": "tenses",
+      "titleAr": "الأزمنة البسيطة",
+      "titleEn": "Simple Tenses",
+      "promptTemplate": "Yesterday, we ___ a fun game.",
+      "correctOption": "played",
+      "options": ["played", "play", "plays"],
+      "hintAr": "Yesterday تدل على الماضي البسيط (+ed)",
+      "hintEn": "Yesterday uses Past Simple (+ed)"
+    },
+    {
+      "topic": "tenses",
+      "titleAr": "الأزمنة البسيطة",
+      "titleEn": "Simple Tenses",
+      "promptTemplate": "Tomorrow, I ___ visit grandma.",
+      "correctOption": "will",
+      "options": ["will", "did", "am"],
+      "hintAr": "Tomorrow تدل على المستقبل باستخدام will",
+      "hintEn": "Tomorrow uses will for the future"
+    },
+    {
+      "topic": "tenses",
+      "titleAr": "الأزمنة البسيطة",
+      "titleEn": "Simple Tenses",
+      "promptTemplate": "Last night, she ___ a nice cake.",
+      "correctOption": "made",
+      "options": ["made", "make", "makes"],
+      "hintAr": "Last night تدل على الماضي، وماضي make هو made",
+      "hintEn": "Last night uses Past Simple: made"
+    },
+    {
+      "topic": "prepositions",
+      "titleAr": "حروف الجر",
+      "titleEn": "Prepositions",
+      "promptTemplate": "The cat is ___ the box.",
+      "correctOption": "in",
+      "options": ["in", "on", "under"],
+      "hintAr": "in تعني داخل الصندوق",
+      "hintEn": "in means inside something"
+    },
+    {
+      "topic": "prepositions",
+      "titleAr": "حروف الجر",
+      "titleEn": "Prepositions",
+      "promptTemplate": "The book is ___ the desk.",
+      "correctOption": "on",
+      "options": ["on", "in", "under"],
+      "hintAr": "on تعني فوق سطح المكتب",
+      "hintEn": "on means resting on top of"
+    },
+    {
+      "topic": "prepositions",
+      "titleAr": "حروف الجر",
+      "titleEn": "Prepositions",
+      "promptTemplate": "The ball is ___ the bed.",
+      "correctOption": "under",
+      "options": ["under", "on", "in"],
+      "hintAr": "under تعني تحت السرير",
+      "hintEn": "under means below something"
+    },
+    {
+      "topic": "prepositions",
+      "titleAr": "حروف الجر",
+      "titleEn": "Prepositions",
+      "promptTemplate": "The lamp is ___ the bed.",
+      "correctOption": "next to",
+      "options": ["next to", "in", "under"],
+      "hintAr": "next to تعني بجانب السرير",
+      "hintEn": "next to means beside something"
+    }
+  ]
+}

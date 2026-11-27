@@ -33,4 +33,10 @@ public class HomeController : Controller
 
         return View(featuredProducts);
     }
+
+    [HttpGet("PhonicsApp")]
+    public IActionResult PhonicsApp() => View();
+
+    [HttpGet("Privacy")]
+    public IActionResult Privacy() => View();
 }

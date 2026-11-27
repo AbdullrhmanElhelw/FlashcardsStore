@@ -1,0 +1,69 @@
+@inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
+@{
+    var isRtl = Loc.IsRtl;
+    ViewData["Title"] = isRtl ? "سياسة الخصوصية — أكاديمية خلود النادي" : "Privacy Policy — Kholoud Elnady Academy";
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-start">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-10 space-y-6">
+        <div class="border-b border-slate-100 pb-4">
+            <span class="text-xs font-extrabold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+                @(isRtl ? "آخر تحديث: نوفمبر 2026" : "Last Updated: November 2026")
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 mt-3">
+                @(isRtl ? "سياسة الخصوصية لتطبيق ألعاب الفونكس ومتجر أكاديمية خلود النادي" : "Privacy Policy — Phonics Games App & Kholoud Elnady Store")
+            </h1>
+        </div>
+
+        @if (isRtl)
+        {
+            <div class="space-y-5 text-sm text-slate-700 leading-relaxed">
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">1. خصوصية الأطفال</h2>
+                    <p>تم تصميم تطبيق <strong>ألعاب الفونكس - خلود النادي</strong> خصيصاً لتعليم الأطفال الصوتيات الإنجليزية (Jolly Phonics) بطريقة آمنة. التطبيق لا يطلب من الطفل إنشاء حساب بريد إلكتروني، ولا يعرض أي إعلانات خارجية، ولا يشارك بيانات الطفل مع أي جهات تسويقية.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">2. إذن الميكروفون (RECORD_AUDIO)</h2>
+                    <p>يُستخدم إذن الميكروفون فقط داخل ألعاب النطق ("سجّل صوتك / كرّر الكلمة") للتحقق من نطق الطفل للكلمة على جهازه. لا يتم تخزين أو رفع أي تسجيلات صوتية للأطفال على خوادمنا.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">3. بيانات التقدم والتفعيل</h2>
+                    <p>يتم حفظ اسم الطفل المختار، والأفاتار، والنجوم، وتقدم المراحل محلياً على الجهاز فقط. عند إدخال كود التفعيل المرفق مع طلبات المتجر، يتم إرسال معرّف الجهاز التقني (Device ID) وكود التفعيل فقط للتحقق من صلاحية الكود وعدد الأجهزة المسموح بها.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">4. طلبات المتجر الإلكتروني</h2>
+                    <p>عند شراء الكروت المطبوعة أو الكورسات عبر الموقع، تُستخدم بيانات الاسم ورقم الهاتف والعنوان فقط لتنفيذ الطلب وتوصيله والتواصل مع ولي الأمر.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">5. التواصل والاستفسار</h2>
+                    <p>لأي استفسارات تتعلق بالخصوصية أو لحذف بيانات تفعيل جهاز معين، يمكنكم التواصل معنا مباشرة عبر صفحة المتجر أو واتساب الأكاديمية.</p>
+                </section>
+            </div>
+        }
+        else
+        {
+            <div class="space-y-5 text-sm text-slate-700 leading-relaxed">
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">1. Children's Privacy</h2>
+                    <p><strong>Phonics Games - Kholoud Elnady</strong> is designed for children learning Jolly Phonics in a safe environment. The app does not require email registration, contains zero third-party ads, and never sells or shares children's data.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">2. Microphone Permission (RECORD_AUDIO)</h2>
+                    <p>The microphone permission is used solely during pronunciation practice games ("Repeat After Me") to recognize spoken words on the device. Voice audio is never recorded, stored, or uploaded to our servers.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">3. Local Progress & Code Activation</h2>
+                    <p>Child profile name, avatar, stars, and learning progress are stored locally on the device. When activating a bundle code, only the code and a technical device identifier are sent to our server to verify license activation.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">4. Store Orders</h2>
+                    <p>Customer name, phone number, and shipping address provided on our web store are used strictly to fulfill and deliver flashcard orders.</p>
+                </section>
+                <section class="space-y-1.5">
+                    <h2 class="text-base font-extrabold text-slate-900">5. Contact</h2>
+                    <p>If you have any privacy questions or wish to reset device activation data, please contact us via WhatsApp or our store contact channels.</p>
+                </section>
+            </div>
+        }
+    </div>
+</div>

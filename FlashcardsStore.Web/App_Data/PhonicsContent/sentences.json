@@ -5,8 +5,12 @@
     { "id": 3, "words": ["The", "hen", "is", "red"], "arabicMeaning": "الدجاجة حمراء", "artworkKey": "hen", "accentColor": "#D97706", "isFree": true },
     { "id": 4, "words": ["I", "see", "a", "red", "pen"], "arabicMeaning": "أرى قلماً أحمر", "artworkKey": "pen", "accentColor": "#7C3AED", "isFree": true },
     { "id": 5, "words": ["The", "sun", "is", "hot"], "arabicMeaning": "الشمس ساخنة", "artworkKey": "sun", "accentColor": "#CA8A04", "isFree": false },
-    { "id": 6, "words": ["A", "frog", "can", "hop"], "arabicMeaning": "الضفدع يستطيع القفز", "artworkKey": "dog", "accentColor": "#16A34A", "isFree": false },
+    { "id": 6, "words": ["A", "frog", "can", "hop"], "arabicMeaning": "الضفدع يستطيع القفز", "artworkKey": "frog", "accentColor": "#16A34A", "isFree": false },
     { "id": 7, "words": ["I", "see", "a", "blue", "ship"], "arabicMeaning": "أرى سفينة زرقاء", "artworkKey": "ship", "accentColor": "#2563EB", "isFree": false },
-    { "id": 8, "words": ["Bob", "likes", "the", "cake"], "arabicMeaning": "بوب يحب الكعكة", "artworkKey": "cake", "accentColor": "#EC4899", "isFree": false }
+    { "id": 8, "words": ["Bob", "likes", "the", "cake"], "arabicMeaning": "بوب يحب الكعكة", "artworkKey": "cake", "accentColor": "#EC4899", "isFree": false },
+    { "id": 9, "words": ["My", "dog", "can", "run"], "arabicMeaning": "كلبي يستطيع الجري", "artworkKey": "dog", "accentColor": "#D97706", "isFree": false },
+    { "id": 10, "words": ["We", "go", "to", "school"], "arabicMeaning": "نحن نذهب إلى المدرسة", "artworkKey": "book", "accentColor": "#0284C7", "isFree": false },
+    { "id": 11, "words": ["She", "drinks", "cold", "milk"], "arabicMeaning": "هي تشرب حليباً بارداً", "artworkKey": "milk", "accentColor": "#0EA5E9", "isFree": false },
+    { "id": 12, "words": ["The", "bird", "is", "blue"], "arabicMeaning": "الطائر أزرق", "artworkKey": "bird", "accentColor": "#3B82F6", "isFree": false }
   ]
 }
