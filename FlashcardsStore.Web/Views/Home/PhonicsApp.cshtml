@@ -8,23 +8,23 @@
         : "Hello Miss Kholoud, I want to ask about the Jolly Phonics Flashcards & App");
 }
 
-<section class="bg-gradient-to-b from-[#2B071C] via-[#3A0A26] to-[#1A0412] text-white py-16 sm:py-24 relative overflow-hidden">
+<section class="bg-gradient-to-b from-[#2B071C] via-[#3A0A26] to-[#1A0412] text-white py-14 sm:py-20 relative overflow-hidden">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div class="space-y-5 text-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div class="lg:col-span-7 space-y-5 text-start">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/15 border border-amber-400/35 text-amber-300 text-xs font-extrabold">
-                    @(isRtl ? "رفيق الكروت المطبوعة الرسمي" : "Official Printed Flashcards Companion")
+                    @(isRtl ? "رفيق الكروت المطبوعة الرسمي — Card Store Game" : "Official Printed Flashcards Companion — Card Store Game")
                 </span>
                 <h1 class="text-3xl sm:text-5xl font-black leading-tight">
                     @(isRtl ? "تطبيق ألعاب Jolly Phonics للأطفال" : "Jolly Phonics Kids Game App")
                 </h1>
                 <p class="text-base sm:text-lg text-amber-100/90 leading-relaxed">
                     @(isRtl
-                        ? "رحلة تأسيس ممتعة تبدأ من أصوات S A T I P N حتى القراءة والدمج والكتابة على السطور — مصممة للعمل مع كروت الفلاش كاردز المطبوعة وكورسات أكاديمية خلود النادي."
-                        : "A joyful foundation journey from S A T I P N sounds to blending, reading, and guided letter tracing — built to pair with our printed flashcards and courses.")
+                        ? "رحلة تأسيس ممتعة تبدأ من أصوات S A T I P N حتى الدمج وتقطيع الأصوات والكتابة بالأسهم على السطور — مصممة للعمل مع كروت الفلاش كاردز المطبوعة وكورسات أكاديمية خلود النادي."
+                        : "A joyful foundation journey from S A T I P N sounds to blending, segmenting, and stroke-guided tracing — built to pair with our printed flashcards and courses.")
                 </p>
 
-                <div class="flex flex-wrap gap-3 pt-2">
+                <div class="flex flex-wrap gap-3 pt-1">
                     <a asp-controller="Catalog" asp-action="Index"
                        class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow-lg transition">
                         @(isRtl ? "اطلب الكروت واحصل على كود التفعيل" : "Order Flashcards & Get Activation Code")
@@ -34,43 +34,108 @@
                         @(isRtl ? "احجز كورس التأسيس عبر واتساب" : "Book Course via WhatsApp")
                     </a>
                 </div>
+
+                <!-- QR Code Card -->
+                <div class="mt-4 inline-flex items-center gap-4 bg-white text-slate-900 rounded-2xl p-4 shadow-xl border-2 border-amber-300/70">
+                    <img src="~/images/phonics-app/qr-phonics-app.png"
+                         asp-append-version="true"
+                         alt="QR Code - Phonics App"
+                         class="w-24 h-24 rounded-xl border border-slate-200 shrink-0" />
+                    <div class="space-y-1 text-start">
+                        <div class="text-xs font-black text-amber-700 uppercase tracking-wide">
+                            @(isRtl ? "امسح الكود بموبايلك" : "Scan with your phone")
+                        </div>
+                        <div class="text-sm font-extrabold text-[#2B071C]">
+                            @(isRtl ? "افتح صفحة التطبيق والكروت فوراً" : "Open the Phonics App page instantly")
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-snug max-w-xs">
+                            @(isRtl
+                                ? "وجّه كاميرا الموبايل نحو الـ QR Code لمشاركة التطبيق أو فتحه مباشرة على جهاز طفلك."
+                                : "Point your phone camera at the QR code to open or share the app on your child's device.")
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-6 sm:p-8 space-y-4">
-                <div class="text-sm font-extrabold text-amber-300">
-                    @(isRtl ? "ماذا يتعلم الطفل داخل التطبيق؟" : "What Does Your Child Learn?")
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <div class="bg-white/10 rounded-2xl p-4">
-                        <div class="font-black text-white">1. @(isRtl ? "أصوات S A T I P N" : "Jolly Phonics S A T I P N")</div>
-                        <div class="text-xs text-amber-100/80 mt-1">@(isRtl ? "42 صوتاً بالصورة والحركة والنطق الصحيح للصوت (ssss) وليس اسم الحرف." : "42 phoneme sounds with picture, physical action, and true phoneme pronunciation.")</div>
-                    </div>
-                    <div class="bg-white/10 rounded-2xl p-4">
-                        <div class="font-black text-white">2. @(isRtl ? "الدمج وتقطيع الأصوات" : "Blending & Segmenting")</div>
-                        <div class="text-xs text-amber-100/80 mt-1">@(isRtl ? "دمج حرفين ثم كلمات CVC، وتقطيع الكلمة لأصوات، وتمييز مكان الصوت." : "2-letter and CVC blending, phoneme counting, and first/middle/last sound spotting.")</div>
-                    </div>
-                    <div class="bg-white/10 rounded-2xl p-4">
-                        <div class="font-black text-white">3. @(isRtl ? "تتبع الكلمة على السطور" : "Guided Stroke Tracing")</div>
-                        <div class="text-xs text-amber-100/80 mt-1">@(isRtl ? "كتابة الكلمات والحروف بالأسهم الإرشادية على شبكة الـ 4 سطور." : "4-line handwriting grid with numbered green stroke arrows and per-letter checking.")</div>
-                    </div>
-                    <div class="bg-white/10 rounded-2xl p-4">
-                        <div class="font-black text-white">4. @(isRtl ? "تكامل مع الكروت المطبوعة" : "Paired with Flashcards")</div>
-                        <div class="text-xs text-amber-100/80 mt-1">@(isRtl ? "كل طلب كروت من المتجر يصدر معه كود تفعيل تلقائي يفتح كل المراحل على جهازين." : "Every flashcards order automatically generates an activation code for 2 devices.")</div>
-                    </div>
+            <!-- Featured Phone Mockup -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="w-[270px] sm:w-[290px] bg-slate-950 rounded-[2.6rem] p-3 shadow-2xl border-[3px] border-amber-400/40 relative">
+                    <div class="w-20 h-4 bg-slate-950 rounded-b-2xl mx-auto mb-1"></div>
+                    <img src="~/images/phonics-app/screen-home.png"
+                         asp-append-version="true"
+                         alt="Jolly Phonics App Home Screen"
+                         class="w-full rounded-[2rem] object-cover shadow-inner" />
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8 text-start">
+<!-- Real Screenshots Showcase Gallery -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8">
+    <div class="text-center space-y-2">
+        <span class="text-xs font-extrabold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
+            @(isRtl ? "صور حقيقية من داخل التطبيق" : "Real Screenshots from the App")
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">
+            @(isRtl ? "جولة داخل لعبة الفونكس" : "Inside the Phonics Game")
+        </h2>
+        <p class="text-sm text-slate-600 max-w-2xl mx-auto">
+            @(isRtl
+                ? "واجهة بسيطة ومبهجة مصممة خصيصاً للأطفال: مسار تعلم متدرج، كروت بالصوت والحركة، ألعاب تفاعلية، وتقرير لولي الأمر."
+                : "A joyful, kid-friendly interface: step-by-step Jolly Phonics path, action flashcards, interactive drills, and a parent report.")
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+            <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                <img src="~/images/phonics-app/screen-home.png" asp-append-version="true" alt="Learn Path" class="w-full rounded-[1.5rem]" />
+            </div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "1. مسار Jolly Phonics" : "1. Jolly Phonics Path")</h3>
+                <p class="text-xs text-slate-500 mt-0.5">@(isRtl ? "يبدأ بالمجموعة الأولى S A T I P N حتى الدمج والحروف الصامتة." : "Starts with Group 1 S A T I P N through blending and silent letters.")</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+            <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                <img src="~/images/phonics-app/screen-cards.png" asp-append-version="true" alt="Phonics Cards & Tracing" class="w-full rounded-[1.5rem]" />
+            </div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "2. كروت الأصوات والتتبع" : "2. Sound Cards & Tracing")</h3>
+                <p class="text-xs text-slate-500 mt-0.5">@(isRtl ? "صورة + حركة + نطق الصوت الصحيح + تتبع الحرف بالأسهم." : "Picture + action + true phoneme audio + stroke-guided tracing.")</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+            <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                <img src="~/images/phonics-app/screen-games.png" asp-append-version="true" alt="Games Hub" class="w-full rounded-[1.5rem]" />
+            </div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "3. صالة الألعاب والتمارين" : "3. Games & Drills Hub")</h3>
+                <p class="text-xs text-slate-500 mt-0.5">@(isRtl ? "البالونات، تقطيع الأصوات، مكان الصوت، وقراءة جمل SATIPN." : "Balloons, sound counting, sound position, and SATIPN reader.")</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+            <div class="w-full max-w-[210px] bg-slate-900 rounded-[2rem] p-2 shadow-lg">
+                <img src="~/images/phonics-app/screen-progress.png" asp-append-version="true" alt="Progress & Parent Report" class="w-full rounded-[1.5rem]" />
+            </div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-sm">@(isRtl ? "4. التقدم وتقرير ولي الأمر" : "4. Progress & Parent Report")</h3>
+                <p class="text-xs text-slate-500 mt-0.5">@(isRtl ? "متابعة نجوم الطفل، الشارات، الكلمات الصعبة، ومتجر النجوم." : "Track mastered words, badges, weak sounds, and star rewards.")</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3 Steps to Connect with Flashcards -->
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-8 text-start">
     <div class="text-center space-y-2">
         <h2 class="text-2xl sm:text-3xl font-black text-slate-900">
-            @(isRtl ? "كيف تحصل على التفعيل الكامل؟" : "How to Unlock the Full App?")
+            @(isRtl ? "كيف تحصل على التفعيل الكامل مع الكروت؟" : "How to Unlock the Full App with Flashcards?")
         </h2>
-        <p class="text-sm text-slate-600">
-            @(isRtl ? "3 خطوات بسيطة لربط كروت الفلاش كاردز بالتطبيق" : "3 simple steps to connect your flashcards with the app")
-        </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -87,7 +152,13 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-2">
             <div class="w-10 h-10 rounded-xl bg-[#2B071C] text-amber-300 font-black flex items-center justify-center">3</div>
             <h3 class="font-extrabold text-slate-900">@(isRtl ? "فعّل التطبيق والعب" : "Activate & Play")</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">@(isRtl ? "أدخل الكود داخل التطبيق لفتح جميع المراحل والقصص والألعاب وتقرير ولي الأمر." : "Enter the code inside the app to unlock all stages, drills, and the parent report.")</p>
+            <p class="text-xs text-slate-600 leading-relaxed">@(isRtl ? "أدخل الكود داخل التطبيق لفتح جميع المراحل والألعاب وتقرير ولي الأمر." : "Enter the code inside the app to unlock all stages, drills, and the parent report.")</p>
         </div>
+    </div>
+
+    <div class="text-center pt-2">
+        <a asp-controller="Home" asp-action="Privacy" class="text-xs font-bold text-slate-500 hover:text-[#2B071C] underline">
+            @(isRtl ? "اطلع على سياسة الخصوصية لتطبيق الأطفال" : "Read the Children's App Privacy Policy")
+        </a>
     </div>
 </section>
