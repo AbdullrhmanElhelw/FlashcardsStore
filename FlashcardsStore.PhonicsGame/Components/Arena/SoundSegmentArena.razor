@@ -1,0 +1,52 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentSegment is { } seg)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background:#F5F3FF;">
+            @((MarkupString)WordArtwork.GetSvg(seg.ArtworkKey, seg.AccentColor))
+        </div>
+        <div class="arabic-hint" style="font-size:16px;">@Loc.T("SegmentPrompt")</div>
+        @if (Loc.IsArabic)
+        {
+            <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;">@seg.ArabicMeaning</div>
+        }
+        <div class="audio-controls">
+            <button class="btn-speak" @onclick="Vm.SpeakCurrentSegmentAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+
+        @if (Vm.WordSolved)
+        {
+            <div class="blend-slider-row" style="margin-top:14px;">
+                @foreach (var p in seg.Phonemes)
+                {
+                    <span class="blend-pill active">/@p/</span>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="story-quiz-options" style="grid-template-columns:repeat(3,1fr);">
+        @foreach (var n in new[] { 2, 3, 4 })
+        {
+            var isRight = Vm.WordSolved && n == seg.Phonemes.Count;
+            var isWrong = Vm.SegmentWrongCount == n;
+            var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            <button class="@cls" @onclick="() => Vm.SelectSegmentCountAsync(n)">
+                <div style="font-size:24px;font-weight:900;">@n</div>
+                <div style="font-size:11px;opacity:0.8;">@Loc.T("SoundsUnit")</div>
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (@seg.Word.ToUpperInvariant() = @seg.Phonemes.Count)</div>
+            <button class="btn-next" @onclick="Vm.NextSegmentAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

@@ -12,5 +12,8 @@ public enum GameMode
     SpeakRepeat,
     ListenComplete,
     TraceWrite,
-    BalloonPop
+    BalloonPop,
+    SoundSegment,
+    SoundPosition,
+    DecodableReader
 }

@@ -194,7 +194,7 @@
 </div>
 
 <!-- Courses & Flashcards Store Integration -->
-<div class="extra-modes-row" style="grid-template-columns:1fr 1fr;margin:14px 0 10px;">
+<div class="extra-modes-row" style="grid-template-columns:1fr 1fr;margin:14px 0 8px;">
     <div class="extra-mode-card rhyme" style="margin:0;" @onclick="Vm.StartBalloonPopAsync">
         <div class="extra-mode-title">@Loc.T("BalloonGameTitle")</div>
         <div class="extra-mode-sub">@Loc.T("BalloonGameSub")</div>
@@ -202,6 +202,21 @@
     <div class="extra-mode-card sentence" style="margin:0;" @onclick="Vm.OpenParentReport">
         <div class="extra-mode-title">@Loc.T("ParentReportTitle")</div>
         <div class="extra-mode-sub">@Loc.T("ParentReportSub")</div>
+    </div>
+</div>
+
+<div class="extra-modes-row" style="grid-template-columns:repeat(3,1fr);margin:0 0 12px;">
+    <div class="extra-mode-card minimal" style="margin:0;" @onclick="Vm.StartSoundSegmentAsync">
+        <div class="extra-mode-title" style="font-size:12px;">@Loc.T("SegmentGameTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("SegmentGameSub")</div>
+    </div>
+    <div class="extra-mode-card sentence" style="margin:0;" @onclick="Vm.StartSoundPositionAsync">
+        <div class="extra-mode-title" style="font-size:12px;">@Loc.T("PositionGameTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("PositionGameSub")</div>
+    </div>
+    <div class="extra-mode-card rhyme" style="margin:0;" @onclick="Vm.StartDecodableReaderAsync">
+        <div class="extra-mode-title" style="font-size:12px;">@Loc.T("DecodableTitle")</div>
+        <div class="extra-mode-sub">@Loc.T("DecodableSub")</div>
     </div>
 </div>
 

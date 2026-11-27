@@ -1,0 +1,45 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentDecodable is { } dec)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background:#ECFDF5;">
+            @((MarkupString)WordArtwork.GetSvg(dec.ArtworkKey, dec.AccentColor))
+        </div>
+        <div class="grammar-topic-pill" style="background:#D1FAE5;color:#065F46;">S • A • T • I • P • N</div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:10px;">@Loc.T("DecodableTapHint")</div>
+
+        <div class="decodable-words-row">
+            @foreach (var w in dec.Text.Split(' '))
+            {
+                <button class="decodable-word-pill" @onclick="() => Vm.SpeakDecodableWordAsync(w)">@w</button>
+            }
+        </div>
+
+        @if (Loc.IsArabic)
+        {
+            <div style="font-size:14px;font-weight:800;color:var(--muted);margin-top:8px;">@dec.ArabicMeaning</div>
+        }
+
+        <div class="audio-controls" style="margin-top:14px;">
+            <button class="btn-speak" @onclick="Vm.SpeakDecodableSentenceAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+            @if (!Vm.WordSolved)
+            {
+                <button class="btn-primary" style="padding:10px 18px;font-size:13px;" @onclick="Vm.CompleteDecodableAsync">
+                    @Loc.T("DecodableReadBtn")
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob")</div>
+            <button class="btn-next" @onclick="Vm.NextDecodableAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

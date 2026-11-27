@@ -1,0 +1,41 @@
+@inherits PhonicsComponentBase<GameArenaViewModel>
+
+@if (Vm.CurrentPosition is { } pos)
+{
+    <div class="picture-stage">
+        <div class="picture-circle" style="background:#EFF6FF;">
+            @((MarkupString)WordArtwork.GetSvg(pos.ArtworkKey, pos.AccentColor))
+        </div>
+        <div class="grammar-topic-pill" style="font-size:14px;">/@pos.TargetSound/</div>
+        <div class="arabic-hint" style="font-size:16px;">
+            @(Loc.IsArabic ? $"أين تسمع صوت /{pos.TargetSound}/ في هذه الكلمة؟" : $"Where do you hear /{pos.TargetSound}/?")
+        </div>
+        <div class="audio-controls">
+            <button class="btn-speak" @onclick="Vm.SpeakCurrentPositionAsync">
+                <span class="icon-svg" style="width:16px;height:16px;">@((MarkupString)UiIcons.Volume)</span>
+                <span>@Loc.T("ListenWord")</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="story-quiz-options" style="grid-template-columns:repeat(3,1fr);">
+        @foreach (var opt in new[] { (0, "PosFirst", "● ○ ○"), (1, "PosMiddle", "○ ● ○"), (2, "PosLast", "○ ○ ●") })
+        {
+            var isRight = Vm.WordSolved && opt.Item1 == pos.PositionIndex;
+            var isWrong = Vm.PositionWrongChoice == opt.Item1;
+            var cls = "story-quiz-btn" + (isRight ? " correct" : "") + (isWrong ? " wrong" : "");
+            <button class="@cls" @onclick="() => Vm.SelectPositionAsync(opt.Item1)">
+                <div style="font-size:14px;font-weight:900;">@Loc.T(opt.Item2)</div>
+                <div style="font-size:12px;letter-spacing:2px;margin-top:4px;opacity:0.75;">@opt.Item3</div>
+            </button>
+        }
+    </div>
+
+    @if (Vm.WordSolved)
+    {
+        <div class="celebrate-banner">
+            <div style="font-weight:900;">@Loc.T("GreatJob") (@pos.Word.ToUpperInvariant())</div>
+            <button class="btn-next" @onclick="Vm.NextPositionAsync">@Loc.T("NextWord")</button>
+        </div>
+    }
+}

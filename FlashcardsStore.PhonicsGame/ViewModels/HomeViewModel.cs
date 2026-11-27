@@ -103,6 +103,9 @@ public sealed partial class HomeViewModel : BaseViewModel
     public Task StartSpeakRepeatChallengeAsync() => _arena.StartSpeakRepeatChallengeAsync();
     public Task StartListenCompleteChallengeAsync() => _arena.StartListenCompleteChallengeAsync();
     public Task StartBalloonPopAsync() => _arena.StartBalloonPopAsync();
+    public Task StartSoundSegmentAsync() => _arena.StartSoundSegmentAsync();
+    public Task StartSoundPositionAsync() => _arena.StartSoundPositionAsync();
+    public Task StartDecodableReaderAsync() => _arena.StartDecodableReaderAsync();
     public void OpenParentReport() => _parentReport.Open();
 
     public void OpenSoundboard()

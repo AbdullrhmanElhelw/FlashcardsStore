@@ -54,6 +54,25 @@
     }
 </div>
 
+<!-- Progressive Blending Slider (s -> a -> t -> sat) -->
+<div class="blend-slider-box" @onclick="Vm.BlendWordProgressivelyAsync">
+    <div class="blend-slider-row">
+        @{
+            var phonemes = Vm.GetCurrentWordPhonemes();
+        }
+        @for (var p = 0; p < phonemes.Count; p++)
+        {
+            var isLit = Vm.BlendingStepIndex == p;
+            <span class="blend-pill @(isLit ? "active" : "")">@phonemes[p]</span>
+            @if (p < phonemes.Count - 1)
+            {
+                <span style="color:#94A3B8;font-weight:900;">→</span>
+            }
+        }
+    </div>
+    <div style="font-size:11px;font-weight:800;color:#7C3AED;margin-top:4px;">@Loc.T("BlendSliderHint")</div>
+</div>
+
 <div class="tiles-bank">
     @for (var i = 0; i < Vm.Tiles.Count; i++)
     {

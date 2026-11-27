@@ -198,5 +198,19 @@
     "ParentGateBtn":  "دخول للتقرير",
     "ParentReportTitle":  "تقرير ولي الأمر",
     "ParentReportSub":  "تقدم الطفل والأصوات الصعبة",
-    "BalloonGameSub":  "فرقع البالونة الصح"
+    "BalloonGameSub":  "فرقع البالونة الصح",
+    "SegmentGameTitle":  "تقطيع الأصوات",
+    "DecodableTapHint":  "اضغط على أي كلمة لسماعها، واقرأ الجملة:",
+    "SegmentGameSub":  "عدّ أصوات الكلمة",
+    "SegmentPrompt":  "اسمع الكلمة: كام صوت سمعت؟",
+    "PositionGameTitle":  "مكان الصوت",
+    "PosLast":  "الآخر",
+    "SoundsUnit":  "أصوات",
+    "DecodableReadBtn":  "قرأتها!",
+    "PosMiddle":  "النص",
+    "PositionGameSub":  "أول / نص / آخر",
+    "BlendSliderHint":  "اضغط للدمج التدريجي صوت بصوت ← كلمة",
+    "DecodableTitle":  "قراءة SATIPN",
+    "PosFirst":  "الأول",
+    "DecodableSub":  "جمل من أول 6 حروف"
 }

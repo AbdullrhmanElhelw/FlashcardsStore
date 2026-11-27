@@ -198,5 +198,19 @@
     "ParentGateBtn":  "Unlock Report",
     "ParentReportTitle":  "Parent Report",
     "ParentReportSub":  "Child progress \u0026 weak sounds",
-    "BalloonGameSub":  "Pop the matching sound"
+    "BalloonGameSub":  "Pop the matching sound",
+    "SegmentGameTitle":  "Sound Count",
+    "DecodableTapHint":  "Tap any word to hear it, then read the sentence:",
+    "SegmentGameSub":  "Segment phonemes",
+    "SegmentPrompt":  "Listen: How many sounds do you hear?",
+    "PositionGameTitle":  "Sound Spot",
+    "PosLast":  "Last",
+    "SoundsUnit":  "sounds",
+    "DecodableReadBtn":  "I Read It!",
+    "PosMiddle":  "Middle",
+    "PositionGameSub":  "First / Mid / Last",
+    "BlendSliderHint":  "Tap to blend sound-by-sound into the word",
+    "DecodableTitle":  "SATIPN Reader",
+    "PosFirst":  "First",
+    "DecodableSub":  "Read mini sentences"
 }

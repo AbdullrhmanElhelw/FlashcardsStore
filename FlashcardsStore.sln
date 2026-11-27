@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.Web", "Flas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.Mobile", "FlashcardsStore.Mobile\FlashcardsStore.Mobile.csproj", "{2CBFC903-48C5-4391-9A7D-5846E17E3607}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsStore.PhonicsGame", "FlashcardsStore.PhonicsGame\FlashcardsStore.PhonicsGame.csproj", "{CEC4FB9D-2A3F-41C9-A147-677904107390}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x64.Build.0 = Release|Any CPU
 		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x86.ActiveCfg = Release|Any CPU
 		{2CBFC903-48C5-4391-9A7D-5846E17E3607}.Release|x86.Build.0 = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|x64.Build.0 = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Debug|x86.Build.0 = Debug|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|x64.ActiveCfg = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|x64.Build.0 = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|x86.ActiveCfg = Release|Any CPU
+		{CEC4FB9D-2A3F-41C9-A147-677904107390}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

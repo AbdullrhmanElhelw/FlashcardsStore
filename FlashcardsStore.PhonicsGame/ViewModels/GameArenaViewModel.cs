@@ -81,6 +81,23 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     [ObservableProperty] private int _balloonQueueIndex;
     [ObservableProperty] private string _targetBalloonSound = string.Empty;
 
+    // Progressive Blending Slider
+    [ObservableProperty] private int _blendingStepIndex = -1;
+
+    // Sound Segmenting (Sound Counting)
+    [ObservableProperty] private IReadOnlyList<SegmentChallenge> _segmentList = [];
+    [ObservableProperty] private int _segmentIndex;
+    [ObservableProperty] private int? _segmentWrongCount;
+
+    // Sound Position (First / Middle / Last)
+    [ObservableProperty] private IReadOnlyList<PositionChallenge> _positionList = [];
+    [ObservableProperty] private int _positionIndex;
+    [ObservableProperty] private int? _positionWrongChoice;
+
+    // Decodable Mini-Reader (SATIPN)
+    [ObservableProperty] private IReadOnlyList<DecodableSentence> _decodableList = [];
+    [ObservableProperty] private int _decodableIndex;
+
     // Speech Check
     [ObservableProperty] private string _speechFeedback = string.Empty;
     [ObservableProperty] private bool _speechSuccess;
@@ -113,6 +130,9 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     public RhymeChallenge? CurrentRhyme => RhymeIndex < RhymeList.Count ? RhymeList[RhymeIndex] : null;
     public MinimalPairChallenge? CurrentMinimalPair => MinimalPairIndex < MinimalPairList.Count ? MinimalPairList[MinimalPairIndex] : null;
     public GrammarChallenge? CurrentGrammar => GrammarIndex < GrammarList.Count ? GrammarList[GrammarIndex] : null;
+    public SegmentChallenge? CurrentSegment => SegmentIndex < SegmentList.Count ? SegmentList[SegmentIndex] : null;
+    public PositionChallenge? CurrentPosition => PositionIndex < PositionList.Count ? PositionList[PositionIndex] : null;
+    public DecodableSentence? CurrentDecodable => DecodableIndex < DecodableList.Count ? DecodableList[DecodableIndex] : null;
     public string EquippedTheme => _progress.EquippedTheme;
 
     public Task RegisterDragBridgeAsync()
@@ -998,6 +1018,242 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
             balloon.IsWrong = false;
             NotifyAll();
         }
+    }
+
+    // --- Progressive Blending Slider ---
+    public IReadOnlyList<string> GetCurrentWordPhonemes()
+        => ActiveStage is null || WordIndex >= ActiveStage.Words.Count
+            ? []
+            : SplitIntoPhonemes(CurrentWord.Word);
+
+    public static IReadOnlyList<string> SplitIntoPhonemes(string word)
+    {
+        var w = (word ?? string.Empty).Trim().ToLowerInvariant();
+        string[] digraphs = ["igh", "ear", "air", "ure", "sh", "ch", "th", "ng", "ai", "oa", "ee", "oo", "or", "ar", "er", "qu", "ou", "oi", "ue", "kn", "wr", "mb"];
+        var result = new List<string>();
+        var i = 0;
+        while (i < w.Length)
+        {
+            var matched = digraphs.FirstOrDefault(d => i + d.Length <= w.Length && w.AsSpan(i, d.Length).SequenceEqual(d));
+            if (matched is not null)
+            {
+                result.Add(matched);
+                i += matched.Length;
+            }
+            else
+            {
+                result.Add(w[i].ToString());
+                i++;
+            }
+        }
+        return result;
+    }
+
+    [RelayCommand]
+    public async Task BlendWordProgressivelyAsync()
+    {
+        if (ActiveStage is null || WordIndex >= ActiveStage.Words.Count) return;
+        var phonemes = SplitIntoPhonemes(CurrentWord.Word);
+        for (var i = 0; i < phonemes.Count; i++)
+        {
+            BlendingStepIndex = i;
+            await _speech.SpeakPhonemeAsync(phonemes[i]);
+            await Task.Delay(340);
+        }
+        BlendingStepIndex = -1;
+        await _speech.SpeakAsync(CurrentWord.Word, pitch: 1.08f, rate: 0.85f);
+    }
+
+    // --- Sound Segmenting (Sound Counting) ---
+    public async Task StartSoundSegmentAsync()
+    {
+        SelectedMode = GameMode.SoundSegment;
+        SegmentList =
+        [
+            new("at", "عند", "at", "#D97706", ["a", "t"]),
+            new("sat", "جلس", "cat", "#F97316", ["s", "a", "t"]),
+            new("pin", "دبوس", "pin", "#2563EB", ["p", "i", "n"]),
+            new("ship", "سفينة", "ship", "#0284C7", ["sh", "i", "p"]),
+            new("fish", "سمكة", "fish", "#0D9488", ["f", "i", "sh"]),
+            new("rain", "مطر", "rain", "#0EA5E9", ["r", "ai", "n"]),
+            new("frog", "ضفدع", "frog", "#16A34A", ["f", "r", "o", "g"])
+        ];
+        SegmentIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(89, "تقطيع الكلمة لأصوات", "Sound Counting", "", "", "star_badge", "#7C3AED", "#EC4899", true, []);
+        _shell.NavigateTo(AppScreen.Playing);
+        await SetupCurrentSegmentAsync();
+    }
+
+    private Task SetupCurrentSegmentAsync()
+    {
+        WordSolved = false;
+        SegmentWrongCount = null;
+        return CurrentSegment is null ? Task.CompletedTask : _speech.SpeakAsync(CurrentSegment.Word, pitch: 1.05f, rate: 0.8f);
+    }
+
+    [RelayCommand]
+    public Task SpeakCurrentSegmentAsync()
+        => CurrentSegment is null ? Task.CompletedTask : _speech.SpeakAsync(CurrentSegment.Word, pitch: 1.05f, rate: 0.8f);
+
+    public async Task SelectSegmentCountAsync(int count)
+    {
+        if (WordSolved || CurrentSegment is null) return;
+        if (count == CurrentSegment.Phonemes.Count)
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(CurrentSegment.Word, 1, Streak);
+            _shell.RefreshHeader();
+            await _js.InvokeAsync("phonicsAudio.success");
+            await _js.InvokeAsync("phonicsAudio.confetti");
+            foreach (var p in CurrentSegment.Phonemes)
+            {
+                await _speech.SpeakPhonemeAsync(p);
+                await Task.Delay(250);
+            }
+        }
+        else
+        {
+            SegmentWrongCount = count;
+            Streak = 0;
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            await Task.Delay(420);
+            SegmentWrongCount = null;
+        }
+    }
+
+    [RelayCommand]
+    public async Task NextSegmentAsync()
+    {
+        if (SegmentIndex + 1 < SegmentList.Count) { SegmentIndex++; await SetupCurrentSegmentAsync(); }
+        else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
+    }
+
+    // --- Sound Position (First / Middle / Last) ---
+    public async Task StartSoundPositionAsync()
+    {
+        SelectedMode = GameMode.SoundPosition;
+        PositionList =
+        [
+            new("sun", "s", 0, "شمس", "sun", "#D97706"),
+            new("cat", "a", 1, "قطة", "cat", "#EA580C"),
+            new("hat", "t", 2, "قبعة", "hat", "#F59E0B"),
+            new("pin", "i", 1, "دبوس", "pin", "#2563EB"),
+            new("pan", "p", 0, "مقلاة", "pan", "#0284C7"),
+            new("net", "t", 2, "شبكة", "net", "#16A34A")
+        ];
+        PositionIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(88, "مكان الصوت في الكلمة", "Sound Position", "", "", "star_badge", "#0EA5E9", "#2563EB", true, []);
+        _shell.NavigateTo(AppScreen.Playing);
+        await SetupCurrentPositionAsync();
+    }
+
+    private async Task SetupCurrentPositionAsync()
+    {
+        WordSolved = false;
+        PositionWrongChoice = null;
+        await SpeakCurrentPositionAsync();
+    }
+
+    [RelayCommand]
+    public async Task SpeakCurrentPositionAsync()
+    {
+        if (CurrentPosition is null) return;
+        await _speech.SpeakPhonemeAsync(CurrentPosition.TargetSound);
+        await Task.Delay(350);
+        await _speech.SpeakAsync(CurrentPosition.Word, pitch: 1.05f, rate: 0.8f);
+    }
+
+    public async Task SelectPositionAsync(int pos)
+    {
+        if (WordSolved || CurrentPosition is null) return;
+        if (pos == CurrentPosition.PositionIndex)
+        {
+            WordSolved = true;
+            Streak++;
+            StageStars++;
+            _progress.RecordWordCompleted(CurrentPosition.Word, 1, Streak);
+            _shell.RefreshHeader();
+            await _js.InvokeAsync("phonicsAudio.success");
+            await _js.InvokeAsync("phonicsAudio.confetti");
+        }
+        else
+        {
+            PositionWrongChoice = pos;
+            Streak = 0;
+            await _js.InvokeAsync("phonicsAudio.wrong");
+            await Task.Delay(420);
+            PositionWrongChoice = null;
+        }
+    }
+
+    [RelayCommand]
+    public async Task NextPositionAsync()
+    {
+        if (PositionIndex + 1 < PositionList.Count) { PositionIndex++; await SetupCurrentPositionAsync(); }
+        else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
+    }
+
+    // --- Decodable Mini-Reader (Group 1: S A T I P N) ---
+    public async Task StartDecodableReaderAsync()
+    {
+        SelectedMode = GameMode.DecodableReader;
+        DecodableList =
+        [
+            new("Pat sat.", "بات جلس.", "cat", "#F97316"),
+            new("Tap a pan.", "اطرق على المقلاة.", "pan", "#EA580C"),
+            new("An ant sat.", "جلست نملة.", "ant", "#E11D48"),
+            new("A tin pin.", "دبوس من الصفيح.", "pin", "#2563EB"),
+            new("Sit in a pit.", "اجلس في الحفرة.", "net", "#16A34A"),
+            new("Pat naps.", "بات يأخذ قيلولة.", "sun", "#D97706")
+        ];
+        DecodableIndex = 0;
+        StageStars = 0;
+        Streak = 0;
+        StageFinished = false;
+        ActiveStage = new PhonicsStage(87, "قراءة جمل S A T I P N", "SATIPN Mini-Reader", "", "", "star_badge", "#10B981", "#059669", true, []);
+        _shell.NavigateTo(AppScreen.Playing);
+        await SetupCurrentDecodableAsync();
+    }
+
+    private Task SetupCurrentDecodableAsync()
+    {
+        WordSolved = false;
+        return SpeakDecodableSentenceAsync();
+    }
+
+    public Task SpeakDecodableWordAsync(string word)
+        => _speech.SpeakAsync(word.Trim('.', '!', '?'), pitch: 1.08f, rate: 0.82f);
+
+    [RelayCommand]
+    public Task SpeakDecodableSentenceAsync()
+        => CurrentDecodable is null ? Task.CompletedTask : _speech.SpeakAsync(CurrentDecodable.Text, pitch: 1.05f, rate: 0.82f);
+
+    [RelayCommand]
+    public async Task CompleteDecodableAsync()
+    {
+        if (WordSolved || CurrentDecodable is null) return;
+        WordSolved = true;
+        Streak++;
+        StageStars++;
+        _progress.RecordWordCompleted(CurrentDecodable.Text, 1, Streak);
+        _shell.RefreshHeader();
+        await _js.InvokeAsync("phonicsAudio.success");
+        await _js.InvokeAsync("phonicsAudio.confetti");
+    }
+
+    [RelayCommand]
+    public async Task NextDecodableAsync()
+    {
+        if (DecodableIndex + 1 < DecodableList.Count) { DecodableIndex++; await SetupCurrentDecodableAsync(); }
+        else { StageFinished = true; await _js.InvokeAsync("phonicsAudio.confetti"); }
     }
 
     public void Dispose() => _dotNetRef?.Dispose();

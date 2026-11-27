@@ -69,6 +69,15 @@ else if (Vm.ActiveStage is not null)
         case GameMode.BalloonPop:
             <BalloonPopArena />
             break;
+        case GameMode.SoundSegment:
+            <SoundSegmentArena />
+            break;
+        case GameMode.SoundPosition:
+            <SoundPositionArena />
+            break;
+        case GameMode.DecodableReader:
+            <DecodableReaderArena />
+            break;
     }
 
     @if (Vm.WordSolved
