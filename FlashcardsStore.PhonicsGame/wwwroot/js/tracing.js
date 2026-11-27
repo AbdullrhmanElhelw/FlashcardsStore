@@ -1,12 +1,15 @@
 window.phonicsTracing = (() => {
     let canvas = null;
     let ctx = null;
+    let maskCanvas = null;
+    let maskCtx = null;
+    let targetWord = '';
     let drawing = false;
     let strokeColor = '#7C3AED';
     let lastPoint = null;
-    let totalDistance = 0;
     let history = [];
     let demoRaf = null;
+    let textBounds = { left: 0, right: 340, top: 0, bottom: 210 };
 
     function getPos(e) {
         const rect = canvas.getBoundingClientRect();
@@ -14,6 +17,117 @@ window.phonicsTracing = (() => {
             x: (e.clientX - rect.left) * (canvas.width / rect.width),
             y: (e.clientY - rect.top) * (canvas.height / rect.height)
         };
+    }
+
+    function buildWordMask(text) {
+        targetWord = (text || '').trim().toLowerCase();
+        if (!canvas) return;
+        maskCanvas = document.createElement('canvas');
+        maskCanvas.width = canvas.width;
+        maskCanvas.height = canvas.height;
+        maskCtx = maskCanvas.getContext('2d', { willReadFrequently: true });
+        maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+        if (!targetWord) return;
+
+        const isCompact = targetWord.length > 5;
+        const fontSize = isCompact ? 72 : 96;
+        maskCtx.font = `800 ${fontSize}px Nunito, Fredoka, sans-serif`;
+        maskCtx.textAlign = 'center';
+        maskCtx.textBaseline = 'middle';
+        // Draw thick stroke + fill so finger tolerance matches the visual hollow word
+        maskCtx.lineWidth = 18;
+        maskCtx.strokeStyle = '#000';
+        maskCtx.fillStyle = '#000';
+        const cx = maskCanvas.width / 2;
+        const cy = maskCanvas.height / 2 + 2;
+        maskCtx.strokeText(targetWord, cx, cy);
+        maskCtx.fillText(targetWord, cx, cy);
+
+        // Compute tight horizontal bounds of the rendered word
+        const data = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height).data;
+        let minX = maskCanvas.width, maxX = 0, minY = maskCanvas.height, maxY = 0;
+        for (let y = 0; y < maskCanvas.height; y += 2) {
+            for (let x = 0; x < maskCanvas.width; x += 2) {
+                if (data[(y * maskCanvas.width + x) * 4 + 3] > 20) {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
+            }
+        }
+        textBounds = minX < maxX
+            ? { left: minX, right: maxX, top: minY, bottom: maxY }
+            : { left: 20, right: maskCanvas.width - 20, top: 20, bottom: maskCanvas.height - 20 };
+    }
+
+    function computeEvaluation() {
+        if (!ctx || !canvas) return { ok: false, percent: 0, missing: '' };
+        if (!maskCtx || !targetWord) {
+            return { ok: true, percent: 100, missing: '' };
+        }
+
+        const w = canvas.width;
+        const h = canvas.height;
+        const userData = ctx.getImageData(0, 0, w, h).data;
+        const maskData = maskCtx.getImageData(0, 0, w, h).data;
+
+        const len = Math.max(1, targetWord.length);
+        const span = Math.max(1, textBounds.right - textBounds.left);
+        const sliceW = span / len;
+
+        const maskCounts = new Array(len).fill(0);
+        const hitCounts = new Array(len).fill(0);
+        let totalUserInk = 0;
+        let inkOnMask = 0;
+
+        for (let y = 0; y < h; y += 3) {
+            for (let x = 0; x < w; x += 3) {
+                const idx = (y * w + x) * 4 + 3;
+                const isMask = maskData[idx] > 20;
+                const isUser = userData[idx] > 20;
+
+                if (isUser) {
+                    totalUserInk++;
+                    if (isMask) inkOnMask++;
+                }
+
+                if (isMask) {
+                    const charIdx = Math.min(len - 1, Math.max(0, Math.floor((x - textBounds.left) / sliceW)));
+                    maskCounts[charIdx]++;
+                    if (isUser) hitCounts[charIdx]++;
+                }
+            }
+        }
+
+        let coveredSlices = 0;
+        const missingChars = [];
+        for (let i = 0; i < len; i++) {
+            const ratio = maskCounts[i] > 0 ? hitCounts[i] / maskCounts[i] : 1;
+            if (ratio >= 0.28) {
+                coveredSlices++;
+            } else {
+                missingChars.push(targetWord[i]);
+            }
+        }
+
+        const totalMask = maskCounts.reduce((a, b) => a + b, 0);
+        const totalHit = hitCounts.reduce((a, b) => a + b, 0);
+        const overallRatio = totalMask > 0 ? totalHit / totalMask : 0;
+        const percent = Math.min(100, Math.round((coveredSlices / len) * 70 + Math.min(1, overallRatio / 0.45) * 30));
+        const precision = totalUserInk > 0 ? inkOnMask / totalUserInk : 0;
+
+        const ok = missingChars.length === 0 && totalUserInk > 25 && precision >= 0.25;
+        return { ok, percent, missing: missingChars.join(', ') };
+    }
+
+    function updateProgressBar() {
+        const res = computeEvaluation();
+        const fill = document.getElementById('traceProgressFill');
+        const txt = document.getElementById('traceProgressText');
+        if (fill) fill.style.width = `${res.percent}%`;
+        if (txt) txt.textContent = `${res.percent}%`;
     }
 
     function saveSnapshot() {
@@ -54,26 +168,26 @@ window.phonicsTracing = (() => {
         ctx.lineJoin = 'round';
         ctx.stroke();
 
-        const dx = pos.x - lastPoint.x;
-        const dy = pos.y - lastPoint.y;
-        totalDistance += Math.hypot(dx, dy);
         lastPoint = pos;
     }
 
     function onUp() {
+        if (!drawing) return;
         drawing = false;
         lastPoint = null;
+        updateProgressBar();
     }
 
     return {
-        init(canvasId) {
+        init(canvasId, word) {
             if (demoRaf) cancelAnimationFrame(demoRaf);
             canvas = document.getElementById(canvasId);
             if (!canvas) return;
             ctx = canvas.getContext('2d', { willReadFrequently: true });
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             history = [];
-            totalDistance = 0;
+            buildWordMask(word || '');
+            updateProgressBar();
 
             canvas.onpointerdown = onDown;
             canvas.onpointermove = onMove;
@@ -84,19 +198,20 @@ window.phonicsTracing = (() => {
             if (ctx && canvas) {
                 saveSnapshot();
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                totalDistance = 0;
+                updateProgressBar();
             }
         },
         undo() {
             if (!ctx || history.length === 0) return;
             const prev = history.pop();
             ctx.putImageData(prev, 0, 0);
+            updateProgressBar();
         },
         setColor(color) {
             strokeColor = color || '#7C3AED';
         },
-        hasDrawnEnough() {
-            return totalDistance > 45;
+        evaluateTrace() {
+            return computeEvaluation();
         },
         playDemo(guideId) {
             const el = document.getElementById(guideId);

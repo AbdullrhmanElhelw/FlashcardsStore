@@ -185,5 +185,6 @@
     "TraceUndoBtn":  "Undo",
     "TraceDoneBtn":  "Done!",
     "TraceDemoBtn":  "Demo",
-    "ModeTraceTitle":  "Trace \u0026 Write"
+    "ModeTraceTitle":  "Trace \u0026 Write",
+    "TraceMissingLetters":  "Trace every letter! Still missing:"
 }

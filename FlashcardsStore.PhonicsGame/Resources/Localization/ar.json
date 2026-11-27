@@ -185,5 +185,6 @@
     "TraceUndoBtn":  "تراجع",
     "TraceDoneBtn":  "خلصت!",
     "TraceDemoBtn":  "ورّيني",
-    "ModeTraceTitle":  "ارسم واكتب"
+    "ModeTraceTitle":  "ارسم واكتب",
+    "TraceMissingLetters":  "تتبّع كل حروف الكلمة! باقي:"
 }

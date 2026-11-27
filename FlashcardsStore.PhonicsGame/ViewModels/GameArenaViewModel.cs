@@ -228,7 +228,7 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
         else if (SelectedMode == GameMode.TraceWrite)
         {
             await Task.Delay(50);
-            await _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas");
+            await _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas", word);
         }
 
         await SpeakCurrentWordAsync();
@@ -863,7 +863,10 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     }
 
     // --- Trace & Write (LingoDeer-style) ---
-    public Task InitWordTraceAsync() => _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas");
+    public sealed record TraceEvalResult(bool Ok, int Percent, string Missing);
+
+    public Task InitWordTraceAsync()
+        => _js.InvokeAsync("phonicsTracing.init", "wordTraceCanvas", CurrentWord.Word.ToLowerInvariant());
 
     [RelayCommand]
     public Task UndoTraceAsync() => _js.InvokeAsync("phonicsTracing.undo");
@@ -884,11 +887,13 @@ public sealed partial class GameArenaViewModel : BaseViewModel, IDisposable
     public async Task CompleteTraceAsync()
     {
         if (WordSolved) return;
-        var drawn = await _js.InvokeAsync<bool>("phonicsTracing.hasDrawnEnough");
-        if (!drawn)
+        var eval = await _js.InvokeAsync<TraceEvalResult>("phonicsTracing.evaluateTrace");
+        if (eval is null || !eval.Ok)
         {
             SpeechSuccess = false;
-            SpeechFeedback = _loc.T("TraceMorePrompt");
+            SpeechFeedback = string.IsNullOrWhiteSpace(eval?.Missing)
+                ? _loc.T("TraceMorePrompt")
+                : $"{_loc.T("TraceMissingLetters")} ({eval.Missing.ToUpperInvariant()})";
             await _js.InvokeAsync("phonicsAudio.wrong");
             return;
         }
