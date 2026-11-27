@@ -53,6 +53,11 @@
                     <span>@(isRtl ? "تطبيق الفونكس" : "Phonics App")</span>
                 </a>
 
+                <a asp-controller="Home" asp-action="StoreApp"
+                   class="inline-flex items-center gap-1.5 px-2 xl:px-3 py-2 rounded-xl text-slate-700 hover:text-[#3A0A26] hover:bg-slate-100 transition-colors whitespace-nowrap">
+                    <span>@(isRtl ? "تطبيق المتجر" : "Store App")</span>
+                </a>
+
                 <!-- Interactive Categories Dropdown -->
                 <div class="relative" x-data="{ catDropdownOpen: false }" @@click.away="catDropdownOpen = false">
                     <button type="button"

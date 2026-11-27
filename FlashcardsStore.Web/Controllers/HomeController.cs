@@ -37,6 +37,9 @@ public class HomeController : Controller
     [HttpGet("PhonicsApp")]
     public IActionResult PhonicsApp() => View();
 
+    [HttpGet("StoreApp")]
+    public IActionResult StoreApp() => View();
+
     [HttpGet("Privacy")]
     public IActionResult Privacy() => View();
 }
