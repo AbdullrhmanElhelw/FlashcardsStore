@@ -90,7 +90,8 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
-// Register Cart Session Manager
+// Register HttpClientFactory & Cart Session Manager
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<CartSessionManager>();
 
 // Register Application Services (DTOs, Validation, Business Logic)
