@@ -163,8 +163,8 @@
 
                 <!-- 2. HD Photo Gallery Mode -->
                 <div x-show="viewMode === 'gallery'" style="display: none;" class="max-w-md mx-auto space-y-3">
-                    <div class="relative bg-white rounded-2xl border-2 border-amber-200/80 shadow-sm overflow-hidden flex items-center justify-center min-h-[280px]">
-                        <img :src="activeImage" alt="@primaryName" class="w-full h-[320px] object-cover transition-transform duration-300 hover:scale-105" />
+                    <div class="relative bg-white rounded-2xl border-2 border-amber-200/80 p-2 shadow-sm overflow-hidden flex items-center justify-center min-h-[280px]">
+                        <img :src="activeImage" alt="@primaryName" class="w-full h-auto max-h-[440px] object-contain transition-transform duration-300 hover:scale-105" />
                         <span class="absolute top-3 @(isRtl ? "left-3" : "right-3") px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[10px] font-bold">
                             @Loc.GetLocalized("صورة عالية الدقة", "HD Preview")
                         </span>
