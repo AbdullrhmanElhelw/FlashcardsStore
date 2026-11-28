@@ -290,9 +290,9 @@ html[dir="ltr"] .category-pill-compact {
    Product Details Page: Enlarged 3D Interactive Card Preview
    ========================================================================== */
 .details-3d-preview .flip-card-scene {
-  height: 410px;
-  min-height: 410px;
-  max-height: 410px;
+  height: 390px;
+  min-height: 390px;
+  max-height: 390px;
 }
 
 .details-3d-preview .flip-card-front .card-artwork {
