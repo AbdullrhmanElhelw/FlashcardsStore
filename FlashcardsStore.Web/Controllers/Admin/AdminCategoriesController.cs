@@ -83,7 +83,7 @@ public sealed class AdminCategoriesController : AdminControllerBase
         });
     }
 
-    [HttpPost("EditCategory")]
+    [HttpPost("EditCategory/{id:int?}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditCategory(UpdateCategoryDto dto, CancellationToken cancellationToken)
     {

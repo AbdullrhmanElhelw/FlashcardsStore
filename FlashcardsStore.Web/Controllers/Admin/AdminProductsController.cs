@@ -160,7 +160,7 @@ public sealed class AdminProductsController : AdminControllerBase
         });
     }
 
-    [HttpPost("EditProduct")]
+    [HttpPost("EditProduct/{id:int?}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditProduct(
         UpdateProductDto dto,

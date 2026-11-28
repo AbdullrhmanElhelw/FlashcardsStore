@@ -149,10 +149,10 @@
                                         </div>
 
                                         <!-- Product Image + Carousel Arrows -->
-                                        <div class="relative bg-gradient-to-br from-[#FAF8F5] to-[#F3ECE0] rounded-2xl p-4 border border-amber-200/60 overflow-hidden group">
+                                        <div class="relative bg-gradient-to-br from-[#FAF8F5] to-[#F3ECE0] rounded-2xl border border-amber-200/60 overflow-hidden group">
                                             <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@sProd.Slug" class="block">
                                                 <img src="@sImg" alt="@sName"
-                                                     class="w-full h-52 sm:h-56 object-contain mx-auto transition-transform duration-500 group-hover:scale-105" />
+                                                     class="w-full h-52 sm:h-56 object-cover mx-auto transition-transform duration-500 group-hover:scale-105" />
                                             </a>
 
                                             @if (heroSlides.Count > 1)
