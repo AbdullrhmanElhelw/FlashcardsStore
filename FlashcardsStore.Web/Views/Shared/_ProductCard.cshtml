@@ -45,9 +45,9 @@
                 <div class="card-artwork group relative">
                     <!-- Clickable Artwork Image Link -->
                     <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
-                       class="w-full h-full flex items-center justify-center cursor-pointer p-1"
+                       class="w-full h-full flex items-center justify-center cursor-pointer"
                        title="@primaryTitle">
-                        <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                        <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     </a>
 
                     <!-- Category Pill (Top Start Corner) -->

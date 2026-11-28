@@ -121,7 +121,7 @@ using (var scope = app.Services.CreateScope())
 // Configure HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Catalog/Index");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 

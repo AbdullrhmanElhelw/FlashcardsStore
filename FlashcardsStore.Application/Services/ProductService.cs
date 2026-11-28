@@ -228,6 +228,9 @@ public class ProductService : IProductService
         return Result<bool>.Success(true);
     }
 
+    public Task<bool> IsSlugTakenAsync(string slug, int? excludeId = null, CancellationToken cancellationToken = default)
+        => _productRepository.ExistsBySlugAsync(slug, excludeId, cancellationToken);
+
     public async Task<IReadOnlyList<ProductCardViewModel>> GetFeaturedCardsAsync(CancellationToken cancellationToken = default)
     {
         var products = await _productRepository.GetFeaturedProductsAsync(cancellationToken);

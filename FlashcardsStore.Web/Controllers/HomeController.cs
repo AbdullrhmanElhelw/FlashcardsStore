@@ -55,6 +55,12 @@ public class HomeController : Controller
     [HttpGet("Privacy")]
     public IActionResult Privacy() => View();
 
+    [Route("Home/Error")]
+    [AcceptVerbs("GET", "POST")]
+    [IgnoreAntiforgeryToken]
+    public IActionResult Error()
+        => RedirectToAction("Index", "Catalog");
+
     [HttpGet("download/{appName}")]
     public async Task<IActionResult> DownloadApp(string appName, CancellationToken cancellationToken)
     {

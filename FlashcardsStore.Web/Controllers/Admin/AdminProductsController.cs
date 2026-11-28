@@ -306,8 +306,7 @@ public sealed class AdminProductsController : AdminControllerBase
         var counter = 1;
         while (true)
         {
-            var existing = await _productService.GetProductDetailBySlugAsync(candidate, ct);
-            if (existing is null || (currentProductId.HasValue && existing.Id == currentProductId.Value))
+            if (!await _productService.IsSlugTakenAsync(candidate, currentProductId, ct))
                 return candidate;
 
             candidate = $"{clean}-{counter++}";

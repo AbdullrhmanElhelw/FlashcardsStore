@@ -131,7 +131,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
     public async Task<bool> ExistsBySlugAsync(string slug, int? excludeId = null, CancellationToken cancellationToken = default)
     {
         return excludeId.HasValue
-            ? await _dbSet.AnyAsync(p => p.Slug == slug && p.Id != excludeId.Value, cancellationToken)
-            : await _dbSet.AnyAsync(p => p.Slug == slug, cancellationToken);
+            ? await _dbSet.IgnoreQueryFilters().AnyAsync(p => p.Slug == slug && p.Id != excludeId.Value, cancellationToken)
+            : await _dbSet.IgnoreQueryFilters().AnyAsync(p => p.Slug == slug, cancellationToken);
     }
 }

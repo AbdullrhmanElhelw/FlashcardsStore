@@ -14,6 +14,7 @@ public interface IProductService
     Task<Result<ProductDto>> CreateProductAsync(CreateProductDto dto, CancellationToken cancellationToken = default);
     Task<Result<ProductDto>> UpdateProductAsync(UpdateProductDto dto, CancellationToken cancellationToken = default);
     Task<Result<bool>> DeleteProductAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> IsSlugTakenAsync(string slug, int? excludeId = null, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductCardViewModel>> GetFeaturedCardsAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductCardViewModel>> GetCardsByIdsAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default);
 }
