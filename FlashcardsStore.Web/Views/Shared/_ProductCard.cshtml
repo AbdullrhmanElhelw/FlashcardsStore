@@ -6,12 +6,14 @@
         .ToList();
     var firstImage = imageList.FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
     var backImage = !string.IsNullOrWhiteSpace(Model.BackImageUrl) ? Model.BackImageUrl.Trim() : null;
+    var isDetailsPreview = ViewData["IsDetailsPreview"] as bool? == true;
 
     var isRtl = Loc.IsRtl;
     var primaryTitle = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);
     var secondaryTitle = isRtl ? Model.Name : Model.NameAr;
     var categoryDisplay = Loc.GetLocalized(Model.CategoryNameAr, Model.CategoryName);
     var currency = Loc.Get("Currency");
+    var cardCountText = (!isRtl && Model.CardCount == 1) ? "1 card" : Loc.Get("CardsCountLabel", Model.CardCount);
 
     var audienceDisplay = Loc.TranslateTargetAudience(Model.TargetAudience);
 
@@ -44,19 +46,26 @@
             <div class="flip-card-front">
                 <!-- Compact Artwork with direct Click to Details -->
                 <div class="card-artwork group relative">
-                    <!-- Clickable Artwork Image Link -->
-                    <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
-                       class="w-full h-full flex items-center justify-center cursor-pointer"
-                       title="@primaryTitle">
-                        <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    </a>
+                    <!-- Clickable Artwork Image Link (opens Lightbox in Details preview) -->
+                    @if (isDetailsPreview)
+                    {
+                        <button type="button"
+                                onclick="event.stopPropagation(); window.openImageLightbox && window.openImageLightbox('@firstImage', '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(primaryTitle)')"
+                                class="w-full h-full flex items-center justify-center cursor-zoom-in"
+                                title="@primaryTitle">
+                            <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                        </button>
+                    }
+                    else
+                    {
+                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                           class="w-full h-full flex items-center justify-center cursor-pointer"
+                           title="@primaryTitle">
+                            <img src="@firstImage" alt="@primaryTitle" loading="lazy" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                        </a>
+                    }
 
-                    <!-- Category Pill (Top Start Corner) -->
-                    <span class="category-pill-compact">
-                        @categoryDisplay
-                    </span>
-
-                    <!-- Wishlist Toggle Heart Button (Top End Corner, completely separate from category pill) -->
+                    <!-- Wishlist Toggle Heart Button (Top End Corner) -->
                     <button type="button"
                             onclick="event.stopPropagation()"
                             @@click.stop="$store.wishlist.toggle(@Model.Id)"
@@ -83,18 +92,19 @@
                 <!-- Info Body -->
                 <div class="p-2.5 sm:p-3 flex flex-col justify-between flex-grow">
                     <div class="space-y-1">
-                        <!-- Grade / Audience & Count Tag -->
-                        <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-slate-500">
-                            <span class="truncate text-slate-600">@audienceDisplay</span>
-                            <span class="text-[#8D6711] bg-amber-50 px-1.5 py-0.5 rounded shrink-0">@Loc.Get("CardsCountLabel", Model.CardCount)</span>
+                        <!-- Category Badge & Count Tag -->
+                        <div class="flex items-center justify-between gap-1.5 text-[10px] sm:text-[11px] font-bold text-slate-500">
+                            <span class="text-[#4A0D29] bg-[#4A0D29]/8 px-2 py-0.5 rounded-md truncate">@categoryDisplay</span>
+                            <span class="text-[#8D6711] bg-amber-50 px-1.5 py-0.5 rounded shrink-0">@cardCountText</span>
                         </div>
 
                         <!-- Card Title (Clickable link to details) -->
-                        <h3 class="text-xs sm:text-sm font-black text-slate-900 leading-snug line-clamp-1 hover:text-[#B88E23] transition-colors">
+                        <h3 class="text-xs sm:text-sm font-black text-slate-900 leading-snug line-clamp-2 hover:text-[#B88E23] transition-colors">
                             <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug">
                                 @primaryTitle
                             </a>
                         </h3>
+                        <span class="block text-[10px] font-semibold text-slate-400 truncate">@audienceDisplay</span>
                     </div>
 
                     <!-- Price & Actions Bar -->
@@ -140,16 +150,19 @@
                                 </button>
                             }
 
-                            <!-- Details Icon Link -->
-                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
-                               onclick="event.stopPropagation()"
-                               class="p-1.5 sm:p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center shrink-0 min-h-[34px] sm:min-h-[36px] min-w-[34px] sm:min-w-[36px]"
-                               title="@Loc.Get("Details")">
-                                <svg class="w-4 h-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </a>
+                            @if (!isDetailsPreview)
+                            {
+                                <!-- Details Icon Link -->
+                                <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                                   onclick="event.stopPropagation()"
+                                   class="p-1.5 sm:p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center shrink-0 min-h-[34px] sm:min-h-[36px] min-w-[34px] sm:min-w-[36px]"
+                                   title="@Loc.Get("Details")">
+                                    <svg class="w-4 h-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -172,8 +185,12 @@
                         </button>
                     </div>
 
-                    <div class="flex-1 min-h-0 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-white p-1 mb-2 flex items-center justify-center">
-                        <img src="@backImage" alt="@primaryTitle" class="w-full h-full object-contain" />
+                    <div class="flex-1 min-h-0 flex items-center justify-center mb-2">
+                        <button type="button"
+                                onclick="event.stopPropagation(); window.openImageLightbox && window.openImageLightbox('@backImage', '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(primaryTitle)')"
+                                class="h-full aspect-[3/4] max-w-full rounded-xl overflow-hidden border border-[#D4AF37]/40 bg-white p-1 shadow-md cursor-zoom-in">
+                            <img src="@backImage" alt="@primaryTitle" class="w-full h-full object-contain" />
+                        </button>
                     </div>
 
                     @if (!string.IsNullOrWhiteSpace(Model.AudioUrl))
@@ -322,13 +339,16 @@
                             </button>
                         }
 
-                        <!-- Details Icon Link on Back Face -->
-                        <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
-                           onclick="event.stopPropagation()"
-                           class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] sm:text-xs transition-colors flex items-center justify-center min-h-[34px] border border-white/20 shrink-0"
-                           title="@Loc.Get("Details")">
-                            <span>@Loc.Get("Details")</span>
-                        </a>
+                        @if (!isDetailsPreview)
+                        {
+                            <!-- Details Icon Link on Back Face -->
+                            <a asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug" 
+                               onclick="event.stopPropagation()"
+                               class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] sm:text-xs transition-colors flex items-center justify-center min-h-[34px] border border-white/20 shrink-0"
+                               title="@Loc.Get("Details")">
+                                <span>@Loc.Get("Details")</span>
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

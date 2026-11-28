@@ -153,7 +153,7 @@
                             SampleWords = Model.SampleWords
                         };
                     }
-                    <partial name="_ProductCard" model="cardVm" />
+                    <partial name="_ProductCard" model="cardVm" view-data='new ViewDataDictionary(ViewData) { { "IsDetailsPreview", true } }' />
                     <div class="flex items-center justify-center gap-2 text-center text-xs font-bold text-slate-500 mt-3">
                         <svg class="w-4 h-4 text-[#8D6711]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -164,10 +164,11 @@
 
                 <!-- 2. HD Photo Gallery Mode -->
                 <div x-show="viewMode === 'gallery'" style="display: none;" class="max-w-md mx-auto space-y-3">
-                    <div class="relative bg-white rounded-2xl border-2 border-amber-200/80 p-2 shadow-sm overflow-hidden flex items-center justify-center min-h-[280px]">
-                        <img :src="activeImage" alt="@primaryName" class="w-full h-auto max-h-[440px] object-contain transition-transform duration-300 hover:scale-105" />
+                    <div class="relative bg-[#FAF8F5] rounded-2xl border-2 border-amber-200/80 p-3 shadow-sm overflow-hidden flex items-center justify-center min-h-[260px] cursor-zoom-in group"
+                         @@click="window.openImageLightbox && window.openImageLightbox(activeImage, '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(primaryName)')">
+                        <img :src="activeImage" alt="@primaryName" class="w-full h-auto max-h-[440px] object-contain transition-transform duration-300 group-hover:scale-[1.02]" />
                         <span class="absolute top-3 @(isRtl ? "left-3" : "right-3") px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[10px] font-bold">
-                            @Loc.GetLocalized("صورة عالية الدقة", "HD Preview")
+                            @Loc.GetLocalized("اضغط للتكبير 🔍", "Click to Zoom 🔍")
                         </span>
                     </div>
 
@@ -178,9 +179,9 @@
                             {
                                 <button type="button" 
                                         @@click="activeImage = '@img'"
-                                        :class="activeImage === '@img' ? 'border-[#8D6711] ring-2 ring-amber-300' : 'border-slate-200 opacity-70 hover:opacity-100'"
-                                        class="w-16 h-16 rounded-xl border bg-white transition-all overflow-hidden shrink-0 cursor-pointer">
-                                    <img src="@img" alt="Thumbnail" class="w-full h-full object-cover" />
+                                        :class="activeImage === '@img' ? 'border-[#8D6711] ring-2 ring-amber-300' : 'border-slate-200 opacity-75 hover:opacity-100'"
+                                        class="w-20 aspect-[4/3] rounded-xl border bg-[#FAF8F5] p-1 transition-all overflow-hidden shrink-0 cursor-pointer">
+                                    <img src="@img" alt="Thumbnail" class="w-full h-full object-contain" />
                                 </button>
                             }
                         </div>
@@ -676,3 +677,47 @@
     </section>
 
 </div>
+
+<!-- Fullscreen Image Lightbox Modal -->
+<div id="fc-image-lightbox"
+     class="fixed inset-0 z-[120] hidden items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4"
+     onclick="if (event.target === this) window.closeImageLightbox()">
+    <button type="button"
+            onclick="window.closeImageLightbox()"
+            aria-label="@Loc.GetLocalized("إغلاق", "Close")"
+            class="fixed top-4 @(isRtl ? "left-4" : "right-4") z-10 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-slate-900 hover:bg-amber-100 font-black text-xs shadow-xl cursor-pointer transition">
+        <span>✕</span>
+        <span>@Loc.GetLocalized("إغلاق", "Close")</span>
+    </button>
+    <div class="relative max-w-5xl max-h-[88vh] flex flex-col items-center gap-3" onclick="event.stopPropagation()">
+        <img id="fc-lightbox-img" src="" alt="" class="max-h-[82vh] max-w-[92vw] object-contain rounded-2xl shadow-2xl bg-white p-2 border border-[#D4AF37]/40" />
+        <p id="fc-lightbox-title" class="text-xs sm:text-sm font-bold text-[#F6ECC9] text-center"></p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.openImageLightbox = function (src, title) {
+            var modal = document.getElementById('fc-image-lightbox');
+            var img = document.getElementById('fc-lightbox-img');
+            var caption = document.getElementById('fc-lightbox-title');
+            if (!modal || !img) return;
+            img.src = src;
+            img.alt = title || '';
+            if (caption) caption.textContent = title || '';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        };
+        window.closeImageLightbox = function () {
+            var modal = document.getElementById('fc-image-lightbox');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        };
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') window.closeImageLightbox();
+        });
+    </script>
+}
