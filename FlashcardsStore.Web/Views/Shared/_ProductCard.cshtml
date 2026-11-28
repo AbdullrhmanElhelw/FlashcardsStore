@@ -1,10 +1,12 @@
 @model ProductCardViewModel
 @inject FlashcardsStore.Application.Interfaces.Services.ILocalizationService Loc
 @{
-    var firstImage = (Model.ImageUrl ?? "")
-        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim())
-        .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
+    var imageList = (Model.ImageUrl ?? "")
+        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .ToList();
+    var firstImage = imageList.FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
+    var useSecondImageOnBack = (ViewData["UseSecondImageOnBack"] as bool? == true) && imageList.Count > 1;
+    var backImage = useSecondImageOnBack ? imageList[1] : null;
 
     var isRtl = Loc.IsRtl;
     var primaryTitle = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);
@@ -154,8 +156,64 @@
                 </div>
             </div>
 
-            <!-- Back Face: Compact Luxury Objectives & Fast Action -->
+            <!-- Back Face: Real Back Image (on Details when 2+ images) or Interactive Preview -->
             <div class="flip-card-back">
+                @if (backImage is not null)
+                {
+                    <div class="flex items-center justify-between border-b border-[#D4AF37]/20 pb-1.5 mb-2">
+                        <span class="text-[10px] font-bold text-[#D4AF37]">@Loc.GetLocalized("معاينة ضهر الكارت", "Back Side Preview")</span>
+                        <button type="button" 
+                                data-action="flip-card"
+                                onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('is-flipped')"
+                                class="text-[10px] text-[#FBF6E5]/80 hover:text-white flex items-center gap-1 font-bold cursor-pointer">
+                            <span>@Loc.Get("FrontFace")</span>
+                            <svg class="w-3 h-3 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex-1 min-h-0 rounded-xl overflow-hidden border border-[#D4AF37]/30 bg-white/5 mb-2">
+                        <img src="@backImage" alt="@primaryTitle" class="w-full h-full object-cover" />
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.AudioUrl))
+                    {
+                        <div class="flex justify-center mb-1">
+                            <button type="button"
+                                    onclick="event.stopPropagation(); window.playAudioNote(this, '@Model.AudioUrl')"
+                                    class="audio-quick-btn px-3 py-1 rounded-lg bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-400 transition-all flex items-center gap-1.5 text-[10px] font-black cursor-pointer">
+                                <span>@Loc.Get("TeacherVoiceButton")</span>
+                                <span class="soundwave-container hidden">
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                </span>
+                            </button>
+                        </div>
+                    }
+                    else if (Model.SampleWords != null && Model.SampleWords.Count > 0)
+                    {
+                        var wordsToSay = string.Join(", ", Model.SampleWords.Select(w => w.Word.Replace("'", "")));
+                        <div class="flex justify-center mb-1">
+                            <button type="button"
+                                    onclick="event.stopPropagation(); window.playQuickCardPronunciation(this, '@wordsToSay')"
+                                    class="audio-quick-btn px-3 py-1 rounded-lg bg-[#D4AF37]/25 hover:bg-[#D4AF37]/45 text-[#D4AF37] border border-[#D4AF37]/40 transition-all flex items-center gap-1.5 text-[10px] font-black cursor-pointer">
+                                <svg class="w-3 h-3 text-[#D4AF37] speaker-icon pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                </svg>
+                                <span class="audio-btn-label">@Loc.Get("PronounceWordsButton")</span>
+                                <span class="soundwave-container hidden">
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                    <span class="soundwave-bar"></span>
+                                </span>
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
                 <div class="space-y-2">
                     <div class="flex items-center justify-between border-b border-[#D4AF37]/20 pb-1.5">
                         <span class="text-[10px] font-bold text-[#D4AF37]">@Loc.Get("CardContent")</span>
@@ -234,6 +292,7 @@
                         }
                     </div>
                 </div>
+                }
 
                 <!-- Back Actions -->
                 <div class="pt-2 border-t border-[#D4AF37]/20 mt-auto space-y-1.5">
