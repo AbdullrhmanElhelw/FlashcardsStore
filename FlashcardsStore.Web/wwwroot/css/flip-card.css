@@ -285,3 +285,22 @@ html[dir="ltr"] .category-pill-compact {
   70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
   100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }
+
+/* ==========================================================================
+   Product Details Page: Enlarged 3D Interactive Card Preview
+   ========================================================================== */
+.details-3d-preview .flip-card-scene {
+  height: 410px;
+  min-height: 410px;
+  max-height: 410px;
+}
+
+.details-3d-preview .flip-card-front .card-artwork {
+  flex: 0 0 215px;
+  height: 215px;
+  padding: 10px;
+}
+
+.details-3d-preview .category-pill-compact {
+  max-width: 210px;
+}
