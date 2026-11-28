@@ -243,6 +243,28 @@
                 </div>
             </div>
 
+            <!-- Optional Card Back Image for 3D Flip -->
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+                <label class="admin-form-label flex items-center gap-1.5">
+                    <span>صورة ضهر الكارت في العرض التفاعلي 3D (اختياري)</span>
+                </label>
+                <input type="hidden" name="existingBackImage" value="@Model.BackImageUrl" />
+                @if (!string.IsNullOrWhiteSpace(Model.BackImageUrl))
+                {
+                    <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <img src="@Model.BackImageUrl" alt="Back Image" class="w-16 h-16 rounded-lg object-cover border border-slate-200" />
+                        <label class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 cursor-pointer">
+                            <input type="checkbox" name="removeBackImage" value="true" class="rounded border-rose-300 text-rose-600" />
+                            <span>إزالة صورة الضهر والرجوع للعرض التفاعلي</span>
+                        </label>
+                    </div>
+                }
+                <input type="file" name="backImageFile" accept="image/*" class="admin-form-input text-xs" />
+                <p class="text-[11px] text-slate-400 font-medium">
+                    إذا تم رفع صورة هنا ستظهر عند قلب الكارت (3D)؛ وإذا تُرك فارغاً سيظهر المحتوى التفاعلي والنطق الصوتي.
+                </p>
+            </div>
+
             <!-- Optional manual fallback or custom URL (subtle) -->
             <div class="pt-2 border-t border-slate-100">
                 <details class="text-xs">

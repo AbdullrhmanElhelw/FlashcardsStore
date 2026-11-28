@@ -15,6 +15,7 @@ public class CreateProductDto
     public string? ImageUrl { get; set; } = string.Empty;
     public string? AudioUrl { get; set; }
     public string? BackPreviewText { get; set; } = string.Empty;
+    public string? BackImageUrl { get; set; }
     public string? BackKeyPoints { get; set; } = string.Empty;
     public string? BackKeyPointsEn { get; set; } = string.Empty;
     public string? SampleWords { get; set; } = string.Empty;

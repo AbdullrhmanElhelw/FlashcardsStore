@@ -5,8 +5,7 @@
         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         .ToList();
     var firstImage = imageList.FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
-    var useSecondImageOnBack = (ViewData["UseSecondImageOnBack"] as bool? == true) && imageList.Count > 1;
-    var backImage = useSecondImageOnBack ? imageList[1] : null;
+    var backImage = !string.IsNullOrWhiteSpace(Model.BackImageUrl) ? Model.BackImageUrl.Trim() : null;
 
     var isRtl = Loc.IsRtl;
     var primaryTitle = isRtl ? Model.NameAr : (string.IsNullOrWhiteSpace(Model.Name) ? Model.NameAr : Model.Name);

@@ -13,6 +13,8 @@ public static class DbInitializer
         await context.Database.EnsureCreatedAsync();
         await context.Database.ExecuteSqlRawAsync(
             "IF COL_LENGTH('dbo.Customer', 'PasswordHash') IS NULL ALTER TABLE [dbo].[Customer] ADD [PasswordHash] nvarchar(256) NULL;");
+        await context.Database.ExecuteSqlRawAsync(
+            "IF COL_LENGTH('dbo.Product', 'BackImageUrl') IS NULL ALTER TABLE [dbo].[Product] ADD [BackImageUrl] nvarchar(500) NULL;");
 
         // Seed Categories
         if (!await context.Categories.AnyAsync())

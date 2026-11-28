@@ -159,6 +159,7 @@ public class ProductService : IProductService
             ImageUrl = dto.ImageUrl ?? string.Empty,
             AudioUrl = dto.AudioUrl,
             BackPreviewText = dto.BackPreviewText ?? string.Empty,
+            BackImageUrl = dto.BackImageUrl,
             BackKeyPoints = dto.BackKeyPoints ?? string.Empty,
             BackKeyPointsEn = dto.BackKeyPointsEn ?? string.Empty,
             SampleWords = dto.SampleWords ?? string.Empty,
@@ -203,6 +204,7 @@ public class ProductService : IProductService
         product.ImageUrl = dto.ImageUrl ?? product.ImageUrl;
         product.AudioUrl = dto.AudioUrl;
         product.BackPreviewText = dto.BackPreviewText ?? string.Empty;
+        product.BackImageUrl = dto.BackImageUrl;
         product.BackKeyPoints = dto.BackKeyPoints ?? string.Empty;
         product.BackKeyPointsEn = dto.BackKeyPointsEn ?? string.Empty;
         product.SampleWords = dto.SampleWords ?? string.Empty;
@@ -264,6 +266,7 @@ public class ProductService : IProductService
         ImageUrl = p.ImageUrl,
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
+        BackImageUrl = p.BackImageUrl,
         BackKeyPoints = p.BackKeyPoints,
         BackKeyPointsEn = p.BackKeyPointsEn,
         CategoryName = p.Category?.Name ?? string.Empty,
@@ -289,6 +292,7 @@ public class ProductService : IProductService
         ImageUrl = p.ImageUrl,
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
+        BackImageUrl = p.BackImageUrl,
         BackKeyPoints = p.BackKeyPoints,
         BackKeyPointsEn = p.BackKeyPointsEn,
         SampleWords = p.SampleWords,
@@ -316,6 +320,7 @@ public class ProductService : IProductService
         ImageUrl = p.ImageUrl,
         AudioUrl = p.AudioUrl,
         BackPreviewText = p.BackPreviewText,
+        BackImageUrl = p.BackImageUrl,
         BackKeyPoints = p.BackKeyPoints,
         BackKeyPointsEn = p.BackKeyPointsEn,
         SampleWordsText = p.SampleWords,

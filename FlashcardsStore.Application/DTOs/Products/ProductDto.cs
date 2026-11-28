@@ -21,6 +21,7 @@ public class ProductDto
         .FirstOrDefault() ?? "/images/cards/card-phonics-1.svg";
     public string? AudioUrl { get; set; }
     public string BackPreviewText { get; set; } = string.Empty;
+    public string? BackImageUrl { get; set; }
     public string BackKeyPoints { get; set; } = string.Empty;
     public string BackKeyPointsEn { get; set; } = string.Empty;
     public string SampleWords { get; set; } = string.Empty;

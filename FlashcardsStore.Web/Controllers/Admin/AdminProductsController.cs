@@ -89,6 +89,7 @@ public sealed class AdminProductsController : AdminControllerBase
     public async Task<IActionResult> CreateProduct(
         CreateProductDto dto,
         List<IFormFile>? imageFiles,
+        IFormFile? backImageFile,
         IFormFile? audioFile,
         CancellationToken cancellationToken)
     {
@@ -104,6 +105,11 @@ public sealed class AdminProductsController : AdminControllerBase
         else if (string.IsNullOrWhiteSpace(dto.ImageUrl))
             dto.ImageUrl = DefaultProductImage;
         ModelState.Remove(nameof(dto.ImageUrl));
+
+        var savedBackImage = await SaveSingleImageAsync(backImageFile, cancellationToken);
+        if (savedBackImage is not null)
+            dto.BackImageUrl = savedBackImage;
+        ModelState.Remove(nameof(dto.BackImageUrl));
 
         var savedAudio = await SaveUploadedAudioAsync(audioFile, cancellationToken);
         if (savedAudio is not null)
@@ -149,6 +155,7 @@ public sealed class AdminProductsController : AdminControllerBase
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             ImageUrl = product.ImageUrl,
+            BackImageUrl = product.BackImageUrl,
             AudioUrl = product.AudioUrl,
             BackPreviewText = product.BackPreviewText,
             BackKeyPoints = product.BackKeyPoints,
@@ -166,6 +173,9 @@ public sealed class AdminProductsController : AdminControllerBase
         UpdateProductDto dto,
         List<IFormFile>? imageFiles,
         string? existingImages,
+        IFormFile? backImageFile,
+        string? existingBackImage,
+        bool removeBackImage,
         IFormFile? audioFile,
         string? existingAudio,
         CancellationToken cancellationToken)
@@ -188,6 +198,15 @@ public sealed class AdminProductsController : AdminControllerBase
             ? string.Join(",", imagesList)
             : (string.IsNullOrWhiteSpace(dto.ImageUrl) ? DefaultProductImage : dto.ImageUrl);
         ModelState.Remove(nameof(dto.ImageUrl));
+
+        var savedBackImage = await SaveSingleImageAsync(backImageFile, cancellationToken);
+        if (savedBackImage is not null)
+            dto.BackImageUrl = savedBackImage;
+        else if (removeBackImage)
+            dto.BackImageUrl = null;
+        else if (!string.IsNullOrWhiteSpace(existingBackImage))
+            dto.BackImageUrl = existingBackImage;
+        ModelState.Remove(nameof(dto.BackImageUrl));
 
         var savedAudio = await SaveUploadedAudioAsync(audioFile, cancellationToken);
         if (savedAudio is not null)
@@ -250,6 +269,7 @@ public sealed class AdminProductsController : AdminControllerBase
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             ImageUrl = product.ImageUrl,
+            BackImageUrl = product.BackImageUrl,
             AudioUrl = product.AudioUrl,
             BackPreviewText = product.BackPreviewText,
             BackKeyPoints = product.BackKeyPoints,
@@ -281,6 +301,15 @@ public sealed class AdminProductsController : AdminControllerBase
             uploaded.Add(await _fileStorageService.SaveFileAsync(stream, file.FileName, "products", ct));
         }
         return uploaded;
+    }
+
+    private async Task<string?> SaveSingleImageAsync(IFormFile? imageFile, CancellationToken ct)
+    {
+        if (imageFile is null || imageFile.Length <= 0 || !imageFile.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        await using var stream = imageFile.OpenReadStream();
+        return await _fileStorageService.SaveFileAsync(stream, imageFile.FileName, "products", ct);
     }
 
     private async Task<string?> SaveUploadedAudioAsync(IFormFile? audioFile, CancellationToken ct)
